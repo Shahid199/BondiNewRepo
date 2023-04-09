@@ -10,7 +10,7 @@ const questionMcqSchema = new Schema(
     },
     options: [
       {
-        type: Array,
+        type: String,
         required: false,
       },
     ],

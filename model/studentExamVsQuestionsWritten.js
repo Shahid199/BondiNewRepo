@@ -22,29 +22,35 @@ const studentExamVsQuestionsWrittenSchema = new Schema(
       ref: questionsWritten,
     },
     //when students submit image answer script
-    submittedScriptILink: {
-      type: Array,
-      required: false,
-    },
+    submittedScriptILink: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
     //when students submit pdf answer script
     //submittedScriptPdfLink: {
     //    type: String,
     //    required: false,
     //  },
     //For Image
-    ansewerScriptILink: {
-      type: Array,
-      required: false,
-    },
+    ansewerScriptILink: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
     //For Pdf file
     //ansewerScriptPdfLink: {
     //  type: String,
     //  required: false,
     // },
-    obtainedMarks: {
-      type: Array,
-      required: false,
-    },
+    obtainedMarks: [
+      {
+        type: Number,
+        required: false,
+      },
+    ],
     totalObtainedMarks: {
       type: Number,
       required: false,

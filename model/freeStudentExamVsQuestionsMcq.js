@@ -31,7 +31,7 @@ const freeStudentExamVsQuestionsMcqSchema = new Schema(
     ],
     answeredStatus: [
       {
-        type: String,
+        type: Boolean,
         required: false,
         default: false,
       },
