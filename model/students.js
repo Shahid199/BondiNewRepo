@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const studentsScheam = new Schema(
+const studentsSchema = new Schema(
   {
     regNo: {
       type: String,
@@ -43,4 +43,4 @@ const studentsScheam = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("Student", studentsScheam);
+module.exports = mongoose.model("Student", studentsSchema);

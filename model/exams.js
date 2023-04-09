@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const subjects = require("./subjects");
 const Schema = mongoose.Schema;
 
-const examScheam = new Schema(
+const examSchema = new Schema(
   {
     name: {
       type: String,
@@ -60,4 +60,4 @@ const examScheam = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("Exam", examScheam);
+module.exports = mongoose.model("Exam", examSchema);

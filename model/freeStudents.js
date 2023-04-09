@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const freeStudentsScheama = new Schema(
+const freeStudentsSchema = new Schema(
   {
     name: {
       type: String,
@@ -39,4 +39,4 @@ const freeStudentsScheama = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("FreeStudent", freeStudentsScheama);
+module.exports = mongoose.model("FreeStudent", freeStudentsSchema);

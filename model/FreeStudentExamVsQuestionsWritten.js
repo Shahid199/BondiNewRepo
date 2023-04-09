@@ -4,7 +4,7 @@ const freeStudents = require("./freeStudents");
 const questionsWritten = require("./questionsWritten");
 const Schema = mongoose.Schema;
 
-const freeStudentExamVsQuestionsWrittenScheama = new Schema(
+const freeStudentExamVsQuestionsWrittenSchema = new Schema(
   {
     freeStudentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -58,5 +58,5 @@ const freeStudentExamVsQuestionsWrittenScheama = new Schema(
 );
 module.exports = mongoose.model(
   "FreeStudentExamVsQuestionWritten",
-  freeStudentExamVsQuestionsWrittenScheama
+  freeStudentExamVsQuestionsWrittenSchema
 );

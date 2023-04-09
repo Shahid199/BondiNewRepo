@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const courses = require("./courses");
 const Schema = mongoose.Schema;
 
-const subjectScheam = new Schema(
+const subjectScheama = new Schema(
   {
     name: {
       type: String,
@@ -28,4 +28,4 @@ const subjectScheam = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("Subject", subjectScheam);
+module.exports = mongoose.model("Subject", subjectScheama);

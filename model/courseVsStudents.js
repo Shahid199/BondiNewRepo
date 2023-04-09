@@ -3,7 +3,7 @@ const courses = require("./courses");
 const students = require("./students");
 const Schema = mongoose.Schema;
 
-const courseVsStudentsScheam = new Schema(
+const courseVsStudentsSchema = new Schema(
   {
     courseId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -24,4 +24,4 @@ const courseVsStudentsScheam = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("CourseVsStudent", courseVsStudentsScheam);
+module.exports = mongoose.model("CourseVsStudent", courseVsStudentsSchema);

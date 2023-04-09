@@ -2,9 +2,27 @@ const mongoose = require("mongoose");
 const exams = require("./exams");
 const Schema = mongoose.Schema;
 
-const questionWrittenScheama = new Schema(
+const questionMcqSchema = new Schema(
   {
-    questionIlink: {
+    question: {
+      type: String,
+      required: true,
+    },
+    options: [
+      {
+        type: Array,
+        required: false,
+      },
+    ],
+    optionCount: {
+      type: Number,
+      required: true,
+    },
+    correctOption: {
+      type: String,
+      required: true,
+    },
+    explanationILink: {
       type: String,
       required: true,
     },
@@ -12,10 +30,6 @@ const questionWrittenScheama = new Schema(
       type: Boolean,
       required: true,
       default: true,
-    },
-    noOfQuestion: {
-      type: Number,
-      rewuired: true,
     },
     examId: [
       {
@@ -27,4 +41,4 @@ const questionWrittenScheama = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("QuestionWritten", questionWrittenScheama);
+module.exports = mongoose.model("QuestionMcq", questionMcqSchema);

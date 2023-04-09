@@ -4,7 +4,7 @@ const questionsWritten = require("./questionsWritten");
 const students = require("./students");
 const Schema = mongoose.Schema;
 
-const studentExamVsQuestionsWrittenScheama = new Schema(
+const studentExamVsQuestionsWrittenSchema = new Schema(
   {
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -58,5 +58,5 @@ const studentExamVsQuestionsWrittenScheama = new Schema(
 );
 module.exports = mongoose.model(
   "StudentExamVsQuestionWritten",
-  studentExamVsQuestionsWrittenScheama
+  studentExamVsQuestionsWrittenSchema
 );
