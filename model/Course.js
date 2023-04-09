@@ -14,6 +14,10 @@ const courseSchema = new Schema(
       required: false,
       max: 10000,
     },
+    courseILink: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
