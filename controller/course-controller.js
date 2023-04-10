@@ -1,5 +1,4 @@
 const Course = require("../model/Course");
-
 //Create Courses
 const createCourse = async (req, res, next) => {
   const { name, descr, courseILink } = req.body;
