@@ -60,7 +60,10 @@ const getUserByRole = async (req, res, next) => {
   console.log(role);
   let user;
   try {
-    user = await User.find({ role: role });
+    user = await User.findOne({ role: role }).select("-password");
+    //console.log(user);
+    //user = user.populate("userName");
+    //console.log(user._id);
   } catch (err) {
     return new Error(err);
   }
