@@ -38,7 +38,7 @@ const getCourse = async (req, res, next) => {
   if (!course) {
     return res.status(404).json({ message: "Course Not Found" });
   }
-  return res.status(200).json({ course });
+  return res.status(200).json( course );
 };
 
 //get all course
