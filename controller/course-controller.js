@@ -1,7 +1,7 @@
 const Course = require("../model/Course");
 
 //Create Courses
-const createcourse = async (req, res, next) => {
+const createCourse = async (req, res, next) => {
   const { name, descr, courseILink } = req.body;
   let existingCourse;
   try {
@@ -26,7 +26,7 @@ const createcourse = async (req, res, next) => {
 };
 
 //get course
-const getcourse = async (req, res, next) => {
+const getCourse = async (req, res, next) => {
   const courseId = req.query.id;
   console.log(courseId);
   let course;
@@ -42,7 +42,7 @@ const getcourse = async (req, res, next) => {
 };
 
 //get all course
-const getallcourse = async (req, res, next) => {
+const getAllCourse = async (req, res, next) => {
   let courses;
   try {
     courses = await Course.find({}).exec();
@@ -55,6 +55,6 @@ const getallcourse = async (req, res, next) => {
   return res.status(200).json({ courses });
 };
 
-exports.createcourse = createcourse;
-exports.getcourse = getcourse;
-exports.getallcourse = getallcourse;
+exports.createCourse = createCourse;
+exports.getCourse = getCourse;
+exports.getAllCourse = getAllCourse;
