@@ -25,4 +25,36 @@ const createcourse = async (req, res, next) => {
   return res.status(201).json({ message: course });
 };
 
+//get course
+const getcourse = async (req, res, next) => {
+  const courseId = req.query.id;
+  console.log(courseId);
+  let course;
+  try {
+    course = await Course.findById(courseId);
+  } catch (err) {
+    return new Error(err);
+  }
+  if (!course) {
+    return res.status(404).json({ message: "Course Not Found" });
+  }
+  return res.status(200).json({ course });
+};
+
+//get all course
+const getallcourse = async (req, res, next) => {
+  let courses;
+  try {
+    courses = await Course.find({}).exec();
+  } catch (err) {
+    return new Error(err);
+  }
+  if (!courses) {
+    return res.status(404).json({ message: "Courses Not Found" });
+  }
+  return res.status(200).json({ courses });
+};
+
 exports.createcourse = createcourse;
+exports.getcourse = getcourse;
+exports.getallcourse = getallcourse;
