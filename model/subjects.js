@@ -2,23 +2,25 @@ const mongoose = require("mongoose");
 const courses = require("./Course");
 const Schema = mongoose.Schema;
 
-const subjectScheama = new Schema(
+const subjectSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
-      unique: true,
-      max: 200,
+    },
+    showName:{
+      type:String,
+      required:true,
     },
     descr: {
       type: String,
       required: false,
       max: 10000,
     },
-    iLink: {
-      type: String,
-      required: true,
-    },
+    //iLink: {
+      //type: String,
+      //required: true,
+    //},
     courseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: courses,
@@ -28,4 +30,4 @@ const subjectScheama = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("Subject", subjectScheama);
+module.exports = mongoose.model("Subject", subjectSchema);

@@ -38,18 +38,18 @@ const examSchema = new Schema(
       type: Number,
       required: true,
     },
-    // totalMarks: {
-    //   type: Number,
-    //   required: true,
-    // },
-    // numberOfQuestions: {
-    //   type: Number,
-    //   required: true,
-    // },
+    //totalMarks: {
+     // type: Number,
+     // required: true,
+    //},
+    //numberOfQuestions: {
+      //type: Number,
+      //required: true,
+    //},
     status: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,

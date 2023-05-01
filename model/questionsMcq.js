@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const exams = require("./exams");
+const Exam = require("./Exam");
 const Schema = mongoose.Schema;
 
 const questionMcqSchema = new Schema(
@@ -34,7 +34,7 @@ const questionMcqSchema = new Schema(
     examId: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: exams,
+        ref: Exam,
       },
     ],
   },

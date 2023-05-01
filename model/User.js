@@ -18,11 +18,6 @@ const userScheama = new Schema(
       type: String,
       required: true,
     },
-    institution: {
-      type: String,
-      required: false,
-      default: null,
-    },
     address: {
       type: String,
       required: false,
@@ -30,27 +25,7 @@ const userScheama = new Schema(
     },
     password: {
       type: String,
-      required: true,
-    },
-    sscRoll: {
-      type: String,
       required: false,
-      default: null,
-    },
-    sscReg: {
-      type: String,
-      required: false,
-      default: null,
-    },
-    hscRoll: {
-      type: String,
-      required: false,
-      default: null,
-    },
-    hscReg: {
-      type: String,
-      required: false,
-      default: null,
     },
     role: {
       type: Number,

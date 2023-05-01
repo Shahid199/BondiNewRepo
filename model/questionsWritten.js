@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const exams = require("./exams");
+const exam = require("./Exam");
 const Schema = mongoose.Schema;
 
 const questionWrittenSchema = new Schema(
@@ -15,12 +15,12 @@ const questionWrittenSchema = new Schema(
     },
     noOfQuestion: {
       type: Number,
-      rewuired: true,
+      required: true,
     },
     examId: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: exams,
+        ref: exam,
       },
     ],
   },
