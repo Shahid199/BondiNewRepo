@@ -8,19 +8,15 @@ const subjectSchema = new Schema(
       type: String,
       required: true,
     },
-    showName:{
-      type:String,
-      required:true,
-    },
     descr: {
       type: String,
       required: false,
       max: 10000,
     },
-    //iLink: {
-      //type: String,
-      //required: true,
-    //},
+    iLink: {
+      type: String,
+      required: true,
+    },
     courseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: courses,

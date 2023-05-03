@@ -1,7 +1,7 @@
 const Course = require("../model/Course");
 //Create Courses
 const createCourse = async (req, res, next) => {
-  const { name, descr, courseILink } = req.body;
+  const { name, descr } = req.body;
   let existingCourse;
   try {
     existingCourse = await Course.findOne({ name: name });
@@ -14,7 +14,6 @@ const createCourse = async (req, res, next) => {
   const course = new Course({
     name: name,
     descr: descr,
-    courseILink: courseILink,
   });
   try {
     const doc = await course.save();
@@ -39,7 +38,6 @@ const getCourse = async (req, res, next) => {
   }
   return res.status(200).json( course );
 };
-
 //get all course
 const getAllCourse = async (req, res, next) => {
   let courses;

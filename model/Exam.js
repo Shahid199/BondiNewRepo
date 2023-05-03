@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const subjects = require("./subjects");
+const subjects = require("./Subject");
 const Schema = mongoose.Schema;
 
 const examSchema = new Schema(
@@ -13,7 +13,7 @@ const examSchema = new Schema(
     //exam variation for Weekly/Monthly/daily
     examType: {
       type: Number,
-      required: false,
+      required: true,
     },
     //exam variation for MCQ/Written/Both
     examVariation: {
@@ -38,14 +38,14 @@ const examSchema = new Schema(
       type: Number,
       required: true,
     },
-    //totalMarks: {
-     // type: Number,
-     // required: true,
-    //},
-    //numberOfQuestions: {
-      //type: Number,
-      //required: true,
-    //},
+    totalMarks: {
+      type: Number,
+      required: true,
+    },
+    numberOfQuestions: {
+      type: Number,
+      required: true,
+    },
     status: {
       type: Boolean,
       required: true,
@@ -55,6 +55,16 @@ const examSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: subjects,
       required: true,
+    },
+    sscStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    hscStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
