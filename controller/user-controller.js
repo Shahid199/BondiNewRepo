@@ -90,7 +90,64 @@ const getUserRole = async (req, res, next) => {
   }
   return res.status(200).json(userRole);
 };
+
+
+/**
+ * User auth 
+ */
+const loginSuperAdmin = async (req,res) =>{
+  try {
+    const { userName, password } = req.body;
+    // Find the user associated with the email provided by the user
+    const user = await User.findOne({ userName });
+    // If the user isn't found in the database, return a message
+    if (!user) {
+        return res.status(404).json("User not found");
+    }
+    
+    // if user found verify the password
+    
+    await user.loginUser(user, password, (err, token) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json("Something went wrong!");
+        }
+        if (!token) {
+            return res.status(401).json("Username/Password mismatched");
+        }
+        const { name, userName, _id, mobileNo, role, address } = user;
+        res.cookie('token', token, { expires: new Date(Date.now() + 24 * 3600 * 1000), httpOnly: true, secure: true, sameSite: "None" });
+        return res.status(200).json({ name, userName, _id, mobileNo, role, address, token });
+    });
+} catch (error) {
+    console.log(error);
+    return res.status(500).json("Something went wrong!");
+}
+}
+
+//create superAdmin use only once
+// exports.createSuperAdmin = async (req,res) =>{
+
+//   const hashedPassword = bcrypt.hashSync('qwerty');
+//   const user = new User({
+//     name: 'Super Admin Test',
+//     userName: 'superadmintest',
+//     mobileNo: '01677732635',
+//     address: 'Dhaka',
+//     password: hashedPassword,
+//     role: 1,
+//   });
+//   try {
+//     const doc = await user.save();
+//   } catch (err) {
+//     console.log(err);
+//   }
+//   return res.status(201).json("OK");
+// }
+
+
 exports.createOfficeUser = createOfficeUser;
 exports.createStudentUser = createStudentUser;
 exports.getUserByRole = getUserByRole;
 exports.getUserRole = getUserRole;
+exports.loginSuperAdmin = loginSuperAdmin;
