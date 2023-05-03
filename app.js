@@ -7,6 +7,24 @@ const studentRouter = require("./routes/student-routes");
 const courseVsStudentRouter=require("./routes/coursevsstudent-routes");
 const app = express();
 app.use(express.json());
+
+// const rolePermissions = {
+//   1:['*'],
+//   2:['user/getuserrole','course/getcourse'],
+//   3:['student/getprofile']
+// }
+
+// app.use("/api/*",function(req,res,next){
+//   if(role == 1) next();
+//   if(role ==2){
+    
+//   }
+//   if(role == 3){
+
+//   }
+//   return res.status(403).json('Not allowed');
+
+// });
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);
 app.use("/api/student",studentRouter);
