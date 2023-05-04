@@ -1,4 +1,5 @@
 const Course = require("../model/Course");
+const Student = require("../model/Student");
 //Create Courses
 const createCourse = async (req, res, next) => {
   const { name, descr } = req.body;
@@ -20,7 +21,7 @@ const createCourse = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-  return res.status(201).json({ message: course });
+  return res.status(201).json(course);
 };
 
 //get course
@@ -36,7 +37,7 @@ const getCourse = async (req, res, next) => {
   if (!course) {
     return res.status(404).json({ message: "Course Not Found" });
   }
-  return res.status(200).json( course );
+  return res.status(200).json(course);
 };
 //get all course
 const getAllCourse = async (req, res, next) => {
@@ -51,6 +52,7 @@ const getAllCourse = async (req, res, next) => {
   }
   return res.status(200).json({ courses });
 };
+
 
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;

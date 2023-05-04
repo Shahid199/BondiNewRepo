@@ -1,8 +1,6 @@
 const Course = require("../model/Course");
 const Student = require("../model/Student");
 const CourseVsStudent = require("../model/CourseVsStudent");
-const mongoose = require("mongoose");
-var mongodb = require("mongodb");
 //add Student To Course
 const addStudentToCourse = async (req, res, next) => {
   let { courseId, studentId } = req.body;
@@ -52,7 +50,7 @@ const addStudentToCourse = async (req, res, next) => {
       .status(201)
       .json({ message: "Successfull add student to course." });
   } else {
-    return res.status(400).json({ message: "Something went wrong." });
+    return res.status(404).json({ message: "Something went wrong." });
   }
 };
 //get students by course
@@ -72,7 +70,6 @@ const getStudentByCourse = async (req, res, next) => {
     return res.status(201).json(students);
   }
 };
-
 //get courses by student
 const getCourseByStudent = async (req, res, next) => {
   let studentId = req.query.studentid;
@@ -90,7 +87,25 @@ const getCourseByStudent = async (req, res, next) => {
     return res.status(201).json(courses);
   }
 };
+//get course by regNo
+const getCourseByReg = async (req, res, next) => {
+  const regNo = req.query.regno;
+  let studentId;
+  let courses;
+  try {
+    studentId = await Student.findOne({ regNo: regNo }).select("_id");
+  } catch (err) {
+    console.log(err);
+  }
+  if (studentId) {
+    courses = await CourseVsStudent.find({ studentId: studentId }).populate(
+      "courseId"
+    );
+    return res.status(201).json(courses);
+  } else return res.status(404).json({ message: "Course Not found." });
+};
 
 exports.addStudentToCourse = addStudentToCourse;
 exports.getStudentByCourse = getStudentByCourse;
 exports.getCourseByStudent = getCourseByStudent;
+exports.getCourseByReg = getCourseByReg;

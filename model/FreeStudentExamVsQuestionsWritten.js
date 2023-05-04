@@ -26,6 +26,7 @@ const freeStudentExamVsQuestionsWrittenSchema = new Schema(
       {
         type: String,
         required: false,
+        unique: true,
       },
     ],
     //when students submit pdf answer script
@@ -38,6 +39,7 @@ const freeStudentExamVsQuestionsWrittenSchema = new Schema(
       {
         type: String,
         required: false,
+        unique: true,
       },
     ],
     //For Pdf file

@@ -16,6 +16,7 @@ const subjectSchema = new Schema(
     iLink: {
       type: String,
       required: true,
+      unique: true,
     },
     courseId: {
       type: mongoose.Schema.Types.ObjectId,

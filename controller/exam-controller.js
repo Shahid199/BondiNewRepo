@@ -1,0 +1,96 @@
+const Course = require("../model/Course");
+const Exam = require("../model/Exam");
+const Subject = require("../model/Subject");
+//create Exam
+const createExam = async (req, res, next) => {
+  const {
+    courseName,
+    subjectName,
+    name,
+    examType,
+    examVariation,
+    examFreeOrnot,
+    startTime,
+    endTime,
+    totalQuestionMcq,
+    totalMarksMcq,
+    totalQuestionWritten,
+    totalMarksWritten,
+    status,
+    sscStatus,
+    hscStatus,
+    negativeMarks,
+  } = req.body;
+  let startTime1, endTime1, tqw, tmw, tqm, tmm;
+  tqw = totalQuestionWritten;
+  tmw = totalMarksWritten;
+  tqm = totalQuestionMcq;
+  tmm = totalMarksMcq;
+  if (totalQuestionWritten == null || totalMarksWritten == null) {
+    tqw = Number(0);
+    tmw = Number(0);
+  }
+  if (totalQuestionMcq == null || totalMarksMcq == null) {
+    tqm = Number(0);
+    tmm = Number(0);
+  }
+  startTime1 = new Date(startTime);
+  endTime1 = new Date(endTime);
+  duration = (endTime1 - startTime1) / (60 * 1000);
+  let courseId, subjectId, subjects, examNameCheck, saveExam;
+  try {
+    courseId = await Course.findOne({ name: courseName }).exec();
+  } catch (err) {
+    console.log(err);
+  }
+  if (courseId == null)
+    return res.status(404).json({ message: "No course Found." });
+  try {
+    subjects = await Subject.find({ courseId: courseId }).select("name");
+  } catch (err) {
+    console.log(err);
+  }
+  subjects = Object.entries(subjects);
+  subjects.forEach((element) => {
+    if (element[1].name == subjectName) {
+      subjectId = element[1]._id;
+    }
+  });
+  if (subjectId == null)
+    return res.status(404).json({ message: "Subject not found." });
+  try {
+    examNameCheck = await Exam.findOne({ name: name }).select("_id");
+  } catch (err) {
+    console.log(err);
+  }
+  if (examNameCheck)
+    return res.status(403).json({ message: "Exam name already exisit." });
+  saveExam = new Exam({
+    courseId: courseId,
+    subjectId: subjectId,
+    name: name,
+    examType: examType,
+    examVariation: examVariation,
+    examFreeOrnot: examFreeOrnot,
+    startTime: startTime1,
+    endTime: endTime1,
+    duration: duration,
+    totalQuestionMcq: tqm,
+    totalMarksMcq: tmm,
+    totalQuestionWritten: tqw,
+    totalMarksWritten: tmw,
+    negativeMarks: Number(negativeMarks),
+    status: Boolean(status),
+    sscStatus: Boolean(sscStatus),
+    hscStatus: Boolean(hscStatus),
+  });
+  let doc;
+  try {
+    doc = await saveExam.save();
+  } catch (err) {
+    console.log(err);
+  }
+  return res.status(201).json(doc);
+};
+
+exports.createExam = createExam;

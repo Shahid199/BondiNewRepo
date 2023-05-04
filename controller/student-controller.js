@@ -118,6 +118,16 @@ const getStudentId = async (req, res, next) => {
     return res.status(201).json({ studentId });
   }
 };
+const getAllStudent = async (req, res, next) => {
+  let students;
+  try {
+    students = await Student.find({});
+  } catch (err) {
+    console.log(err);
+  }
+  return res.status(201).json(students);
+};
 exports.addStudent = addStudent;
 exports.updateStudent = updateStudent;
 exports.getStudentId = getStudentId;
+exports.getAllStudent = getAllStudent;

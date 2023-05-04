@@ -10,12 +10,12 @@ const examSchema = new Schema(
       unique: true,
       max: 200,
     },
-    //exam variation for Weekly/Monthly/daily
+    //exam variation for Weekly=1/Monthly=2/daily=3
     examType: {
       type: Number,
       required: true,
     },
-    //exam variation for MCQ/Written/Both
+    //exam variation for MCQ=1/Written=2/Both=3
     examVariation: {
       type: Number,
       required: true,
@@ -38,13 +38,21 @@ const examSchema = new Schema(
       type: Number,
       required: true,
     },
-    totalMarks: {
+    totalQuestionMcq: {
       type: Number,
-      required: true,
+      required: false,
     },
-    numberOfQuestions: {
+    totalMarksMcq: {
       type: Number,
-      required: true,
+      required: false,
+    },
+    totalQuestionWritten: {
+      type: Number,
+      required: false,
+    },
+    totalMarksWritten: {
+      type: Number,
+      required: false,
     },
     status: {
       type: Boolean,
@@ -65,6 +73,10 @@ const examSchema = new Schema(
       type: Boolean,
       required: true,
       default: false,
+    },
+    negativeMarks: {
+      type: Number,
+      reqauired: true,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.

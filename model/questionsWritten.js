@@ -7,15 +7,12 @@ const questionWrittenSchema = new Schema(
     questionIlink: {
       type: String,
       required: true,
+      unique: true,
     },
     status: {
       type: Boolean,
       required: true,
       default: true,
-    },
-    noOfQuestion: {
-      type: Number,
-      required: true,
     },
     examId: [
       {
