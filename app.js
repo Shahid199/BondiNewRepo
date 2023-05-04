@@ -1,32 +1,29 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+
+const app = express();
+
+const passport = require('passport');
+const cors = require('./utilities/cors');
+
+require('./utilities/passport');
+app.use(passport.initialize());
+
+cors(app);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// add routes from below
 const courseRouter = require("./routes/course-routes");
 const userRouter = require("./routes/user-routes");
 const studentRouter = require("./routes/student-routes");
 const courseVsStudentRouter = require("./routes/coursevsstudent-routes");
 const subjectRouter = require("./routes/subject-routes");
 const examRouter = require("./routes/exam-routes");
-const app = express();
-app.use(express.json());
 
-// const rolePermissions = {
-//   1:['*'],
-//   2:['user/getuserrole','course/getcourse'],
-//   3:['student/getprofile']
-// }
 
-// app.use("/api/*",function(req,res,next){
-//   if(role == 1) next();
-//   if(role ==2){
-
-//   }
-//   if(role == 3){
-
-//   }
-//   return res.status(403).json('Not allowed');
-
-// });
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);
 app.use("/api/student", studentRouter);
