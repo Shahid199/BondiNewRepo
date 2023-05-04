@@ -2,7 +2,14 @@ const Subject = require("../model/Subject");
 const Course = require("../model/Course");
 //Create Subject
 const createSubject = async (req, res, next) => {
-  const { courseId, name, descr, iLink } = req.body;
+  const { courseId, name, descr } = req.body;
+  const file = req.file;
+  
+  let iLinkPath = null;
+  if(file){
+    iLinkPath = "uploads/".concat(file.filename);
+  }
+  
   let existingSubject;
   try {
     existingSubject = await Subject.findOne({ name: name }).select("courseId");
@@ -18,7 +25,7 @@ const createSubject = async (req, res, next) => {
   const subject = new Subject({
     name: name,
     descr: descr,
-    iLink: iLink,
+    iLink: iLinkPath,
     courseId: courseId,
   });
   try {

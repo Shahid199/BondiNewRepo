@@ -1,11 +1,12 @@
-const express = require("express");
+const router = require("express").Router();
+const passport = require('passport');
 const {
   createSubject,
   getSubjectByCourse,
 } = require("../controller/subject-controller");
-const router = express.Router();
+const { upload } = require("../utilities/multer");
 
-router.post("/createsubject", createSubject);
+router.post("/createsubject",[passport.authenticate('jwt', { session: false }), upload.single('iLink')], createSubject);
 router.get("/getsubjectbycourse", getSubjectByCourse);
 
 module.exports = router;
