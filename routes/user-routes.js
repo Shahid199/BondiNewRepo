@@ -11,7 +11,7 @@ const {
 const authorize = require('../utilities/authorizationMiddleware');
 const router = express.Router();
 
-router.post("/createofficeuser", [passport.authenticate('jwt', { session: false }), authorize(['admin'])], createOfficeUser);
+router.post("/createofficeuser", [passport.authenticate('jwt', { session: false }), authorize(['admin','superadmin'])], createOfficeUser);
 router.post("/createstudentuser", [passport.authenticate('jwt', { session: false }), authorize(['superadmin', 'admin'])], createStudentUser);
 router.get("/getuserbyrole/:role", [passport.authenticate('jwt', { session: false }), authorize(['superadmin', 'admin'])], getUserByRole);
 router.get("/getuserrole", [passport.authenticate('jwt', { session: false }), authorize(['admin'])], getUserRole);
