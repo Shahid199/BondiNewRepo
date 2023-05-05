@@ -8,6 +8,7 @@ const passport = require('passport');
 const cors = require('./utilities/cors');
 
 require('./utilities/passport');
+require('./utilities/passport_student');
 app.use(passport.initialize());
 
 cors(app);

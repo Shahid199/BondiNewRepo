@@ -11,7 +11,7 @@ const getHomePage = async (req, res, next) => {
     subjectDataDaily,
     subjectDataMonthly,
     subjectDataweekly;
-  let { courseId, studentId } = req.body;
+  let { courseId, studentId } = req.user;
   let subjectId;
   try {
     courseId = await Course.findById(courseId).select("_id");
@@ -75,6 +75,6 @@ const getHomePage = async (req, res, next) => {
   homeData["monthly"] = subjectDataweekly;
   homeData["runningExam"] = running;
   homeData["comingExam"] = coming;
-  return res.status(201).send(Object.entries(homeData));
+  return res.status(200).json(homeData);
 };
 exports.getHomePage = getHomePage;

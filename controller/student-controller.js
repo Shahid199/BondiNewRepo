@@ -25,8 +25,8 @@ const loginStudent = async (req, res) => {
     }
     // if all checks passed above now geneate login token
     const token = jwt.sign({
-      studentId: getStudent._id,
-      courseId: courseId
+      studentId: String(getStudent._id),
+      courseId: String(courseId)
     }, process.env.SALT, { expiresIn: '1d' });
     
     return res.status(200).json({ "message": "Student logged into the course", token });
