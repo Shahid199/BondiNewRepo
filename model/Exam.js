@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const subjects = require("./Subject");
+const courses = require("./Course");
 const Schema = mongoose.Schema;
 
 const examSchema = new Schema(
@@ -64,6 +65,11 @@ const examSchema = new Schema(
       ref: subjects,
       required: true,
     },
+    courseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: courses,
+      required: true,
+    },
     sscStatus: {
       type: Boolean,
       required: true,
@@ -77,6 +83,10 @@ const examSchema = new Schema(
     negativeMarks: {
       type: Number,
       reqauired: true,
+    },
+    iLink: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.

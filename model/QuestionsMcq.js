@@ -8,6 +8,10 @@ const questionMcqSchema = new Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: Boolean,
+      required: true,
+    },
     options: [
       {
         type: String,
@@ -32,12 +36,6 @@ const questionMcqSchema = new Schema(
       required: true,
       default: true,
     },
-    examId: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: exam,
-      },
-    ],
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

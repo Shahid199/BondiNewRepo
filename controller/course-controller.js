@@ -8,6 +8,7 @@ const createCourse = async (req, res, next) => {
     existingCourse = await Course.findOne({ name: name });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (existingCourse) {
     return res.status(400).json({ message: "course already exist" });
@@ -20,6 +21,7 @@ const createCourse = async (req, res, next) => {
     const doc = await course.save();
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(course);
 };

@@ -8,6 +8,7 @@ const createSubject = async (req, res, next) => {
     existingSubject = await Subject.findOne({ name: name }).select("courseId");
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (existingSubject) {
     existingSubject = String(existingSubject.courseId);
@@ -25,6 +26,7 @@ const createSubject = async (req, res, next) => {
     const doc = await subject.save();
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: "Subject Successfully created." });
 };
@@ -36,12 +38,14 @@ const getSubjectByCourse = async (req, res, next) => {
     courseIdOb = await Course.findById(courseId).select("_id");
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   let subjects;
   try {
     subjects = await Subject.find({ courseId: courseIdOb });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (subjects) {
     return res.status(201).json(subjects);

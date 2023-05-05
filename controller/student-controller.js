@@ -7,6 +7,7 @@ const addStudent = async (req, res, next) => {
     existingStudent = await Student.findOne({ regNo: regNo });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (existingStudent) {
     return res.status(400).json({ message: "student already exist" });
@@ -20,6 +21,7 @@ const addStudent = async (req, res, next) => {
     const doc = await stud.save();
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: "Student Created Succesfully." });
 };
@@ -31,6 +33,7 @@ const updateStudent = async (req, res, next) => {
     existingStudent = await Student.findOne({ regNo: regNo });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (!existingStudent) {
     return res.status(400).json({ message: "student not exists." });
@@ -51,6 +54,7 @@ const updateStudent = async (req, res, next) => {
         flag = true;
       } catch (err) {
         console.log(err);
+        return res.status(500).json("Something went wrong!");
       }
       if (flag) {
         return res
@@ -73,6 +77,7 @@ const updateStudent = async (req, res, next) => {
         flag = true;
       } catch (err) {
         console.log(err);
+        return res.status(500).json("Something went wrong!");
       }
       if (flag) {
         return res
@@ -93,6 +98,7 @@ const updateStudent = async (req, res, next) => {
         flag = true;
       } catch (err) {
         console.log(err);
+        return res.status(500).json("Something went wrong!");
       }
       if (flag) {
         return res
@@ -111,6 +117,7 @@ const getStudentId = async (req, res, next) => {
     studentId = studentId._id;
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (!studentId)
     return res.status(401).json({ message: "Student Not Found." });
@@ -124,6 +131,7 @@ const getAllStudent = async (req, res, next) => {
     students = await Student.find({});
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(students);
 };

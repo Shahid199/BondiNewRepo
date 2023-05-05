@@ -14,6 +14,7 @@ const createOfficeUser = async (req, res, next) => {
     existingUser = await User.findOne({ userName: userName });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (existingUser) {
     return res.status(400).json({ message: "user already exist" });
@@ -33,6 +34,7 @@ const createOfficeUser = async (req, res, next) => {
     const doc = await user.save();
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");;
   }
   return res.status(201).json({ message: "New User created successfully." });
 };
@@ -44,6 +46,7 @@ const createStudentUser = async (req, res, next) => {
     existingUser = await User.findOne({ userName: userName });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (existingUser) {
     return res.status(400).json({ message: "student already exist" });
@@ -58,6 +61,7 @@ const createStudentUser = async (req, res, next) => {
     const doc = await user.save();
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: user });
 };

@@ -9,11 +9,13 @@ const addStudentToCourse = async (req, res, next) => {
     studentId = await Student.findById(studentId).select("_id");
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   try {
     courseId = await Course.findById(courseId).select("_id");
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   let existingStudentCourse;
   let flag = false;
@@ -29,6 +31,7 @@ const addStudentToCourse = async (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (flag == true) {
     return res
@@ -44,6 +47,7 @@ const addStudentToCourse = async (req, res, next) => {
     doc = await courseVsStudent.save();
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (doc) {
     return res
@@ -65,6 +69,7 @@ const getStudentByCourse = async (req, res, next) => {
     flag = true;
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (flag == true) {
     return res.status(201).json(students);
@@ -82,6 +87,7 @@ const getCourseByStudent = async (req, res, next) => {
     flag = true;
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (flag == true) {
     return res.status(201).json(courses);
@@ -96,6 +102,7 @@ const getCourseByReg = async (req, res, next) => {
     studentId = await Student.findOne({ regNo: regNo }).select("_id");
   } catch (err) {
     console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
   if (studentId) {
     courses = await CourseVsStudent.find({ studentId: studentId }).populate(

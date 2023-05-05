@@ -22,6 +22,7 @@ const studentRouter = require("./routes/student-routes");
 const courseVsStudentRouter = require("./routes/coursevsstudent-routes");
 const subjectRouter = require("./routes/subject-routes");
 const examRouter = require("./routes/exam-routes");
+const homeRouter = require("./routes/home-routes");
 
 
 app.use("/api/course", courseRouter);
@@ -30,12 +31,13 @@ app.use("/api/student", studentRouter);
 app.use("/api/coursevsstudent", courseVsStudentRouter);
 app.use("/api/subject", subjectRouter);
 app.use("/api/exam", examRouter);
+app.use("/api/home", homeRouter);
 mongoose
   .connect(
     "mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
   )
   .then(() => {
-    app.listen(5010);
-    console.log("connected to port 5010");
+    app.listen(5011);
+    console.log("connected to port 5011");
   })
   .catch((err) => console.log(err));
