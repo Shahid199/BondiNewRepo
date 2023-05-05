@@ -1,4 +1,40 @@
 const Student = require("../model/Student");
+const Course = require("../model/Course");
+const CourseVsStudent = require("../model/CourseVsStudent");
+const jwt = require('jsonwebtoken');
+
+/**
+ * login a student to a course
+ * @param {Object} req courseId,regNo
+ * @returns token
+ */
+const loginStudent = async (req, res) => {
+  const { courseId, regNo } = req.body;
+  try {
+    const getStudent = await Student.findOne({ regNo: regNo }, '_id').exec();
+    if (!getStudent) {
+      return res.status(404).json("Student not found");
+    }
+    const getCourse = await Course.findById({ _id: courseId }).exec();
+    if (!getCourse) {
+      return res.status(404).json("Course not found");
+    }
+    const studentvscourse = await CourseVsStudent.findOne({ courseId, studentId: getStudent._id, status: true }).exec();
+    if (!studentvscourse) {
+      return res.status(404).json("Course not registered for the student ID");
+    }
+    // if all checks passed above now geneate login token
+    const token = jwt.sign({
+      studentId: getStudent._id,
+      courseId: courseId
+    }, process.env.SALT, { expiresIn: '1d' });
+    
+    return res.status(200).json({ "message": "Student logged into the course", token });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({"message":"Something went wrong!"});
+  }
+}
 //Create Students
 const addStudent = async (req, res, next) => {
   const { regNo, name, mobileNo } = req.body;
@@ -127,6 +163,9 @@ const getAllStudent = async (req, res, next) => {
   }
   return res.status(201).json(students);
 };
+
+
+exports.loginStudent = loginStudent;
 exports.addStudent = addStudent;
 exports.updateStudent = updateStudent;
 exports.getStudentId = getStudentId;
