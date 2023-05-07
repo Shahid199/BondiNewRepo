@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const questionWrittenSchema = new Schema(
   {
-    questionIlink: {
+    questionILink: {
       type: String,
       required: true,
       unique: true,
@@ -14,12 +14,6 @@ const questionWrittenSchema = new Schema(
       required: true,
       default: true,
     },
-    examId: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: exam,
-      },
-    ],
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

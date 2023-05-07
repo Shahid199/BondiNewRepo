@@ -7,6 +7,7 @@ const questionMcqSchema = new Schema(
     question: {
       type: String,
       required: true,
+      default:null,
     },
     type: {
       type: Boolean,

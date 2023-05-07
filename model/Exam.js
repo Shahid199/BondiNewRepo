@@ -82,7 +82,8 @@ const examSchema = new Schema(
     },
     negativeMarks: {
       type: Number,
-      reqauired: true,
+      required: true,
+      default:0,
     },
     iLink: {
       type: String,
