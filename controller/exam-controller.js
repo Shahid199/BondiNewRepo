@@ -120,7 +120,7 @@ const getExamBySubject = async (req, res, next) => {
   let subjectId;
   subjectId = req.query.subjectid;
   const variation = req.query.variation;
-  let studentId = req.payload.studnetId;
+  //let studentId = req.payload.studnetId;
   let courseId = null;
   try {
     courseId = await Subject.findById(subjectId).select("courseId");
@@ -129,22 +129,22 @@ const getExamBySubject = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  let doc = null;
-  try {
-    doc = await CourseVsStudent.findOne(
-      {
-        $and: [
-          { status: true },
-          { courseId: courseId },
-          { studentId: studentId },
-        ],
-      },
-      "_id"
-    );
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
+  let doc = "Sdf";
+  // try {
+  //   doc = await CourseVsStudent.findOne(
+  //     {
+  //       $and: [
+  //         { status: true },
+  //         { courseId: courseId },
+  //         { studentId: studentId },
+  //       ],
+  //     },
+  //     "_id"
+  //   );
+  // } catch (err) {
+  //   console.log(err);
+  //   return res.status(500).json("Something went wrong!");
+  // }
   if (doc != null) {
     let exams = null;
     exams = await Exam.find(
@@ -152,7 +152,8 @@ const getExamBySubject = async (req, res, next) => {
         $and: [
           { status: true },
           { subjectId: subjectId },
-          { examType: variation },
+          { examVariation: variation },
+          { endTime: { $gt: Date.now() } },
         ],
       },
       "name examVariation startTime endTime"
@@ -169,7 +170,7 @@ const getExamBySubject = async (req, res, next) => {
     examPage["exam"] = exams;
     examPage["course"] = courseName;
     examPage["subject"] = subjectName;
-    if (exams != null && courseName != null && subjectName != null)
+    if (exams.length > 0 && courseName != null && subjectName != null)
       return res.status(201).json(examPage);
     else return res.status(404).json({ message: "No exam Found." });
   } else
