@@ -1,4 +1,5 @@
 const express = require("express");
+const { upload } = require("../utilities/multer");
 const {
   loginStudent,
   addStudent,
@@ -10,7 +11,7 @@ const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
 //student admin panel routes
-router.post("/addstudent", addStudent);
+router.post("/addstudent", upload.single("excelFile"), addStudent);
 router.put("/updatestudent", updateStudent);
 router.get("/getstudentid", getStudentId);
 router.get("/getallstudent", getAllStudent);

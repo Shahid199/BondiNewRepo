@@ -30,6 +30,7 @@ const upload = multer({
       "image/png",
       "image/gif",
       "image/svg+xml",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ];
     if (mimeTypeList.indexOf(file.mimetype) <= -1) {
       const cusError = new Error("File type is invalid");
