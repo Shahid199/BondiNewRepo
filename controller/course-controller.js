@@ -1,5 +1,6 @@
 const Course = require("../model/Course");
 const Student = require("../model/Student");
+const Limit = 1;
 //Create Courses
 const createCourse = async (req, res, next) => {
   const { name, descr } = req.body;
@@ -25,14 +26,22 @@ const createCourse = async (req, res, next) => {
   }
   return res.status(201).json(course);
 };
-
 //get course
 const getCourse = async (req, res, next) => {
   const courseId = req.query.id;
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
   console.log(courseId);
   let course;
   try {
-    course = await Course.findById(courseId);
+    course = await Course.findById(courseId).skip(skippedItem).limit(Limit);
   } catch (err) {
     return new Error(err);
   }
@@ -44,8 +53,17 @@ const getCourse = async (req, res, next) => {
 //get all course
 const getAllCourse = async (req, res, next) => {
   let courses;
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
   try {
-    courses = await Course.find({}).exec();
+    courses = await Course.find({}).skip(skippedItem).limit(Limit).exec();
   } catch (err) {
     return new Error(err);
   }
@@ -54,8 +72,6 @@ const getAllCourse = async (req, res, next) => {
   }
   return res.status(200).json({ courses });
 };
-
-
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;

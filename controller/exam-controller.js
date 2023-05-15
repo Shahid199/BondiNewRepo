@@ -6,6 +6,7 @@ const QuestionsWritten = require("../model/QuestionsWritten");
 const Subject = require("../model/Subject");
 const WrittenQuestionVsExam = require("../model/WrittenQuestionVsExam");
 const CourseVsStudent = require("../model/CourseVsStudent");
+const Limit = 1;
 
 //create Exam
 const createExam = async (req, res, next) => {
@@ -74,7 +75,7 @@ const createExam = async (req, res, next) => {
     return res.status(500).json("Something went wrong!");
   }
   if (examNameCheck)
-    return res.status(403).json({ message: "Exam name already exisit." });
+    return res.status(400).json({ message: "Exam name already exisit." });
   saveExam = new Exam({
     courseId: courseId,
     subjectId: subjectId,
@@ -107,19 +108,43 @@ const createExam = async (req, res, next) => {
 //get all exam
 const getAllExam = async (req, res, next) => {
   let exams;
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
   try {
-    exams = await Exam.find({}, "name startTime endTime");
+    exams = await Exam.find({}, "name startTime endTime")
+      .skip(skippedItem)
+      .limit(Limit);
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  return res.status(201).send(exams);
+  return res.status(200).send(exams);
 };
 //get exam by subject(double parameter send from front-end needed)
 const getExamBySubject = async (req, res, next) => {
   let subjectId;
   subjectId = req.query.subjectid;
   const variation = req.query.variation;
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+  if (subjectId == null || variation == null) {
+    return res.status(404).json("not found data.");
+  }
+
   //let studentId = req.payload.studnetId;
   let courseId = null;
   try {
@@ -157,7 +182,9 @@ const getExamBySubject = async (req, res, next) => {
         ],
       },
       "name examVariation startTime endTime"
-    );
+    )
+      .skip(skippedItem)
+      .limit(Limit);
     let courseName, subjectName;
     try {
       courseName = await Course.findById(String(courseId), "name");
@@ -171,46 +198,60 @@ const getExamBySubject = async (req, res, next) => {
     examPage["course"] = courseName;
     examPage["subject"] = subjectName;
     if (exams.length > 0 && courseName != null && subjectName != null)
-      return res.status(201).json(examPage);
+      return res.status(200).json(examPage);
     else return res.status(404).json({ message: "No exam Found." });
   } else
     return res
-      .status(403)
-      .jsonn({ message: "Student not allowed to the subject." });
+      .status(404)
+      .json({ message: "Student not allowed to the subject." });
 };
 //add questions
 const addQuestionMcq = async (req, res, next) => {
-  const file = req.files;
   let iLinkPath = null;
   let explanationILinkPath = null;
-  if (!file.iLink) {
-    return res.status(404).json({ message: "Question File not uploaded." });
-  }
-  if (!file.explanationILink) {
-    return res.status(404).json({ message: "Expalnation File not uploaded." });
-  }
-  iLinkPath = "uploads/".concat(file.iLink[0].filename);
-  explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
   let data = new Object();
-  const type = req.body.type;
+  let type = Boolean(req.body.type);
+  let examId = req.body.examid;
+  const { question, optionCount, options, correctOption, status } = req.body;
+  //working with file upload
+
+  //end of upload
+  //read uploaded file path
+
+  //end of read uploaded file path
+  //question insert for text question(type=true)
+  console.log(typeof type);
+  console.log(type);
   if (type == true) {
-    const { question, optionCount, options, correctOption, status } = req.body;
-    let examId = req.body.examId;
+    const file = req.files;
+    if (!file.explanationILink) {
+      return res
+        .status(404)
+        .json({ message: "Expalnation File not uploaded." });
+    }
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
+
+    
     try {
       examId = await Exam.findById(examId).select("_id");
     } catch (err) {
       console.log(err);
       return res.status(500).json("Something went wrong1!");
     }
-    if (Number(optionCount) != Array(options).length) {
+    //option count check
+    console.log(Number(optionCount));
+    console.log(options);
+    if (Number(optionCount) != options.length) {
       return res
-        .status(401)
+        .status(400)
         .json({ message: "option count not same of options length" });
     }
+    //end of option count
+    //insert question
     let questions = new QuestionsMcq({
       question: question,
       optionCount: Number(optionCount),
-      options: Array(options),
+      options: options,
       correctOption: correctOption,
       explanationILink: explanationILinkPath,
       status: Boolean(status),
@@ -223,26 +264,77 @@ const addQuestionMcq = async (req, res, next) => {
       console.log(err);
       return res.status(500).json("Something went wrong2!");
     }
+    //end of insert question
+    //insert question to reference mcqquestionexam table
     let doc1;
     let questionId = doc._id;
-    let questionExam = new McqQuestionVsExam({
-      McqQuestionId: questionId,
-      examId: examId,
-    });
+    if (!questionId) return res.status(400).send("question not inserted");
+    let mcqQData,
+      sizeMid,
+      mId,
+      mIdNew = [];
     try {
-      doc1 = await questionExam.save();
+      mcqQData = await McqQuestionVsExam.findOne({ eId: examId }).select(
+        "mId sizeMid"
+      );
     } catch (err) {
       console.log(err);
-      return res.status(500).json("Something went wrong3!");
+      return res.status(500).json("Something went wrong2!");
     }
+    console.log(mcqQData);
+    if (mcqQData == null) {
+      mIdNew.push(questionId);
+      let questionExam = new McqQuestionVsExam({
+        eId: examId,
+        mId: mIdNew,
+        sizeMid: Number(mIdNew.length),
+      });
+      try {
+        doc1 = await questionExam.save();
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json("Something went wrong3!");
+      }
+    } else {
+      console.log(mcqQData);
+      mId = mcqQData.mId;
+      sizeMid = mcqQData.sizeMid;
+      sizeMid = sizeMid + 1;
+      mIdNew = mId;
+      mIdNew.push(questionId);
+      try {
+        doc1 = await McqQuestionVsExam.updateOne(
+          { eId: examId },
+          { $set: { mId: mIdNew, sizeMid: sizeMid } }
+        );
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json("Something went wrong3!");
+      }
+    }
+    //end of insert question to reference mcqquestionexam table
+    //end of iinsert text question
+
+    //start of insert question as image
     if (doc1 == null) {
       let delDoc = await QuestionsMcq.findByIdAndDelete(doc._id);
-      return res.status(401).json("DB Error occur for insertion.");
+      return res.status(400).json("DB Error occur for insertion.");
     }
     if (doc != null && doc1 != null)
       return res.status(201).json({ message: "Question Succesfully added." });
     else return res.status(404).json("Not save correctly.");
   } else {
+    const file = req.files;
+    if (!file.iLink) {
+      return res.status(404).json({ message: "Question File not uploaded." });
+    }
+    if (!file.explanationILink) {
+      return res
+        .status(404)
+        .json({ message: "Expalnation File not uploaded." });
+    }
+    iLinkPath = "uploads/".concat(file.iLink[0].filename);
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     const { optionCount, options, correctOption, status } = req.body;
     let examId = req.body.examId;
     try {
@@ -251,15 +343,15 @@ const addQuestionMcq = async (req, res, next) => {
       console.log(err);
       return res.status(500).json("Something went wrong4!");
     }
-    if (Number(optionCount) != Array(options).length) {
+    if (Number(optionCount) != options.length) {
       return res
-        .status(401)
+        .status(400)
         .json({ message: "option count not same of options length" });
     }
     let questions = new QuestionsMcq({
       question: iLinkPath,
       optionCount: Number(optionCount),
-      options: Array(options),
+      options: options,
       correctOption: correctOption,
       explanationILink: explanationILinkPath,
       status: Boolean(status),
@@ -274,24 +366,71 @@ const addQuestionMcq = async (req, res, next) => {
     }
     let doc1;
     let questionId = doc._id;
-    let questionExam = new McqQuestionVsExam({
-      McqQuestionId: questionId,
-      examId: examId,
-    });
+    let mcqQData, sizeMid, mId, mIdNew;
     try {
-      doc1 = await questionExam.save();
+      mcqQData = await McqQuestionVsExam.find({ eId: examId }).select(
+        "mId sizeMid"
+      );
     } catch (err) {
       console.log(err);
-      return res.status(500).json("Something went wrong!");
+      return res.status(500).json("Something went wrong2!");
     }
+    if (mcqQData == null) {
+      mIdNew.push(questionId);
+      let questionExam = new McqQuestionVsExam({
+        eId: examId,
+        mId: mIdNew,
+        sizeMid: Number(mIdNew.length),
+      });
+      try {
+        doc1 = await questionExam.save();
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json("Something went wrong3!");
+      }
+    } else {
+      console.log(mcqQData);
+      mId = mcqQData[0].mId;
+      sizeMid = mcqQData[0].sizeMid;
+      sizeMid = sizeMid + 1;
+      mIdNew = mId;
+      mIdNew.push(questionId);
+      try {
+        doc1 = await McqQuestionVsExam.updateOne(
+          { eId: examId },
+          { $set: { mId: mIdNew, sizeMid: sizeMid } }
+        );
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json("Something went wrong3!");
+      }
+    }
+
+    // mId = mcqQData[0].mId;
+    // sizeMid = mcqQData[0].sizeMid;
+    // sizeMid = sizeMid + 1;
+    // mIdNew = mId;
+    // mIdNew.push(questionId);
+    // let questionExam = new McqQuestionVsExam({
+    //   eId: examId,
+    //   mId: mIdNew,
+    //   sizeMid: sizeMid,
+    // });
+    // try {
+    //   doc1 = await questionExam.save();
+    // } catch (err) {
+    //   console.log(err);
+    //   return res.status(500).json("Something went wrong!");
+    // }
     if (doc1 == null) {
       let delDoc = await QuestionsMcq.findByIdAndDelete(doc._id);
-      return res.status(401).json("DB Error occur for insertion.");
+      return res.status(400).json("DB Error occur for insertion.");
     }
     if (doc != null && doc1 != null)
       return res.status(201).json({ message: "Question Succesfully added." });
     else return res.status(404).json("Not save correctly.");
   }
+  //end of insert question as image
 };
 //add wriiten question function
 const addQuestionWritten = async (req, res, next) => {
@@ -302,7 +441,7 @@ const addQuestionWritten = async (req, res, next) => {
   // console.log(file.questionILink[0].filename);
   // return res.status(201).json("Ok");
   if (!file.questionILink[0].filename)
-    return res.status(401).json("File not uploaded.");
+    return res.status(400).json("File not uploaded.");
   questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
   //written question save to db table
   const { status } = req.body;
@@ -340,7 +479,7 @@ const addQuestionWritten = async (req, res, next) => {
   }
   if (doc1 == null) {
     let delDoc = await QuestionsWritten.findByIdAndDelete(doc._id);
-    return res.status(401).json("DB Error occur for insertion.");
+    return res.status(400).json("DB Error occur for insertion.");
   }
   if (doc != null && doc1 != null) return res.status(201).json(doc);
   else return res.status(404).json("Not save correctly.");

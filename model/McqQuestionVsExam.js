@@ -5,21 +5,24 @@ const Schema = mongoose.Schema;
 
 const McqQuestionVsExamSchema = new Schema(
   {
-    McqQuestionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: questions,
-    },
-    examId: {
+    eId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: exams,
+    },
+    mId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: questions,
+      },
+    ],
+    sizeMid: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model(
-  "McqQuestionVsExamSchema",
-  McqQuestionVsExamSchema
-);
+module.exports = mongoose.model("McqQuestionVsExam", McqQuestionVsExamSchema);

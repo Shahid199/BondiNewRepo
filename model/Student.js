@@ -6,6 +6,7 @@ const studentsSchema = new Schema(
     regNo: {
       type: String,
       required: true,
+      unique: true,
     },
     name: {
       type: String,

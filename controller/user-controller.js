@@ -1,9 +1,10 @@
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
+const Limit = 1;
 //Create Users
 const createOfficeUser = async (req, res, next) => {
   const { name, userName, mobileNo, password, address } = req.body;
-  
+
   if (name == "") return res.status(400).json({ message: "name is required" });
   else if (userName == "")
     return res.status(400).json({ message: "username is required" });
@@ -34,7 +35,7 @@ const createOfficeUser = async (req, res, next) => {
     const doc = await user.save();
   } catch (err) {
     console.log(err);
-    return res.status(500).json("Something went wrong!");;
+    return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: "New User created successfully." });
 };
@@ -68,10 +69,23 @@ const createStudentUser = async (req, res, next) => {
 //get user by role
 const getUserByRole = async (req, res, next) => {
   const role = req.query.role;
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+
   console.log(role);
   let user;
   try {
-    user = await User.findOne({ role: role }).select("-password");
+    user = await User.findOne({ role: role })
+      .select("-password")
+      .skip(skippedItem)
+      .limit(Limit);
   } catch (err) {
     return new Error(err);
   }
@@ -95,40 +109,44 @@ const getUserRole = async (req, res, next) => {
   }
   return res.status(200).json(userRole);
 };
-
-
 /**
- * User auth 
+ * User auth
  */
-const loginSuperAdmin = async (req,res) =>{
+const loginSuperAdmin = async (req, res) => {
   try {
     const { userName, password } = req.body;
     // Find the user associated with the email provided by the user
     const user = await User.findOne({ userName });
     // If the user isn't found in the database, return a message
     if (!user) {
-        return res.status(404).json("User not found");
+      return res.status(404).json("User not found");
     }
-    
+
     // if user found verify the password
-    
+
     await user.loginUser(user, password, (err, token) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).json("Something went wrong!");
-        }
-        if (!token) {
-            return res.status(401).json("Username/Password mismatched");
-        }
-        const { name, userName, _id, mobileNo, role, address } = user;
-        res.cookie('token', token, { expires: new Date(Date.now() + 24 * 3600 * 1000), httpOnly: true, secure: true, sameSite: "None" });
-        return res.status(200).json({ name, userName, _id, mobileNo, role, address, token });
+      if (err) {
+        console.log(err);
+        return res.status(500).json("Something went wrong!");
+      }
+      if (!token) {
+      }
+      const { name, userName, _id, mobileNo, role, address } = user;
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 24 * 3600 * 1000),
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+      return res
+        .status(200)
+        .json({ name, userName, _id, mobileNo, role, address, token });
     });
-} catch (error) {
+  } catch (error) {
     console.log(error);
     return res.status(500).json("Something went wrong!");
-}
-}
+  }
+};
 
 //create superAdmin use only once
 // exports.createSuperAdmin = async (req,res) =>{
@@ -149,7 +167,6 @@ const loginSuperAdmin = async (req,res) =>{
 //   }
 //   return res.status(201).json("OK");
 // }
-
 
 exports.createOfficeUser = createOfficeUser;
 exports.createStudentUser = createStudentUser;

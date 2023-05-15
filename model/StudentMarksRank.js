@@ -18,22 +18,32 @@ const studentMarkRanksSchema = new Schema(
     examStartTime: {
       type: Date,
       required: true,
+      default: null,
     },
     examEndTime: {
       type: Date,
-      required: true,
+      required: false,
+      default: null,
     },
     duration: {
       type: Number,
-      required: true,
+      required: false,
+      ddefault: null,
     },
     totalObtainedMarks: {
       type: Number,
-      required: true,
+      required: false,
+      default: null,
     },
     rank: {
       type: Number,
+      required: false,
+      default: null,
+    },
+    finishedStatus: {
+      type: Boolean,
       required: true,
+      default: false,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.

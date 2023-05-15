@@ -16,7 +16,7 @@ const StudentExamVsQuestionsMcqSchema = new Schema(
       required: true,
       ref: exams,
     },
-    McqQuestionId: [
+    mcqQuestionId: [
       {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -27,11 +27,12 @@ const StudentExamVsQuestionsMcqSchema = new Schema(
       {
         type: String,
         required: false,
+        default: null,
       },
     ],
     answeredStatus: [
       {
-        type: String,
+        type: Boolean,
         required: false,
         default: false,
       },
@@ -39,12 +40,13 @@ const StudentExamVsQuestionsMcqSchema = new Schema(
     totalObtainedMarks: {
       type: Number,
       required: false,
+      default: null,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
 module.exports = mongoose.model(
-  "StudentExamVsQuestionMcq",
+  "StudentExamVsQuestionsMcq",
   StudentExamVsQuestionsMcqSchema
 );
