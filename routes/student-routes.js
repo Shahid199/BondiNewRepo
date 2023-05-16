@@ -12,6 +12,9 @@ const {
   examCheck,
   submitAnswer,
   getRunningData,
+  viewSollution,
+  historyData,
+  missedExam,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -23,6 +26,7 @@ router.post("/updateanswer", updateAssignQuestion);
 //need query parameter eid(examid).
 router.put("/submitanswer", submitAnswer);
 //if start exam api response status is 300 then call getrunnigdata API.
+//if start exam api response status is 301 then exam ended.
 router.get("/getrunningdata", examCheck, getRunningData);
 
 //student admin panel routes
@@ -31,4 +35,9 @@ router.put("/updatestudent", updateStudent);
 router.get("/getstudentid", getStudentId);
 router.get("/getallstudent", getAllStudent);
 
+router.get("/viewsollution", viewSollution);
+router.get("/history", historyData);
+router.get("/missedexam", missedExam);
+
 module.exports = router;
+//new node

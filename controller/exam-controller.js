@@ -6,6 +6,8 @@ const QuestionsWritten = require("../model/QuestionsWritten");
 const Subject = require("../model/Subject");
 const WrittenQuestionVsExam = require("../model/WrittenQuestionVsExam");
 const CourseVsStudent = require("../model/CourseVsStudent");
+const fs = require("fs");
+const http = require("http");
 const Limit = 1;
 
 //create Exam
@@ -231,7 +233,6 @@ const addQuestionMcq = async (req, res, next) => {
     }
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
 
-    
     try {
       examId = await Exam.findById(examId).select("_id");
     } catch (err) {
@@ -485,9 +486,23 @@ const addQuestionWritten = async (req, res, next) => {
   else return res.status(404).json("Not save correctly.");
 };
 
+const getPhoto = async (req, res, next) => {
+  let filePath = "uploads/curehealth.jpeg";
+  let contentType = "image/jpeg";
+  fs.readFile(filePath, function(err, data) {
+    if (err) throw err // Fail if the file can't be read.
+    http.createServer(function(req, res) {
+      res.writeHead(200, {'Content-Type': contentType})
+      res.end(data) // Send the file data to the browser.
+    }).listen(8124)
+    console.log('Server running at http://localhost:8124/')
+  });
+};
+
 //export functions
 exports.createExam = createExam;
 exports.getAllExam = getAllExam;
 exports.addQuestionMcq = addQuestionMcq;
 exports.addQuestionWritten = addQuestionWritten;
 exports.getExamBySubject = getExamBySubject;
+exports.getPhoto = getPhoto;

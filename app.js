@@ -33,6 +33,7 @@ app.use("/api/coursevsstudent", courseVsStudentRouter);
 app.use("/api/subject", subjectRouter);
 app.use("/api/exam", examRouter);
 app.use("/api/home", homeRouter);
+
 mongoose
   .connect(
     "mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"

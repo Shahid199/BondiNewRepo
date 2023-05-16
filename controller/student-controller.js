@@ -10,6 +10,8 @@ const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const StudentMarksRank = require("../model/StudentMarksRank");
 const { connect } = require("../routes/exam-routes");
 const fsp = fs.promises;
+const mongoose = require("mongoose");
+const Subject = require("../model/Subject");
 
 const Limit = 1;
 
@@ -520,6 +522,179 @@ const submitAnswer = async (req, res, next) => {
   return res.status(200).json("Answer Submitted Successfully");
 };
 
+const viewSollution = async (req, res, next) => {
+  const studentId = req.query.studentid;
+  const examId = req.query.examid;
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await StudentExamVsQuestionsMcq.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let resultData = [];
+  console.log(data[0].mcqQuestionId.length);
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = data[0].mcqQuestionId[i].correctOptions;
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    console.log(data1);
+    resultData.push(data1);
+    i++;
+  }
+  //console.log(studentIdObj);
+  return res.status(200).json({ resultData });
+};
+const historyData = async (req, res, next) => {
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+  const studentId = req.query.studentid;
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let data;
+  try {
+    data = await StudentExamVsQuestionsMcq.find({
+      studentId: studentIdObj,
+    })
+      .populate("examId")
+      .skip(skippedItem)
+      .limit(Limit);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (data == null) return res.status(404).json("data not found.");
+  let resultData = [];
+  for (let i = 0; i < data.length; i++) {
+    let data1 = {};
+    data1["title"] = data[i].examId.name;
+    data1["type"] = data[i].examId.examVariation;
+    data1["variation"] = data[i].examId.examType;
+    data1["totalMarksMcq"] = data[0].examId.totalMarksMcq;
+    let rank = null;
+    let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+    try {
+      rank = await StudentMarksRank.findOne(
+        {
+          $and: [
+            { studentId: studentIdObj },
+            { examId: examIdObj },
+            { finishedStatus: true },
+          ],
+        },
+        "rank totalObtainedMarks examStartTime examEndtime"
+      );
+    } catch (err) {
+      return res.status(500).json("DB Error!");
+    }
+    let subjectIdObj = String(data[i].examId.subjectId);
+    let subjectName = null;
+    try {
+      subjectName = await Subject.findById(subjectIdObj).select("name");
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    subjectName = subjectName.name;
+    if (rank == null || subjectName == null)
+      return res.status(404).json("data not found.");
+    data1["totalObtainedMarks"] = rank.totalObtainedMarks;
+    data1["meritPosition"] = rank.rank;
+    data1["examStartTime"] = rank.examStartTime;
+    data1["examEndTime"] = rank.examEndTime;
+    data1["subjectName"] = subjectName;
+    resultData.push(data1);
+    i++;
+  }
+  return res.status(200).json(resultData);
+};
+
+const missedExam = async (req, res, next) => {
+  //pagination:start
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+  //pagination:end
+  const studentId = req.query.studentid;
+  const courseId = req.query.courseid;
+  const courseIdObj = new mongoose.Types.ObjectId(courseId);
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let allExam = null;
+  try {
+    allExam = await Exam.find({
+      $and: [{ courseId: courseIdObj }, { status: true }],
+    }).select("_id");
+  } catch (err) {
+    return res.status(500).json("DB error");
+  }
+  let doneExam = null;
+  try {
+    doneExam = await StudentMarksRank.find(
+      {
+        studentId: studentIdObj,
+      },
+      "examId"
+    );
+  } catch (err) {
+    return res.status(500).json("DB error");
+  }
+  if (allExam == null) return res.status(404).json("data not found.");
+  let data = [];
+  for (let i = 0; i < allExam.length; i++) {
+    data[i] = String(allExam[i]._id);
+  }
+  let doneExamArr = [];
+  for (let i = 0; i < doneExam.length; i++) {
+    doneExamArr.push(String(doneExam[i].examId));
+  }
+  const removedArray = data.filter(function (el) {
+    return !doneExamArr.includes(el);
+  });
+  let resultData = null;
+  if (doneExam == null) removedArray = data;
+  try {
+    resultData = await Exam.find({ _id: { $in: removedArray } })
+      .populate("subjectId courseId")
+      .skip(skippedItem)
+      .limit(Limit);
+  } catch (err) {
+    return res.status(500).json("DB Error!");
+  }
+  let resultFinal = [];
+  for (let i = 0; i < resultData.length; i++) {
+    let result = {};
+    result["exanName"] = resultData[i].name;
+    result["startTime"] = resultData[i].startTime;
+    result["duration"] = resultData[i].duration;
+    result["examType"] = resultData[i].examType;
+    result["examVariation"] = resultData[i].examVariation;
+    result["negativeMarks"] = resultData[i].negativeMarks;
+    result["subject"] = resultData[i].subjectId.name;
+
+    resultFinal.push(result);
+  }
+  return res.status(200).json(resultFinal);
+};
+
+const filterHistory = async (req, res, next) => {};
+
 exports.loginStudent = loginStudent;
 exports.addStudent = addStudent;
 exports.updateStudent = updateStudent;
@@ -530,3 +705,6 @@ exports.updateAssignQuestion = updateAssignQuestion;
 exports.examCheck = examCheck;
 exports.submitAnswer = submitAnswer;
 exports.getRunningData = getRunningData;
+exports.viewSollution = viewSollution;
+exports.historyData = historyData;
+exports.missedExam = missedExam;
