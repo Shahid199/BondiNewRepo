@@ -514,7 +514,7 @@ const viewSollution = async (req, res, next) => {
     resultData.push(data1);
     i++;
   }
-  return res.status(200).json({ resultData });
+  return res.status(200).json(resultData);
 };
 const historyData = async (req, res, next) => {
   const studentId = req.user.studentId;

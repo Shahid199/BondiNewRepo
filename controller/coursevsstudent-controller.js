@@ -177,7 +177,12 @@ const getCourseByReg = async (req, res, next) => {
     courses = await CourseVsStudent.find({ studentId: studentId }).populate(
       "courseId"
     );
-    return res.status(200).json(courses);
+    let dataNew = [];
+    for (let i = 0; i < courses.length; i++) {
+      dataNew.push(courses[i].courseId);
+    }
+    let studentId1 = studentId._id;
+    return res.status(200).json({ courses: dataNew, studentId: studentId1 });
   } else return res.status(404).json({ message: "Course Not found." });
 };
 
