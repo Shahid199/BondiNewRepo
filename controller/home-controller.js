@@ -12,7 +12,8 @@ const getHomePage = async (req, res, next) => {
     subjectDataDaily,
     subjectDataMonthly,
     subjectDataweekly;
-  let { courseId, studentId } = req.user;
+  let courseId = req.user.courseId;
+  let studentId = req.user.studentId;
   //Top
   if (section == "top") {
     try {

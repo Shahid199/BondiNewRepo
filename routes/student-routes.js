@@ -9,7 +9,6 @@ const {
   getAllStudent,
   assignQuestion,
   updateAssignQuestion,
-  examCheck,
   submitAnswer,
   getRunningData,
   viewSollution,
@@ -22,14 +21,11 @@ const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
 //need query parameter eid(examid).
-router.get("/startexam", examCheck, assignQuestion);
+router.get("/startexam", assignQuestion);
 //need query parameter eid,question sl,answeredoption.
 router.post("/updateanswer", updateAssignQuestion);
-//need query parameter eid(examid).
 router.put("/submitanswer", submitAnswer);
-//if start exam api response status is 300 then call getrunnigdata API.
-//if start exam api response status is 301 then exam ended.
-router.get("/getrunningdata", examCheck, getRunningData);
+router.get("/getrunningdata", getRunningData);
 
 //student admin panel routes
 router.post("/addstudent", upload.single("excelFile"), addStudent);

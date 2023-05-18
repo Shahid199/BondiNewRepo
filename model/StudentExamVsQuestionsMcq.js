@@ -30,13 +30,31 @@ const StudentExamVsQuestionsMcqSchema = new Schema(
         default: null,
       },
     ],
-    answeredStatus: [
-      {
-        type: Boolean,
-        required: false,
-        default: false,
-      },
-    ],
+    totalCorrectAnswer: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    totalWrongAnswer: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    totalNotAnswered: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    totalCorrectMarks: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    totalWrongMarks: {
+      type: Number,
+      required: false,
+      default: null,
+    },
     totalObtainedMarks: {
       type: Number,
       required: false,

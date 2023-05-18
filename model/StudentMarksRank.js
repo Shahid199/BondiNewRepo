@@ -45,6 +45,11 @@ const studentMarkRanksSchema = new Schema(
       required: true,
       default: false,
     },
+    runningStatus:{
+      type:Boolean,
+      required:false,
+      default:false,
+    }
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

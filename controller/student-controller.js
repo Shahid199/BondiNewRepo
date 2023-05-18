@@ -12,6 +12,7 @@ const { connect } = require("../routes/exam-routes");
 const fsp = fs.promises;
 const mongoose = require("mongoose");
 const Subject = require("../model/Subject");
+const { fork } = require("child_process");
 
 const Limit = 1;
 
@@ -203,80 +204,69 @@ const getAllStudent = async (req, res, next) => {
   return res.status(200).json(students);
 };
 //Student have finsihed exam status check
-const examCheck = async (req, res, next) => {
-  let eid = req.query.eId;
-  let sid = req.user.studentId;
+// const examCheck = async (req, res, next) => {
+//   let eid = req.query.eId;
+//   let sid = req.user.studentId;
 
-  //start:check student already complete the exam or not
-  let eId1, sId1;
-  try {
-    sId1 = await Student.findById(sid).select("_id");
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-  try {
-    eId1 = await Exam.findById(eid).select("_id");
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-  let finishedStatus;
-  try {
-    finishedStatus = await StudentMarksRank.findOne(
-      {
-        $and: [{ studentId: sId1 }, { examId: eId1 }],
-      },
-      "finishedStatus examStartTime examEndTime"
-    );
-  } catch (err) {
-    consoole.log(err);
-    return res.status(500).json(err);
-  }
-  // console.log(eid);
-  // console.log(sid);
-  console.log(finishedStatus);
-  if (finishedStatus == null) {
-    req.body.eId = eid;
-    next();
-  } else {
-    if (finishedStatus.finishedStatus == false) {
-      req.body.eId = eid;
-      req.body.examStartTime = finishedStatus.examStartTime;
-      req.body.examEndTime = finishedStatus.examEndTime;
-      next();
-    } else return res.status(301).json("exam end.");
-  }
-};
+//   //start:check student already complete the exam or not
+//   let eId1, sId1;
+//   try {
+//     sId1 = await Student.findById(sid).select("_id");
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   }
+//   try {
+//     eId1 = await Exam.findById(eid).select("_id");
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   }
+//   let finishedStatus;
+//   try {
+//     finishedStatus = await StudentMarksRank.findOne(
+//       {
+//         $and: [{ studentId: sId1 }, { examId: eId1 }],
+//       },
+//       "finishedStatus examStartTime examEndTime"
+//     );
+//   } catch (err) {
+//     consoole.log(err);
+//     return res.status(500).json(err);
+//   }
+//   // console.log(eid);
+//   // console.log(sid);
+//   console.log(finishedStatus);
+//   if (finishedStatus == null) {
+//     req.body.eId = eid;
+//     next();
+//   } else {
+//     if (finishedStatus.finishedStatus == false) {
+//       req.body.eId = eid;
+//       req.body.examStartTime = finishedStatus.examStartTime;
+//       req.body.examEndTime = finishedStatus.examEndTime;
+//       next();
+//     } else return res.status(301).json("exam end.");
+//   }
+// };
 //assign question
 const assignQuestion = async (req, res, next) => {
   //data get from examcheck function req.body
   const eId = req.body.eId;
   const studentId = req.user.studentId;
-  const examStartTime = req.body.examStartTime;
-  const examEndTime = req.body.examEndTime;
-  if (examStartTime != null) {
-    return res.status(300).json("runnig.");
-  }
-  if (examEndTime != null) return res.status(301).json("exam end.");
-  console.log(eId);
-  const startTime = new Date();
-
   //start:check student already complete the exam or not
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
+  let status;
+  try {
+    status = await StudentMarksRank.findOne({
+      $and: [{ studentId: sId }, { examId: eId1 }],
+    });
+  } catch (err) {
+    return res.status(500).json("DB error");
+  }
+  if (status.finishedStatus == true) return res.status(200).json("ended");
+  if (status.runningStatus == true) return res.status(200).json("running");
 
-  // let findStudentExam;
-  // try {
-  //   findStudentExam = await StudentExamVsQuestionsMcq.findOne({
-  //     $and: [{ examId: eId1 }, { studentId: sId }],
-  //   }).select("_id");
-  // } catch (err) {
-  //   return res.status(500).json(err);
-  // }
-  // //console.log(findStudentExam);
-  // if (findStudentExam == null)
-  //   return res.status(404).json("student has already completed the exam.");
-  //end:check student already complete the exam or not
   let doc = [],
     size,
     min = 0,
@@ -289,12 +279,13 @@ const assignQuestion = async (req, res, next) => {
   }
   let totalQues;
   try {
-    totalQues = await Exam.findById(eId).select("totalQuestionMcq");
+    totalQues = await Exam.findById(eId).select("totalQuestionMcq duration");
   } catch (err) {
     return res.status(500).json(err);
   }
   //start:generating random index of questions
   totalQues = Number(totalQues.totalQuestionMcq);
+  let duration = totalQues.duration;
   max = size.sizeMid - 1;
   max = max - min;
   for (let i = 0; ; i++) {
@@ -343,19 +334,20 @@ const assignQuestion = async (req, res, next) => {
     mcqQuestionId: doc2,
     answeredOption: answered,
   });
-  let saveStudentQuestion,
-    flag = false,
-    flag1 = false;
+  let saveStudentQuestion;
+  let flag = false;
+  let flag1 = false;
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
     flag = true;
     console.log(err);
   }
+  const examStartTime = new Date();
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
     examId: eId1,
-    examStartTime: startTime,
+    examStartTime: examStartTime,
   });
   try {
     saveStudentExam = await studentMarksRank.save();
@@ -363,7 +355,8 @@ const assignQuestion = async (req, res, next) => {
     flag = true;
     console.log(err);
   }
-  questions.push(startTime);
+  questions.push(examStartTime);
+  questions.push(duration);
   console.log(questions);
   if (flag == true || flag1 == true)
     return res.status(404).json("Problem occur to assign question.");
@@ -414,7 +407,7 @@ const updateAssignQuestion = async (req, res, next) => {
 //getrunningdata api will call after assignquestion api called.
 const getRunningData = async (req, res, next) => {
   const sId = req.user.studentId;
-  const eId = req.query.eId;
+  const eId = req.body.eId;
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -441,7 +434,7 @@ const getRunningData = async (req, res, next) => {
 const submitAnswer = async (req, res, next) => {
   const eId = req.query.eId;
   const sId = req.user.studentId;
-  const examEndTime = Date(req.query.endTime);
+  const examEndTime = new Date();
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -456,35 +449,24 @@ const submitAnswer = async (req, res, next) => {
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId._id);
   let saveStudentExamEnd;
-  let update = { examEndTime: examEndTime, finishedStatus: true };
-  let flag = false;
+  let update = {
+    examEndTime: examEndTime,
+    finishedStatus: true,
+    runningStatus: false,
+  };
+
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
       update
     );
-    flag = true;
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
   }
-  if (flag == true) {
-    req.body.eId = eId;
-    req.body.sId = sId;
-    next();
-    return res.status(200).json("Answer Submitted Successfully");
-  } else return res.status(200).json("Not saves.");
-};
-const examCalculation = async (req, res, next) => {
-  const eId = re.body.eId;
-  const sId = req.body.sId;
-  eIdObj = new mongoose.Types.ObjectId(eId);
-  sIdObj = new mongoose.Types.ObjectId(sId);
-  let examData = null;
-  try {
-  } catch (err) {
-    return res.status(500).json({ errorMessage: "DB error!" }, { error: err });
-  }
+  const forkk = fork("../utilities/examCalculation.js");
+  forkk.send({eId, sId});
+  return res.status(200).json("Answer Submitted Successfully.");
 };
 
 const viewSollution = async (req, res, next) => {
@@ -763,7 +745,6 @@ exports.getStudentId = getStudentId;
 exports.getAllStudent = getAllStudent;
 exports.assignQuestion = assignQuestion;
 exports.updateAssignQuestion = updateAssignQuestion;
-exports.examCheck = examCheck;
 exports.submitAnswer = submitAnswer;
 exports.getRunningData = getRunningData;
 exports.viewSollution = viewSollution;
