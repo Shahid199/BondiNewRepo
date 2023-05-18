@@ -66,7 +66,7 @@ const addStudentToCourse1 = async (req, res, next) => {
 const addStudentToCourse = async (req, res, next) => {
   //start file work
   const file = req.file;
-  let courseId = req.body.courseid;
+  let courseId = req.body.courseId;
   let excelFilePath = null;
   if (!file) {
     return res.status(404).json({ message: "Excel File not uploaded." });
@@ -128,7 +128,7 @@ const addStudentToCourse = async (req, res, next) => {
 };
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
-  let courseId = req.query.courseid;
+  let courseId = req.query.courseId;
   let students,
     flag = false;
   try {
@@ -164,7 +164,7 @@ const getCourseByStudent = async (req, res, next) => {
 };
 //get course by regNo
 const getCourseByReg = async (req, res, next) => {
-  const regNo = req.query.regno;
+  const regNo = req.query.regNo;
   let studentId;
   let courses;
   try {

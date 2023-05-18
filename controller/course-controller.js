@@ -28,7 +28,7 @@ const createCourse = async (req, res, next) => {
 };
 //get course
 const getCourse = async (req, res, next) => {
-  const courseId = req.query.id;
+  const courseId = req.query.courseId;
   let page = req.query.page;
   let skippedItem;
   if (page == null) {

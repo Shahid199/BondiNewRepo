@@ -132,7 +132,7 @@ const getAllExam = async (req, res, next) => {
 //get exam by subject(double parameter send from front-end needed)
 const getExamBySubject = async (req, res, next) => {
   let subjectId;
-  subjectId = req.query.subjectid;
+  subjectId = req.query.subjectId;
   const variation = req.query.variation;
   let page = req.query.page;
   let skippedItem;
@@ -213,7 +213,7 @@ const addQuestionMcq = async (req, res, next) => {
   let explanationILinkPath = null;
   let data = new Object();
   let type = Boolean(req.body.type);
-  let examId = req.body.examid;
+  let examId = req.body.examId;
   const { question, optionCount, options, correctOption, status } = req.body;
   //working with file upload
 

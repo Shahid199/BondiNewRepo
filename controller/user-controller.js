@@ -96,7 +96,7 @@ const getUserByRole = async (req, res, next) => {
 };
 //get user role
 const getUserRole = async (req, res, next) => {
-  const userName = req.query.username;
+  const userName = req.query.userName;
   console.log(userName);
   let userInfo;
   try {

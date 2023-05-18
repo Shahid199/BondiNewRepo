@@ -2,9 +2,9 @@ const Subject = require("../model/Subject");
 const Course = require("../model/Course");
 //Create Subject
 const createSubject = async (req, res, next) => {
-  const { courseid, name, descr } = req.body;
+  const { courseId, name, descr } = req.body;
   const file = req.file;
-  const courseId = courseid;
+  const courseId1 = courseId;
 
   let iLinkPath = null;
   if (file) {
@@ -19,7 +19,7 @@ const createSubject = async (req, res, next) => {
     return res.status(500).json("Something went wrong!");
   }
   if (existingSubject) {
-    existingSubject = String(existingSubject.courseId);
+    existingSubject = String(existingSubject.courseId1);
   }
   if (existingSubject == courseId) {
     return res.status(400).json({ message: "course already exist" });
@@ -28,7 +28,7 @@ const createSubject = async (req, res, next) => {
     name: name,
     descr: descr,
     iLink: iLinkPath,
-    courseId: courseId,
+    courseId: courseId1,
   });
   try {
     const doc = await subject.save();
@@ -40,7 +40,7 @@ const createSubject = async (req, res, next) => {
 };
 //get subject by course
 const getSubjectByCourse = async (req, res, next) => {
-  const courseId = req.query.courseid;
+  const courseId = req.user.courseId;
   let courseIdOb;
   try {
     courseIdOb = await Course.findById(courseId).select("_id");

@@ -1,6 +1,6 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
-const { passport } = require("../utilities/passport_student");
+const passport = require("passport");
 const {
   loginStudent,
   addStudent,
@@ -15,6 +15,8 @@ const {
   viewSollution,
   historyData,
   missedExam,
+  retakeExam,
+  retakeSubmit,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -36,8 +38,14 @@ router.get("/getstudentid", getStudentId);
 router.get("/getallstudent", getAllStudent);
 
 router.get("/viewsollution", viewSollution);
-router.get("/history", historyData);
+router.get(
+  "/history",
+  [passport.authenticate("jwt", { session: false })],
+  historyData
+);
 router.get("/missedexam", missedExam);
+router.get("/retake", retakeExam);
+router.get("/retakesubmit", retakeSubmit);
 
 module.exports = router;
 //new node
