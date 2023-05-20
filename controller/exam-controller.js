@@ -7,7 +7,6 @@ const Subject = require("../model/Subject");
 const WrittenQuestionVsExam = require("../model/WrittenQuestionVsExam");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
-const http = require("http");
 const Limit = 1;
 
 //create Exam
@@ -18,7 +17,6 @@ const createExam = async (req, res, next) => {
     name,
     examType,
     examVariation,
-    examFreeOrnot,
     startTime,
     endTime,
     totalQuestionMcq,
@@ -84,7 +82,6 @@ const createExam = async (req, res, next) => {
     name: name,
     examType: examType,
     examVariation: examVariation,
-    examFreeOrNot: examFreeOrnot,
     startTime: startTime1,
     endTime: endTime1,
     duration: duration,
@@ -222,8 +219,6 @@ const addQuestionMcq = async (req, res, next) => {
 
   //end of read uploaded file path
   //question insert for text question(type=true)
-  console.log(typeof type);
-  console.log(type);
   if (type == true) {
     const file = req.files;
     if (!file.explanationILink) {
@@ -282,7 +277,6 @@ const addQuestionMcq = async (req, res, next) => {
       console.log(err);
       return res.status(500).json("Something went wrong2!");
     }
-    console.log(mcqQData);
     if (mcqQData == null) {
       mIdNew.push(questionId);
       let questionExam = new McqQuestionVsExam({
@@ -297,7 +291,6 @@ const addQuestionMcq = async (req, res, next) => {
         return res.status(500).json("Something went wrong3!");
       }
     } else {
-      console.log(mcqQData);
       mId = mcqQData.mId;
       sizeMid = mcqQData.sizeMid;
       sizeMid = sizeMid + 1;
@@ -486,18 +479,6 @@ const addQuestionWritten = async (req, res, next) => {
   else return res.status(404).json("Not save correctly.");
 };
 
-const getPhoto = async (req, res, next) => {
-  let filePath = "uploads/curehealth.jpeg";
-  let contentType = "image/jpeg";
-  fs.readFile(filePath, function(err, data) {
-    if (err) throw err // Fail if the file can't be read.
-    http.createServer(function(req, res) {
-      res.writeHead(200, {'Content-Type': contentType})
-      res.end(data) // Send the file data to the browser.
-    }).listen(8124)
-    console.log('Server running at http://localhost:8124/')
-  });
-};
 
 //export functions
 exports.createExam = createExam;
@@ -505,4 +486,3 @@ exports.getAllExam = getAllExam;
 exports.addQuestionMcq = addQuestionMcq;
 exports.addQuestionWritten = addQuestionWritten;
 exports.getExamBySubject = getExamBySubject;
-exports.getPhoto = getPhoto;

@@ -22,11 +22,11 @@ const examSchema = new Schema(
       required: true,
     },
     //exam variation for free/not
-    examFreeOrNot: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
+    // examFreeOrNot: {
+    //   type: Boolean,
+    //   required: true,
+    //   default: false,
+    // },
     startTime: {
       type: Date,
       required: true,

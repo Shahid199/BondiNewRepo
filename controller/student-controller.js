@@ -13,6 +13,7 @@ const fsp = fs.promises;
 const mongoose = require("mongoose");
 const Subject = require("../model/Subject");
 const { fork } = require("child_process");
+const ISODate = require("isodate");
 
 const Limit = 1;
 
@@ -358,10 +359,10 @@ const assignQuestion = async (req, res, next) => {
   questions.push(examStartTime);
   questions.push(duration);
   console.log(questions);
-  if (flag == true || flag1 == true)
+  if (flag == true || flag1 == true) {
     return res.status(404).json("Problem occur to assign question.");
-
-  return res.status(200).json(questions);
+  }
+ return res.status(404).json("Data not saved in missed exam table.");
 };
 //update question answer when student select answer
 //API:/updateassignquestion?examid=<examid>&questionindex=<questionumber>$optionindex=<optionindex>
@@ -465,10 +466,9 @@ const submitAnswer = async (req, res, next) => {
     return res.status(500).json(err);
   }
   const forkk = fork("../utilities/examCalculation.js");
-  forkk.send({eId, sId});
+  forkk.send({ eId, sId });
   return res.status(200).json("Answer Submitted Successfully.");
 };
-
 const viewSollution = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examid;
@@ -565,7 +565,6 @@ const historyData = async (req, res, next) => {
   }
   return res.status(200).json(resultData);
 };
-
 const missedExam = async (req, res, next) => {
   const studentId = req.user.studentId;
   const courseId = req.user.courseId;
@@ -709,7 +708,7 @@ const retakeSubmit = async (req, res, next) => {
   let totalMarksMcq = Number(examData.eId.totalMarksMcq);
   examData = examData.mId;
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < qIdObj.length; i++) {
     let answer = answered[i];
     if (String(examData[doc[i]]._id) == String(qIdObj[i])) {
       console.log(answer);
@@ -736,7 +735,69 @@ const retakeSubmit = async (req, res, next) => {
 
   return res.status(200).json(answerScript);
 };
-const filterHistory = async (req, res, next) => {};
+
+const getRank = async (req, res, next) => {
+  const sId = req.user.studentId;
+  const eId = req.body.eId;
+  const eIdObj = new mongoose.Types.ObjectId(eId);
+  const sIdObj = new mongoose.Types.ObjectId(sId);
+  //totalObtainedMarks;
+  let result = null;
+  try {
+    result = await StudentExamVsQuestionsMcq.find(
+      { examId: eIdObj },
+      "totalObtainedMarks"
+    ).sort("totalObtainedMarks");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("DB error");
+  }
+  let rank = 0;
+  for (let i = 0; i < result.length; i++) {
+    let stud = String(result[i]._id);
+    if (stud == sId) {
+      break;
+    } else rank++;
+  }
+  let update = { rank: Number(rank) };
+  let doc = null;
+  console.log(rank);
+  try {
+    doc = await StudentMarksRank.findByIdAndUpdate(sId, update);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("DB error.");
+  }
+  console.log(doc);
+  if (doc != null) return res.status(200).josn(rank);
+  else return res.status(404).json("not found rank.");
+};
+const filterHistory = async (req, res, next) => {
+  const sId = new mongoose.Types.ObjectId(req.user.studentId);
+  const startDate = ISODate(re.body.startDate);
+  const endDate = ISODate(re.body.endDate);
+  const examId = new mongoose.Types.ObjectId(req.body.examId);
+  const type = req.body.type;
+  const variation = req.body.variation;
+  const subjectId = req.body.subjectId;
+  let result = null;
+  try {
+    result = await StudentExamVsQuestionsMcq.find({
+      $sand: [
+        { examId: eId },
+        { startTime: { $gte: startDate, $lt: endDate } },
+        { "examId.examVariation": variation },
+        { "examId.type": type },
+        { "examId.examVariation": variation },
+      ],
+    })
+      .populate("examId")
+      .skip(skippedItem)
+      .limit(Limit);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 exports.loginStudent = loginStudent;
 exports.addStudent = addStudent;
@@ -752,3 +813,4 @@ exports.historyData = historyData;
 exports.missedExam = missedExam;
 exports.retakeExam = retakeExam;
 exports.retakeSubmit = retakeSubmit;
+exports.getRank = getRank;

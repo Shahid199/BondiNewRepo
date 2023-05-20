@@ -7,7 +7,6 @@ const {
   addQuestionMcq,
   addQuestionWritten,
   getExamBySubject,
-  getPhoto,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -34,6 +33,5 @@ router.post(
   addQuestionWritten
 );
 router.get("/getexambysubject", getExamBySubject);
-router.get("/getPhoto", getPhoto);
 
 module.exports = router;
