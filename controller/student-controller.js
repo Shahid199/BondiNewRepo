@@ -537,7 +537,7 @@ const historyData = async (req, res, next) => {
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
-    data1["totalMarksMcq"] = data[1].examId.totalMarksMcq;
+    data1["totalMarksMcq"] = data[0].examId.totalMarksMcq;
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     try {
