@@ -526,9 +526,9 @@ const historyData = async (req, res, next) => {
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     data1["title"] = data[i].examId.name;
-    data1["type"] = data[i].examId.examVariation;
-    data1["variation"] = data[i].examId.examType;
-    data1["totalMarksMcq"] = data[0].examId.totalMarksMcq;
+    data1["type"] = data[i].examId.examType;
+    data1["variation"] = data[i].examId.examVariation;
+    data1["totalMarksMcq"] = data[1].examId.totalMarksMcq;
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     try {
@@ -639,7 +639,7 @@ const missedExam = async (req, res, next) => {
 };
 
 const retakeExam = async (req, res, next) => {
-  const examId = req.query.examid;
+  const examId = req.query.examId;
   const examIdObj = new mongoose.Types.ObjectId(examId);
   let examData = null,
     doc = [],
