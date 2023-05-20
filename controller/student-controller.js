@@ -42,10 +42,12 @@ const loginStudent = async (req, res) => {
       return res.status(404).json("Course not registered for the student ID");
     }
     // if all checks passed above now geneate login token
+    const studentIdStr = String(getStudent._id);
+    const courseIdStr = String(courseId);
     const token = jwt.sign(
       {
-        studentId: String(getStudent._id),
-        courseId: String(courseId),
+        studentId: studentIdStr,
+        courseId: courseIdStr,
       },
       process.env.SALT,
       { expiresIn: "1d" }
@@ -53,12 +55,19 @@ const loginStudent = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Student logged into the course", token });
+      .json({ message: "Student logged into the course", token,studentIdStr,courseIdStr });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
+
+/**
+ * validate if the token is valid or retur to login state
+ */
+const validateToken = async (req ,res) => {
+  return res.json(req.user);
+}
 //Create Students
 const addStudent = async (req, res, next) => {
   //start file work
@@ -800,6 +809,7 @@ const filterHistory = async (req, res, next) => {
 };
 
 exports.loginStudent = loginStudent;
+exports.validateToken = validateToken;
 exports.addStudent = addStudent;
 exports.updateStudent = updateStudent;
 exports.getStudentId = getStudentId;
