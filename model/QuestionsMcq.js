@@ -24,7 +24,7 @@ const questionMcqSchema = new Schema(
       required: true,
     },
     correctOption: {
-      type: String,
+      type: Number,
       required: true,
     },
     explanationILink: {

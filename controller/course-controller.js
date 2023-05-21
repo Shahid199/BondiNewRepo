@@ -72,6 +72,21 @@ const getAllCourse = async (req, res, next) => {
   }
   return res.status(200).json({ courses });
 };
+
+//use for functional work like dropdown load
+const getAllCourseAdmin = async (req, res, next) => {
+  let courses;
+  try {
+    courses = await Course.find({}, "name").exec();
+  } catch (err) {
+    return new Error(err);
+  }
+  if (!courses) {
+    return res.status(404).json({ message: "Courses Not Found" });
+  }
+  return res.status(200).json(courses);
+};
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;
+exports.getAllCourseAdmin = getAllCourseAdmin;

@@ -1,5 +1,6 @@
 const Subject = require("../model/Subject");
 const Course = require("../model/Course");
+const { default: mongoose } = require("mongoose");
 //Create Subject
 const createSubject = async (req, res, next) => {
   const { courseId, name, descr } = req.body;
@@ -40,7 +41,7 @@ const createSubject = async (req, res, next) => {
 };
 //get subject by course
 const getSubjectByCourse = async (req, res, next) => {
-  const courseId = req.user.courseId;
+  const courseId = req.body.courseId;
   let courseIdOb;
   try {
     courseIdOb = await Course.findById(courseId).select("_id");
@@ -59,6 +60,18 @@ const getSubjectByCourse = async (req, res, next) => {
     return res.status(200).json(subjects);
   } else return res.status(404).json({ message: "Subjects not found." });
 };
+const getSubjectByCourseAdmin = async (req, res, next) => {
+  const courseId = req.query.courseId;
+  const courseIdObj = new mongoose.Types.ObjectId(courseId);
+  let subject = null;
+  try {
+    subject = await Subject.find({ courseId: courseIdObj }, "name");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(200).json(subject);
+};
 
 exports.createSubject = createSubject;
 exports.getSubjectByCourse = getSubjectByCourse;
+exports.getSubjectByCourseAdmin = getSubjectByCourseAdmin;

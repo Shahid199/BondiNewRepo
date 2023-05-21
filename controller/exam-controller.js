@@ -7,6 +7,7 @@ const Subject = require("../model/Subject");
 const WrittenQuestionVsExam = require("../model/WrittenQuestionVsExam");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
+const { default: mongoose } = require("mongoose");
 const Limit = 1;
 
 //create Exam
@@ -17,6 +18,7 @@ const createExam = async (req, res, next) => {
     name,
     examType,
     examVariation,
+    examFreeOrNot,
     startTime,
     endTime,
     totalQuestionMcq,
@@ -80,8 +82,9 @@ const createExam = async (req, res, next) => {
     courseId: courseId,
     subjectId: subjectId,
     name: name,
-    examType: examType,
-    examVariation: examVariation,
+    examType: Number(examType),
+    examVariation: Number(examVariation),
+    examFreeOrNot: Boolean(examFreeOrNot),
     startTime: startTime1,
     endTime: endTime1,
     duration: duration,
@@ -117,7 +120,7 @@ const getAllExam = async (req, res, next) => {
     skippedItem = (page - 1) * Limit;
   }
   try {
-    exams = await Exam.find({}, "name startTime endTime")
+    exams = await Exam.find({ examFreeOrNot: false }, "name startTime endTime")
       .skip(skippedItem)
       .limit(Limit);
   } catch (err) {
@@ -177,6 +180,7 @@ const getExamBySubject = async (req, res, next) => {
           { status: true },
           { subjectId: subjectId },
           { examVariation: variation },
+          { examFreeOrNot: false },
           { endTime: { $gt: Date.now() } },
         ],
       },
@@ -248,7 +252,7 @@ const addQuestionMcq = async (req, res, next) => {
       question: question,
       optionCount: Number(optionCount),
       options: options,
-      correctOption: correctOption,
+      correctOption: Number(correctOption), //index value
       explanationILink: explanationILinkPath,
       status: Boolean(status),
       type: Boolean(type),
@@ -346,7 +350,7 @@ const addQuestionMcq = async (req, res, next) => {
       question: iLinkPath,
       optionCount: Number(optionCount),
       options: options,
-      correctOption: correctOption,
+      correctOption: Number(correctOption),
       explanationILink: explanationILinkPath,
       status: Boolean(status),
       type: Boolean(type),
@@ -426,6 +430,22 @@ const addQuestionMcq = async (req, res, next) => {
   }
   //end of insert question as image
 };
+const getExamBySub = async (req, res, next) => {
+  const subjectId = req.query.subjectId;
+  const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let examData = null;
+  try {
+    examData = await Exam.find(
+      {
+        $and: [{ subjectId: subjectIdObj }, { examFreeOrNot: false }],
+      },
+      "name"
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(200).json(examData);
+};
 //add wriiten question function
 const addQuestionWritten = async (req, res, next) => {
   //file upload handle
@@ -479,6 +499,15 @@ const addQuestionWritten = async (req, res, next) => {
   else return res.status(404).json("Not save correctly.");
 };
 
+const examRuleSet = async (req, res, next) => {
+  const examId = req.body.examId;
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let examRule = null;
+  try {
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
 
 //export functions
 exports.createExam = createExam;
@@ -486,3 +515,5 @@ exports.getAllExam = getAllExam;
 exports.addQuestionMcq = addQuestionMcq;
 exports.addQuestionWritten = addQuestionWritten;
 exports.getExamBySubject = getExamBySubject;
+exports.getExamBySub = getExamBySub;
+exports.examRuleSet = examRuleSet;

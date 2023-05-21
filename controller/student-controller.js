@@ -53,21 +53,23 @@ const loginStudent = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    return res
-      .status(200)
-      .json({ message: "Student logged into the course", token,studentIdStr,courseIdStr });
+    return res.status(200).json({
+      message: "Student logged into the course",
+      token,
+      studentIdStr,
+      courseIdStr,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
-
 /**
  * validate if the token is valid or retur to login state
  */
-const validateToken = async (req ,res) => {
+const validateToken = async (req, res) => {
   return res.json(req.user);
-}
+};
 //Create Students
 const addStudent = async (req, res, next) => {
   //start file work
@@ -371,7 +373,7 @@ const assignQuestion = async (req, res, next) => {
   if (flag == true || flag1 == true) {
     return res.status(404).json("Problem occur to assign question.");
   }
- return res.status(404).json("Data not saved in missed exam table.");
+  return res.status(404).json("Data not saved in missed exam table.");
 };
 //update question answer when student select answer
 //API:/updateassignquestion?examid=<examid>&questionindex=<questionumber>$optionindex=<optionindex>
@@ -537,7 +539,7 @@ const historyData = async (req, res, next) => {
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
-    data1["totalMarksMcq"] = data[0].examId.totalMarksMcq;
+    data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     try {
@@ -720,7 +722,6 @@ const retakeSubmit = async (req, res, next) => {
   for (let i = 0; i < qIdObj.length; i++) {
     let answer = answered[i];
     if (String(examData[doc[i]]._id) == String(qIdObj[i])) {
-      console.log(answer);
       if (answer == "-1") notAnswered = notAnswered + 1;
       else if (answer == examData[doc[i]].answeredOption)
         totalCorrect = totalCorrect + 1;
@@ -728,7 +729,7 @@ const retakeSubmit = async (req, res, next) => {
     }
   }
   correctMarks = totalMarksMcq / qIdObj.length;
-  let negativeValue = (2 * negativeMarks) / 100;
+  let negativeValue = (correctMarks * negativeMarks) / 100;
   marks = totalCorrect * correctMarks - negativeValue * totalWrong;
   let answerScript = {};
   answerScript["totalQuestion"] = qIdObj.length;
@@ -747,7 +748,7 @@ const retakeSubmit = async (req, res, next) => {
 
 const getRank = async (req, res, next) => {
   const sId = req.user.studentId;
-  const eId = req.body.eId;
+  const eId = req.query.eId;
   const eIdObj = new mongoose.Types.ObjectId(eId);
   const sIdObj = new mongoose.Types.ObjectId(sId);
   //totalObtainedMarks;
@@ -778,7 +779,7 @@ const getRank = async (req, res, next) => {
     return res.status(500).json("DB error.");
   }
   console.log(doc);
-  if (doc != null) return res.status(200).josn(rank);
+  if (doc != null) return res.status(200).josn("set Succesfully.");
   else return res.status(404).json("not found rank.");
 };
 const filterHistory = async (req, res, next) => {

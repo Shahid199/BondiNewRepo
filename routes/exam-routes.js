@@ -7,6 +7,8 @@ const {
   addQuestionMcq,
   addQuestionWritten,
   getExamBySubject,
+  getExamBySub,
+  examRuleSet,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -33,5 +35,12 @@ router.post(
   addQuestionWritten
 );
 router.get("/getexambysubject", getExamBySubject);
+
+router.get("/getexambysub", getExamBySub);
+router.post(
+  "/examruleset",
+  [upload.fields([{ name: "examRule" }])],
+  examRuleSet
+);
 
 module.exports = router;

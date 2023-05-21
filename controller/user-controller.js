@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const Limit = 1;
 //Create Users
 const createOfficeUser = async (req, res, next) => {
-  const { name, userName, mobileNo, password, address } = req.body;
+  const { name, userName, mobileNo, password, address, role } = req.body;
 
   if (name == "") return res.status(400).json({ message: "name is required" });
   else if (userName == "")

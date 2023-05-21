@@ -3,7 +3,6 @@ const { upload } = require("../utilities/multer");
 const passport = require("passport");
 const {
   loginStudent,
-  validateToken,
   addStudent,
   updateStudent,
   getStudentId,
@@ -22,8 +21,6 @@ const {
 const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
-//validate toke 
-router.get("/validate-login",[passport.authenticate("jwt", { session: false })], validateToken);
 //need query parameter eid(examid).
 router.get(
   "/startexam",
@@ -54,7 +51,7 @@ router.get("/getstudentid", getStudentId);
 router.get("/getallstudent", getAllStudent);
 
 router.get(
-  "/viewsollution",
+  "/viewSollution",
   [passport.authenticate("jwt", { session: false })],
   viewSollution
 );
@@ -73,11 +70,12 @@ router.get(
   [passport.authenticate("jwt", { session: false })],
   retakeExam
 );
-router.get(
-  "/getrank",
+router.post(
+  "/setrank",
   [passport.authenticate("jwt", { session: false })],
   getRank
 );
+
 
 module.exports = router;
 //new node

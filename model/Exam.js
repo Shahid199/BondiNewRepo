@@ -21,12 +21,12 @@ const examSchema = new Schema(
       type: Number,
       required: true,
     },
-    //exam variation for free/not
-    // examFreeOrNot: {
-    //   type: Boolean,
-    //   required: true,
-    //   default: false,
-    // },
+   // exam variation for free/not
+    examFreeOrNot: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     startTime: {
       type: Date,
       required: true,
