@@ -113,38 +113,43 @@ const getUserRole = async (req, res, next) => {
  * User auth
  */
 const loginSuperAdmin = async (req, res) => {
-  try {
-    const { userName, password } = req.body;
-    // Find the user associated with the email provided by the user
-    const user = await User.findOne({ userName });
-    // If the user isn't found in the database, return a message
-    if (!user) {
-      return res.status(404).json("User not found");
-    }
-
-    // if user found verify the password
-
-    await user.loginUser(user, password, (err, token) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json("Something went wrong!");
+  if (req.isAuthenticated() === false) {
+    try {
+      const { userName, password } = req.body;
+      // Find the user associated with the email provided by the user
+      const user = await User.findOne({ userName });
+      // If the user isn't found in the database, return a message
+      if (!user) {
+        return res.status(404).json("User not found");
       }
-      if (!token) {
-      }
-      const { name, userName, _id, mobileNo, role, address } = user;
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 24 * 3600 * 1000),
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
+
+      // if user found verify the password
+
+      await user.loginUser(user, password, (err, token) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json("Something went wrong!");
+        }
+        if (!token) {
+          return res.status(401).json("Email/Password mismatched");
+        }
+        const { name, userName, _id, mobileNo, role, address } = user;
+        res.cookie("token", token, {
+          expires: new Date(Date.now() + 24 * 3600 * 1000),
+          httpOnly: true,
+          secure: true,
+          sameSite: "None",
+        });
+        return res
+          .status(200)
+          .json({ name, userName, _id, mobileNo, role, address, token });
       });
-      return res
-        .status(200)
-        .json({ name, userName, _id, mobileNo, role, address, token });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json("Something went wrong!");
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Something went wrong!");
+    }
+  }else{
+    return res.status(301).redirect('/dashboard');
   }
 };
 

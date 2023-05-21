@@ -1,7 +1,7 @@
 const cors = require("cors");
 let options = {
-    "origin":["http://localhost:5011","http://localhost:3000"],
-    "Access-Control-Allow-Origin": ["http://localhost:5011","http://localhost:3000"],
+    "origin":["http://localhost:3001","http://localhost:3000"],
+    "Access-Control-Allow-Origin": ["http://localhost:3001","http://localhost:3000"],
     "Access-Control-Request-Methods": "GET,PUT,POST,DELETE,OPTIONS",
     "X-Requested-With": "XMLHttpRequest",
     "X-Frame-Options": "SAMEORIGIN",
