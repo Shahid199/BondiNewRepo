@@ -11,6 +11,9 @@ const {
   examRuleSet,
   examRuleGet,
   examRuleGetAll,
+  examByCourseSubject,
+  getExamById,
+  updateExamSubmit,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -43,5 +46,7 @@ router.get("/getexambysub", getExamBySub);
 router.post("/examruleset", [upload.single("ruleILink")], examRuleSet);
 router.get("/examruleget", examRuleGet);
 router.get("/examrulegetall", examRuleGetAll);
-
+router.get("/exambycoursesubject", examByCourseSubject);
+router.get("/getexambyid", getExamById);
+router.post("/updateexamsubmit", updateExamSubmit);
 module.exports = router;
