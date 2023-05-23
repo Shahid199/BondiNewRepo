@@ -11,6 +11,7 @@ const cors = require("./utilities/cors");
 
 require("./utilities/passport");
 require("./utilities/passport_student");
+require("./utilities/passport_student_free");
 // config cookie-parser
 app.use(cookies());
 //global middleware which will look for tokens in browser cookie

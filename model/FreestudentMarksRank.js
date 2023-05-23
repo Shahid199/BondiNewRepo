@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const freeStudentMarkRanksSchema = new Schema(
   {
-    freeStudentId: {
+    studentId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: freeStudents,
@@ -18,25 +18,42 @@ const freeStudentMarkRanksSchema = new Schema(
     examStartTime: {
       type: Date,
       required: true,
+      default: null,
     },
     examEndTime: {
       type: Date,
-      required: true,
+      required: false,
+      default: null,
     },
     duration: {
       type: Number,
-      required: true,
+      required: false,
+      ddefault: null,
     },
     totalObtainedMarks: {
       type: Number,
-      required: true,
+      required: false,
+      default: null,
     },
     rank: {
       type: Number,
+      required: false,
+      default: null,
+    },
+    finishedStatus: {
+      type: Boolean,
       required: true,
+      default: false,
+    },
+    runningStatus: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
-
-module.exports = mongoose.model("FreeStudentMarkRank", freeStudentMarkRanksSchema);
+module.exports = mongoose.model(
+  "FreeStudentMarkRank",
+  freeStudentMarkRanksSchema
+);

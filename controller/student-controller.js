@@ -2,13 +2,12 @@ const Student = require("../model/Student");
 const Course = require("../model/Course");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
 const Exam = require("../model/Exam");
 const McqQuestionVsExam = require("../model/McqQuestionVsExam");
 const QuestionsMcq = require("../model/QuestionsMcq");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const StudentMarksRank = require("../model/StudentMarksRank");
-const { connect } = require("../routes/exam-routes");
+const fs = require("fs");
 const fsp = fs.promises;
 const mongoose = require("mongoose");
 const Subject = require("../model/Subject");
@@ -216,72 +215,27 @@ const getAllStudent = async (req, res, next) => {
   console.log(count);
   return res.status(200).json(students);
 };
-//Student have finsihed exam status check
-// const examCheck = async (req, res, next) => {
-//   let eid = req.query.eId;
-//   let sid = req.user.studentId;
-
-//   //start:check student already complete the exam or not
-//   let eId1, sId1;
-//   try {
-//     sId1 = await Student.findById(sid).select("_id");
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
-//   try {
-//     eId1 = await Exam.findById(eid).select("_id");
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
-//   let finishedStatus;
-//   try {
-//     finishedStatus = await StudentMarksRank.findOne(
-//       {
-//         $and: [{ studentId: sId1 }, { examId: eId1 }],
-//       },
-//       "finishedStatus examStartTime examEndTime"
-//     );
-//   } catch (err) {
-//     consoole.log(err);
-//     return res.status(500).json(err);
-//   }
-//   // console.log(eid);
-//   // console.log(sid);
-//   console.log(finishedStatus);
-//   if (finishedStatus == null) {
-//     req.body.eId = eid;
-//     next();
-//   } else {
-//     if (finishedStatus.finishedStatus == false) {
-//       req.body.eId = eid;
-//       req.body.examStartTime = finishedStatus.examStartTime;
-//       req.body.examEndTime = finishedStatus.examEndTime;
-//       next();
-//     } else return res.status(301).json("exam end.");
-//   }
-// };
-
 const examCheckMiddleware = async (req, res, next) => {
-  const eId = req.body.eId;
+  const examId = req.body.eId;
   const studentId = req.user.studentId;
   //start:check student already complete the exam or not
-  let eId1, sId;
-  sId = new mongoose.Types.ObjectId(studentId);
-  eId1 = new mongoose.Types.ObjectId(eId);
-  let status;
+  let examIdObj, studentIdObj;
+  studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examIdObj = new mongoose.Types.ObjectId(examId);
+  let status = null;
   try {
     status = await StudentMarksRank.findOne({
-      $and: [{ studentId: sId }, { examId: eId1 }],
-    }).populate("examId");
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
   } catch (err) {
     return res.status(500).json("DB error");
   }
-  if (status.finishedStatus == false && status.runningStatus == false)
-    return res.status(200).json("assign");
-  else if (status.finishedStatus == true) return res.status(200).json("ended");
-  else return res.status(200).json("running");
+  if (status == null) return res.status(200).json("assign");
+  else {
+    if (status.finishedStatus == true) return res.status(200).json("ended");
+    else return res.status(200).json("running");
+  }
 };
-
 //assign question
 const assignQuestion = async (req, res, next) => {
   //data get from examcheck function req.body
@@ -487,7 +441,6 @@ const submitAnswer = async (req, res, next) => {
     finishedStatus: true,
     runningStatus: false,
   };
-
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
