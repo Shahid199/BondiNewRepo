@@ -123,8 +123,17 @@ const getAllCourseAdmin = async (req, res, next) => {
   }
   return res.status(200).json(courses);
 };
+const updateSingle = async(req,res,next)=>{
+  const id = req.query.id;
+  const singleCourse = req.body;
+  console.log(singleCourse);
+  const filter = {_id: new ObjectId(id)};
+  const result = await Course.findByIdAndUpdate(filter,singleCourse);
+  return res.status(200).json(result);
+};
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;
 exports.getAllCourseAdmin = getAllCourseAdmin;
 exports.updateStatusCourse = updateStatusCourse;
+exports.updateSingle = updateSingle;
