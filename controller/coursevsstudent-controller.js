@@ -8,7 +8,7 @@ const fsp = fs.promises;
 const addStudentToCourse = async (req, res, next) => {
   //start file work
   const file = req.file;
-  let courseId = req.body.courseId;
+  let courseId = req.query.courseId;
   let excelFilePath = null;
   if (!file) {
     return res.status(404).json({ message: "File not uploaded." });
