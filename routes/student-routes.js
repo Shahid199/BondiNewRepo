@@ -17,16 +17,23 @@ const {
   retakeExam,
   retakeSubmit,
   getRank,
+  examCheckMiddleware,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
 //need query parameter eid(examid).
 router.get(
+  "/examcheckmiddleware",
+  [passport.authenticate("jwt", { session: false })],
+  examCheckMiddleware
+);
+router.get(
   "/startexam",
   [passport.authenticate("jwt", { session: false })],
   assignQuestion
 );
+
 //need query parameter eid,question sl,answeredoption.
 router.post(
   "/updateanswer",
@@ -43,6 +50,7 @@ router.get(
   [passport.authenticate("jwt", { session: false })],
   getRunningData
 );
+
 
 //student admin panel routes
 router.post("/addstudent", upload.single("excelFile"), addStudent);
@@ -70,12 +78,16 @@ router.get(
   [passport.authenticate("jwt", { session: false })],
   retakeExam
 );
+router.get(
+  "/retakesubmit",
+  [passport.authenticate("jwt", { session: false })],
+  retakeSubmit
+);
 router.post(
   "/setrank",
   [passport.authenticate("jwt", { session: false })],
   getRank
 );
-
 
 module.exports = router;
 //new node

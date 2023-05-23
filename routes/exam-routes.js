@@ -9,10 +9,12 @@ const {
   getExamBySubject,
   getExamBySub,
   examRuleSet,
+  examRuleGet,
+  examRuleGetAll,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
-router.post("/createexam", createExam);
+router.post("/createexam", [upload.single("iLink")], createExam);
 router.get("/getallexam", getAllExam);
 router.post(
   "/addquestionmcq",
@@ -37,10 +39,9 @@ router.post(
 router.get("/getexambysubject", getExamBySubject);
 
 router.get("/getexambysub", getExamBySub);
-router.post(
-  "/examruleset",
-  [upload.fields([{ name: "examRule" }])],
-  examRuleSet
-);
+
+router.post("/examruleset", [upload.single("ruleILink")], examRuleSet);
+router.get("/examruleget", examRuleGet);
+router.get("/examrulegetall", examRuleGetAll);
 
 module.exports = router;

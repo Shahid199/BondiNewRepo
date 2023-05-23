@@ -10,6 +10,7 @@ const freeStudentsSchema = new Schema(
     mobileNo: {
       type: String,
       required: true,
+      unique: true,
     },
     institution: {
       type: String,

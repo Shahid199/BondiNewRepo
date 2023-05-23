@@ -21,7 +21,7 @@ const examSchema = new Schema(
       type: Number,
       required: true,
     },
-   // exam variation for free/not
+    // exam variation for free/not
     examFreeOrNot: {
       type: Boolean,
       required: true,
@@ -40,6 +40,10 @@ const examSchema = new Schema(
       required: true,
     },
     totalQuestionMcq: {
+      type: Number,
+      required: false,
+    },
+    marksPerMcq: {
       type: Number,
       required: false,
     },
@@ -83,7 +87,7 @@ const examSchema = new Schema(
     negativeMarks: {
       type: Number,
       required: true,
-      default:0,
+      default: 0,
     },
     iLink: {
       type: String,

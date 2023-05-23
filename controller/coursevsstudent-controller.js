@@ -2,74 +2,16 @@ const Course = require("../model/Course");
 const Student = require("../model/Student");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
+const { default: mongoose } = require("mongoose");
 const fsp = fs.promises;
 //add Student To Course
-const addStudentToCourse1 = async (req, res, next) => {
-  let { courseId, studentId } = req.body;
-  const studnetIdCheck = studentId;
-  console.log(studentId);
-  try {
-    studentId = await Student.findOne({ _id: studentId });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong1!");
-  }
-  console.log(studentId);
-  try {
-    courseId = await Course.findById(courseId).select("_id");
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong2!");
-  }
-  let existingStudentCourse;
-  let flag = false;
-  try {
-    existingStudentCourse = await CourseVsStudent.find({
-      courseId: courseId,
-    }).select("studentId");
-    existingStudentCourse = Object.entries(existingStudentCourse);
-    existingStudentCourse.forEach((Element) => {
-      if (String(Element[1].studentId) == studnetIdCheck) {
-        flag = true;
-      }
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong3!");
-  }
-  if (flag == true) {
-    return res
-      .status(400)
-      .json({ message: "student already assign to the course." });
-  }
-  const courseVsStudent = new CourseVsStudent({
-    courseId: courseId,
-    studentId: studentId,
-  });
-  console.log(courseId);
-  console.log(studentId);
-  let doc;
-  try {
-    doc = await courseVsStudent.save();
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong4!");
-  }
-  if (doc) {
-    return res
-      .status(201)
-      .json({ message: "Successfull add student to course." });
-  } else {
-    return res.status(404).json({ message: "Something went wrong5." });
-  }
-};
 const addStudentToCourse = async (req, res, next) => {
   //start file work
   const file = req.file;
   let courseId = req.body.courseId;
   let excelFilePath = null;
   if (!file) {
-    return res.status(404).json({ message: "Excel File not uploaded." });
+    return res.status(404).json({ message: "File not uploaded." });
   }
   excelFilePath = "uploads/".concat(file.filename);
   const data1 = await fsp.readFile(excelFilePath, "utf8");
@@ -78,15 +20,11 @@ const addStudentToCourse = async (req, res, next) => {
   //end file work
   let students = [];
   let problemStudent = [];
+  let existStudent = [];
   let courseId1;
-  try {
-    courseId1 = await Course.findById(courseId).select("_id");
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-  if (courseId1 == null) return res.status(404).json("course not found");
+  courseId1 = new mongoose.Types.ObjectId(courseId);
   for (let i = 1; i < linesArr.length; i++) {
-    const regNo = String(linesArr[i].replace(/[\r]/g, ""));
+    const regNo = String(linesArr[i].replace(/[-"\r]/g, ""));
     if (regNo == "undefined") {
       continue;
     }
@@ -110,7 +48,7 @@ const addStudentToCourse = async (req, res, next) => {
       return res.status(500).json("err");
     }
     if (existData != null) {
-      problemStudent.push(regNo);
+      existStudent.push(regNo);
       continue;
     }
     users["courseId"] = courseId1;
@@ -118,31 +56,31 @@ const addStudentToCourse = async (req, res, next) => {
     users["status"] = true;
     students.push(users);
   }
+  if (problemStudent.length > 0) return res.status(202).json(problemStudent);
   let doc;
   try {
     doc = await CourseVsStudent.insertMany(students, { ordered: false });
   } catch (err) {
     return res.status(500).json(err);
   }
-  return res.status(201).json(problemStudent);
+  return res
+    .status(201)
+    .json({ message: "Successfully inserted all student.", existStudent });
 };
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
-  let students,
-    flag = false;
+  let students;
   try {
-    students = await CourseVsStudent.find({ courseId: courseId }).populate(
-      "studentId"
-    );
-    flag = true;
+    students = await CourseVsStudent.find({
+      $and: [{ courseId: courseId }, { status: true }],
+    }).populate("studentId");
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  if (flag == true) {
-    return res.status(200).json(students);
-  }
+  if (students != null) return res.status(200).json(students);
+  else return res.status(404).json("student not found in course.");
 };
 //get courses by student
 const getCourseByStudent = async (req, res, next) => {

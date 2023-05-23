@@ -42,24 +42,16 @@ const createSubject = async (req, res, next) => {
 //get subject by course
 const getSubjectByCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
-  let courseIdOb;
-  try {
-    courseIdOb = await Course.findById(courseId).select("_id");
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
+  let courseIdOb = new mongoose.Types.ObjectId(courseId);
   let subjects;
   try {
     subjects = await Subject.find({ courseId: courseIdOb });
   } catch (err) {
-    console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  if (subjects) {
-    return res.status(200).json(subjects);
-  } else return res.status(404).json({ message: "Subjects not found." });
+  return res.status(200).json(subjects);
 };
+//for dropdown use
 const getSubjectByCourseAdmin = async (req, res, next) => {
   const courseId = req.query.courseId;
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
@@ -71,6 +63,7 @@ const getSubjectByCourseAdmin = async (req, res, next) => {
   }
   return res.status(200).json(subject);
 };
+
 
 exports.createSubject = createSubject;
 exports.getSubjectByCourse = getSubjectByCourse;

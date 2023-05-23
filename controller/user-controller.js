@@ -1,6 +1,10 @@
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
 const Limit = 1;
+
+const validateToken = async (req, res) => {
+  return res.json(req.user);
+};
 //Create Users
 const createOfficeUser = async (req, res, next) => {
   const { name, userName, mobileNo, password, address, role } = req.body;
@@ -148,8 +152,8 @@ const loginSuperAdmin = async (req, res) => {
       console.log(error);
       return res.status(500).json("Something went wrong!");
     }
-  }else{
-    return res.status(301).redirect('/dashboard');
+  } else {
+    return res.status(301).redirect("/dashboard");
   }
 };
 
@@ -178,3 +182,4 @@ exports.createStudentUser = createStudentUser;
 exports.getUserByRole = getUserByRole;
 exports.getUserRole = getUserRole;
 exports.loginSuperAdmin = loginSuperAdmin;
+exports.validateToken = validateToken;

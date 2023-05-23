@@ -14,6 +14,7 @@ const mongoose = require("mongoose");
 const Subject = require("../model/Subject");
 const { fork } = require("child_process");
 const ISODate = require("isodate");
+const moment = require("moment");
 
 const Limit = 1;
 
@@ -84,9 +85,9 @@ const addStudent = async (req, res, next) => {
   const linesArr = linesExceptFirst.map((line) => line.split(","));
   let students = [];
   for (let i = 0; i < linesArr.length; i++) {
-    const name = String(linesArr[i][2]).replace(/["]/g, "");
-    const regNo = String(linesArr[i][1]).replace(/["]/g, "");
-    const mobileNo = String(linesArr[i][3]).replace(/[-]/g, "");
+    const name = String(linesArr[i][2]).replace(/[-"\r]/g, "");
+    const regNo = String(linesArr[i][1]).replace(/[-"\r]/g, "");
+    const mobileNo = String(linesArr[i][3]).replace(/[-"\r]/g, "");
     if (
       name == "undefined" ||
       regNo == "undefined" ||
@@ -259,9 +260,8 @@ const getAllStudent = async (req, res, next) => {
 //     } else return res.status(301).json("exam end.");
 //   }
 // };
-//assign question
-const assignQuestion = async (req, res, next) => {
-  //data get from examcheck function req.body
+
+const examCheckMiddleware = async (req, res, next) => {
   const eId = req.body.eId;
   const studentId = req.user.studentId;
   //start:check student already complete the exam or not
@@ -272,13 +272,25 @@ const assignQuestion = async (req, res, next) => {
   try {
     status = await StudentMarksRank.findOne({
       $and: [{ studentId: sId }, { examId: eId1 }],
-    });
+    }).populate("examId");
   } catch (err) {
     return res.status(500).json("DB error");
   }
-  if (status.finishedStatus == true) return res.status(200).json("ended");
-  if (status.runningStatus == true) return res.status(200).json("running");
+  if (status.finishedStatus == false && status.runningStatus == false)
+    return res.status(200).json("assign");
+  else if (status.finishedStatus == true) return res.status(200).json("ended");
+  else return res.status(200).json("running");
+};
 
+//assign question
+const assignQuestion = async (req, res, next) => {
+  //data get from examcheck function req.body
+  const eId = req.body.eId;
+  const studentId = req.user.studentId;
+  //start:check student already complete the exam or not
+  let eId1, sId;
+  sId = new mongoose.Types.ObjectId(studentId);
+  eId1 = new mongoose.Types.ObjectId(eId);
   let doc = [],
     size,
     min = 0,
@@ -289,15 +301,17 @@ const assignQuestion = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  let totalQues;
+  let totalQuesData;
   try {
-    totalQues = await Exam.findById(eId).select("totalQuestionMcq duration");
+    totalQuesData = await Exam.findById(eId).select(
+      "totalQuestionMcq duration endTime"
+    );
   } catch (err) {
     return res.status(500).json(err);
   }
+  let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
-  totalQues = Number(totalQues.totalQuestionMcq);
-  let duration = totalQues.duration;
+  let totalQues = Number(totalQuesData.totalQuestionMcq);
   max = size.sizeMid - 1;
   max = max - min;
   for (let i = 0; ; i++) {
@@ -311,15 +325,20 @@ const assignQuestion = async (req, res, next) => {
   //end:generating random index of questions
   let doc1;
   try {
-    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 }).select("mId").lean();
+    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 })
+      .select("mId")
+      .populate({
+        path: "mId",
+        match: { status: { $eq: true } },
+        select: "_id",
+      });
   } catch (err) {
     return res.status(500).json(err);
   }
   let doc2 = [];
   doc1 = doc1.mId;
   for (let i = 0; i < totalQues; i++) {
-    let x = doc[i];
-    let data = doc1[i];
+    let data = doc1[doc[i]];
     doc2.push(data);
   }
   let questions;
@@ -346,34 +365,36 @@ const assignQuestion = async (req, res, next) => {
     mcqQuestionId: doc2,
     answeredOption: answered,
   });
-  let saveStudentQuestion;
-  let flag = false;
-  let flag1 = false;
-  try {
-    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
-  } catch (err) {
-    flag = true;
-    console.log(err);
-  }
+  let saveStudentQuestion = null,
+    saveStudentExam = null;
+  let duration = totalQues.duration;
   const examStartTime = new Date();
+  const examEndTime = new Date(moment(startTime1).add(duration, "minutes"));
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
     examId: eId1,
     examStartTime: examStartTime,
+    runningStatus: true,
+    examEndTime: examEndTime,
   });
+  try {
+    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
+  } catch (err) {
+    return res.status(500).json(err);
+  }
   try {
     saveStudentExam = await studentMarksRank.save();
   } catch (err) {
-    flag = true;
     console.log(err);
   }
-  questions.push(examStartTime);
-  questions.push(duration);
+  questions.push({ studStartTime: examStartTime });
+  questions.push({ studEndTime: examEndTime });
+  questions.push({ examEndTime: examFinishTime });
   console.log(questions);
-  if (flag == true || flag1 == true) {
+  if (saveStudentQuestion == null || saveStudentExam == null) {
     return res.status(404).json("Problem occur to assign question.");
   }
-  return res.status(404).json("Data not saved in missed exam table.");
+  return res.status(201).json(questions);
 };
 //update question answer when student select answer
 //API:/updateassignquestion?examid=<examid>&questionindex=<questionumber>$optionindex=<optionindex>
@@ -825,3 +846,4 @@ exports.missedExam = missedExam;
 exports.retakeExam = retakeExam;
 exports.retakeSubmit = retakeSubmit;
 exports.getRank = getRank;
+exports.examCheckMiddleware = examCheckMiddleware;

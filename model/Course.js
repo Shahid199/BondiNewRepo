@@ -14,6 +14,10 @@ const courseSchema = new Schema(
       required: false,
       max: 10000,
     },
+    status: {
+      type: Boolean,
+      required: true,
+    },
   },
   { timestamps: true }
 );

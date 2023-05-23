@@ -1,9 +1,15 @@
+const { default: mongoose } = require("mongoose");
 const Course = require("../model/Course");
 const Student = require("../model/Student");
-const Limit = 1;
+const CourseVsStudent = require("../model/CourseVsStudent");
+const { json } = require("express");
+const Limit = 10;
 //Create Courses
 const createCourse = async (req, res, next) => {
-  const { name, descr } = req.body;
+  const { name, descr, status } = req.body;
+  if (status == null || status == "false")
+    return res.status(404).json("Create course-status must be true.");
+  //status = Boolean(status);
   let existingCourse;
   try {
     existingCourse = await Course.findOne({ name: name });
@@ -14,9 +20,11 @@ const createCourse = async (req, res, next) => {
   if (existingCourse) {
     return res.status(400).json({ message: "course already exist" });
   }
+
   const course = new Course({
     name: name,
     descr: descr,
+    status: Boolean(status),
   });
   try {
     const doc = await course.save();
@@ -26,24 +34,14 @@ const createCourse = async (req, res, next) => {
   }
   return res.status(201).json(course);
 };
-//get course
+//get course update
 const getCourse = async (req, res, next) => {
-  const courseId = req.query.courseId;
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
-  console.log(courseId);
+  const courseId = req.body.courseId;
   let course;
   try {
-    course = await Course.findById(courseId).skip(skippedItem).limit(Limit);
+    course = await Course.findById(courseId);
   } catch (err) {
-    return new Error(err);
+    return res.status(500).json(err);
   }
   if (!course) {
     return res.status(404).json({ message: "Course Not Found" });
@@ -63,7 +61,10 @@ const getAllCourse = async (req, res, next) => {
     skippedItem = (page - 1) * Limit;
   }
   try {
-    courses = await Course.find({}).skip(skippedItem).limit(Limit).exec();
+    courses = await Course.find({ status: true })
+      .skip(skippedItem)
+      .limit(Limit)
+      .exec();
   } catch (err) {
     return new Error(err);
   }
@@ -72,12 +73,48 @@ const getAllCourse = async (req, res, next) => {
   }
   return res.status(200).json({ courses });
 };
-
+//update status of course
+const updateStatusCourse = async (req, res, next) => {
+  const courseId = req.body.courseId;
+  let status = req.body.status;
+  let status1 = JSON.parse(status);
+  const courseIdObj = new mongoose.Types.ObjectId(courseId);
+  let updStatus = null;
+  try {
+    updStatus = await Course.findByIdAndUpdate(courseId, { status: status1 });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  try {
+    updStatus = await Course.findById(String(updStatus._id)).select(
+      "status courseId"
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let updStatusSecond = null;
+  if (updStatus.status == status1) {
+    try {
+      updStatusSecond = await CourseVsStudent.updateMany(
+        { courseId: courseIdObj },
+        { status: status1 }
+      );
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    if (updStatusSecond.matchedCount == 0)
+      return res.status(404).json("no student in the course.");
+    else
+      return res
+        .status(201)
+        .json("student & courses status update succesfully.");
+  } else return res.status(404).json("Course status not updated.");
+};
 //use for functional work like dropdown load
 const getAllCourseAdmin = async (req, res, next) => {
   let courses;
   try {
-    courses = await Course.find({}, "name").exec();
+    courses = await Course.find({ status: true }, "name status").exec();
   } catch (err) {
     return new Error(err);
   }
@@ -90,3 +127,4 @@ exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;
 exports.getAllCourseAdmin = getAllCourseAdmin;
+exports.updateStatusCourse = updateStatusCourse;
