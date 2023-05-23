@@ -3,6 +3,7 @@ const Course = require("../model/Course");
 const Student = require("../model/Student");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const { json } = require("express");
+const { ObjectId } = require("mongodb");
 const Limit = 10;
 //Create Courses
 const createCourse = async (req, res, next) => {
@@ -53,7 +54,7 @@ const getAllCourse = async (req, res, next) => {
   let courses;
   let getStatus= {};
   if(req.query.status){
-    getStatus = req.query.status;
+    getStatus = req.query;
   }
   let page = req.query.page;
   let skippedItem;
@@ -80,6 +81,7 @@ const getAllCourse = async (req, res, next) => {
 //update status of course
 const updateStatusCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
+  console.log(courseId);
   let status = req.body.status;
   let status1 = JSON.parse(status);
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
@@ -135,9 +137,21 @@ const updateSingle = async(req,res,next)=>{
   const result = await Course.findByIdAndUpdate(filter,singleCourse);
   return res.status(200).json(result);
 };
+const deactivateCourse = async(req,res,next)=>{
+  const id = req.query.id;
+  const filter = {_id: new ObjectId(id)};
+  const result = await Course.findByIdAndUpdate(filter,{status:false});
+  let result2;
+  if(result){
+     result2 = await CourseVsStudent.updateMany({courseId:id},{status:false});
+  }
+  console.log(result2);
+  return res.status(200).json(result);
+}
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;
 exports.getAllCourseAdmin = getAllCourseAdmin;
 exports.updateStatusCourse = updateStatusCourse;
 exports.updateSingle = updateSingle;
+exports.deactivateCourse = deactivateCourse;
