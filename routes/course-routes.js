@@ -12,6 +12,6 @@ router.post("/createcourse", createCourse);
 router.get("/getcourse", getCourse);
 router.get("/getallcourse", getAllCourse);
 router.get("/getallcourseadmin", getAllCourseAdmin);
-router.post("/updatestatuscourse", updateStatusCourse);
+router.post("/deactivatecourse", updateStatusCourse);
 
 module.exports = router;
