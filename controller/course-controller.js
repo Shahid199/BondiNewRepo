@@ -51,6 +51,10 @@ const getCourse = async (req, res, next) => {
 //get all course
 const getAllCourse = async (req, res, next) => {
   let courses;
+  let getStatus= {};
+  if(req.query.status){
+    getStatus = req.query.status;
+  }
   let page = req.query.page;
   let skippedItem;
   if (page == null) {
@@ -61,7 +65,7 @@ const getAllCourse = async (req, res, next) => {
     skippedItem = (page - 1) * Limit;
   }
   try {
-    courses = await Course.find({ status: true })
+    courses = await Course.find(getStatus)
       .skip(skippedItem)
       .limit(Limit)
       .exec();
