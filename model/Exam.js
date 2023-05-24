@@ -51,14 +51,14 @@ const examSchema = new Schema(
       type: Number,
       required: false,
     },
-    totalQuestionWritten: {
-      type: Number,
-      required: false,
-    },
-    totalMarksWritten: {
-      type: Number,
-      required: false,
-    },
+    // totalQuestionWritten: {
+    //   type: Number,
+    //   required: false,
+    // },
+    // totalMarksWritten: {
+    //   type: Number,
+    //   required: false,
+    // },
     status: {
       type: Boolean,
       required: true,

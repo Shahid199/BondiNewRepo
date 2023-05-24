@@ -1,7 +1,4 @@
 const mongoose = require("mongoose");
-const Exam = require("../model/Exam");
-const McqQuestionVsExam = require("../model/McqQuestionVsExam");
-const QuestionsMcq = require("../model/QuestionsMcq");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const StudentMarksRank = require("../model/StudentMarksRank");
 
@@ -10,17 +7,21 @@ async function examCalculation(message) {
   const sId = message.sId;
   eIdObj = new mongoose.Types.ObjectId(eId);
   sIdObj = new mongoose.Types.ObjectId(sId);
+  let sIeIObj = await StudentMarksRank.find(
+    { $and: [{ studentId: sIdObj }, { examId: eIdObj }] },
+    "_id"
+  );
+  sIeIObj = sIeIObj[0]._id;
   let examData = null;
   try {
     examData = await StudentExamVsQuestionsMcq.findOne({
       $and: [{ examId: eIdObj }, { studemtId: sIdObj }],
     }).populate("mcqQuestionId examId");
   } catch (err) {
-    return res.status(500).json({ errorMessage: "DB error!" }, { error: err });
+    return "data not found.";
   }
   let id = String(examData._id);
-  let correctMarks =
-    examData.examId.totalMarksMcq / examData.examId.totalQuestionMcq;
+  let correctMarks = examData.examId.marksPerMcq;
   let negativeMarks = examData.examId.negativeMarks;
   let negativeMarksValue = (correctMarks * negativeMarks) / 100;
   let examDataMcq = examData.mcqQuestionId;
@@ -28,7 +29,7 @@ async function examCalculation(message) {
   let notAnswered = 0;
   let totalCorrectAnswer = 0;
   let totalWrongAnswer = 0;
-  let totalMarks = 0;
+  let totalObtainedMarks = 0;
   let totalCorrectMarks = 0;
   let totalWrongMarks = 0;
   for (let i = 0; i < examDataMcq.length; i++) {
@@ -40,27 +41,79 @@ async function examCalculation(message) {
   }
   totalCorrectMarks = totalCorrectAnswer * correctMarks;
   totalWrongMarks = totalWrongAnswer * negativeMarksValue;
-  totalMarks = totalCorrectMarks - totalWrongMarks;
+  totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
   const update = {
     totalCorrectAnswer: totalCorrectAnswer,
     totalWrongAnswer: totalWrongAnswer,
     totalNotAnswered: notAnswered,
     totalCorrectMarks: totalCorrectMarks,
     totalWrongMarks: totalWrongMarks,
-    totalObtainedMarks: totalMarks,
+    totalObtainedMarks: totalObtainedMarks,
   };
-  let result = null;
+  let result = null,
+    getResult = null,
+    sendResult = {},
+    rank = null,
+    dataRank = null,
+    upd = null,
+    upd1 = null,
+    upd2 = null,
+    getRank = null;
   try {
-    result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(
-      { id: id },
-      update
+    result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update);
+    upd = await StudentMarksRank.update(
+      {
+        $and: [{ examId: eIdObj }, { studentId: sIdObj }],
+      },
+      { totalObtainedMarks: totalObtainedMarks }
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return "problem to save";
   }
-}
+  try {
+    getResult = await StudentExamVsQuestionsMcq.findById(id).populate("examId");
+  } catch (err) {
+    return "problem to save";
+  }
+  try {
+    dataRank = await StudentMarksRank.find(
+      { examId: eIdObj },
+      "sId totalObtainedMarks"
+    ).sort({ totalObtainedMarks: -1 });
+  } catch (err) {
+    return "problem to save";
+  }
+  let studentRankObject = {
+    _id: sIeIObj,
+    sId: sIdObj,
+    totalObtainedMarks: totalObtainedMarks,
+  };
+  rank = Number(dataRank.indexOf(studentRankObject)) + 1;
+  try {
+    upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
+      rank: rank,
+    });
+  } catch (err) {
+    return err;
+  }
+  try {
+    upd2 = await StudentMarksRank.findById(String(sIeIObj), "rank");
+  } catch (err) {
+    return err;
+  }
+  getrank = upd2.rank;
+  sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
+  sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
+  sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
+  sendResult["totalObtained"] = getResult.totalObtainedMarks;
+  sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  sendResult["rank"] = getRank;
 
+  return result;
+}
 process.on("message", async (message) => {
-  await examCalculation(message);
-  process.kill(process.pid);
+  let resultData = await examCalculation(message);
+  process.send(resultData);
 });

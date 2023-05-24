@@ -216,7 +216,7 @@ const getAllStudent = async (req, res, next) => {
   return res.status(200).json(students);
 };
 const examCheckMiddleware = async (req, res, next) => {
-  const examId = req.body.eId;
+  const examId = req.query.eId;
   const studentId = req.user.studentId;
   //start:check student already complete the exam or not
   let examIdObj, studentIdObj;
@@ -239,7 +239,7 @@ const examCheckMiddleware = async (req, res, next) => {
 //assign question
 const assignQuestion = async (req, res, next) => {
   //data get from examcheck function req.body
-  const eId = req.body.eId;
+  const eId = req.query.eId;
   const studentId = req.user.studentId;
   //start:check student already complete the exam or not
   let eId1, sId;
@@ -394,7 +394,7 @@ const updateAssignQuestion = async (req, res, next) => {
 //getrunningdata api will call after assignquestion api called.
 const getRunningData = async (req, res, next) => {
   const sId = req.user.studentId;
-  const eId = req.body.eId;
+  const eId = req.query.eId;
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -452,7 +452,8 @@ const submitAnswer = async (req, res, next) => {
   }
   const forkk = fork("../utilities/examCalculation.js");
   forkk.send({ eId, sId });
-  return res.status(200).json("Answer Submitted Successfully.");
+  let resultRank = forkk.on(message);
+  return res.status(200).json(resultRank);
 };
 const viewSollution = async (req, res, next) => {
   const studentId = req.user.studentId;

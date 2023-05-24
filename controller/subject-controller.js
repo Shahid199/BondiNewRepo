@@ -41,7 +41,7 @@ const createSubject = async (req, res, next) => {
 };
 //get subject by course
 const getSubjectByCourse = async (req, res, next) => {
-  const courseId = req.body.courseId;
+  const courseId = req.query.courseId;
   let courseIdOb = new mongoose.Types.ObjectId(courseId);
   let subjects;
   try {
