@@ -67,6 +67,9 @@ const getSubjectById = async (req, res, next) => {
   subjectDataAll["courseId"] = subjectData.courseId._id;
   subjectDataAll["courseName"] = subjectData.courseId.name;
   subjectDataAll["iLink"] = subjectData.iLink;
+  subjectDataAll["createdAt"] = subjectData.createdAt;
+  subjectDataAll["updatedAt"] = subjectData.updatedAt;
+
   return res.status(200).json(subjectDataAll);
 };
 //update subject
