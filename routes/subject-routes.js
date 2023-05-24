@@ -3,16 +3,14 @@ const passport = require("passport");
 const {
   createSubject,
   getSubjectByCourse,
-  getSubjectByCourseAdmin,
+  updateSubject,
+  getSubjectById,
 } = require("../controller/subject-controller");
 const { upload } = require("../utilities/multer");
 
-router.post(
-  "/createsubject",
-  [passport.authenticate("jwt", { session: false }), upload.single("iLink")],
-  createSubject
-);
+router.post("/createsubject", [upload.single("iLink")], createSubject);
+router.put("/updatesubject", [upload.single("iLink")], updateSubject);
+router.get("/getsubjectbyid", getSubjectById);
 router.get("/getsubjectbycourse", getSubjectByCourse);
-router.get("/getsubjectbycourseadmin", getSubjectByCourseAdmin);
 
 module.exports = router;

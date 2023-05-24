@@ -77,7 +77,26 @@ const createExam = async (req, res, next) => {
   return res.status(201).json(doc);
 };
 
-//update exam view
+//get exam
+const getAllExam = async (req, res, next) => {
+  let exams;
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+  try {
+    exams = await Exam.find({}).skip(skippedItem).limit(Limit);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(200).send(exams);
+};
 const getExamById = async (req, res, next) => {
   const examId = req.query.examId;
   let examData = null;
@@ -109,27 +128,23 @@ const getExamById = async (req, res, next) => {
   data["createdAt"] = examData.createdAt;
   return res.status(200).json(data);
 };
-//get all exam
-const getAllExam = async (req, res, next) => {
-  let exams;
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
+const getExamBySub = async (req, res, next) => {
+  const subjectId = req.query.subjectId;
+  const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let examData = null;
   try {
-    exams = await Exam.find({}).skip(skippedItem).limit(Limit);
+    examData = await Exam.find({
+      $and: [
+        { subjectId: subjectIdObj },
+        { examFreeOrNot: false },
+        { status: true },
+      ],
+    });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
+    return res.status(500).json(err);
   }
-  return res.status(200).send(exams);
+  return res.status(200).json(examData);
 };
-//get exam by subject(double parameter send from front-end needed)
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
@@ -207,6 +222,68 @@ const getExamBySubject = async (req, res, next) => {
       .status(404)
       .json({ message: "Student not allowed to the subject." });
 };
+const examByCourseSubject = async (req, res, next) => {
+  const { courseId, subjectId, page } = req.query;
+  const courseIdObj = new mongoose.Types.ObjectId(courseId);
+  const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+  let examData;
+  try {
+    examData = await Exam.find({
+      $and: [
+        { courseId: courseIdObj },
+        { subjectId: subjectIdObj },
+        { status: true },
+      ],
+    })
+      .sort({ createdAt: "desc" })
+      .skip(skippedItem)
+      .limit(Limit)
+      .populate("courseId subjectId")
+      .exec();
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let result = [];
+  if (examData.length == 0)
+    return res
+      .status(404)
+      .json("Not found any Exam under the course and subject.");
+  for (let i = 0; i < examData.length; i++) {
+    let data = {};
+    data["examId"] = examData[i]._id;
+    data["examName"] = examData[i].name;
+    data["courseId"] = examData[i].courseId._id;
+    data["courseName"] = examData[i].courseId.name;
+    data["subjectId"] = examData[i].subjectId._id;
+    data["subjectName"] = examData[i].subjectId.name;
+    data["status"] = examData[i].status;
+    data["sscStatus"] = examData[i].sscStatus;
+    data["hscStatus"] = examData[i].hscStatus;
+    data["iLink"] = examData[i].iLink;
+    data["startTime"] = examData[i].startTime;
+    data["endTime"] = examData[i].endTime;
+    data["examType"] = examData[i].examType;
+    data["examVariation"] = examData[i].variation;
+    data["duration"] = examData[i].duration;
+    data["examFreeOrNot"] = examData[i].examFreeOrNot;
+    data["totalQuestionMcq"] = examData[i].totalQuestionMcq;
+    data["marksPerMcq"] = examData[i].marksPerMcq;
+    data["totalMarksMcq"] = examData[i].totalMarksMcq;
+    data["createdAt"] = examData[i].createdAt;
+    result.push(data);
+  }
+  result.push({ examCount: examData.length });
+  return res.status(200).json(result);
+};
+
 //add questions
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
@@ -229,7 +306,7 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(404).json("Question File not uploaded.");
     }
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
-    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename); 
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
@@ -295,76 +372,7 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(404).json("Saved.");
 };
 
-//use for dropdown
-const getExamBySub = async (req, res, next) => {
-  const subjectId = req.query.subjectId;
-  const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
-  let examData = null;
-  try {
-    examData = await Exam.find({
-      $and: [
-        { subjectId: subjectIdObj },
-        { examFreeOrNot: false },
-        { status: true },
-      ],
-    });
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-  return res.status(200).json(examData);
-};
-//add wriiten question function
-const addQuestionWritten = async (req, res, next) => {
-  //file upload handle
-  const file = req.files;
-  console.log(file);
-  let questionILinkPath = null;
-  // console.log(file.questionILink[0].filename);
-  // return res.status(201).json("Ok");
-  if (!file.questionILink[0].filename)
-    return res.status(400).json("File not uploaded.");
-  questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
-  //written question save to db table
-  const { status } = req.body;
-  let question = new QuestionsWritten({
-    questionILink: questionILinkPath,
-    status: JSON.parse(status),
-  });
-  let doc;
-  try {
-    doc = await question.save();
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  //exam block
-  let examId = req.body.examId;
-  try {
-    examId = await Exam.findById(examId).select("_id");
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong4!");
-  }
-  //data insert to reference table
-  let doc1;
-  let questionId = doc._id;
-  let questionExam = new WrittenQuestionVsExam({
-    writtenQuestionId: questionId,
-    examId: examId,
-  });
-  try {
-    doc1 = await questionExam.save();
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  if (doc1 == null) {
-    let delDoc = await QuestionsWritten.findByIdAndDelete(doc._id);
-    return res.status(400).json("DB Error occur for insertion.");
-  }
-  if (doc != null && doc1 != null) return res.status(201).json(doc);
-  else return res.status(404).json("Not save correctly.");
-};
+//exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
   let ruleILinkPath = null;
@@ -439,67 +447,57 @@ const examRuleGetAll = async (req, res, next) => {
   else return res.status(404).json("No data found.");
 };
 
-//course Subject Report
-const examByCourseSubject = async (req, res, next) => {
-  const { courseId, subjectId, page } = req.query;
-  const courseIdObj = new mongoose.Types.ObjectId(courseId);
-  const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
-  let examData;
+//add wriiten question function
+const addQuestionWritten = async (req, res, next) => {
+  //file upload handle
+  const file = req.files;
+  console.log(file);
+  let questionILinkPath = null;
+  // console.log(file.questionILink[0].filename);
+  // return res.status(201).json("Ok");
+  if (!file.questionILink[0].filename)
+    return res.status(400).json("File not uploaded.");
+  questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
+  //written question save to db table
+  const { status } = req.body;
+  let question = new QuestionsWritten({
+    questionILink: questionILinkPath,
+    status: JSON.parse(status),
+  });
+  let doc;
   try {
-    examData = await Exam.find({
-      $and: [
-        { courseId: courseIdObj },
-        { subjectId: subjectIdObj },
-        { status: true },
-      ],
-    })
-      .sort({ createdAt: "desc" })
-      .skip(skippedItem)
-      .limit(Limit)
-      .populate("courseId subjectId")
-      .exec();
+    doc = await question.save();
   } catch (err) {
-    return res.status(500).json(err);
+    console.log(err);
+    return res.status(500).json("Something went wrong!");
   }
-  let result = [];
-  if (examData.length == 0)
-    return res
-      .status(404)
-      .json("Not found any Exam under the course and subject.");
-  for (let i = 0; i < examData.length; i++) {
-    let data = {};
-    data["examId"] = examData[i]._id;
-    data["examName"] = examData[i].name;
-    data["courseId"] = examData[i].courseId._id;
-    data["courseName"] = examData[i].courseId.name;
-    data["subjectId"] = examData[i].subjectId._id;
-    data["subjectName"] = examData[i].subjectId.name;
-    data["status"] = examData[i].status;
-    data["sscStatus"] = examData[i].sscStatus;
-    data["hscStatus"] = examData[i].hscStatus;
-    data["iLink"] = examData[i].iLink;
-    data["startTime"] = examData[i].startTime;
-    data["endTime"] = examData[i].endTime;
-    data["examType"] = examData[i].examType;
-    data["examVariation"] = examData[i].variation;
-    data["duration"] = examData[i].duration;
-    data["examFreeOrNot"] = examData[i].examFreeOrNot;
-    data["totalQuestionMcq"] = examData[i].totalQuestionMcq;
-    data["marksPerMcq"] = examData[i].marksPerMcq;
-    data["totalMarksMcq"] = examData[i].totalMarksMcq;
-    data["createdAt"] = examData[i].createdAt;
-    result.push(data);
+  //exam block
+  let examId = req.body.examId;
+  try {
+    examId = await Exam.findById(examId).select("_id");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong4!");
   }
-  result.push({ examCount: examData.length });
-  return res.status(200).json(result);
+  //data insert to reference table
+  let doc1;
+  let questionId = doc._id;
+  let questionExam = new WrittenQuestionVsExam({
+    writtenQuestionId: questionId,
+    examId: examId,
+  });
+  try {
+    doc1 = await questionExam.save();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  if (doc1 == null) {
+    let delDoc = await QuestionsWritten.findByIdAndDelete(doc._id);
+    return res.status(400).json("DB Error occur for insertion.");
+  }
+  if (doc != null && doc1 != null) return res.status(201).json(doc);
+  else return res.status(404).json("Not save correctly.");
 };
 
 //export functions
