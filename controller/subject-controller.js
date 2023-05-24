@@ -2,6 +2,7 @@ const Subject = require("../model/Subject");
 const Course = require("../model/Course");
 const { default: mongoose } = require("mongoose");
 const Exam = require("../model/Exam");
+const moment  = require("moment");
 //Create Subject
 const createSubject = async (req, res, next) => {
   const { courseId, name, descr } = req.body;
@@ -106,8 +107,35 @@ const updateSubject = async (req, res, next) => {
   }
   return res.status(500).json("Updated.");
 };
+//Get Subject List
+const getAllSubject = async (req, res, next) => {
+  let subjects = null;
+  let data = [];
+  try {
+    subjects = await Subject.find({}).populate("courseId");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  //return res.status(200).json(subjects);
+  for (let i = 0; i < subjects.length; i++) {
+    let subjectDataAll = {};
+    subjectDataAll["name"] = subjects[i].name;
+    subjectDataAll["descr"] = subjects[i].descr;
+    subjectDataAll["courseId"] = subjects[i].courseId._id;
+    subjectDataAll["courseName"] = subjects[i].courseId.name;
+    subjectDataAll["createdAt"] = moment(subjects[i].createdAt).format(
+      "MM-DD-YYYY hh:mm:ss a"
+    );
+    subjectDataAll["updatedAt"] = moment(subjects[i].updatedAt).format(
+      "MM-DD-YYYY hh:mm:ss a"
+    );
+    data.push(subjectDataAll);
+  }
 
+  return res.status(200).json(data);
+};
 exports.createSubject = createSubject;
 exports.getSubjectByCourse = getSubjectByCourse;
 exports.getSubjectById = getSubjectById;
 exports.updateSubject = updateSubject;
+exports.getAllSubject = getAllSubject;
