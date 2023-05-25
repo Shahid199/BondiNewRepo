@@ -241,6 +241,7 @@ const assignQuestion = async (req, res, next) => {
   //data get from examcheck function req.body
   const eId = req.query.eId;
   const studentId = req.user.studentId;
+  console.log(eId);
   //start:check student already complete the exam or not
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
@@ -296,7 +297,7 @@ const assignQuestion = async (req, res, next) => {
   let doc2 = [];
   doc1 = doc1.mId;
   for (let i = 0; i < totalQues; i++) {
-    let data = doc1.mId[doc[i]];
+    let data = doc1[doc[i]];
     doc2.push(data);
   }
   let questions;
@@ -327,7 +328,7 @@ const assignQuestion = async (req, res, next) => {
     saveStudentExam = null;
   let duration = totalQues.duration;
   const examStartTime = new Date();
-  const examEndTime = new Date(moment(startTime1).add(duration, "minutes"));
+  const examEndTime = new Date(moment(examStartTime).add(duration, "minutes"));
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
     examId: eId1,
@@ -410,6 +411,7 @@ const getRunningData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+  console.log(getQuestionMcq);
   let runningResponseLast = [];
   for (let i = 0; i < getQuestionMcq.mcqQuestionId.length; i++) {
     let runningResponse = {};
@@ -461,7 +463,7 @@ const submitAnswer = async (req, res, next) => {
 };
 const viewSollution = async (req, res, next) => {
   const studentId = req.user.studentId;
-  const examId = req.query.examid;
+  const examId = req.query.examId;
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let data = null;
@@ -473,18 +475,16 @@ const viewSollution = async (req, res, next) => {
     return res.status(500).json(err);
   }
   let resultData = [];
-  console.log(data[0].mcqQuestionId.length);
+  console.log(data);
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
     let data1 = {};
     data1["question"] = data[0].mcqQuestionId[i].question;
     data1["options"] = data[0].mcqQuestionId[i].options;
-    data1["correctOptions"] = data[0].mcqQuestionId[i].correctOptions;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
     data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
     data1["type"] = data[0].mcqQuestionId[i].type;
     data1["answeredOption"] = data[0].answeredOption[i];
-    console.log(data1);
     resultData.push(data1);
-    i++;
   }
   return res.status(200).json(resultData);
 };

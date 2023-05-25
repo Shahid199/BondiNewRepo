@@ -76,7 +76,6 @@ const createExam = async (req, res, next) => {
   }
   return res.status(201).json(doc);
 };
-
 //get exam
 const getAllExam = async (req, res, next) => {
   let exams;
@@ -441,7 +440,6 @@ const examRuleGetAll = async (req, res, next) => {
   if (data) return res.status(200).json(data);
   else return res.status(404).json("No data found.");
 };
-
 //add wriiten question function
 const addQuestionWritten = async (req, res, next) => {
   //file upload handle
@@ -494,7 +492,6 @@ const addQuestionWritten = async (req, res, next) => {
   if (doc != null && doc1 != null) return res.status(201).json(doc);
   else return res.status(404).json("Not save correctly.");
 };
-
 //view questions
 const questionByExamId = async (req, res, next) => {
   const examId = req.query.examId;

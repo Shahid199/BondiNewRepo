@@ -10,6 +10,7 @@ const addStudentToCourse = async (req, res, next) => {
   const file = req.file;
   let courseId = req.query.courseId;
   let excelFilePath = null;
+  //console.log(file);
   if (!file) {
     return res.status(404).json({ message: "File not uploaded." });
   }
@@ -17,6 +18,7 @@ const addStudentToCourse = async (req, res, next) => {
   const data1 = await fsp.readFile(excelFilePath, "utf8");
   const linesExceptFirst = data1.split("\n");
   const linesArr = linesExceptFirst;
+  console.log(linesArr.length);
   //end file work
   let students = [];
   let problemStudent = [];
@@ -24,7 +26,7 @@ const addStudentToCourse = async (req, res, next) => {
   let courseId1;
   courseId1 = new mongoose.Types.ObjectId(courseId);
   for (let i = 1; i < linesArr.length; i++) {
-    const regNo = String(linesArr[i].replace(/[-"\r]/g, ""));
+    const regNo = String(linesArr[i].replace(/[\r]/g, ""));
     if (regNo == "undefined") {
       continue;
     }

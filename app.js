@@ -57,9 +57,6 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
-    // let startTime1 = new Date();
-    // console.log(startTime1);
-    // console.log(new Date(moment(startTime1).add(30, "minutes")));
     console.log("running on 5011");
   })
   .catch((err) => console.log(err));
