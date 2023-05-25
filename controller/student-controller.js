@@ -251,7 +251,12 @@ const assignQuestion = async (req, res, next) => {
     max = 0,
     rand;
   try {
-    size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
+    size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate({
+      path: "mId",
+      match: { status: { $eq: true } },
+    });
+    size = size.mId.length;
+    //size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -266,8 +271,7 @@ const assignQuestion = async (req, res, next) => {
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
   let totalQues = Number(totalQuesData.totalQuestionMcq);
-  max = size.sizeMid - 1;
-  max = max - min;
+  max = size - 1;
   for (let i = 0; ; i++) {
     rand = Math.random();
     rand = rand * Number(max);
@@ -292,7 +296,7 @@ const assignQuestion = async (req, res, next) => {
   let doc2 = [];
   doc1 = doc1.mId;
   for (let i = 0; i < totalQues; i++) {
-    let data = doc1[doc[i]];
+    let data = doc1.mId[doc[i]];
     doc2.push(data);
   }
   let questions;

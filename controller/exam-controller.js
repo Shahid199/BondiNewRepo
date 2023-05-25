@@ -283,7 +283,6 @@ const examByCourseSubject = async (req, res, next) => {
   result.push({ examCount: examData.length });
   return res.status(200).json(result);
 };
-
 //add questions
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
@@ -332,12 +331,12 @@ const addQuestionMcq = async (req, res, next) => {
   let questionId = doc._id;
   if (!questionId) return res.status(400).send("question not inserted");
   let mcqQData,
-    sizeMid,
+    doc1,
     mId,
     mIdNew = [];
   try {
     mcqQData = await McqQuestionVsExam.findOne({ eId: examIdObj }).select(
-      "mId sizeMid"
+      "mId"
     );
   } catch (err) {
     return res.status(500).json(err);
@@ -347,7 +346,6 @@ const addQuestionMcq = async (req, res, next) => {
     let questionExam = new McqQuestionVsExam({
       eId: examId,
       mId: mIdNew,
-      sizeMid: Number(mIdNew.length),
     });
     try {
       doc1 = await questionExam.save();
@@ -356,14 +354,12 @@ const addQuestionMcq = async (req, res, next) => {
     }
   } else {
     mId = mcqQData.mId;
-    sizeMid = mcqQData.sizeMid;
-    sizeMid = sizeMid + 1;
     mIdNew = mId;
     mIdNew.push(questionId);
     try {
       doc1 = await McqQuestionVsExam.updateOne(
         { eId: examIdObj },
-        { $set: { mId: mIdNew, sizeMid: sizeMid } }
+        { $set: { mId: mIdNew } }
       );
     } catch (err) {
       return res.status(500).json(err);
@@ -371,7 +367,6 @@ const addQuestionMcq = async (req, res, next) => {
   }
   return res.status(404).json("Saved.");
 };
-
 //exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -500,6 +495,53 @@ const addQuestionWritten = async (req, res, next) => {
   else return res.status(404).json("Not save correctly.");
 };
 
+//view questions
+const questionByExamId = async (req, res, next) => {
+  const examId = req.query.examId;
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let queryResult = null;
+
+  try {
+    queryResult = await McqQuestionVsExam.findOne({ eId: examId }).populate({
+      path: "mId",
+      match: { status: { $eq: true } },
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  console.log(queryResult);
+  let resultAll = [];
+  for (let i = 0; i < queryResult.mId.length; i++) {
+    let result = {};
+    // if (queryResult.mId[i] == null) continue;
+    result["type"] = queryResult.mId[i].type;
+    result["question"] = queryResult.mId[i].question;
+    result["options"] = queryResult.mId[i].options;
+    result["correctOption"] = queryResult.mId[i].correctOption;
+    result["explanation"] = queryResult.mId[i].explanationILink;
+    result["questionId"] = queryResult.mId[i]._id;
+    result["status"] = queryResult.mId[i].status;
+    resultAll.push(result);
+  }
+  resultAll.push({ totalQuestion: queryResult.mId.length });
+  resultAll.push({ examId: String(queryResult.eId) });
+  return res.status(200).json(resultAll);
+};
+
+const updateQuestionStatus = async (req, res, next) => {
+  const questionId = req.query.questionId;
+  const questionIdObj = new mongoose.Types.ObjectId(questionId);
+  let queryResult = null;
+  try {
+    queryResult = await QuestionsMcq.findByIdAndUpdate(questionIdObj, {
+      status: false,
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(201).json(queryResult);
+};
+
 //export functions
 exports.createExam = createExam;
 exports.getAllExam = getAllExam;
@@ -512,3 +554,5 @@ exports.examRuleGet = examRuleGet;
 exports.examRuleGetAll = examRuleGetAll;
 exports.examByCourseSubject = examByCourseSubject;
 exports.getExamById = getExamById;
+exports.questionByExamId = questionByExamId;
+exports.updateQuestionStatus = updateQuestionStatus;

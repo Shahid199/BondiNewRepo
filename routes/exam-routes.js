@@ -13,6 +13,8 @@ const {
   examRuleGetAll,
   examByCourseSubject,
   getExamById,
+  questionByExamId,
+  updateQuestionStatus,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -47,4 +49,6 @@ router.get("/examruleget", examRuleGet);
 router.get("/examrulegetall", examRuleGetAll);
 router.get("/exambycoursesubject", examByCourseSubject);
 router.get("/getexambyid", getExamById);
+router.get("/questionbyexamid", questionByExamId);
+router.get("/updatequestionstatus",updateQuestionStatus);
 module.exports = router;
