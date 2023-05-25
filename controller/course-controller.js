@@ -37,10 +37,11 @@ const createCourse = async (req, res, next) => {
 };
 //get course update
 const getCourse = async (req, res, next) => {
-  const courseId = req.query.courseId;
+  const id = req.params.id;
+  const filter = {courseId: new ObjectId(id)}
   let course;
   try {
-    course = await Course.findById(courseId);
+    course = await Course.findById(filter);
   } catch (err) {
     return res.status(500).json(err);
   }
