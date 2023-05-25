@@ -315,7 +315,6 @@ exports.getAllFreeStudent = getAllFreeStudent;
 exports.freeLoginStudent = freeLoginStudent;
 exports.examCheckMiddleware = examCheckMiddleware;
 exports.validateToken = validateToken;
-
 exports.assignQuestion = assignQuestion;
 exports.updateAssignQuestion = updateAssignQuestion;
 exports.getRunningData = getRunningData;

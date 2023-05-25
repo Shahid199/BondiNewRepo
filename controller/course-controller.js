@@ -37,7 +37,7 @@ const createCourse = async (req, res, next) => {
 };
 //get course update
 const getCourse = async (req, res, next) => {
-  const courseId = req.body.courseId;
+  const courseId = req.query.courseId;
   let course;
   try {
     course = await Course.findById(courseId);
