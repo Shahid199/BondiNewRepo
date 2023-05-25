@@ -14,6 +14,8 @@ const Subject = require("../model/Subject");
 const { fork } = require("child_process");
 const ISODate = require("isodate");
 const moment = require("moment");
+const PDFDocument = require("pdfkit");
+const path = require("path");
 
 const Limit = 1;
 
@@ -461,6 +463,8 @@ const submitAnswer = async (req, res, next) => {
   let resultRank = forkk.on(message);
   return res.status(200).json(resultRank);
 };
+
+//student can view the following info
 const viewSollution = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
@@ -511,8 +515,13 @@ const historyData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+  console.log(data);
+
+  //return res.status(200).json(data);
   if (data == null) return res.status(404).json("data not found.");
+
   let resultData = [];
+  let flag = false;
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     data1["title"] = data[i].examId.name;
@@ -543,8 +552,10 @@ const historyData = async (req, res, next) => {
       return res.status(500).json(err);
     }
     subjectName = subjectName.name;
-    if (rank == null || subjectName == null)
-      return res.status(404).json("data not found.");
+    if (rank == null || subjectName == null) {
+      flag = true;
+      break;
+    }
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
     data1["meritPosition"] = rank.rank;
     data1["examStartTime"] = rank.examStartTime;
@@ -553,7 +564,8 @@ const historyData = async (req, res, next) => {
     resultData.push(data1);
     i++;
   }
-  return res.status(200).json(resultData);
+  if (flag == true) return res.status(404).json("data not found.");
+  else return res.status(200).json(resultData);
 };
 const missedExam = async (req, res, next) => {
   const studentId = req.user.studentId;
@@ -574,7 +586,11 @@ const missedExam = async (req, res, next) => {
   let allExam = null;
   try {
     allExam = await Exam.find({
-      $and: [{ courseId: courseIdObj }, { status: true }],
+      $and: [
+        { courseId: courseIdObj },
+        { status: true },
+        { endtime: { $lt: new Date() } },
+      ],
     }).select("_id");
   } catch (err) {
     return res.status(500).json("DB error");
@@ -625,9 +641,10 @@ const missedExam = async (req, res, next) => {
 
     resultFinal.push(result);
   }
-  return res.status(200).json(resultFinal);
+  if (resultFinal.length == 0)
+    return res.status(404).json("No Missed Exam Available.");
+  else return res.status(200).json(resultFinal);
 };
-
 const retakeExam = async (req, res, next) => {
   const examId = req.query.examId;
   const examIdObj = new mongoose.Types.ObjectId(examId);
@@ -638,33 +655,50 @@ const retakeExam = async (req, res, next) => {
     questionData = [],
     rand;
   try {
-    examData = await McqQuestionVsExam.find({ eId: examIdObj }).populate(
-      "eId mId"
-    );
+    examData = await McqQuestionVsExam.findOne({ eId: examIdObj })
+      .select("_id mId eId")
+      .populate("eId mId");
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
   }
+  let examDataNew = examData;
+  examData = examData.mId;
+  //return res.status(200).json(examData);
   //start:generating random index of questions
-  max = examData[0].sizeMid - 1;
+  max = examData.length - 1;
   max = max - min;
+  console.log(max);
   for (let i = 0; ; i++) {
     rand = Math.random();
     rand = rand * Number(max);
     rand = Math.floor(rand);
     rand = rand + Number(min);
+
     if (!doc.includes(rand)) doc.push(rand);
-    if (doc.length == examData[0].eId.totalQuestionMcq) break;
+    if (doc.length == examDataNew.eId.totalQuestionMcq) break;
   }
   for (let i = 0; i < doc.length; i++) {
     let questions = {};
-    questions["id"] = examData[0].mId[doc[i]]._id;
-    questions["question"] = examData[0].mId[doc[i]].question;
-    questions["options"] = examData[0].mId[doc[i]].options;
-    questions["optionCount"] = examData[0].mId[doc[i]].optionCount;
-    questions["type"] = examData[0].mId[doc[i]].type;
-    questionData.push(examData);
+    questions["id"] = examData[doc[i]]._id;
+    questions["question"] = examData[doc[i]].question;
+    questions["options"] = examData[doc[i]].options;
+    questions["optionCount"] = examData[doc[i]].optionCount;
+    questions["type"] = examData[doc[i]].type;
+    questionData.push(questions);
   }
+  const filename = path.basename(
+    "/Users/shahid/Desktop/node-project/BondiDb/Backend/uploads/7.jpeg1685003311587.jpeg"
+  );
+
+  const document = new PDFDocument();
+  document.pipe(fs.createWriteStream("QuestionInfo.pdf"));
+  document.text("hello", 100, 100);
+  document.image(
+    "/Users/shahid/Desktop/node-project/BondiDb/Backend/uploads/7.jpeg1685003311587.jpeg",
+    { width: 300 }
+  );
+  document.end();
   //end:generating random index of questions
   if (questionData != null)
     return res.status(200).json({ one: questionData, two: doc });
@@ -724,7 +758,6 @@ const retakeSubmit = async (req, res, next) => {
 
   return res.status(200).json(answerScript);
 };
-
 const getRank = async (req, res, next) => {
   const sId = req.user.studentId;
   const eId = req.query.eId;

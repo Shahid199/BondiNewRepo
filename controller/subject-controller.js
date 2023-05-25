@@ -2,7 +2,7 @@ const Subject = require("../model/Subject");
 const Course = require("../model/Course");
 const { default: mongoose } = require("mongoose");
 const Exam = require("../model/Exam");
-const moment  = require("moment");
+const moment = require("moment");
 //Create Subject
 const createSubject = async (req, res, next) => {
   const { courseId, name, descr } = req.query;
@@ -42,14 +42,17 @@ const createSubject = async (req, res, next) => {
 };
 //get subject by course
 const getSubjectByCourse = async (req, res, next) => {
+  const ObjectId = mongoose.Types.ObjectId;
+  let subjects = [];
   const courseId = req.query.courseId;
+  if(!ObjectId.isValid(courseId))return res.status(404).json(subjects);
   let courseIdOb = new mongoose.Types.ObjectId(courseId);
-  let subjects;
   try {
     subjects = await Subject.find({ courseId: courseIdOb });
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
+ // if (!subjects) return res.status().json(su);
   return res.status(200).json(subjects);
 };
 //view subject info
