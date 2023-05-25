@@ -5,7 +5,7 @@ const Exam = require("../model/Exam");
 const moment  = require("moment");
 //Create Subject
 const createSubject = async (req, res, next) => {
-  const { courseId, name, descr } = req.body;
+  const { courseId, name, descr } = req.query;
   const file = req.file;
   const courseId1 = courseId;
 
