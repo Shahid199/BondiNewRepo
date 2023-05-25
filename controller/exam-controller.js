@@ -9,7 +9,7 @@ const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
-const Limit = 1;
+const Limit = 10;
 
 //create Exam
 const createExam = async (req, res, next) => {
@@ -509,7 +509,7 @@ const questionByExamId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  console.log(queryResult);
+  if (queryResult == null) return res.status(404).json("No Question added.");
   let resultAll = [];
   for (let i = 0; i < queryResult.mId.length; i++) {
     let result = {};
