@@ -106,11 +106,7 @@ const updateSubject = async (req, res, next) => {
   } catch (err) {
     return res.status(501).json(err);
   }
-<<<<<<< HEAD
   return res.status(200).json("Subject is updated.");
-=======
-  return res.status(201).json("Updated.");
->>>>>>> 040f09b42b75ab6a8a2e03d260b1b5b127ec9073
 };
 //Get Subject List
 const getAllSubject = async (req, res, next) => {
