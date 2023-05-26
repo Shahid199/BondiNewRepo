@@ -9,19 +9,15 @@ const ObjectId = mongoose.Types.ObjectId;
 const addStudentToCourse = async (req, res, next) => {
   //start file work
   const file = req.file;
+  if (!file) return res.status(404).json("CSV file is not uploaded or wrong file name.");
   let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
     return res.status(404).json("courseId is invalid.");
   let excelFilePath = null;
-  //console.log(file);
-  if (!file) {
-    return res.status(404).json({ message: "File not uploaded." });
-  }
   excelFilePath = "uploads/".concat(file.filename);
   const data1 = await fsp.readFile(excelFilePath, "utf8");
   const linesExceptFirst = data1.split("\n");
   const linesArr = linesExceptFirst;
-  console.log(linesArr.length);
   //end file work
   let students = [];
   let problemStudent = [];
@@ -52,6 +48,7 @@ const addStudentToCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("err");
     }
+    console.log(existData);
     if (existData != null) {
       existStudent.push(regNo);
       continue;
@@ -61,6 +58,7 @@ const addStudentToCourse = async (req, res, next) => {
     users["status"] = true;
     students.push(users);
   }
+
   if (problemStudent.length > 0) return res.status(202).json(problemStudent);
   let doc;
   try {
@@ -127,7 +125,7 @@ const getCourseByReg = async (req, res, next) => {
     }
     let studentId1 = studentId._id;
     return res.status(200).json({ courses: dataNew, studentId: studentId1 });
-  } else return res.status(404).json("Course Not found." );
+  } else return res.status(404).json("Course Not found.");
 };
 
 exports.addStudentToCourse = addStudentToCourse;
