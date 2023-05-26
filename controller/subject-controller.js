@@ -45,14 +45,14 @@ const getSubjectByCourse = async (req, res, next) => {
   const ObjectId = mongoose.Types.ObjectId;
   let subjects = [];
   const courseId = req.query.courseId;
-  if(!ObjectId.isValid(courseId))return res.status(404).json(subjects);
+  if (!ObjectId.isValid(courseId)) return res.status(404).json(subjects);
   let courseIdOb = new mongoose.Types.ObjectId(courseId);
   try {
     subjects = await Subject.find({ courseId: courseIdOb });
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
- // if (!subjects) return res.status().json(su);
+  // if (!subjects) return res.status().json(su);
   return res.status(200).json(subjects);
 };
 //view subject info
@@ -66,6 +66,7 @@ const getSubjectById = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+  if (subjectData == null) return res.status(200).json([]);
   subjectDataAll["name"] = subjectData.name;
   subjectDataAll["descr"] = subjectData.descr;
   subjectDataAll["courseId"] = subjectData.courseId._id;
@@ -79,7 +80,10 @@ const getSubjectById = async (req, res, next) => {
 };
 //update subject
 const updateSubject = async (req, res, next) => {
+  const ObjectId = mongoose.Types.ObjectId;
   const { subjectId, name, descr, iLink, courseId } = req.body;
+  if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("subjectId or courseId is not valid.");
   let subjectExam = null;
   try {
     subjectExam = await Exam.find({
@@ -102,7 +106,11 @@ const updateSubject = async (req, res, next) => {
   } catch (err) {
     return res.status(501).json(err);
   }
+<<<<<<< HEAD
   return res.status(200).json("Subject is updated.");
+=======
+  return res.status(201).json("Updated.");
+>>>>>>> 040f09b42b75ab6a8a2e03d260b1b5b127ec9073
 };
 //Get Subject List
 const getAllSubject = async (req, res, next) => {

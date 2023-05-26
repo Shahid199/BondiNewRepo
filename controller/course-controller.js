@@ -37,7 +37,12 @@ const createCourse = async (req, res, next) => {
 };
 //get course update
 const getCourse = async (req, res, next) => {
+<<<<<<< HEAD
   const id = req.query.courseId;
+=======
+  const id = req.params.id;
+  const filter = { courseId: new ObjectId(id) };
+>>>>>>> 040f09b42b75ab6a8a2e03d260b1b5b127ec9073
   let course;
   try {
     course = await Course.findById(id);
@@ -52,8 +57,8 @@ const getCourse = async (req, res, next) => {
 //get all course
 const getAllCourse = async (req, res, next) => {
   let courses;
-  let getStatus= {};
-  if(req.query.status){
+  let getStatus = {};
+  if (req.query.status) {
     getStatus = req.query;
   }
   let page = req.query.page;
@@ -80,7 +85,10 @@ const getAllCourse = async (req, res, next) => {
 };
 //update status of course
 const updateStatusCourse = async (req, res, next) => {
+  const ObjectId = mongoose.Types.ObjectId;
   const courseId = req.body.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("courseId is invalid.");
   console.log(courseId);
   let status = req.body.status;
   let status1 = JSON.parse(status);
@@ -129,25 +137,28 @@ const getAllCourseAdmin = async (req, res, next) => {
   }
   return res.status(200).json(courses);
 };
-const updateSingle = async(req,res,next)=>{
+const updateSingle = async (req, res, next) => {
   const id = req.query.id;
   const singleCourse = req.body;
   console.log(singleCourse);
-  const filter = {_id: new ObjectId(id)};
-  const result = await Course.findByIdAndUpdate(filter,singleCourse);
+  const filter = { _id: new ObjectId(id) };
+  const result = await Course.findByIdAndUpdate(filter, singleCourse);
   return res.status(200).json(result);
 };
-const deactivateCourse = async(req,res,next)=>{
+const deactivateCourse = async (req, res, next) => {
   const id = req.query.id;
-  const filter = {_id: new ObjectId(id)};
-  const result = await Course.findByIdAndUpdate(filter,{status:false});
+  const filter = { _id: new ObjectId(id) };
+  const result = await Course.findByIdAndUpdate(filter, { status: false });
   let result2;
-  if(result){
-     result2 = await CourseVsStudent.updateMany({courseId:id},{status:false});
+  if (result) {
+    result2 = await CourseVsStudent.updateMany(
+      { courseId: id },
+      { status: false }
+    );
   }
   console.log(result2);
   return res.status(200).json(result);
-}
+};
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;

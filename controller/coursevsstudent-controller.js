@@ -4,11 +4,14 @@ const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose } = require("mongoose");
 const fsp = fs.promises;
+const ObjectId = mongoose.Types.ObjectId;
 //add Student To Course
 const addStudentToCourse = async (req, res, next) => {
   //start file work
   const file = req.file;
   let courseId = req.query.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("courseId is invalid.");
   let excelFilePath = null;
   //console.log(file);
   if (!file) {
@@ -72,6 +75,8 @@ const addStudentToCourse = async (req, res, next) => {
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("courseId is invalid.");
   let students;
   try {
     students = await CourseVsStudent.find({
@@ -87,20 +92,19 @@ const getStudentByCourse = async (req, res, next) => {
 //get courses by student
 const getCourseByStudent = async (req, res, next) => {
   let studentId = req.query.studentid;
-  let courses,
-    flag = false;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("studentId is invalid.");
+  let courses = [];
   try {
     courses = await CourseVsStudent.find({ studentId: studentId }).populate(
       "courseId"
     );
-    flag = true;
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  if (flag == true) {
-    return res.status(200).json(courses);
-  }
+
+  return res.status(200).json(courses);
 };
 //get course by regNo
 const getCourseByReg = async (req, res, next) => {
@@ -123,7 +127,7 @@ const getCourseByReg = async (req, res, next) => {
     }
     let studentId1 = studentId._id;
     return res.status(200).json({ courses: dataNew, studentId: studentId1 });
-  } else return res.status(404).json({ message: "Course Not found." });
+  } else return res.status(404).json("Course Not found." );
 };
 
 exports.addStudentToCourse = addStudentToCourse;

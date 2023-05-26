@@ -3,6 +3,7 @@ const express = require("express");
 const cookies = require("cookie-parser");
 const mongoose = require("mongoose");
 const moment = require("moment");
+const path = require("path");
 
 const app = express();
 
@@ -28,6 +29,8 @@ cors(app);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, "/public")));
 
 // add routes from below
 const courseRouter = require("./routes/course-routes");
