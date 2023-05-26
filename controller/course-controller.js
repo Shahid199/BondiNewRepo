@@ -37,12 +37,7 @@ const createCourse = async (req, res, next) => {
 };
 //get course update
 const getCourse = async (req, res, next) => {
-<<<<<<< HEAD
   const id = req.query.courseId;
-=======
-  const id = req.params.id;
-  const filter = { courseId: new ObjectId(id) };
->>>>>>> 040f09b42b75ab6a8a2e03d260b1b5b127ec9073
   let course;
   try {
     course = await Course.findById(id);
