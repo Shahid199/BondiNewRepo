@@ -73,6 +73,7 @@ const getSubjectById = async (req, res, next) => {
   subjectDataAll["iLink"] = subjectData.iLink;
   subjectDataAll["createdAt"] = subjectData.createdAt;
   subjectDataAll["updatedAt"] = subjectData.updatedAt;
+  subjectDataAll["_id"] = subjectData._id;
 
   return res.status(200).json(subjectDataAll);
 };
@@ -82,33 +83,26 @@ const updateSubject = async (req, res, next) => {
   let subjectExam = null;
   try {
     subjectExam = await Exam.find({
-      subjectId: new mongoose.Types.ObjectId(subjectId),
-    });
+      subjectId: new mongoose.Types.ObjectId(subjectId)
+    }).count();
   } catch (err) {
     return res.status(500).json(err);
   }
-  if (subjectExam)
-    return res.status(404).json("Exam already exist.Can' update subject.");
-  const file = req.file;
-  let iLinkPath = null;
-  let upd = null;
-  if (file) {
-    iLinkPath = "uploads/".concat(file.filename);
-  } else {
-    iLinkPath = iLink;
-  }
+  if (subjectExam>0) return res.status(404).json("Exam already exist.Can' update subject.");
+    
+
   const subjectData = {
     name: name,
     descr: descr,
-    iLink: iLinkPath,
+    iLink: iLink,
     courseId: new mongoose.Types.ObjectId(courseId),
   };
   try {
     upd = await Subject.findByIdAndUpdate(subjectId, subjectData);
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(501).json(err);
   }
-  return res.status(500).json("Updated.");
+  return res.status(200).json("Subject is updated.");
 };
 //Get Subject List
 const getAllSubject = async (req, res, next) => {
@@ -132,6 +126,7 @@ const getAllSubject = async (req, res, next) => {
     subjectDataAll["updatedAt"] = moment(subjects[i].updatedAt).format(
       "MM-DD-YYYY hh:mm:ss a"
     );
+    subjectDataAll["_id"] = subjects[i]._id;
     data.push(subjectDataAll);
   }
 

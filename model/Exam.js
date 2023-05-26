@@ -11,7 +11,7 @@ const examSchema = new Schema(
       unique: true,
       max: 200,
     },
-    //exam variation for Weekly=1/Monthly=2/daily=3
+    //exam variation for daily=1/Weekly=2/Monthly=3
     examType: {
       type: Number,
       required: true,

@@ -4,7 +4,7 @@ const Student = require("../model/Student");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const { json } = require("express");
 const { ObjectId } = require("mongodb");
-const Limit = 10;
+const Limit = 30;
 //Create Courses
 const createCourse = async (req, res, next) => {
   const { name, descr, status } = req.body;
@@ -37,11 +37,10 @@ const createCourse = async (req, res, next) => {
 };
 //get course update
 const getCourse = async (req, res, next) => {
-  const id = req.params.id;
-  const filter = {courseId: new ObjectId(id)}
+  const id = req.query.courseId;
   let course;
   try {
-    course = await Course.findById(filter);
+    course = await Course.findById(id);
   } catch (err) {
     return res.status(500).json(err);
   }

@@ -9,7 +9,7 @@ const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
-const Limit = 10;
+const Limit = 100;
 
 //create Exam
 const createExam = async (req, res, next) => {
@@ -19,6 +19,7 @@ const createExam = async (req, res, next) => {
     return res.status(404).json("Fil not uploaded.");
   }
   iLinkPath = "uploads/".concat(file.filename);
+  const examFromQuery= JSON.parse(req.query.exam);
   const {
     courseId,
     subjectId,
@@ -35,7 +36,21 @@ const createExam = async (req, res, next) => {
     sscStatus,
     hscStatus,
     negativeMarks,
-  } = req.body;
+  } = examFromQuery;
+  console.log(courseId,subjectId,
+    name,
+    examType,
+    examVariation,
+    examFreeOrNot,
+    startTime,
+    endTime,
+    totalQuestionMcq,
+    marksPerMcq,
+    status,
+    duration,
+    sscStatus,
+    hscStatus,
+    negativeMarks,);
   let startTime1, endTime1, tqm, tmm;
   tqm = totalQuestionMcq;
   tmm = marksPerMcq;
@@ -127,6 +142,8 @@ const getExamById = async (req, res, next) => {
   data["createdAt"] = examData.createdAt;
   return res.status(200).json(data);
 };
+
+//get all exam for a particular course of particular subject
 const getExamBySub = async (req, res, next) => {
   const subjectId = req.query.subjectId;
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);

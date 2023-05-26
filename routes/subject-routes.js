@@ -9,8 +9,8 @@ const {
 } = require("../controller/subject-controller");
 const { upload } = require("../utilities/multer");
 
-router.post("/createsubject", [upload.single("iLink")], createSubject);
-router.put("/updatesubject", [upload.single("iLink")], updateSubject);
+router.post("/createsubject", [passport.authenticate("jwt", { session: false }),upload.single("iLink")], createSubject);
+router.put("/updatesubject", updateSubject);
 router.get("/getsubjectbyid", getSubjectById);
 router.get("/getsubjectbycourse", getSubjectByCourse);
 router.get("/getallsubject", getAllSubject);
