@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     const data = file.originalname;
     let arr = data.split(".");
     let extension = arr.pop();
-    const newName = file.originalname + Date.now();// + "." + extension;
+    const newName = file.originalname + Date.now() + "." + extension;
     callback(null, newName);
   },
 });
