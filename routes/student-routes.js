@@ -3,6 +3,7 @@ const { upload } = require("../utilities/multer");
 const passport = require("passport");
 const {
   loginStudent,
+  validateToken,
   addStudent,
   updateStudent,
   getStudentId,
@@ -22,6 +23,7 @@ const {
 const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
+router.get("/validate-login",[passport.authenticate("jwt", { session: false })], validateToken);
 //need query parameter eid(examid).
 router.get(
   "/examcheckmiddleware",
