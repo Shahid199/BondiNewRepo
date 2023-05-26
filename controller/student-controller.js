@@ -16,6 +16,7 @@ const ISODate = require("isodate");
 const moment = require("moment");
 const PDFDocument = require("pdfkit");
 const path = require("path");
+const handlebars = require("handlebars");
 
 const Limit = 1;
 
@@ -26,6 +27,8 @@ const Limit = 1;
  */
 const loginStudent = async (req, res) => {
   const { courseId, regNo } = req.body;
+  const ObjectId = mongoose.Types.ObjectId;
+  if (!ObjectId.isValid(courseId)) return res.status(422).json("Course Id not valid");
   try {
     const getStudent = await Student.findOne({ regNo: regNo }, "_id").exec();
     if (!getStudent) {
@@ -646,7 +649,10 @@ const missedExam = async (req, res, next) => {
   else return res.status(200).json(resultFinal);
 };
 const retakeExam = async (req, res, next) => {
+  const ObjectId = mongoose.Types.ObjectId;
   const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
   let examData = null,
     doc = [],
@@ -678,6 +684,7 @@ const retakeExam = async (req, res, next) => {
     if (!doc.includes(rand)) doc.push(rand);
     if (doc.length == examDataNew.eId.totalQuestionMcq) break;
   }
+  let ids = [];
   for (let i = 0; i < doc.length; i++) {
     let questions = {};
     questions["id"] = examData[doc[i]]._id;
@@ -686,19 +693,74 @@ const retakeExam = async (req, res, next) => {
     questions["optionCount"] = examData[doc[i]].optionCount;
     questions["type"] = examData[doc[i]].type;
     questionData.push(questions);
+    ids.push(examData[doc[i]]._id);
   }
-  const filename = path.basename(
-    "/Users/shahid/Desktop/node-project/BondiDb/Backend/uploads/7.jpeg1685003311587.jpeg"
-  );
+  // const filename = path.basename(
+  //   "/Users/shahid/Desktop/node-project/BondiDb/Backend/uploads/7.jpeg1685003311587.jpeg"
+  // );
 
-  const document = new PDFDocument();
-  document.pipe(fs.createWriteStream("QuestionInfo.pdf"));
-  document.text("hello", 100, 100);
-  document.image(
-    "/Users/shahid/Desktop/node-project/BondiDb/Backend/uploads/7.jpeg1685003311587.jpeg",
-    { width: 300 }
-  );
-  document.end();
+  let template = handlebars.compile(`
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#customers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+</style>
+</head>
+<body>
+
+<h1>A Fancy Table</h1>
+
+<table id="customers">
+  <tr>
+    <td>{{#each questionData}}{{this.id}}-{{this.tupe}}</td>{{/each}}
+  </tr>
+</table>
+</body>
+</html>
+
+
+`);
+  var data = {
+    id: ids,
+    type: String(questionData[0].type),
+  };
+  var result = template(data);
+  //const pdf = handlebars.render(template, data);
+
+  // Write the PDF to a file.
+  fs.writeFileSync("my-pdf.pdf", result);
+
+  // const document = new PDFDocument({ margin: 50 });
+  // document.pipe(fs.createWriteStream("QuestionInfo.pdf"));
+  // document.image(
+  //   "/Users/shahid/Desktop/node-project/BondiDb/Backend/BP-logo.jpeg",
+  //   250,
+  //   50,
+  //   { width: 100 }
+  // );
+  // document.end();
   //end:generating random index of questions
   if (questionData != null)
     return res.status(200).json({ one: questionData, two: doc });

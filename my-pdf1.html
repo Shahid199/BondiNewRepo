@@ -1,0 +1,137 @@
+
+  .table-resp {
+    border-collapse: collapse;
+    margin-left: 1em;
+    caption {
+      text-align: left;
+      width: 95vw; // Screws up table width until positioning below
+      // caption-side: top-outside; Firefox-only for now
+    }
+  }
+  
+  @media (min-width: 768px) { // sm, md, lg 
+    .table-resp {
+      margin-top: 3em;
+      position: relative; // Used below to give position: absolute context
+      caption {
+        position: absolute; // Fixes table width broken by width: 95vw above
+        top: -2em;
+        margin-bottom: .75em;
+      }
+      thead {
+        text-align: left;
+        background-color: #333;
+        color: white;
+      }
+      tbody {
+        tr {
+          &:nth-child(odd) {
+            // background-color: hsl(0, 0%, 94%);
+          }
+          &:nth-child(even) {
+            // background-color: hsl(0, 0%, 88%);
+          }
+        }
+      }
+      td, th {
+        padding: .25em .5em;
+        &:nth-child(2) {
+          border-left: 3px solid #fff;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 767px) /* xs */ {
+    thead {
+      display: none;
+    }
+    .table-resp {
+      display: block;
+      margin-top: 1em;
+    }
+    td {
+      display: block;
+    }
+    td:first-child {
+      font-weight: 700;
+      margin-top: .75em;
+      margin-bottom: 0;
+    }
+    td:nth-child(2) {
+      margin-top: 0;
+    }
+  }
+  
+  /* Uninteresting stuff below here */
+  
+  html {
+    font: 18px "Iowan Old Style", serif;
+  }
+  <html>
+    <head>
+      <title>My PDF</title>
+    </head>
+   
+    <body>
+    <table class="table-resp">
+    <caption><b>Table 6.1</b>: Writers &amp; Their Most Famous Creations</caption>
+    <thead>
+      <tr>
+        <th>Writer</th>
+        <th>Creation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lovecraft</td>
+        <td>Cthulhu</td>
+      </tr>
+      <tr>
+        <td>Burroughs</td>
+        <td>Tarzan of the Apes</td>
+      </tr>
+      <tr>
+        <td>Dent</td>
+        <td>Doc Savage</td>
+      </tr>
+      <tr>
+        <td>Gibson</td>
+        <td>The Shadow</td>
+      </tr>
+      <tr>
+        <td>Haggard</td>
+        <td>Allan Quatermain</td>
+      </tr>
+      <tr>
+        <td>Wells</td>
+        <td>The Time Traveler</td>
+      </tr>
+      <tr>
+        <td>Verne</td>
+        <td>Captain Nemo</td>
+      </tr>
+      <tr>
+        <td>Howard</td>
+        <td>Conan the Barbarian</td>
+      </tr>
+      <tr>
+        <td>Raymond</td>
+        <td>Flash Gordon</td>
+      </tr>
+      <tr>
+        <td>Rohmer</td>
+        <td>Fu Manchu</td>
+      </tr>
+      <tr>
+        <td>Nolan</td>
+        <td>Buck Rogers</td>
+      </tr>
+      <tr>
+        <td>Leiber</td>
+        <td>Fafhrd &amp; the Gray Mouser</td>
+      </tr>
+    </tbody>
+  </table>
+    </body>
+  </html>
