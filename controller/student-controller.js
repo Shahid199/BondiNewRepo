@@ -357,6 +357,7 @@ const assignQuestion = async (req, res, next) => {
   questions.push({ studStartTime: examStartTime });
   questions.push({ studEndTime: examEndTime });
   questions.push({ examEndTime: examFinishTime });
+  questions.push({ answeredOption: answered });
   console.log(questions);
   if (saveStudentQuestion == null || saveStudentExam == null) {
     return res.status(404).json("Problem occur to assign question.");
@@ -647,7 +648,7 @@ const missedExam = async (req, res, next) => {
 
     resultFinal.push(result);
   }
- 
+
   return res.status(200).json(resultFinal);
 };
 const retakeExam = async (req, res, next) => {
