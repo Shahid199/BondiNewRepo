@@ -102,8 +102,10 @@ const createExam = async (req, res, next) => {
 };
 //get exam
 const getAllExam = async (req, res, next) => {
-  let exams;
+  const examType = req.query.examType;
+  console.log(examType);
   let page = req.query.page;
+  let exams;
   let skippedItem;
   if (page == null) {
     page = Number(1);
@@ -112,11 +114,22 @@ const getAllExam = async (req, res, next) => {
     page = Number(page);
     skippedItem = (page - 1) * Limit;
   }
-  try {
-    exams = await Exam.find({}).skip(skippedItem).limit(Limit);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
+  if (examType) {
+    try {
+      exams = await Exam.find({ examType: Number(examType) })
+        .skip(skippedItem)
+        .limit(Limit);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json("Something went wrong!");
+    }
+  } else {
+    try {
+      exams = await Exam.find({}).skip(skippedItem).limit(Limit);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json("Something went wrong!");
+    }
   }
   return res.status(200).send(exams);
 };
