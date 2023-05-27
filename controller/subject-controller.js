@@ -10,7 +10,7 @@ const createSubject = async (req, res) => {
   if (!file) return res.status(404).json("please Provide valid filename.");
   const courseId1 = courseId;
   let iLinkPath = null;
-  iLinkPath = process.env.HOSTNAME.concat("uploads/".concat(file.filename));
+  iLinkPath = "uploads/".concat(file.filename);
   let existingSubject;
   try {
     existingSubject = await Subject.findOne({ name: name }).select("courseId");

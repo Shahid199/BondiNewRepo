@@ -122,7 +122,7 @@ const getCourseByReg = async (req, res, next) => {
     );
     let dataNew = [];
     for (let i = 0; i < courses.length; i++) {
-      dataNew.push(courses[i].courseId);
+      if (courses[i].courseId) dataNew.push(courses[i].courseId);
     }
     let studentId1 = studentId._id;
     return res.status(200).json({ courses: dataNew, studentId: studentId1 });
