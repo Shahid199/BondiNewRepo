@@ -371,7 +371,7 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(500).json(err);
     }
   }
-  return res.status(404).json("Saved.");
+  return res.status(201).json("Saved.");
 };
 //exam rule page
 const examRuleSet = async (req, res, next) => {
