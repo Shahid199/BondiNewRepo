@@ -647,9 +647,8 @@ const missedExam = async (req, res, next) => {
 
     resultFinal.push(result);
   }
-  if (resultFinal.length == 0)
-    return res.status(200).json("No Missed Exam Available.");
-  else return res.status(200).json(resultFinal);
+ 
+  return res.status(200).json(resultFinal);
 };
 const retakeExam = async (req, res, next) => {
   const ObjectId = mongoose.Types.ObjectId;
