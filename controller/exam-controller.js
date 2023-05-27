@@ -506,7 +506,7 @@ const examRuleSet = async (req, res, next) => {
   }
 };
 const examRuleGet = async (req, res, next) => {
-  let examId = req.body.examId;
+  let examId = req.query.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
