@@ -9,12 +9,7 @@ const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
-<<<<<<< HEAD
 const Limit = 100;
-=======
-const ObjectId = mongoose.Types.ObjectId;
-const Limit = 10;
->>>>>>> 040f09b42b75ab6a8a2e03d260b1b5b127ec9073
 
 //create Exam
 const createExam = async (req, res, next) => {
@@ -41,7 +36,6 @@ const createExam = async (req, res, next) => {
     sscStatus,
     hscStatus,
     negativeMarks,
-<<<<<<< HEAD
   } = examFromQuery;
   console.log(courseId,subjectId,
     name,
@@ -57,11 +51,6 @@ const createExam = async (req, res, next) => {
     sscStatus,
     hscStatus,
     negativeMarks,);
-=======
-  } = req.body;
-  if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
-    return res.status(404).json("subjectId or courseId is invalid.");
->>>>>>> 040f09b42b75ab6a8a2e03d260b1b5b127ec9073
   let startTime1, endTime1, tqm, tmm;
   tqm = totalQuestionMcq;
   tmm = marksPerMcq;
@@ -124,8 +113,8 @@ const getAllExam = async (req, res, next) => {
 };
 const getExamById = async (req, res, next) => {
   const examId = req.query.examId;
-  if (!ObjectId.isValid(examId))
-    return res.status(404).json("examId is invalid.");
+  // if (!ObjectId.isValid(examId))
+  //   return res.status(404).json("examId is invalid.");
   let examData = null;
   try {
     examData = await Exam.findById(examId).populate("courseId subjectId");
