@@ -4,8 +4,8 @@ const { default: mongoose } = require("mongoose");
 const Exam = require("../model/Exam");
 const moment = require("moment");
 //Create Subject
-const createSubject = async (req, res, next) => {
-  const { courseId, name, descr } = req.query;
+const createSubject = async (req, res) => {
+  const { courseId, name, descr } = req.body;
   const file = req.file;
   if (!file) return res.status(404).json("please Provide valid filename.");
   const courseId1 = courseId;
