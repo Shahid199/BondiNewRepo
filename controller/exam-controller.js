@@ -17,10 +17,10 @@ const createExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
-    return res.status(404).json("File or filename is not valid.");
+    return res.status(404).json("Fil not uploaded.");
   }
-  iLinkPath = process.env.HOSTNAME.concat("uploads/".concat(file.filename));
-  const examFromQuery = JSON.parse(req.query.exam);
+  iLinkPath = "uploads/".concat(file.filename);
+  const examFromQuery= JSON.parse(req.query.exam);
   const {
     courseId,
     subjectId,
@@ -38,9 +38,7 @@ const createExam = async (req, res, next) => {
     hscStatus,
     negativeMarks,
   } = examFromQuery;
-  console.log(
-    courseId,
-    subjectId,
+  console.log(courseId,subjectId,
     name,
     examType,
     examVariation,
@@ -53,8 +51,7 @@ const createExam = async (req, res, next) => {
     duration,
     sscStatus,
     hscStatus,
-    negativeMarks
-  );
+    negativeMarks,);
   let startTime1, endTime1, tqm, tmm;
   tqm = totalQuestionMcq;
   tmm = marksPerMcq;
@@ -117,36 +114,15 @@ const getAllExam = async (req, res, next) => {
 };
 const getExamById = async (req, res, next) => {
   const examId = req.query.examId;
-  if (!ObjectId.isValid(examId))
-    return res.status(404).json("examId is invalid.");
+  // if (!ObjectId.isValid(examId))
+  //   return res.status(404).json("examId is invalid.");
   let examData = null;
   try {
-    examData = await Exam.findById(examId).populate("courseId subjectId");
+    examData = await Exam.findById(examId);
   } catch (err) {
     return res.status(500).json(err);
   }
-  let data = {};
-  data["examId"] = examData._id;
-  data["examName"] = examData.name;
-  data["courseId"] = examData.courseId._id;
-  data["courseName"] = examData.courseId.name;
-  data["subjectId"] = examData.subjectId._id;
-  data["subjectName"] = examData.subjectId.name;
-  data["status"] = examData.status;
-  data["sscStatus"] = examData.sscStatus;
-  data["hscStatus"] = examData.hscStatus;
-  data["iLink"] = examData.iLink;
-  data["startTime"] = examData.startTime;
-  data["endTime"] = examData.endTime;
-  data["examType"] = examData.examType;
-  data["examVariation"] = examData.variation;
-  data["duration"] = examData.duration;
-  data["examFreeOrNot"] = examData.examFreeOrNot;
-  data["totalQuestionMcq"] = examData.totalQuestionMcq;
-  data["marksPerMcq"] = examData.marksPerMcq;
-  data["totalMarksMcq"] = examData.totalMarksMcq;
-  data["createdAt"] = examData.createdAt;
-  return res.status(200).json(data);
+  return res.status(200).json(examData);
 };
 
 //get all exam for a particular course of particular subject
@@ -334,12 +310,8 @@ const addQuestionMcq = async (req, res, next) => {
     if (!file.iLink || !file.explanationILink) {
       return res.status(404).json("Question File not uploaded.");
     }
-    iLinkPath = process.env.HOSTNAME.concat(
-      "uploads/".concat(file.iLink[0].filename)
-    );
-    explanationILinkPath = process.env.HOSTNAME.concat(
-      "uploads/".concat(file.explanationILink[0].filename)
-    );
+    iLinkPath = "uploads/".concat(file.iLink[0].filename);
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
