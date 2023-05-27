@@ -9,6 +9,7 @@ const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
+const ObjectId = mongoose.Types.ObjectId;
 const Limit = 100;
 
 //create Exam
@@ -151,6 +152,8 @@ const getExamById = async (req, res, next) => {
 //get all exam for a particular course of particular subject
 const getExamBySub = async (req, res, next) => {
   const subjectId = req.query.subjectId;
+  if (!ObjectId.isValid(subjectId))
+    return res.status(404).json("subject Id is not valid.");
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   let examData = null;
   try {
@@ -169,6 +172,8 @@ const getExamBySub = async (req, res, next) => {
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
+  if (!ObjectId.isValid(subjectId))
+    return res.status(404).json("subject Id is not valid.");
   let page = req.query.page;
   let skippedItem;
   if (page == null) {
@@ -245,6 +250,8 @@ const getExamBySubject = async (req, res, next) => {
 };
 const examByCourseSubject = async (req, res, next) => {
   const { courseId, subjectId, page } = req.query;
+  if (!ObjectId.isValid(subjectId) || !ObjectId.isValid(courseId))
+    return res.status(404).json("subject Id or course Id is not valid.");
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   let skippedItem;
@@ -313,6 +320,8 @@ const addQuestionMcq = async (req, res, next) => {
   let question;
   const { questionText, optionCount, options, correctOption, status, examId } =
     req.body;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId Id is not valid.");
   const file = req.files;
   //question insert for text question(type=true)
   if (type == true) {
@@ -401,6 +410,8 @@ const examRuleSet = async (req, res, next) => {
   }
   console.log(ruleILinkPath);
   const examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
   let existingElem = null;
   try {
@@ -436,6 +447,8 @@ const examRuleSet = async (req, res, next) => {
 };
 const examRuleGet = async (req, res, next) => {
   let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
   console.log(examIdObj);
   let data = null;
@@ -521,6 +534,8 @@ const addQuestionWritten = async (req, res, next) => {
 //view questions
 const questionByExamId = async (req, res, next) => {
   const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
   let queryResult = null;
 
@@ -553,6 +568,8 @@ const questionByExamId = async (req, res, next) => {
 
 const updateQuestionStatus = async (req, res, next) => {
   const questionId = req.query.questionId;
+  if (!ObjectId.isValid(questionId))
+    return res.status(404).json("question Id is not valid.");
   const questionIdObj = new mongoose.Types.ObjectId(questionId);
   let queryResult = null;
   try {

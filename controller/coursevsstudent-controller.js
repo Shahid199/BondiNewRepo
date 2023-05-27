@@ -9,7 +9,8 @@ const ObjectId = mongoose.Types.ObjectId;
 const addStudentToCourse = async (req, res, next) => {
   //start file work
   const file = req.file;
-  if (!file) return res.status(404).json("CSV file is not uploaded or wrong file name.");
+  if (!file)
+    return res.status(404).json("CSV file is not uploaded or wrong file name.");
   let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
     return res.status(404).json("courseId is invalid.");
