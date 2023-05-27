@@ -19,7 +19,7 @@ const createExam = async (req, res, next) => {
   if (!file) {
     return res.status(404).json("Fil not uploaded.");
   }
-  iLinkPath = process.env.HOSTNAME.concat("uploads/".concat(file.filename));
+  iLinkPath = "uploads/".concat(file.filename);
   const examFromQuery = JSON.parse(req.query.exam);
   const {
     courseId,
@@ -378,20 +378,14 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(404).json("Expalnation File not uploaded.");
     }
     question = questionText;
-    explanationILinkPath = process.env.HOSTNAME.concat(
-      "uploads/".concat(file.explanationILink[0].filename)
-    );
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
   } else {
     if (!file.iLink) {
       return res.status(404).json("Question File not uploaded.");
     }
 
-    iLinkPath = process.env.HOSTNAME.concat(
-      "uploads/".concat(file.iLink[0].filename)
-    );
-    explanationILinkPath = process.env.HOSTNAME.concat(
-      "uploads/".concat(file.explanationILink[0].filename)
-    );
+    iLinkPath = "uploads/".concat(file.iLink[0].filename);
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
@@ -460,7 +454,7 @@ const examRuleSet = async (req, res, next) => {
   if (!file) {
     return res.status(404).jsoon("Exam rule file not uploaded.");
   }
-  ruleILinkPath = process.env.HOSTNAME.concat("uploads/".concat(file.filename));
+  ruleILinkPath = "uploads/".concat(file.filename);
   console.log(ruleILinkPath);
   const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
