@@ -139,7 +139,7 @@ const getExamById = async (req, res, next) => {
     return res.status(404).json("examId is invalid.");
   let examData = null;
   try {
-    examData = await Exam.findById(examId);
+    examData = await Exam.findById(examId).populate("courseId subjectId");
   } catch (err) {
     return res.status(500).json(err);
   }
