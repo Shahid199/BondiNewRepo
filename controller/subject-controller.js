@@ -7,12 +7,10 @@ const moment = require("moment");
 const createSubject = async (req, res, next) => {
   const { courseId, name, descr } = req.query;
   const file = req.file;
+  if (!file) return res.status(404).json("please Provide valid filename.");
   const courseId1 = courseId;
-
   let iLinkPath = null;
-  if (file) {
-    iLinkPath = "uploads/".concat(file.filename);
-  }
+  iLinkPath = process.env.HOSTNAME.concat("uploads/".concat(file.filename));
   let existingSubject;
   try {
     existingSubject = await Subject.findOne({ name: name }).select("courseId");
@@ -87,13 +85,13 @@ const updateSubject = async (req, res, next) => {
   let subjectExam = null;
   try {
     subjectExam = await Exam.find({
-      subjectId: new mongoose.Types.ObjectId(subjectId)
+      subjectId: new mongoose.Types.ObjectId(subjectId),
     }).count();
   } catch (err) {
     return res.status(500).json(err);
   }
-  if (subjectExam>0) return res.status(404).json("Exam already exist.Can' update subject.");
-    
+  if (subjectExam > 0)
+    return res.status(404).json("Exam already exist.Can' update subject.");
 
   const subjectData = {
     name: name,

@@ -28,7 +28,8 @@ const Limit = 1;
 const loginStudent = async (req, res) => {
   const { courseId, regNo } = req.body;
   const ObjectId = mongoose.Types.ObjectId;
-  if (!ObjectId.isValid(courseId)) return res.status(422).json("Course Id not valid");
+  if (!ObjectId.isValid(courseId))
+    return res.status(422).json("Course Id not valid");
   try {
     const getStudent = await Student.findOne({ regNo: regNo }, "_id").exec();
     if (!getStudent) {
@@ -81,7 +82,9 @@ const addStudent = async (req, res, next) => {
   const file = req.file;
   let excelFilePath = null;
   if (!file) {
-    return res.status(404).json({ message: "Excel File not uploaded." });
+    return res
+      .status(404)
+      .json("CSV File not uploaded or filename is not valid.");
   }
   excelFilePath = "uploads/".concat(file.filename);
   const data1 = await fsp.readFile(excelFilePath, "utf8");

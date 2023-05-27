@@ -18,7 +18,9 @@ const storage = multer.diskStorage({
     const data = file.originalname;
     let arr = data.split(".");
     let extension = arr.pop();
-    const newName = file.originalname + Date.now();// + "." + extension;
+    let arrData = String(arr).replace(/[" "-.\r]/g, "");
+    arrData = arrData.replace(extension, "");
+    const newName = arrData + Date.now() + "." + extension;
     callback(null, newName);
   },
 });

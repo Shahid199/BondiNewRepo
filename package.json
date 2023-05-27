@@ -30,7 +30,8 @@
     "path": "^0.12.7",
     "pdfkit": "^0.13.0",
     "pdfkit-table": "^0.1.99",
-    "read-excel-file": "^5.6.1"
+    "read-excel-file": "^5.6.1",
+    "valid-filename": "^4.0.0"
   },
   "repository": {
     "type": "git",
