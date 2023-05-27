@@ -20,7 +20,7 @@ const createExam = async (req, res, next) => {
     return res.status(404).json("Fil not uploaded.");
   }
   iLinkPath = "uploads/".concat(file.filename);
-  const examFromQuery= JSON.parse(req.query.exam);
+  const examFromQuery = JSON.parse(req.query.exam);
   const {
     courseId,
     subjectId,
@@ -38,20 +38,28 @@ const createExam = async (req, res, next) => {
     hscStatus,
     negativeMarks,
   } = examFromQuery;
-  console.log(courseId,subjectId,
-    name,
-    examType,
-    examVariation,
-    examFreeOrNot,
-    startTime,
-    endTime,
-    totalQuestionMcq,
-    marksPerMcq,
-    status,
-    duration,
-    sscStatus,
-    hscStatus,
-    negativeMarks,);
+
+  //data upload from API
+  // const examFromQuery = req.body;
+  // const {
+  //   courseId,
+  //   subjectId,
+  //   name,
+  //   examType,
+  //   examVariation,
+  //   examFreeOrNot,
+  //   startTime,
+  //   endTime,
+  //   totalQuestionMcq,
+  //   marksPerMcq,
+  //   status,
+  //   duration,
+  //   sscStatus,
+  //   hscStatus,
+  //   negativeMarks,
+  // } = examFromQuery;
+  if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("course Id or subject Id is invalid.");
   let startTime1, endTime1, tqm, tmm;
   tqm = totalQuestionMcq;
   tmm = marksPerMcq;
@@ -114,8 +122,8 @@ const getAllExam = async (req, res, next) => {
 };
 const getExamById = async (req, res, next) => {
   const examId = req.query.examId;
-  // if (!ObjectId.isValid(examId))
-  //   return res.status(404).json("examId is invalid.");
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId is invalid.");
   let examData = null;
   try {
     examData = await Exam.findById(examId);
@@ -125,6 +133,63 @@ const getExamById = async (req, res, next) => {
   return res.status(200).json(examData);
 };
 
+const updateExam = async (req, res, next) => {
+  const examFromQuery = req.query;
+  const {
+    examId,
+    courseId,
+    subjectId,
+    name,
+    examType,
+    examVariation,
+    examFreeOrNot,
+    startTime,
+    endTime,
+    totalQuestionMcq,
+    marksPerMcq,
+    status,
+    duration,
+    sscStatus,
+    hscStatus,
+    negativeMarks,
+  } = examFromQuery;
+  if (
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(courseId) ||
+    !ObjectId.isValid(subjectId)
+  ) {
+    return res
+      .status(404)
+      .json("exam Id or course Id or subject Id is not valid.");
+  }
+
+  let saveExamUpd = {
+    courseId: courseId,
+    subjectId: subjectId,
+    name: name,
+    examType: Number(examType),
+    examVariation: Number(examVariation),
+    examFreeOrNot: JSON.parse(examFreeOrNot),
+    startTime: new Date(startTime),
+    endTime: new Date(endTime),
+    duration: Number(duration),
+    totalQuestionMcq: Number(totalQuestionMcq),
+    marksPerMcq: Number(marksPerMcq),
+    totalMarksMcq: Number(totalQuestionMcq) * Number(marksPerMcq),
+    negativeMarks: Number(negativeMarks),
+    status: JSON.parse(status),
+    sscStatus: JSON.parse(sscStatus),
+    hscStatus: JSON.parse(hscStatus),
+  };
+  let updStatus = null;
+  try {
+    updStatus = await Exam.findByIdAndUpdate(examId, saveExamUpd);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (updStatus == null) return res.status(404).json("Prolem at update.");
+  else return res.status(201).json("Updated.");
+};
 //get all exam for a particular course of particular subject
 const getExamBySub = async (req, res, next) => {
   const subjectId = req.query.subjectId;
@@ -292,30 +357,38 @@ const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
   let examIdObj;
-  let type = JSON.parse(req.body.type);
+  //let type = req.query.type;
   let question;
-  const { questionText, optionCount, options, correctOption, status, examId } =
-    req.body;
+  const {
+    questionText,
+    optionCount,
+    options,
+    correctOption,
+    status,
+    examId,
+    type,
+  } = req.body;
+  console.log(status);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
   const file = req.files;
   //question insert for text question(type=true)
-  if (type == true) {
+  if (JSON.parse(type) == true) {
     if (!file.explanationILink) {
       return res.status(404).json("Expalnation File not uploaded.");
     }
     question = questionText;
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
   } else {
-    if (!file.iLink || !file.explanationILink) {
+    if (!file.iLink) {
       return res.status(404).json("Question File not uploaded.");
     }
+
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
-  console.log(iLinkPath);
   //insert question
   let questions = new QuestionsMcq({
     question: question,
@@ -330,6 +403,7 @@ const addQuestionMcq = async (req, res, next) => {
   try {
     doc = await questions.save();
   } catch (err) {
+    console.log(err);
     return res.status(500).json(err);
   }
   //end of insert question
@@ -371,7 +445,7 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(500).json(err);
     }
   }
-  return res.status(404).json("Saved.");
+  return res.status(201).json("Saved.");
 };
 //exam rule page
 const examRuleSet = async (req, res, next) => {
@@ -568,3 +642,4 @@ exports.examByCourseSubject = examByCourseSubject;
 exports.getExamById = getExamById;
 exports.questionByExamId = questionByExamId;
 exports.updateQuestionStatus = updateQuestionStatus;
+exports.updateExam = updateExam;

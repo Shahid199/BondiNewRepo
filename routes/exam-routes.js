@@ -15,6 +15,7 @@ const {
   getExamById,
   questionByExamId,
   updateQuestionStatus,
+  updateExam,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -50,5 +51,6 @@ router.get("/examrulegetall", examRuleGetAll);
 router.get("/exambycoursesubject", examByCourseSubject);
 router.get("/getexambyid", getExamById);
 router.get("/questionbyexamid", questionByExamId);
-router.get("/updatequestionstatus",updateQuestionStatus);
+router.get("/updatequestionstatus", updateQuestionStatus);
+router.put("/updateexam", updateExam);
 module.exports = router;
