@@ -42,7 +42,7 @@ router.post(
   [passport.authenticate("jwt", { session: false })],
   updateAssignQuestion
 );
-router.put(
+router.post(
   "/submitanswer",
   [passport.authenticate("jwt", { session: false })],
   submitAnswer
