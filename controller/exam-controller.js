@@ -9,6 +9,7 @@ const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
+const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
 const Limit = 100;
 
@@ -116,7 +117,13 @@ const getAllExam = async (req, res, next) => {
   }
   if (examType) {
     try {
-      exams = await Exam.find({ examType: Number(examType) })
+      exams = await Exam.find({
+        $and: [
+          { examType: Number(examType) },
+          { examFreeOrNot: false },
+          { status: true },
+        ],
+      })
         .skip(skippedItem)
         .limit(Limit);
     } catch (err) {
@@ -125,7 +132,11 @@ const getAllExam = async (req, res, next) => {
     }
   } else {
     try {
-      exams = await Exam.find({}).skip(skippedItem).limit(Limit);
+      exams = await Exam.find({
+        $and: [{ examFreeOrNot: false }, { status: true }],
+      })
+        .skip(skippedItem)
+        .limit(Limit);
     } catch (err) {
       console.log(err);
       return res.status(500).json("Something went wrong!");
@@ -139,15 +150,15 @@ const getExamById = async (req, res, next) => {
     return res.status(404).json("examId is invalid.");
   let examData = null;
   try {
-    examData = await Exam.findById(examId).populate("courseId subjectId");
+    examData = await Exam.findOne({
+      $and: [{ _id: examId }, { examFreeOrNot: false }, { status: true }],
+    }).populate("courseId subjectId");
   } catch (err) {
     return res.status(500).json(err);
   }
   return res.status(200).json(examData);
 };
-
 const updateExam = async (req, res, next) => {
-  const examFromQuery = req.query;
   const {
     examId,
     courseId,
@@ -165,7 +176,7 @@ const updateExam = async (req, res, next) => {
     sscStatus,
     hscStatus,
     negativeMarks,
-  } = examFromQuery;
+  } = req.body;
   if (
     !ObjectId.isValid(examId) ||
     !ObjectId.isValid(courseId) ||
@@ -177,8 +188,8 @@ const updateExam = async (req, res, next) => {
   }
 
   let saveExamUpd = {
-    courseId: courseId,
-    subjectId: subjectId,
+    courseId: new mongoose.Types.ObjectId(courseId),
+    subjectId: new mongoose.Types.ObjectId(subjectId),
     name: name,
     examType: Number(examType),
     examVariation: Number(examVariation),
@@ -196,13 +207,28 @@ const updateExam = async (req, res, next) => {
   };
   let updStatus = null;
   try {
-    updStatus = await Exam.findByIdAndUpdate(examId, saveExamUpd);
+    updStatus = await Exam.updateOne({ _id: examId }, saveExamUpd);
   } catch (err) {
     return res.status(500).json(err);
   }
   if (updStatus == null) return res.status(404).json("Prolem at update.");
   else return res.status(201).json("Updated.");
 };
+const deactivateExam = async (req, res, next) => {
+  const examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid exam Id.");
+  //const examIdObj = new mongoose.Types.ObjectId(examId);
+  let queryResult = null;
+  try {
+    queryResult = await Exam.findByIdAndUpdate(examId, { status: false });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (queryResult) return res.status(201).json("Deactivated.");
+  else return res.status(404).json("Something went wrong.");
+};
+
 //get all exam for a particular course of particular subject
 const getExamBySub = async (req, res, next) => {
   const subjectId = req.query.subjectId;
@@ -460,6 +486,48 @@ const addQuestionMcq = async (req, res, next) => {
   }
   return res.status(201).json("Saved.");
 };
+
+const addQuestionMcqBulk = async (req, res, next) => {
+  const { questionArray, examId } = req.body;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let finalIds = [];
+  for (let i = 0; i < questionArray.length; i++) {
+    if (ObjectId.isValid(questionArray[i]))
+      finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
+    else continue;
+  }
+  console.log(finalIds);
+  if (finalIds.length == 0)
+    return res.status(404).json("question IDs is not valid.");
+  let mIdArray = null;
+  try {
+    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj }, "mId");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  console.log(mIdArray);
+  mIdArray = mIdArray.mId;
+  let finalIdsString = [];
+  finalIdsString = finalIds.map((e) => String(e));
+  mIdArray = mIdArray.map((e) => String(e));
+  mIdArray = mIdArray.concat(finalIdsString);
+  let withoutDuplicate = Array.from(new Set(mIdArray));
+  withoutDuplicate = withoutDuplicate.map(
+    (e) => new mongoose.Types.ObjectId(e)
+  );
+  console.log(withoutDuplicate);
+  try {
+    sav = await McqQuestionVsExam.updateOne(
+      { eId: examId },
+      {
+        mId: withoutDuplicate,
+      }
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(201).json("Inserted question to the exam.");
+};
 //exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -630,10 +698,10 @@ const updateQuestionStatus = async (req, res, next) => {
   const questionId = req.query.questionId;
   if (!ObjectId.isValid(questionId))
     return res.status(404).json("question Id is not valid.");
-  const questionIdObj = new mongoose.Types.ObjectId(questionId);
+  //const questionIdObj = new mongoose.Types.ObjectId(questionId);
   let queryResult = null;
   try {
-    queryResult = await QuestionsMcq.findByIdAndUpdate(questionIdObj, {
+    queryResult = await QuestionsMcq.findByIdAndUpdate(questionId, {
       status: false,
     });
   } catch (err) {
@@ -657,3 +725,5 @@ exports.getExamById = getExamById;
 exports.questionByExamId = questionByExamId;
 exports.updateQuestionStatus = updateQuestionStatus;
 exports.updateExam = updateExam;
+exports.addQuestionMcqBulk = addQuestionMcqBulk;
+exports.deactivateExam = deactivateExam;

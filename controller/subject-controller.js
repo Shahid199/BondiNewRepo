@@ -3,6 +3,7 @@ const Course = require("../model/Course");
 const { default: mongoose } = require("mongoose");
 const Exam = require("../model/Exam");
 const moment = require("moment");
+const { ObjectId } = require("mongodb");
 //Create Subject
 const createSubject = async (req, res) => {
   const { courseId, name, descr } = req.body;
@@ -134,8 +135,33 @@ const getAllSubject = async (req, res, next) => {
 
   return res.status(200).json(data);
 };
+const subjectDeactivate = async (req, res, nex) => {
+  const subjectId = req.query.subjectId;
+  let result = null;
+  let subjectExam = null;
+  if (!ObjectId.isValid(subjectId))
+    return res.status(404).json("subjectId is invalid.");
+  try {
+    result = await Subject.findByIdAndUpdate(subjectId, { status: false });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  try {
+    subjectExam = await Exam.updateOne(
+      {
+        subjectId: new mongoose.Types.ObjectId(subjectId),
+      },
+      { status: false }
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+
+  return res.status(201).json("Deactivated.");
+};
 exports.createSubject = createSubject;
 exports.getSubjectByCourse = getSubjectByCourse;
 exports.getSubjectById = getSubjectById;
 exports.updateSubject = updateSubject;
 exports.getAllSubject = getAllSubject;
+exports.subjectDeactivate=subjectDeactivate;

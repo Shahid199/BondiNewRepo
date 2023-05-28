@@ -8,7 +8,7 @@ const examSchema = new Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
+      //unique: true,
       max: 200,
     },
     //exam variation for daily=1/Weekly=2/Monthly=3
