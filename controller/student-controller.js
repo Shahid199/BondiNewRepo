@@ -475,7 +475,7 @@ const submitAnswer = async (req, res, next) => {
   let findId = null;
   try {
     findId = await StudentMarksRank.find({
-      $and: [{ examId: eId1 }, { studentId: sId }],
+      $and: [{ examId: eId1 }, { studentId: sId1 }],
     }).select("_id");
   } catch (err) {
     console.log(err);
