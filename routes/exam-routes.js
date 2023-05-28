@@ -48,7 +48,7 @@ router.get("/getexambysubject", getExamBySubject);
 router.get("/getexambysub", getExamBySub);
 
 router.post("/examruleset", [upload.single("ruleILink")], examRuleSet);
-router.get("/examruleget", examRuleGet);
+router.get("/examruleget",[passport.authenticate("jwt", { session: false })], examRuleGet);
 router.get("/examrulegetall", examRuleGetAll);
 router.get("/exambycoursesubject", examByCourseSubject);
 router.get("/getexambyid", getExamById);

@@ -576,17 +576,17 @@ const examRuleSet = async (req, res, next) => {
 const examRuleGet = async (req, res, next) => {
   let examId = req.query.examId;
   if (!ObjectId.isValid(examId))
-    return res.status(404).json("exam Id is not valid.");
+    return res.status(422).json("exam Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  console.log(examIdObj);
   let data = null;
   try {
     data = await ExamRule.findOne({ examId: examIdObj });
   } catch (err) {
     return res.status(500).json(err);
   }
-  if (data) return res.status(200).json(data.ruleILink);
-  else return res.status(404).json("No data found.");
+  // if (data) return res.status(200).json(data.ruleILink);
+  // else return res.status(404).json("No data found.");
+  return res.status(200).json(data)
 };
 const examRuleGetAll = async (req, res, next) => {
   let page = req.query.page;

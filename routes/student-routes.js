@@ -56,7 +56,7 @@ router.get(
 
 //student admin panel routes
 router.post("/addstudent", upload.single("excelFile"), addStudent);
-router.put("/updatestudent", updateStudent);
+router.put("/updatestudent",[passport.authenticate("jwt", { session: false })], updateStudent);
 router.get("/getstudentid", getStudentId);
 router.get("/getallstudent", getAllStudent);
 
