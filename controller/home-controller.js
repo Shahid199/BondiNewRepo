@@ -2,6 +2,7 @@ const Course = require("../model/Course");
 const Exam = require("../model/Exam");
 const Student = require("../model/Student");
 const Subject = require("../model/Subject");
+const { default: mongoose } = require("mongoose");
 
 const getHomePage = async (req, res, next) => {
   let section = req.query.section;
@@ -12,12 +13,12 @@ const getHomePage = async (req, res, next) => {
     subjectDataDaily,
     subjectDataMonthly,
     subjectDataweekly;
-  let courseId = req.user.courseId;
-  let studentId = req.user.studentId;
+  let courseId = new mongoose.Types.ObjectId(req.user.courseId);
+  let studentId = new mongoose.Types.ObjectId(req.user.studentId);
   //Top
   if (section == "top") {
+    let currentTime = Date.now();
     try {
-      let currentTime = Date.now();
       coming = await Exam.find(
         {
           $and: [
