@@ -48,12 +48,20 @@ router.get("/getexambysubject", getExamBySubject);
 router.get("/getexambysub", getExamBySub);
 
 router.post("/examruleset", [upload.single("ruleILink")], examRuleSet);
-router.get("/examruleget",[passport.authenticate("jwt", { session: false })], examRuleGet);
+router.get(
+  "/examruleget",
+  [passport.authenticate("jwt", { session: false })],
+  examRuleGet
+);
 router.get("/examrulegetall", examRuleGetAll);
 router.get("/exambycoursesubject", examByCourseSubject);
 router.get("/getexambyid", getExamById);
 router.get("/questionbyexamid", questionByExamId);
-router.put("/updatequestionstatus", updateQuestionStatus);
+router.put(
+  "/updatequestionstatus",
+  [passport.authenticate("jwt", { session: false })],
+  updateQuestionStatus
+);
 router.put("/updateexam", updateExam);
 router.put("/addquestionmcqbulk", addQuestionMcqBulk);
 router.put("/deactivateexam", deactivateExam);
