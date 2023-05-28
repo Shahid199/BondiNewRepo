@@ -398,7 +398,7 @@ const addQuestionMcq = async (req, res, next) => {
   let question;
   const { questionText, optionCount, correctOption, status, examId, type } =
     req.body;
-  let options = req.body.options;
+  let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
   const file = req.files;
