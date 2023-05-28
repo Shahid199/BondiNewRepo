@@ -481,7 +481,7 @@ const submitAnswer = async (req, res, next) => {
     console.log(err);
   }
   if (findId == null) return res.status(404).json("data not found.");
-  findId = String(findId.id);
+  findId = String(findId._id);
   let saveStudentExamEnd;
   let update = {
     examEndTime: examEndTime,
