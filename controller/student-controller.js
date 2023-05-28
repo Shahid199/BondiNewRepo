@@ -406,16 +406,32 @@ const getRunningData = async (req, res, next) => {
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
-  let getQuestionMcq;
+  let getQuestionMcq, getExamData;
   try {
     getQuestionMcq = await StudentExamVsQuestionsMcq.findOne({
       $and: [{ studentId: sId1 }, { examId: eId1 }],
     }).populate("mcqQuestionId");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("1");
+  }
+  console.log(eId1);
+  console.log(sId1);
+  try {
+    getExamData = await StudentMarksRank.findOne(
+      { examId: eId1 },
+      { studentId: sId1 }
+    )
+      .select("examStartTime examEndTime examId")
+      .populate("examId");
+  } catch (err) {
+    return res.status(500).json("2");
   }
   console.log(getQuestionMcq);
   let runningResponseLast = [];
+  let examData = new Object();
+  let questionData = new Object();
+  let timeData = new Object();
+
   for (let i = 0; i < getQuestionMcq.mcqQuestionId.length; i++) {
     let runningResponse = {};
     runningResponse["question"] = getQuestionMcq.mcqQuestionId[i].question;
@@ -424,7 +440,13 @@ const getRunningData = async (req, res, next) => {
     runningResponse["answeredOption"] = getQuestionMcq.answeredOption[i];
     runningResponseLast.push(runningResponse);
   }
-  return res.status(200).json(runningResponseLast);
+  timeData["startTime"] = getExamData.examStartTime;
+  timeData["endTine"] = getExamData.examEndTime;
+  timeData["examDuration"] = getExamData.examId.duration;
+  questionData = runningResponseLast;
+  examData = getExamData.examId;
+
+  return res.status(200).json({ timeData, questionData, examData });
 };
 //submit answer or end time
 const submitAnswer = async (req, res, next) => {
