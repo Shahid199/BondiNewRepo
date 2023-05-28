@@ -53,7 +53,7 @@ router.get("/examrulegetall", examRuleGetAll);
 router.get("/exambycoursesubject", examByCourseSubject);
 router.get("/getexambyid", getExamById);
 router.get("/questionbyexamid", questionByExamId);
-router.get("/updatequestionstatus", updateQuestionStatus);
+router.put("/updatequestionstatus", updateQuestionStatus);
 router.put("/updateexam", updateExam);
 router.put("/addquestionmcqbulk", addQuestionMcqBulk);
 router.put("/deactivateexam", deactivateExam);
