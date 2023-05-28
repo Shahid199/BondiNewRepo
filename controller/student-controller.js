@@ -478,10 +478,11 @@ const submitAnswer = async (req, res, next) => {
       $and: [{ examId: eId1 }, { studentId: sId1 }],
     }).select("_id");
   } catch (err) {
-    console.log(err);
+    return res.status(500).json(err);
   }
+
   if (findId == null) return res.status(404).json("data not found.");
-  findId = String(findId._id);
+  findId = String(findId[0]._id);
   let saveStudentExamEnd;
   let update = {
     examEndTime: examEndTime,
@@ -497,10 +498,120 @@ const submitAnswer = async (req, res, next) => {
     console.log(err);
     return res.status(500).json(err);
   }
-  const forkk = fork("../utilities/examCalculation.js");
-  forkk.send({ eId, sId });
-  let resultRank = forkk.on(message);
-  return res.status(200).json(resultRank);
+  // const forkk = fork("../utilities/examCalculation.js");
+  // forkk.send({ eId, sId });
+  // let resultRank = forkk.on(message);
+
+
+
+  let sIeIObj = await StudentMarksRank.find(
+    { $and: [{ studentId: sId1 }, { examId: eId1 }] },
+    "_id"
+  );
+  sIeIObj = sIeIObj[0]._id;
+  let examData = null;
+  try {
+    examData = await StudentExamVsQuestionsMcq.findOne({
+      $and: [{ examId: eIdObj }, { studemtId: sIdObj }],
+    }).populate("mcqQuestionId examId");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let id = String(examData._id);
+  let correctMarks = examData.examId.marksPerMcq;
+  let negativeMarks = examData.examId.negativeMarks;
+  let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+  let examDataMcq = examData.mcqQuestionId;
+  let answered = examData.answeredOption;
+  let notAnswered = 0;
+  let totalCorrectAnswer = 0;
+  let totalWrongAnswer = 0;
+  let totalObtainedMarks = 0;
+  let totalCorrectMarks = 0;
+  let totalWrongMarks = 0;
+  for (let i = 0; i < examDataMcq.length; i++) {
+    if (answered[i] == "-1") {
+      notAnswered = notAnswered + 1;
+    } else if (answered[i] == examDataMcq[i].correctOption) {
+      totalCorrectAnswer = total + totalCorrectAnswer + 1;
+    } else totalWrongAnswer = totalWrongAnswer + 1;
+  }
+  totalCorrectMarks = totalCorrectAnswer * correctMarks;
+  totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+  totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+  const update1 = {
+    totalCorrectAnswer: totalCorrectAnswer,
+    totalWrongAnswer: totalWrongAnswer,
+    totalNotAnswered: notAnswered,
+    totalCorrectMarks: totalCorrectMarks,
+    totalWrongMarks: totalWrongMarks,
+    totalObtainedMarks: totalObtainedMarks,
+  };
+  let result = null,
+    getResult = null,
+    sendResult = {},
+    rank = null,
+    dataRank = null,
+    upd = null,
+    upd1 = null,
+    upd2 = null,
+    getRank = null;
+  try {
+    result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+    upd = await StudentMarksRank.update(
+      {
+        $and: [{ examId: eIdObj }, { studentId: sIdObj }],
+      },
+      { totalObtainedMarks: totalObtainedMarks }
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  try {
+    getResult = await StudentExamVsQuestionsMcq.findById(id).populate("examId");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  try {
+    dataRank = await StudentMarksRank.find(
+      { examId: eIdObj },
+      "sId totalObtainedMarks"
+    ).sort({ totalObtainedMarks: -1 });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let studentRankObject = {
+    _id: sIeIObj,
+    sId: sIdObj,
+    totalObtainedMarks: totalObtainedMarks,
+  };
+  rank = Number(dataRank.indexOf(studentRankObject)) + 1;
+  try {
+    upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
+      rank: rank,
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  try {
+    upd2 = await StudentMarksRank.findById(String(sIeIObj), "rank");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  getRank = upd2.rank;
+  sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
+  sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
+  sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
+  sendResult["totalObtained"] = getResult.totalObtainedMarks;
+  sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  sendResult["rank"] = getRank;
+
+
+
+  console.log(sendResult);
+  return res.status(200).json(sendResult);
 };
 
 //student can view the following info

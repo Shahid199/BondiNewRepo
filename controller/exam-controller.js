@@ -498,6 +498,22 @@ const addQuestionMcqBulk = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+
+  if (mIdArray == null) {
+    const newExamQuestinon = new McqQuestionVsExam({
+      eId: examIdObj,
+      mId: finalIds,
+    });
+    let sav = null;
+    try {
+      sav = await newExamQuestinon.save();
+    } catch (err) {
+      return res
+        .status(500)
+        .json("DB problem Occur when new question insert in exam table.");
+    }
+    return res.status(201).json("Success.");
+  }
   console.log(mIdArray);
   mIdArray = mIdArray.mId;
   let finalIdsString = [];
@@ -682,8 +698,8 @@ const questionByExamId = async (req, res, next) => {
     result["status"] = queryResult.mId[i].status;
     resultAll.push(result);
   }
- // resultAll.push({ totalQuestion: queryResult.mId.length });
- // resultAll.push({ examId: String(queryResult.eId) });
+  // resultAll.push({ totalQuestion: queryResult.mId.length });
+  // resultAll.push({ examId: String(queryResult.eId) });
   return res.status(200).json(resultAll);
 };
 

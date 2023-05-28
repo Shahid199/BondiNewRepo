@@ -115,5 +115,7 @@ async function examCalculation(message) {
 }
 process.on("message", async (message) => {
   let resultData = await examCalculation(message);
-  process.send(resultData);
+  process.send("message", async (message) => {
+    return resultData;
+  });
 });
