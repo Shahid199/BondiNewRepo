@@ -12,7 +12,6 @@ const ExamRule = require("../model/ExamRule");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
 const Limit = 100;
-
 //create Exam
 const createExam = async (req, res, next) => {
   const file = req.file;
@@ -228,7 +227,6 @@ const deactivateExam = async (req, res, next) => {
   if (queryResult) return res.status(201).json("Deactivated.");
   else return res.status(404).json("Something went wrong.");
 };
-
 //get all exam for a particular course of particular subject
 const getExamBySub = async (req, res, next) => {
   const subjectId = req.query.subjectId;
@@ -683,8 +681,8 @@ const questionByExamId = async (req, res, next) => {
     result["status"] = queryResult.mId[i].status;
     resultAll.push(result);
   }
-  resultAll.push({ totalQuestion: queryResult.mId.length });
-  resultAll.push({ examId: String(queryResult.eId) });
+ // resultAll.push({ totalQuestion: queryResult.mId.length });
+ // resultAll.push({ examId: String(queryResult.eId) });
   return res.status(200).json(resultAll);
 };
 
