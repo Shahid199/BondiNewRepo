@@ -398,16 +398,9 @@ const addQuestionMcq = async (req, res, next) => {
   let examIdObj;
   //let type = req.query.type;
   let question;
-  const {
-    questionText,
-    optionCount,
-    options,
-    correctOption,
-    status,
-    examId,
-    type,
-  } = req.body;
-  console.log(status);
+  const { questionText, optionCount, correctOption, status, examId, type } =
+    req.body;
+  let options = req.query.body;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
   const file = req.files;
@@ -426,6 +419,7 @@ const addQuestionMcq = async (req, res, next) => {
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
+    options = [];
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
   //insert question
@@ -586,7 +580,7 @@ const examRuleGet = async (req, res, next) => {
   }
   // if (data) return res.status(200).json(data.ruleILink);
   // else return res.status(404).json("No data found.");
-  return res.status(200).json(data)
+  return res.status(200).json(data);
 };
 const examRuleGetAll = async (req, res, next) => {
   let page = req.query.page;

@@ -861,9 +861,9 @@ const getRank = async (req, res, next) => {
 };
 const filterHistory = async (req, res, next) => {
   const sId = new mongoose.Types.ObjectId(req.user.studentId);
-  const startDate = ISODate(re.body.startDate);
-  const endDate = ISODate(re.body.endDate);
-  const examId = new mongoose.Types.ObjectId(req.body.examId);
+  const startDate = ISODate(req.body.start);
+  const endDate = ISODate(req.body.end);
+  const eId = new mongoose.Types.ObjectId(req.body.examId);
   const type = req.body.type;
   const variation = req.body.variation;
   const subjectId = req.body.subjectId;
@@ -872,10 +872,7 @@ const filterHistory = async (req, res, next) => {
     result = await StudentExamVsQuestionsMcq.find({
       $sand: [
         { examId: eId },
-        { startTime: { $gte: startDate, $lt: endDate } },
-        { "examId.examVariation": variation },
-        { "examId.type": type },
-        { "examId.examVariation": variation },
+        { startTime: { $gte: start1, $lt: end } },
       ],
     })
       .populate("examId")
