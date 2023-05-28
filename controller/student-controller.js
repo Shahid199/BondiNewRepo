@@ -17,6 +17,7 @@ const moment = require("moment");
 const PDFDocument = require("pdfkit");
 const path = require("path");
 const handlebars = require("handlebars");
+const { ObjectId } = require("mongodb");
 
 const Limit = 1;
 
@@ -403,6 +404,8 @@ const updateAssignQuestion = async (req, res, next) => {
 const getRunningData = async (req, res, next) => {
   const sId = req.user.studentId;
   const eId = req.query.eId;
+  if (!ObjectId.isValid(sId) || !ObjectId.isValid(eId))
+    return res.status(404).json("invalid student ID or exam ID.");
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -412,19 +415,32 @@ const getRunningData = async (req, res, next) => {
       $and: [{ studentId: sId1 }, { examId: eId1 }],
     }).populate("mcqQuestionId");
   } catch (err) {
-    return res.status(500).json("1");
+    return res.status(500).json("can't get question.Problem Occur.");
   }
-  console.log(eId1);
-  console.log(sId1);
   try {
     getExamData = await StudentMarksRank.findOne(
       { examId: eId1 },
       { studentId: sId1 }
     )
       .select("examStartTime examEndTime examId")
-      .populate("examId");
+      .populate({
+        path: "examId",
+        populate: {
+          path: "subjectId",
+          select: "name",
+          model: "Subject",
+        },
+      })
+      .populate({
+        path: "examId",
+        populate: {
+          path: "courseId",
+          select: "name",
+          model: "Course",
+        },
+      });
   } catch (err) {
-    return res.status(500).json("2");
+    return res.status(500).json("Can't get exam info.");
   }
   console.log(getQuestionMcq);
   let runningResponseLast = [];
