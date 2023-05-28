@@ -670,7 +670,7 @@ const addQuestionWritten = async (req, res, next) => {
 };
 //view questions
 const questionByExamId = async (req, res, next) => {
-  const examId = req.body.examId;
+  const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
@@ -704,7 +704,7 @@ const questionByExamId = async (req, res, next) => {
 };
 
 const updateQuestionStatus = async (req, res, next) => {
-  const questionId = req.query.questionId;
+  const questionId = req.body.questionId;
   if (!ObjectId.isValid(questionId))
     return res.status(404).json("question Id is not valid.");
   //const questionIdObj = new mongoose.Types.ObjectId(questionId);
