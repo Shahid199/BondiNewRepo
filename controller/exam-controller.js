@@ -11,6 +11,7 @@ const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
+
 const Limit = 100;
 //create Exam
 const createExam = async (req, res, next) => {
