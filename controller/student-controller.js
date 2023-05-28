@@ -264,15 +264,16 @@ const assignQuestion = async (req, res, next) => {
     size = size.mId.length;
     //size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("1.something went wrong.");
   }
+  if (!size) return res.status(404).json("No question assigned in the exam.");
   let totalQuesData;
   try {
     totalQuesData = await Exam.findById(eId).select(
       "totalQuestionMcq duration endTime"
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("2.something went wrong");
   }
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
@@ -291,13 +292,9 @@ const assignQuestion = async (req, res, next) => {
   try {
     doc1 = await McqQuestionVsExam.findOne({ eId: eId1 })
       .select("mId")
-      .populate({
-        path: "mId",
-        match: { status: { $eq: true } },
-        select: "_id",
-      });
+      .populate("mId");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("3.Something went wrong.");
   }
   let doc2 = [];
   doc1 = doc1.mId;
@@ -344,12 +341,12 @@ const assignQuestion = async (req, res, next) => {
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("4.Something went wrong.");
   }
   try {
     saveStudentExam = await studentMarksRank.save();
   } catch (err) {
-    console.log(err);
+    return res.status(500).json("5.Something went wrong.");
   }
   questions.push({ studStartTime: examStartTime });
   questions.push({ studEndTime: examEndTime });
@@ -867,10 +864,7 @@ const filterHistory = async (req, res, next) => {
   let result = null;
   try {
     result = await StudentExamVsQuestionsMcq.find({
-      $sand: [
-        { examId: eId },
-        { startTime: { $gte: start1, $lt: end } },
-      ],
+      $sand: [{ examId: eId }, { startTime: { $gte: start1, $lt: end } }],
     })
       .populate("examId")
       .skip(skippedItem)
