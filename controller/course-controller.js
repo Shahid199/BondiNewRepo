@@ -71,7 +71,7 @@ const getAllCourse = async (req, res, next) => {
       .limit(Limit)
       .exec();
   } catch (err) {
-    return new Error(err);
+    return res.status(500).json("1.Something went wrong.");
   }
   if (!courses) {
     return res.status(404).json({ message: "Courses Not Found" });
@@ -92,14 +92,14 @@ const updateStatusCourse = async (req, res, next) => {
   try {
     updStatus = await Course.findByIdAndUpdate(courseId, { status: status1 });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("1.Something went wrong.");
   }
   try {
     updStatus = await Course.findById(String(updStatus._id)).select(
       "status courseId"
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("2.Something went wrong.");
   }
   let updStatusSecond = null;
   if (updStatus.status == status1) {
@@ -109,7 +109,7 @@ const updateStatusCourse = async (req, res, next) => {
         { status: status1 }
       );
     } catch (err) {
-      return res.status(500).json(err);
+      return res.status(500).json("3.Something went wrong.");
     }
     if (updStatusSecond.matchedCount == 0)
       return res.status(404).json("no student in the course.");

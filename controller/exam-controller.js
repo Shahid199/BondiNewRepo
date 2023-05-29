@@ -719,7 +719,9 @@ const updateQuestionStatus = async (req, res, next) => {
   }
   return res.status(201).json(queryResult);
 };
-
+const getStudentByExam = async (req, res, next) => {
+  const courseId = req.query.courseId;
+};
 //export functions
 exports.createExam = createExam;
 exports.getAllExam = getAllExam;

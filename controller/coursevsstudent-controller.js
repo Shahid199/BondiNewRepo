@@ -73,6 +73,15 @@ const addStudentToCourse = async (req, res, next) => {
 };
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
   let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
     return res.status(404).json("courseId is invalid.");
