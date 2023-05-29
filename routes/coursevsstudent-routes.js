@@ -1,5 +1,6 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
+const passport = require("passport");
 const router = express.Router();
 const {
   addStudentToCourse,
@@ -10,12 +11,26 @@ const {
 
 router.post(
   "/addstudenttocourse",
-  upload.single("excelFile"),
+  [
+    passport.authenticate("jwt", { session: false }),
+    upload.single("excelFile"),
+  ],
   addStudentToCourse
 );
-router.get("/getstudentbycourse", getStudentByCourse);
+router.get(
+  "/getstudentbycourse",
+  [passport.authenticate("jwt", { session: false })],
+  getStudentByCourse
+);
 //student
-router.get("/getcoursebystudent", getCourseByStudent);
-router.get("/getcoursebyreg", getCourseByReg);
+router.get(
+  "/getcoursebystudent",
+  [passport.authenticate("jwt", { session: false })],
+  getCourseByStudent
+);
+router.get(
+  "/getcoursebyreg",
+  getCourseByReg
+);
 
 module.exports = router;

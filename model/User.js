@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const userScheama = new Schema(
   {
@@ -33,6 +33,11 @@ const userScheama = new Schema(
       type: Number,
       required: true,
     },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
@@ -48,17 +53,24 @@ userScheama.methods.loginUser = async (user, password, done) => {
         return done(null, false);
       }
 
-      return done(null, jwt.sign({
-        userName: user.userName,
-        id: user._id,
-        name: user.name,
-        role: user.role,
-        mobileNo: user.mobileNo,
-        address: user.address
-      },process.env.SALT, { expiresIn: '1d'}));
+      return done(
+        null,
+        jwt.sign(
+          {
+            userName: user.userName,
+            id: user._id,
+            name: user.name,
+            role: user.role,
+            mobileNo: user.mobileNo,
+            address: user.address,
+          },
+          process.env.SALT,
+          { expiresIn: "1d" }
+        )
+      );
     });
   } catch (error) {
     return done(error);
   }
-}
+};
 module.exports = mongoose.model("User", userScheama);

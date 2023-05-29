@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
 const Limit = 1;
@@ -6,6 +7,52 @@ const validateToken = async (req, res) => {
   return res.json(req.user);
 };
 //Create Users
+
+//get user by role
+const getUserByRole = async (req, res, next) => {
+  const role = Number(req.query.role);
+  if (role == null) return res.status(404).json("Role not found.");
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+
+  console.log(role);
+  let user;
+  try {
+    user = await User.findOne({ role: role },{status:true})
+      .select("name userName mobileNo address")
+      .skip(skippedItem)
+      .limit(Limit);
+  } catch (err) {
+    return new Error(err);
+  }
+  if (!user) {
+    return res.status(404).json({ message: "user Not Found" });
+  }
+  return res.status(200).json(user);
+};
+//get user role
+const getUserRole = async (req, res, next) => {
+  const userName = req.query.userName;
+  console.log(userName);
+  let userInfo;
+  try {
+    userRole = await User.find({ userName: userName }).select("role");
+  } catch (err) {
+    return new Error(err);
+  }
+  if (!userRole) {
+    return res.status(404).json({ message: "user Not Found" });
+  }
+  return res.status(200).json(userRole);
+};
+//New work:User Start
 const createOfficeUser = async (req, res, next) => {
   const { name, userName, mobileNo, password, address, role } = req.body;
 
@@ -43,76 +90,62 @@ const createOfficeUser = async (req, res, next) => {
   }
   return res.status(201).json({ message: "New User created successfully." });
 };
-//Create Users
-const createStudentUser = async (req, res, next) => {
-  const { name, userName, mobileNo, role } = req.body;
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ userName: userName });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  if (existingUser) {
-    return res.status(400).json({ message: "student already exist" });
-  }
-  const user = new User({
+const updateOfficeUser = async (req, res, next) => {
+  const { userId, name, userName, mobileNo, address } = req.body;
+  if (!ObjectId.isValid(userId) || !name || !userName || !mobileNo || !address)
+    return res.status(404).json("Data missing.");
+  let userUpdate = {
     name: name,
     userName: userName,
     mobileNo: mobileNo,
-    role: role,
-  });
+    address: address,
+  };
+  let upd = null;
   try {
-    const doc = await user.save();
+    upd = await User.findByIdAndUpdate(userId, userUpdate);
   } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
+    return res.status(500).json("1.Something went wrong.");
   }
-  return res.status(201).json({ message: user });
+  if (upd == null) return res.status(404).json("Update not done.");
+  return res.status(200).json("Updated user Info");
 };
-//get user by role
-const getUserByRole = async (req, res, next) => {
-  const role = req.query.role;
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
 
-  console.log(role);
-  let user;
+const deactivateUser = async (req, res, next) => {
+  const userId = req.body;
+  if (!ObjectId.isValid(userId))
+    return res.status(404).json("Invalid user Id.");
+  let upd = null;
   try {
-    user = await User.findOne({ role: role })
-      .select("-password")
-      .skip(skippedItem)
-      .limit(Limit);
+    upd = await User.findByIdAndUpdate(userId, { status: false });
   } catch (err) {
-    return new Error(err);
+    return res.status(500).json("1.Something went wrong.");
   }
-  if (!user) {
-    return res.status(404).json({ message: "user Not Found" });
-  }
-  return res.status(200).send(user);
+  return res.status(201).json("User deactivated successfully.");
 };
-//get user role
-const getUserRole = async (req, res, next) => {
-  const userName = req.query.userName;
-  console.log(userName);
-  let userInfo;
+const updatePassword = async (req, res, next) => {
+  const { userId, oldPassowrd, newPassword } = req.body;
+  if (!ObjectId.isValid(userId))
+    return res.status(404).json("Invalid user Id.");
+  let userInfo = null;
   try {
-    userRole = await User.find({ userName: userName }).select("role");
+    userInfo = await User.findById(userId).select("password");
   } catch (err) {
-    return new Error(err);
+    return res.status(500).json("1.Something went wrong.");
   }
-  if (!userRole) {
-    return res.status(404).json({ message: "user Not Found" });
+  const hashedOldPassword = bcrypt.hashSync(oldPassowrd);
+  if (hashedOldPassword != userInfo.password)
+    return res.status(200).json("Old password did not match.");
+  const hashedNewPassword = bcrypt.hashSync(newPassword);
+  let upd = null;
+  try {
+    upd = await User.findByIdAndUpdate(userId, { password });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
   }
-  return res.status(200).json(userRole);
+  if (upd == null) return res.status(200).json("Password Mot Updated.");
+  return res.status(200).json("Password Updated.");
 };
+//New Work:User End
 /**
  * User auth
  */
@@ -178,8 +211,10 @@ const loginSuperAdmin = async (req, res) => {
 // }
 
 exports.createOfficeUser = createOfficeUser;
-exports.createStudentUser = createStudentUser;
 exports.getUserByRole = getUserByRole;
 exports.getUserRole = getUserRole;
 exports.loginSuperAdmin = loginSuperAdmin;
 exports.validateToken = validateToken;
+exports.updateOfficeUser = updateOfficeUser;
+exports.deactivateUser = deactivateUser;
+exports.updatePassword = updatePassword;

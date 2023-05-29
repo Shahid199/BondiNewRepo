@@ -11,6 +11,7 @@ const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
+const moment = require("moment");
 
 const Limit = 100;
 //create Exam
@@ -241,6 +242,7 @@ const getExamBySub = async (req, res, next) => {
         { subjectId: subjectIdObj },
         { examFreeOrNot: false },
         { status: true },
+        { startTime: { $gt: new Date() } },
       ],
     });
   } catch (err) {
@@ -718,7 +720,9 @@ const updateQuestionStatus = async (req, res, next) => {
   }
   return res.status(201).json(queryResult);
 };
-
+const getStudentByExam = async (req, res, next) => {
+  const courseId = req.query.courseId;
+};
 //export functions
 exports.createExam = createExam;
 exports.getAllExam = getAllExam;

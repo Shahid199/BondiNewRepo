@@ -17,13 +17,19 @@ const {
   missedExam,
   retakeExam,
   retakeSubmit,
-  getRank,
   examCheckMiddleware,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
-router.post("/login", loginStudent);
-router.get("/validate-login",[passport.authenticate("jwt", { session: false })], validateToken);
+router.post(
+  "/login",
+  loginStudent
+);
+router.get(
+  "/validate-login",
+  [passport.authenticate("jwt", { session: false })],
+  validateToken
+);
 //need query parameter eid(examid).
 router.get(
   "/examcheckmiddleware",
@@ -53,12 +59,23 @@ router.get(
   getRunningData
 );
 
-
 //student admin panel routes
 router.post("/addstudent", upload.single("excelFile"), addStudent);
-router.put("/updatestudent",[passport.authenticate("jwt", { session: false })], updateStudent);
-router.get("/getstudentid", getStudentId);
-router.get("/getallstudent", getAllStudent);
+router.put(
+  "/updatestudent",
+  [passport.authenticate("jwt", { session: false })],
+  updateStudent
+);
+router.get(
+  "/getstudentid",
+  [passport.authenticate("jwt", { session: false })],
+  getStudentId
+);
+router.get(
+  "/getallstudent",
+  [passport.authenticate("jwt", { session: false })],
+  getAllStudent
+);
 
 router.get(
   "/viewSollution",
@@ -85,11 +102,5 @@ router.get(
   [passport.authenticate("jwt", { session: false })],
   retakeSubmit
 );
-router.post(
-  "/setrank",
-  [passport.authenticate("jwt", { session: false })],
-  getRank
-);
-
 module.exports = router;
 //new node

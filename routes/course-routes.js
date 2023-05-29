@@ -12,12 +12,40 @@ const {
 } = require("../controller/course-controller");
 const router = express.Router();
 
-router.post("/createcourse", createCourse);
-router.get("/getcourse", getCourse);
-router.get("/getallcourse", [passport.authenticate("jwt", { session: false }),],getAllCourse);
-router.get("/getallcourseadmin", getAllCourseAdmin);
-router.put("/deactivatecourse", deactivateCourse);
-router.put("/updatesingle", updateSingle);
-router.post("/updateStatusCourse", updateStatusCourse);
+router.post(
+  "/createcourse",
+  [passport.authenticate("jwt", { session: false })],
+  createCourse
+);
+router.get(
+  "/getcourse",
+  [passport.authenticate("jwt", { session: false })],
+  getCourse
+);
+router.get(
+  "/getallcourse",
+  [passport.authenticate("jwt", { session: false })],
+  getAllCourse
+);
+router.get(
+  "/getallcourseadmin",
+  [passport.authenticate("jwt", { session: false })],
+  getAllCourseAdmin
+);
+router.put(
+  "/deactivatecourse",
+  [passport.authenticate("jwt", { session: false })],
+  deactivateCourse
+);
+router.put(
+  "/updatesingle",
+  [passport.authenticate("jwt", { session: false })],
+  updateSingle
+);
+router.post(
+  "/updateStatusCourse",
+  [passport.authenticate("jwt", { session: false })],
+  updateStatusCourse
+);
 
 module.exports = router;
