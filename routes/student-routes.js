@@ -17,7 +17,6 @@ const {
   missedExam,
   retakeExam,
   retakeSubmit,
-  getRank,
   examCheckMiddleware,
 } = require("../controller/student-controller");
 const router = express.Router();
@@ -104,11 +103,5 @@ router.get(
   [passport.authenticate("jwt", { session: false })],
   retakeSubmit
 );
-router.post(
-  "/setrank",
-  [passport.authenticate("jwt", { session: false })],
-  getRank
-);
-
 module.exports = router;
 //new node
