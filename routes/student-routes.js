@@ -23,7 +23,6 @@ const router = express.Router();
 //student frontend routes
 router.post(
   "/login",
-  [passport.authenticate("jwt", { session: false })],
   loginStudent
 );
 router.get(

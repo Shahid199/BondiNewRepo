@@ -30,7 +30,6 @@ router.get(
 );
 router.get(
   "/getcoursebyreg",
-  [passport.authenticate("jwt", { session: false })],
   getCourseByReg
 );
 
