@@ -6,6 +6,7 @@ const {
   updateSubject,
   getSubjectById,
   getAllSubject,
+  subjectDeactivate,
 } = require("../controller/subject-controller");
 const { upload } = require("../utilities/multer");
 
@@ -14,5 +15,6 @@ router.put("/updatesubject", updateSubject);
 router.get("/getsubjectbyid", getSubjectById);
 router.get("/getsubjectbycourse", getSubjectByCourse);
 router.get("/getallsubject", getAllSubject);
+router.get("/deactivatesubject", subjectDeactivate);
 
 module.exports = router;
