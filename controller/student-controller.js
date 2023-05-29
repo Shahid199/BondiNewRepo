@@ -18,6 +18,7 @@ const PDFDocument = require("pdfkit");
 const path = require("path");
 const handlebars = require("handlebars");
 const { ObjectId } = require("mongodb");
+const { isErrored } = require("stream");
 
 const Limit = 1;
 
@@ -478,14 +479,14 @@ const submitAnswer = async (req, res, next) => {
       $and: [{ examId: eId1 }, { studentId: sId1 }],
     }).select("_id");
   } catch (err) {
-    return res.status(500).json(err);
+    return res
+      .status(500)
+      .json("Proble when get student info from student marks table.");
   }
-
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
   let update = {
-    examEndTime: examEndTime,
     finishedStatus: true,
     runningStatus: false,
   };
@@ -495,15 +496,8 @@ const submitAnswer = async (req, res, next) => {
       update
     );
   } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
+    return res.status(500).json("Problem when updating student marks rank.");
   }
-  // const forkk = fork("../utilities/examCalculation.js");
-  // forkk.send({ eId, sId });
-  // let resultRank = forkk.on(message);
-
-
-
   let sIeIObj = await StudentMarksRank.find(
     { $and: [{ studentId: sId1 }, { examId: eId1 }] },
     "_id"
@@ -512,10 +506,10 @@ const submitAnswer = async (req, res, next) => {
   let examData = null;
   try {
     examData = await StudentExamVsQuestionsMcq.findOne({
-      $and: [{ examId: eIdObj }, { studemtId: sIdObj }],
+      $and: [{ examId: eId1 }, { studentId: sId1 }],
     }).populate("mcqQuestionId examId");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Problem when get exam data.");
   }
   let id = String(examData._id);
   let correctMarks = examData.examId.marksPerMcq;
@@ -533,7 +527,7 @@ const submitAnswer = async (req, res, next) => {
     if (answered[i] == "-1") {
       notAnswered = notAnswered + 1;
     } else if (answered[i] == examDataMcq[i].correctOption) {
-      totalCorrectAnswer = total + totalCorrectAnswer + 1;
+      totalCorrectAnswer = totalCorrectAnswer + 1;
     } else totalWrongAnswer = totalWrongAnswer + 1;
   }
   totalCorrectMarks = totalCorrectAnswer * correctMarks;
@@ -558,45 +552,41 @@ const submitAnswer = async (req, res, next) => {
     getRank = null;
   try {
     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
-    upd = await StudentMarksRank.update(
+    upd = await StudentMarksRank.updateOne(
       {
-        $and: [{ examId: eIdObj }, { studentId: sIdObj }],
+        $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
       { totalObtainedMarks: totalObtainedMarks }
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Problem when update total obtained marks.");
   }
   try {
     getResult = await StudentExamVsQuestionsMcq.findById(id).populate("examId");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Problem when get Student Exam info.");
   }
   try {
     dataRank = await StudentMarksRank.find(
-      { examId: eIdObj },
-      "sId totalObtainedMarks"
+      { examId: eId1 },
+      "studentId totalObtainedMarks"
     ).sort({ totalObtainedMarks: -1 });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Problem when get all student of an exam Id.");
   }
-  let studentRankObject = {
-    _id: sIeIObj,
-    sId: sIdObj,
-    totalObtainedMarks: totalObtainedMarks,
-  };
-  rank = Number(dataRank.indexOf(studentRankObject)) + 1;
+  let dataRankId = dataRank.map((e) => e._id.toString());
+  rank = dataRankId.findIndex((e) => e == sIeIObj.toString()) + 1;
   try {
     upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
       rank: rank,
     });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Problem when update rank.");
   }
   try {
     upd2 = await StudentMarksRank.findById(String(sIeIObj), "rank");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Problem get rank.");
   }
   getRank = upd2.rank;
   sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
@@ -607,8 +597,6 @@ const submitAnswer = async (req, res, next) => {
   sendResult["totalObtained"] = getResult.totalObtainedMarks;
   sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
   sendResult["rank"] = getRank;
-
-
 
   console.log(sendResult);
   return res.status(200).json(sendResult);
