@@ -15,6 +15,6 @@ router.put("/updatesubject", updateSubject);
 router.get("/getsubjectbyid", getSubjectById);
 router.get("/getsubjectbycourse", getSubjectByCourse);
 router.get("/getallsubject", getAllSubject);
-router.get("/deactivatesubject", subjectDeactivate);
+router.put("/deactivatesubject", subjectDeactivate);
 
 module.exports = router;
