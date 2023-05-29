@@ -703,7 +703,7 @@ const questionByExamId = async (req, res, next) => {
   return res.status(200).json(resultAll);
 };
 
-const updateQuestionStatus = async (req, res, next) => {
+const updateQuestionStatus = async (req, res, next) => {   
   const questionId = req.body.questionId;
   if (!ObjectId.isValid(questionId))
     return res.status(404).json("question Id is not valid.");
@@ -714,7 +714,7 @@ const updateQuestionStatus = async (req, res, next) => {
       status: false,
     });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json(err); 
   }
   return res.status(201).json(queryResult);
 };

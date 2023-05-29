@@ -59,7 +59,6 @@ router.get("/getexambyid", getExamById);
 router.get("/questionbyexamid", questionByExamId);
 router.put(
   "/updatequestionstatus",
-  [passport.authenticate("jwt", { session: false })],
   updateQuestionStatus
 );
 router.put("/updateexam", updateExam);
