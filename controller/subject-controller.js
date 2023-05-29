@@ -136,7 +136,7 @@ const getAllSubject = async (req, res, next) => {
   return res.status(200).json(data);
 };
 const subjectDeactivate = async (req, res, nex) => {
-  const subjectId = req.query.subjectId;
+  const subjectId = req.body.subjectId;
   let result = null;
   let subjectExam = null;
   if (!ObjectId.isValid(subjectId))

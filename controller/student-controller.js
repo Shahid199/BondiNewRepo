@@ -606,6 +606,8 @@ const submitAnswer = async (req, res, next) => {
 const viewSollution = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.ƒ");
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let data = null;
@@ -614,7 +616,7 @@ const viewSollution = async (req, res, next) => {
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     }).populate("mcqQuestionId");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Data not found of exam or student.");
   }
   let resultData = [];
   console.log(data);
@@ -632,6 +634,8 @@ const viewSollution = async (req, res, next) => {
 };
 const historyData = async (req, res, next) => {
   const studentId = req.user.studentId;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Student ID not valid.");
   let page = req.query.page;
   let skippedItem;
   if (page == null) {
@@ -680,7 +684,7 @@ const historyData = async (req, res, next) => {
         "rank totalObtainedMarks examStartTime examEndtime"
       );
     } catch (err) {
-      return res.status(500).json("DB Error!");
+      return res.status(500).json("Cannot get");
     }
     let subjectIdObj = String(data[i].examId.subjectId);
     let subjectName = null;
@@ -829,75 +833,9 @@ const retakeExam = async (req, res, next) => {
     questionData.push(questions);
     ids.push(examData[doc[i]]._id);
   }
-  // const filename = path.basename(
-  //   "/Users/shahid/Desktop/node-project/BondiDb/Backend/uploads/7.jpeg1685003311587.jpeg"
-  // );
-
-  let template = handlebars.compile(`
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-#customers {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#customers td, #customers th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#customers tr:nth-child(even){background-color: #f2f2f2;}
-
-#customers tr:hover {background-color: #ddd;}
-
-#customers th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #04AA6D;
-  color: white;
-}
-</style>
-</head>
-<body>
-
-<h1>A Fancy Table</h1>
-
-<table id="customers">
-  <tr>
-    <td>{{#each questionData}}{{this.id}}-{{this.tupe}}</td>{{/each}}
-  </tr>
-</table>
-</body>
-</html>
-
-
-`);
-  var data = {
-    id: ids,
-    type: String(questionData[0].type),
-  };
-  var result = template(data);
-  //const pdf = handlebars.render(template, data);
-
-  // Write the PDF to a file.
-  fs.writeFileSync("my-pdf.pdf", result);
-
-  // const document = new PDFDocument({ margin: 50 });
-  // document.pipe(fs.createWriteStream("QuestionInfo.pdf"));
-  // document.image(
-  //   "/Users/shahid/Desktop/node-project/BondiDb/Backend/BP-logo.jpeg",
-  //   250,
-  //   50,
-  //   { width: 100 }
-  // );
-  // document.end();
   //end:generating random index of questions
   if (questionData != null)
-    return res.status(200).json({ one: questionData, two: doc });
+    return res.status(200).json({ question: questionData, two: doc });
   else return res.status(404).json("Question not found in the exam.");
 };
 const retakeSubmit = async (req, res, next) => {
@@ -911,17 +849,18 @@ const retakeSubmit = async (req, res, next) => {
     totalWrong = Number(0),
     notAnswered = Number(0),
     correctMarks = 0;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam ID is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
   const qIdObj = qId.map((s) => new mongoose.Types.ObjectId(s));
   const answered = answerArr;
-
   try {
     examData = await McqQuestionVsExam.findOne({ eId: examIdObj })
       .select("mId")
       .populate("mId eId");
   } catch (err) {
     console.log(err);
-    return res.status(500).json(err);
+    return res.status(500).json("Not found Exam Data.");
   }
 
   let negativeMarks = Number(examData.eId.negativeMarks);
@@ -937,7 +876,7 @@ const retakeSubmit = async (req, res, next) => {
       else totalWrong = totalWrong + 1;
     }
   }
-  correctMarks = totalMarksMcq / qIdObj.length;
+  correctMarks = Number(examData.eId.correctMarks); //totalMarksMcq / qIdObj.length;
   let negativeValue = (correctMarks * negativeMarks) / 100;
   marks = totalCorrect * correctMarks - negativeValue * totalWrong;
   let answerScript = {};
