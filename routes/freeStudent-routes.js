@@ -13,11 +13,22 @@ const {
 
 const router = express.Router();
 
-router.post("/addfreestudent", addFreeStudent);
-router.get("/getallfreestudent", getAllFreeStudent);
+router.post(
+  "/addfreestudent",
+  [passport.authenticate("jwt", { session: false })],
+  addFreeStudent
+);
+router.get(
+  "/getallfreestudent",
+  [passport.authenticate("jwt", { session: false })],
+  getAllFreeStudent
+);
 
-router.post("/login", freeLoginStudent);
-
+router.post(
+  "/login",
+  [passport.authenticate("jwt", { session: false })],
+  freeLoginStudent
+);
 
 //start:free student exam route
 router.get(

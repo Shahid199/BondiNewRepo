@@ -20,7 +20,7 @@ const handlebars = require("handlebars");
 const { ObjectId } = require("mongodb");
 const { isErrored } = require("stream");
 
-const Limit = 1;
+const Limit = 100;
 
 /**
  * login a student to a course
@@ -206,7 +206,6 @@ const getStudentId = async (req, res, next) => {
 //get all student info
 const getAllStudent = async (req, res, next) => {
   let students;
-  let count;
   let page = req.query.page;
   let skippedItem;
   if (page == null) {
@@ -216,14 +215,20 @@ const getAllStudent = async (req, res, next) => {
     page = Number(page);
     skippedItem = (page - 1) * Limit;
   }
+  let count = 0;
+  try {
+    count = await Student.find({}).count();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
   try {
     students = await Student.find({}).skip(skippedItem).limit(Limit);
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  console.log(count);
-  return res.status(200).json(students);
+  return res.status(200).json({ students, count });
 };
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.eId;
