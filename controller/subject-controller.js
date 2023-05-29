@@ -112,7 +112,7 @@ const getAllSubject = async (req, res, next) => {
   let subjects = null;
   let data = [];
   try {
-    subjects = await Subject.find({}).populate("courseId");
+    subjects = await Subject.find({ status: true }).populate("courseId");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -164,4 +164,4 @@ exports.getSubjectByCourse = getSubjectByCourse;
 exports.getSubjectById = getSubjectById;
 exports.updateSubject = updateSubject;
 exports.getAllSubject = getAllSubject;
-exports.subjectDeactivate=subjectDeactivate;
+exports.subjectDeactivate = subjectDeactivate;
