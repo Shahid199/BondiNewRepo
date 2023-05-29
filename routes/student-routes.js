@@ -1,6 +1,7 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
 const passport = require("passport");
+const authorize = require("../utilities/authorizationMiddleware");
 const {
   loginStudent,
   validateToken,
@@ -21,11 +22,7 @@ const {
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
-router.post(
-  "/login",
-  [passport.authenticate("jwt", { session: false })],
-  loginStudent
-);
+router.post("/login", loginStudent);
 router.get(
   "/validate-login",
   [passport.authenticate("jwt", { session: false })],
@@ -34,73 +31,114 @@ router.get(
 //need query parameter eid(examid).
 router.get(
   "/examcheckmiddleware",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   examCheckMiddleware
 );
 router.get(
   "/startexam",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   assignQuestion
 );
 
 //need query parameter eid,question sl,answeredoption.
 router.post(
   "/updateanswer",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   updateAssignQuestion
 );
 router.post(
   "/submitanswer",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   submitAnswer
 );
 router.get(
   "/getrunningdata",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   getRunningData
 );
 
 //student admin panel routes
-router.post("/addstudent", upload.single("excelFile"), addStudent);
+router.post(
+  "/addstudent",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["moderator", "superadmin"]),
+    upload.single("excelFile"),
+  ],
+  addStudent
+);
 router.put(
   "/updatestudent",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   updateStudent
 );
 router.get(
   "/getstudentid",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   getStudentId
 );
 router.get(
   "/getallstudent",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   getAllStudent
 );
 
 router.get(
   "/viewSollution",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   viewSollution
 );
 router.get(
   "/history",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   historyData
 );
 router.get(
   "/missedexam",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   missedExam
 );
 router.get(
   "/retake",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   retakeExam
 );
 router.get(
   "/retakesubmit",
-  [passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   retakeSubmit
 );
 module.exports = router;

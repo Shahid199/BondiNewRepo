@@ -1,5 +1,5 @@
 const express = require("express");
-
+const authorize = require("../utilities/authorizationMiddleware");
 const passport = require("passport");
 const {
   createCourse,
@@ -14,37 +14,37 @@ const router = express.Router();
 
 router.post(
   "/createcourse",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   createCourse
 );
 router.get(
   "/getcourse",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   getCourse
 );
 router.get(
   "/getallcourse",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   getAllCourse
 );
 router.get(
   "/getallcourseadmin",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   getAllCourseAdmin
 );
 router.put(
   "/deactivatecourse",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   deactivateCourse
 );
 router.put(
   "/updatesingle",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   updateSingle
 );
 router.post(
   "/updateStatusCourse",
-  [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize([])],
   updateStatusCourse
 );
 

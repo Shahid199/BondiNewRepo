@@ -7,7 +7,6 @@ const validateToken = async (req, res) => {
   return res.json(req.user);
 };
 //Create Users
-
 //get user by role
 const getUserByRole = async (req, res, next) => {
   const role = Number(req.query.role);

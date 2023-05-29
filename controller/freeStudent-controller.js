@@ -93,6 +93,7 @@ const freeLoginStudent = async (req, res) => {
     const token = jwt.sign(
       {
         studentId: studentIdStr,
+        role: "freeStudent",
       },
       process.env.SALT,
       { expiresIn: "1d" }
