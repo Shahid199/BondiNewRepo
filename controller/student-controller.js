@@ -476,7 +476,7 @@ const getRunningData = async (req, res, next) => {
 const submitAnswer = async (req, res, next) => {
   const eId = req.query.eId;
   const sId = req.user.studentId;
-  if (!ObjectId(eId) || !ObjectId(sId))
+  if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
   const examEndTime = new Date();
   let eId1, sId1;
@@ -702,6 +702,7 @@ const historyData = async (req, res, next) => {
       flag = true;
       break;
     }
+    data["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
