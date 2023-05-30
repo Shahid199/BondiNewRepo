@@ -3,14 +3,14 @@ const pagination = (totalCount, currentPage) => {
   let hasPrevPage = false;
   let hasNextPage = false;
   let skippedIndex = (currentPage - 1) * perPage;
-  let totalPages = Math.ceil(totalCount / perPage);
-  if (currentPage >= totalPages) {
+  let totalPages = Math.ceil(Number(totalCount) / perPage);
+  if (Number(currentPage) >= totalPages) {
     hasPrevPage = false;
     hasNextPage = false;
-  } else if (currentPage == 1) {
+  } else if (Number(currentPage) == 1) {
     hasPrevPage = false;
     hasNextPage = true;
-  } else if (Math.ceil(totalCount / perPage) == currentPage) {
+  } else if (Math.ceil(Number(totalCount) / perPage) == Number(currentPage)) {
     hasNextPage = false;
     hasPrevPage = true;
   } else {
