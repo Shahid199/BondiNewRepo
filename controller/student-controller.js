@@ -848,8 +848,9 @@ const retakeExam = async (req, res, next) => {
     questionData.push(questions);
     //ids.push(examData[doc[i]]._id);
   }
+  let duration = examDataNew.eId.duration;
   //end:generating random index of questions
-  return res.status(200).json({ question: questionData, two: doc });
+  return res.status(200).json({ question: questionData, two: doc, duration });
 };
 const retakeSubmit = async (req, res, next) => {
   let examData;
