@@ -16,12 +16,12 @@ const router = express.Router();
 
 router.post(
   "/addfreestudent",
-  [passport.authenticate("jwt", { session: false }), passport.authorize([])],
+  [passport.authenticate("jwt", { session: false }), passport.authorize()],
   addFreeStudent
 );
 router.get(
   "/getallfreestudent",
-  [passport.authenticate("jwt", { session: false }), passport.authorize([])],
+  [passport.authenticate("jwt", { session: false }), passport.authorize()],
   getAllFreeStudent
 );
 

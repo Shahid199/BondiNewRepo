@@ -25,7 +25,7 @@ router.post(
   "/createexam",
   [
     passport.authenticate("jwt", { session: false }),
-    // authorize([]),
+    // authorize(),
     upload.single("iLink"),
   ],
   createExam
