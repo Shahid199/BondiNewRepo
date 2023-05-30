@@ -106,6 +106,7 @@ const createOfficeUser = async (req, res, next) => {
     mobileNo: mobileNo,
     address: address,
     password: hashedPassword,
+    status:true,
     role: role,
   });
   try {
@@ -138,11 +139,12 @@ const updateOfficeUser = async (req, res, next) => {
 
 const deactivateUser = async (req, res, next) => {
   const userId = req.body;
-  if (!ObjectId.isValid(userId))
+  console.log(userId);
+  if (!ObjectId.isValid(userId._id))
     return res.status(404).json("Invalid user Id.");
   let upd = null;
   try {
-    upd = await User.findByIdAndUpdate(userId, { status: false });
+    upd = await User.findByIdAndUpdate({_id: new ObjectId(userId._id)}, { status: false });
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
