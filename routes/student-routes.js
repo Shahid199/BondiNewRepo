@@ -19,6 +19,11 @@ const {
   retakeExam,
   retakeSubmit,
   examCheckMiddleware,
+  viewSollutionAdmin,
+  missedExamAdmin,
+  historyDataAdmin,
+  studentSubmittedExamDetail,
+  studentSubmittedExamDetailAdmin,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -141,5 +146,48 @@ router.get(
   ],
   retakeSubmit
 );
+
+router.get(
+  "/viewsollutionadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  viewSollutionAdmin
+);
+router.get(
+  "/missedexamadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  missedExamAdmin
+);
+router.get(
+  "/historydataadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  historyDataAdmin
+);
+router.get(
+  "/studentSubmittedExamDetail",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  studentSubmittedExamDetail
+);
+
+router.get(
+  "/studentSubmittedExamDetailadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  studentSubmittedExamDetailAdmin
+);
+
 module.exports = router;
 //new node
