@@ -7,6 +7,7 @@ const Exam = require("../model/Exam");
 const QuestionsMcq = require("../model/QuestionsMcq");
 const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestionsMcq");
 const moment = require("moment");
+const pagination = require("../utilities/pagination");
 const Limit = 10;
 
 /**
@@ -61,22 +62,24 @@ const addFreeStudent = async (req, res, next) => {
   }
 };
 const getAllFreeStudent = async (req, res, next) => {
-  let page = req.body.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
+  let page = Number(req.body.page) || 1;
+  let count = 0;
   let data;
   try {
-    data = await FreeStudent.find({}).skip(skippedItem).limit(Limit);
+    count = await FreeStudent.find({}).count();
+  } catch (err) {
+    return res.status.json("Something went wrong.");
+  }
+  if (count == 0) return res.status(200).json("No data found.");
+  let paginateData = pagination(count, page);
+  try {
+    data = await FreeStudent.find({})
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json(err);
   }
-  return res.status(200).json(data);
+  return res.status(200).json({ data, paginateData });
 };
 
 const freeLoginStudent = async (req, res) => {

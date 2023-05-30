@@ -75,7 +75,7 @@ const addStudentToCourse = async (req, res, next) => {
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
-  let page = req.query.page || 1;
+  let page = Number(req.query.page) || 1;
   let count = 0;
   try {
     count = await CourseVsStudent.find({
