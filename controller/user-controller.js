@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
-const Limit = 1;
+const Limit = 10;
 
 const validateToken = async (req, res) => {
   return res.json(req.user);
@@ -25,7 +25,7 @@ const getUserByRole = async (req, res, next) => {
   console.log(role);
   let user;
   try {
-    user = await User.findOne({ role: role },{status:true})
+    user = await User.find({ role: role ,status:true})
       .select("name userName mobileNo address")
       .skip(skippedItem)
       .limit(Limit);
@@ -122,6 +122,8 @@ const deactivateUser = async (req, res, next) => {
   }
   return res.status(201).json("User deactivated successfully.");
 };
+
+
 const updatePassword = async (req, res, next) => {
   const { userId, oldPassowrd, newPassword } = req.body;
   if (!ObjectId.isValid(userId))
