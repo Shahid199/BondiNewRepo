@@ -107,7 +107,7 @@ const createExam = async (req, res, next) => {
 const getAllExam = async (req, res, next) => {
   const examType = req.query.examType;
   let paginateData;
-  let page = req.query.page || 1;
+  let page = Number(req.query.page) || 1;
   let exams;
   if (examType) {
     let count = 0;
@@ -277,7 +277,7 @@ const getExamBySubject = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
-  let page = req.query.page || 1;
+  let page = Number(req.query.page) || 1;
   let count = 0;
   try {
     count = await Exam.find({
@@ -324,19 +324,26 @@ const getExamBySubject = async (req, res, next) => {
 };
 
 const examByCourseSubject = async (req, res, next) => {
-  const { courseId, subjectId, page } = req.query;
+  const { courseId, subjectId } = req.query;
   if (!ObjectId.isValid(subjectId) || !ObjectId.isValid(courseId))
     return res.status(404).json("subject Id or course Id is not valid.");
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
+  let page = Number(req.query.page) || 1;
+  let count = 0;
+  try {
+    count = await Exam.find({
+      $and: [
+        { courseId: courseIdObj },
+        { subjectId: subjectIdObj },
+        { status: true },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
   }
+  if (count == 0) return res.status(500).json("No data found.");
+  let paginateData = pagination(count, page);
   let examData;
   try {
     examData = await Exam.find({
@@ -347,12 +354,12 @@ const examByCourseSubject = async (req, res, next) => {
       ],
     })
       .sort({ createdAt: "desc" })
-      .skip(skippedItem)
-      .limit(Limit)
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage)
       .populate("courseId subjectId")
       .exec();
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Something went wrong.");
   }
   let result = [];
   if (examData.length == 0)
@@ -384,7 +391,7 @@ const examByCourseSubject = async (req, res, next) => {
     result.push(data);
   }
   result.push({ examCount: examData.length });
-  return res.status(200).json(result);
+  return res.status(200).json({ result, paginateData });
 };
 //add questions
 const addQuestionMcq = async (req, res, next) => {

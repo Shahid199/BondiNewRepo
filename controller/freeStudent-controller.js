@@ -8,8 +8,6 @@ const QuestionsMcq = require("../model/QuestionsMcq");
 const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestionsMcq");
 const moment = require("moment");
 const pagination = require("../utilities/pagination");
-const Limit = 10;
-
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
