@@ -254,7 +254,6 @@ const getExamBySub = async (req, res, next) => {
         { subjectId: subjectIdObj },
         { examFreeOrNot: false },
         { status: true },
-        { startTime: { $gt: new Date() } },
       ],
     });
   } catch (err) {
