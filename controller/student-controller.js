@@ -53,6 +53,7 @@ const loginStudent = async (req, res) => {
       {
         studentId: studentIdStr,
         courseId: courseIdStr,
+        role: "student",
       },
       process.env.SALT,
       { expiresIn: "1d" }
