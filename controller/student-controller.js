@@ -710,7 +710,6 @@ const historyData = async (req, res, next) => {
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
     resultData.push(data1);
-    i++;
   }
   if (flag == true) return res.status(404).json("data not found.");
   else return res.status(200).json({ resultData, paginateData });
@@ -1027,7 +1026,6 @@ const filterHistory = async (req, res, next) => {
     console.log(err);
   }
 };
-
 //use for admin
 const viewSollutionAdmin = async (req, res, next) => {
   const studentId = req.query.studentId;
