@@ -12,6 +12,7 @@ const ExamRule = require("../model/ExamRule");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
 const moment = require("moment");
+const pagination = require("../utilities/pagination");
 
 const Limit = 100;
 //create Exam
@@ -105,18 +106,24 @@ const createExam = async (req, res, next) => {
 //get exam
 const getAllExam = async (req, res, next) => {
   const examType = req.query.examType;
-  console.log(examType);
-  let page = req.query.page;
+  let paginateData;
+  let page = req.query.page || 1;
   let exams;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
   if (examType) {
+    let count = 0;
+    try {
+      count = await Exam.find({
+        $and: [
+          { examType: Number(examType) },
+          { examFreeOrNot: false },
+          { status: true },
+        ],
+      }).count();
+    } catch (err) {
+      return res.status(500).json("Something went wrong.Pagination.");
+    }
+    if (count == 0) return res.status(200).json("No data found.");
+    paginateData = pagination(count, page);
     try {
       exams = await Exam.find({
         $and: [
@@ -125,25 +132,30 @@ const getAllExam = async (req, res, next) => {
           { status: true },
         ],
       })
-        .skip(skippedItem)
-        .limit(Limit);
+        .skip(paginateData.skippedIndex)
+        .limit(paginateData.perPage);
     } catch (err) {
       console.log(err);
       return res.status(500).json("Something went wrong!");
     }
   } else {
+    let count = 0;
     try {
-      exams = await Exam.find({
+      count = await Exam.find({
         $and: [{ examFreeOrNot: false }, { status: true }],
-      })
-        .skip(skippedItem)
-        .limit(Limit);
+      }).count();
     } catch (err) {
-      console.log(err);
       return res.status(500).json("Something went wrong!");
     }
+    if (count == 0) return res.status(200).json("No data found");
+    paginateData = pagination(count, page);
+    exams = await Exam.find({
+      $and: [{ examFreeOrNot: false }, { status: true }],
+    })
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   }
-  return res.status(200).send(exams);
+  return res.status(200).send({ exams, paginateData });
 };
 const getExamById = async (req, res, next) => {
   const examId = req.query.examId;
@@ -253,82 +265,64 @@ const getExamBySub = async (req, res, next) => {
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
-  if (!ObjectId.isValid(subjectId))
+  console.log(subjectId);
+  //let studentId = req.user.studentId;
+  if (!ObjectId.isValid(subjectId) || !variation)
     return res.status(404).json("subject Id is not valid.");
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
-  if (subjectId == null || variation == null) {
-    return res.status(404).json("not found data.");
-  }
-
-  //let studentId = req.payload.studnetId;
+  subjectId = new mongoose.Types.ObjectId(subjectId);
   let courseId = null;
   try {
     courseId = await Subject.findById(subjectId).select("courseId");
     courseId = courseId.courseId;
   } catch (err) {
-    console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  let doc = "Sdf";
-  // try {
-  //   doc = await CourseVsStudent.findOne(
-  //     {
-  //       $and: [
-  //         { status: true },
-  //         { courseId: courseId },
-  //         { studentId: studentId },
-  //       ],
-  //     },
-  //     "_id"
-  //   );
-  // } catch (err) {
-  //   console.log(err);
-  //   return res.status(500).json("Something went wrong!");
-  // }
-  if (doc != null) {
-    let exams = null;
-    exams = await Exam.find(
-      {
-        $and: [
-          { status: true },
-          { subjectId: subjectId },
-          { examVariation: variation },
-          { examFreeOrNot: false },
-          { endTime: { $gt: Date.now() } },
-        ],
-      },
-      "name examVariation startTime endTime"
-    )
-      .skip(skippedItem)
-      .limit(Limit);
-    let courseName, subjectName;
-    try {
-      courseName = await Course.findById(String(courseId), "name");
-      subjectName = await Subject.findById(String(subjectId), "name");
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json("Something went wrong!");
-    }
-    let examPage = new Object();
-    examPage["exam"] = exams;
-    examPage["course"] = courseName;
-    examPage["subject"] = subjectName;
-    if (exams.length > 0 && courseName != null && subjectName != null)
-      return res.status(200).json(examPage);
-    else return res.status(404).json({ message: "No exam Found." });
-  } else
-    return res
-      .status(404)
-      .json({ message: "Student not allowed to the subject." });
+  let page = req.query.page || 1;
+  let count = 0;
+  try {
+    count = await Exam.find({
+      $and: [
+        { status: true },
+        { subjectId: subjectId },
+        { examVariation: variation },
+        { examFreeOrNot: false },
+        { endTime: { $gt: Date.now() } },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  if (count == 0) return res.status(200).json("No data found.");
+  let paginateData = pagination(count, page);
+  let exams = null;
+  exams = await Exam.find(
+    {
+      $and: [
+        { status: true },
+        { subjectId: subjectId },
+        { examVariation: variation },
+        { examFreeOrNot: false },
+        { endTime: { $gt: Date.now() } },
+      ],
+    },
+    "name examVariation startTime endTime"
+  )
+    .populate("courseId subjectId")
+    .skip(paginateData.skippedIndex)
+    .limit(paginateData.limit);
+  let examPage = new Object();
+  examPage["exam"] = exams;
+  examPage["course"] = exams[0].courseId.name;
+  examPage["subject"] = exams[0].subjectId.name;
+  if (
+    exams.length > 0 &&
+    examPage["course"] != null &&
+    examPage["subject"] != null
+  )
+    return res.status(200).json({ examPage, paginateData });
+  else return res.status(404).json({ message: "No exam Found." });
 };
+
 const examByCourseSubject = async (req, res, next) => {
   const { courseId, subjectId, page } = req.query;
   if (!ObjectId.isValid(subjectId) || !ObjectId.isValid(courseId))

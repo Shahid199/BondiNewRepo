@@ -7,7 +7,7 @@ const router = express.Router();
 router.get(
   "/gethomepage",
   [passport.authenticate("jwt", { session: false })],
-  authorize(["superadmin", "moderator", "student"]),
+  authorize(["student"]),
   getHomePage
 );
 

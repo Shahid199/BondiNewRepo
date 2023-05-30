@@ -5,7 +5,7 @@ const roles = require("./roles");
  * @param {Array} roles
  * @returns next() | res
  */
-const authorize = (allowedRoles = ["superadmin", "moderator"]) => {
+const authorize = (allowedRoles = ["superadmin"]) => {
   return function (req, res, next) {
     if (req.isAuthenticated()) {
       const currentRole = roles[req.user.role];

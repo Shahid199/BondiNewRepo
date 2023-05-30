@@ -27,30 +27,33 @@ router.post(
 );
 router.get(
   "/getuserbyrole",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin"]),
-  ],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   getUserByRole
 );
 router.get(
   "/getuserrole",
-  [passport.authenticate("jwt", { session: false }), authorize(["admin"])],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   getUserRole
 );
 router.put(
   "/updateofficeuser",
-  //[passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
   updateOfficeUser
 );
 router.put(
   "/deactivateuser",
-  // [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   deactivateUser
 );
 router.put(
   "/updatepassword",
-  //[passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "teacher", "moderator"]),
+  ],
   updatePassword
 );
 router.post("/login", loginSuperAdmin);

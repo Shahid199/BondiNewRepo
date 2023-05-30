@@ -3,6 +3,7 @@ const Student = require("../model/Student");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
 const { default: mongoose } = require("mongoose");
+const pagination = require("../utilities/pagination");
 const fsp = fs.promises;
 const ObjectId = mongoose.Types.ObjectId;
 //add Student To Course
@@ -73,28 +74,34 @@ const addStudentToCourse = async (req, res, next) => {
 };
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
   let courseId = req.query.courseId;
+  let page = req.query.page || 1;
+  let count = 0;
+  try {
+    count = await CourseVsStudent.find({
+      $and: [{ courseId: courseId }, { status: true }],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.pagination.");
+  }
+  if (count == 0) return res.status(200).json("No data found.");
+
+  const paginateData = pagination(count, page);
   if (!ObjectId.isValid(courseId))
     return res.status(404).json("courseId is invalid.");
   let students;
   try {
     students = await CourseVsStudent.find({
       $and: [{ courseId: courseId }, { status: true }],
-    }).populate("studentId");
+    })
+      .populate("studentId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  if (students != null) return res.status(200).json(students);
+  if (students != null) return res.status(200).json({ students, paginateData });
   else return res.status(404).json("student not found in course.");
 };
 //get courses by student

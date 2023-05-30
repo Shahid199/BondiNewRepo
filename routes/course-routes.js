@@ -24,7 +24,7 @@ router.get(
 );
 router.get(
   "/getallcourse",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   getAllCourse
 );
 router.get(

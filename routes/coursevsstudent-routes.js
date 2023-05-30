@@ -21,7 +21,7 @@ router.post(
 );
 router.get(
   "/getstudentbycourse",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   getStudentByCourse
 );
 //student
@@ -30,10 +30,6 @@ router.get(
   [passport.authenticate("jwt", { session: false }), authorize([])],
   getCourseByStudent
 );
-router.get(
-  "/getcoursebyreg",
-  [passport.authenticate("jwt", { session: false }),authorize([])],
-  getCourseByReg
-);
+router.get("/getcoursebyreg", getCourseByReg);
 
 module.exports = router;

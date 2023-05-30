@@ -1,6 +1,7 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
 const passport = require("passport");
+const authorize = require("../utilities/authorizationMiddleware");
 const {
   createExam,
   getAllExam,
@@ -32,7 +33,7 @@ router.post(
 );
 router.get(
   "/getallexam",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   getAllExam
 );
 router.post(
@@ -59,8 +60,8 @@ router.post(
 );
 router.get(
   "/getexambysubject",
-  authorize(["student", "freeStudent", "admin", "moderator", "superadmin"]),
   [passport.authenticate("jwt", { session: false })],
+  //authorize(["student"]),
   getExamBySubject
 );
 

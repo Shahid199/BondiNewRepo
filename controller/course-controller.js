@@ -4,6 +4,7 @@ const Student = require("../model/Student");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const { json } = require("express");
 const { ObjectId } = require("mongodb");
+const pagination = require("../utilities/pagination");
 const Limit = 30;
 //Create Courses
 const createCourse = async (req, res, next) => {
@@ -52,23 +53,20 @@ const getCourse = async (req, res, next) => {
 //get all course
 const getAllCourse = async (req, res, next) => {
   let courses;
-  let getStatus = {};
-  if (req.query.status) {
-    getStatus = req.query;
-  }
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
+  let page = Number(req.query.page) || 1;
+  let count = 0;
   try {
-    courses = await Course.find(getStatus)
-      .skip(skippedItem)
-      .limit(Limit)
+    count = await Course.find({ status: true }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  count = Number(count);
+  if (count == 0) return res.status(200).json("No courses found.");
+  const paginateData = pagination(count, page);
+  try {
+    courses = await Course.find({ status: true })
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage)
       .exec();
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
@@ -76,7 +74,7 @@ const getAllCourse = async (req, res, next) => {
   if (!courses) {
     return res.status(404).json({ message: "Courses Not Found" });
   }
-  return res.status(200).json({ courses });
+  return res.status(200).json({ courses, paginateData });
 };
 //update status of course
 const updateStatusCourse = async (req, res, next) => {
