@@ -138,7 +138,7 @@ router.get(
   ],
   retakeExam
 );
-router.get(
+router.post(
   "/retakesubmit",
   [
     passport.authenticate("jwt", { session: false }),
