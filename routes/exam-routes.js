@@ -60,7 +60,10 @@ router.post(
 );
 router.get(
   "/getexambysubject",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
   //authorize(["student"]),
   getExamBySubject
 );
