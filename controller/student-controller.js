@@ -1237,6 +1237,86 @@ const historyDataAdmin = async (req, res, next) => {
   if (flag == true) return res.status(404).json("data not found.");
   else return res.status(200).json({ resultData, paginateData });
 };
+
+const getHistoryByExamId = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data;
+  let count = 0;
+  try {
+    count = await StudentExamVsQuestionsMcq.find({
+      examId: examIdObj,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (count == 0) res.status(200).json("No data found.");
+  let paginateData = pagination(count, page);
+  try {
+    data = await StudentExamVsQuestionsMcq.find({
+      examId: examIdObj,
+    })
+      .populate("examId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("1.SOmething went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("No exam data found for the student.");
+  let resultData = [];
+  let flag = false;
+  for (let i = 0; i < data.length; i++) {
+    let data1 = {};
+    let rank = null;
+    let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+    try {
+      rank = await StudentMarksRank.findOne(
+        {
+          $and: [
+            { examId: examIdObj },
+            { finishedStatus: true },
+          ],
+        },
+        "rank totalObtainedMarks examStartTime examEndtime"
+      );
+    } catch (err) {
+      return res.status(500).json("2.Something went wrong.");
+    }
+    if (rank == null)
+      return res.status(404).json("No exam data forunf for the student.");
+    let subjectIdObj = String(data[i].examId.subjectId);
+    let subjectName = null;
+    try {
+      subjectName = await Subject.findById(subjectIdObj).select("name");
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    subjectName = subjectName.name;
+    if (rank == null || subjectName == null) {
+      flag = true;
+      break;
+    }
+    data1["examId"] = data[i].examId._id;
+    data1["title"] = data[i].examId.name;
+    data1["type"] = data[i].examId.examType;
+    data1["variation"] = data[i].examId.examVariation;
+    data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
+    data1["totalObtainedMarks"] = rank.totalObtainedMarks;
+    data1["meritPosition"] = rank.rank;
+    data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
+    data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
+    data1["subjectName"] = subjectName;
+    resultData.push(data1);
+    i++;
+  }
+  if (flag == true) return res.status(404).json("data not found.");
+  else return res.status(200).json({ resultData, paginateData });
+};
 exports.loginStudent = loginStudent;
 exports.validateToken = validateToken;
 exports.addStudent = addStudent;
@@ -1258,3 +1338,4 @@ exports.viewSollutionAdmin = viewSollutionAdmin;
 exports.missedExamAdmin = missedExamAdmin;
 exports.historyDataAdmin = historyDataAdmin;
 exports.studentSubmittedExamDetailAdmin = studentSubmittedExamDetailAdmin;
+exports.getHistoryByExamId = getHistoryByExamId;

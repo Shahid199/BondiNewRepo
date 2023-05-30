@@ -10,6 +10,7 @@ const {
   subjectDeactivate,
 } = require("../controller/subject-controller");
 const { upload } = require("../utilities/multer");
+const { getHistoryByExamId } = require("../controller/student-controller");
 
 router.post(
   "/createsubject",
@@ -35,6 +36,7 @@ router.get(
   [passport.authenticate("jwt", { session: false }), authorize()],
   getSubjectByCourse
 );
+
 router.get(
   "/getallsubject",
   [passport.authenticate("jwt", { session: false }), authorize()],

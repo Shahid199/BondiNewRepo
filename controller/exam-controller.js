@@ -723,6 +723,8 @@ const updateQuestionStatus = async (req, res, next) => {
 };
 const getStudentByExam = async (req, res, next) => {
   const courseId = req.query.courseId;
+  const examId = req.query.examId;
+  
 };
 //export functions
 exports.createExam = createExam;
