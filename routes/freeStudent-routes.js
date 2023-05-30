@@ -60,6 +60,31 @@ router.get(
   ],
   getRunningData
 );
+router.get(
+  "/retake",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  retakeExam
+);
+router.get(
+  "/retakesubmit",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  retakeSubmit
+);
+router.post(
+  "/submitanswer",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  submitAnswer
+);
+
 //end:free student exam route
 
 module.exports = router;

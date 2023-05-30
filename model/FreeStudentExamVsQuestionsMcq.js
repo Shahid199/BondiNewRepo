@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const freeStudentExamVsQuestionsMcqSchema = new Schema(
   {
-    freeStudentId: {
+    studentId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: freeStudents,
