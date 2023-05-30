@@ -23,25 +23,25 @@ router.get(
 //router.post("/createofficeuser", [passport.authenticate('jwt', { session: false }), authorize(['admin','superadmin'])], createOfficeUser);
 router.post(
   "/createofficeuser",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   createOfficeUser
 );
 router.get(
   "/getuserbyrole",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getUserByRole
 );
 router.get(
   "/getuserbyid",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin"]),
+    authorize(),
   ],
   getUserById
 );
 router.get(
   "/getuserrole",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getUserRole
 );
 router.put(
@@ -54,7 +54,7 @@ router.put(
 );
 router.put(
   "/deactivateuser",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   deactivateUser
 );
 router.put(

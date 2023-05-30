@@ -1,6 +1,7 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
 const passport = require("passport");
+const authorize = require("../utilities/authorizationMiddleware");
 const {
   addFreeStudent,
   getAllFreeStudent,
@@ -10,16 +11,13 @@ const {
   updateAssignQuestion,
   assignQuestion,
   submitAnswer,
-  retakeSubmit,
-  retakeExam,
 } = require("../controller/freeStudent-controller");
-const authorize = require("../utilities/authorizationMiddleware");
 
 const router = express.Router();
 
 router.post(
   "/addfreestudent",
-  [passport.authenticate("jwt", { session: false }), passport.authorize()],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   addFreeStudent
 );
 router.get(
