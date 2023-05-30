@@ -43,9 +43,10 @@ const createSubject = async (req, res) => {
 //get subject by course
 const getSubjectByCourse = async (req, res, next) => {
   const ObjectId = mongoose.Types.ObjectId;
-  let subjects = [];
+  let data = [];
   const courseId = req.query.courseId;
-  if (!ObjectId.isValid(courseId)) return res.status(404).json(subjects);
+  console.log(courseId)
+  if (!ObjectId.isValid(courseId)) return res.status(404).json(data);
   let courseIdOb = new mongoose.Types.ObjectId(courseId);
   let page = Number(req.query.page) || 1;
   let count = 0;
@@ -57,14 +58,14 @@ const getSubjectByCourse = async (req, res, next) => {
   if (count == 0) return res.status(200).json("No data found.");
   let paginateData = pagination(count, page);
   try {
-    subjects = await Subject.find({ courseId: courseIdOb })
+    data = await Subject.find({ courseId: courseIdOb })
       .skip(paginateData.skippedIndex)
       .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
-  // if (!subjects) return res.status().json(su);
-  return res.status(200).json({ subjects, paginateData });
+  // if (!data) return res.status().json(su);
+  return res.status(200).json({ data, paginateData });
 };
 //view subject info
 const getSubjectById = async (req, res, next) => {

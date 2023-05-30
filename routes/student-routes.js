@@ -24,6 +24,7 @@ const {
   historyDataAdmin,
   studentSubmittedExamDetail,
   studentSubmittedExamDetailAdmin,
+  getHistoryByExamId,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -68,6 +69,7 @@ router.post(
   ],
   submitAnswer
 );
+router.get('/gethistorybyexamid',getHistoryByExamId);
 router.get(
   "/getrunningdata",
   [
