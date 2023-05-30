@@ -14,26 +14,22 @@ router.post(
   "/addstudenttocourse",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize([]),
+    authorize(),
     upload.single("excelFile"),
   ],
   addStudentToCourse
 );
 router.get(
   "/getstudentbycourse",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getStudentByCourse
 );
 //student
 router.get(
   "/getcoursebystudent",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getCourseByStudent
 );
-router.get(
-  "/getcoursebyreg",
-  [passport.authenticate("jwt", { session: false }),authorize([])],
-  getCourseByReg
-);
+router.get("/getcoursebyreg", getCourseByReg);
 
 module.exports = router;

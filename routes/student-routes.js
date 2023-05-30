@@ -92,12 +92,12 @@ router.put(
 );
 router.get(
   "/getstudentid",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getStudentId
 );
 router.get(
   "/getallstudent",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getAllStudent
 );
 

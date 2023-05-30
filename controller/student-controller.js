@@ -16,6 +16,7 @@ const ISODate = require("isodate");
 const moment = require("moment");
 const path = require("path");
 const { ObjectId } = require("mongodb");
+const pagination = require("../utilities/pagination");
 
 const Limit = 100;
 
@@ -53,7 +54,7 @@ const loginStudent = async (req, res) => {
       {
         studentId: studentIdStr,
         courseId: courseIdStr,
-        role: "student",
+        role: 4,
       },
       process.env.SALT,
       { expiresIn: "1d" }
@@ -204,30 +205,20 @@ const getStudentId = async (req, res, next) => {
 //get all student info
 const getAllStudent = async (req, res, next) => {
   let students;
-  let page = req.query.page;
-  let skippedItem;
-
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
+  let page = Number(req.query.page) || 1;
   let count = 0;
+
+  if (count == 0) return res.status(200).json("No data found.");
+  let paginateData = pagination(count, page);
   try {
-    count = await Student.find({}).count();
+    students = await Student.find({})
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  try {
-    students = await Student.find({}).skip(skippedItem).limit(Limit);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  return res.status(200).json({ students, count });
+  return res.status(200).json({ students, paginateData });
 };
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.eId;
@@ -646,24 +637,27 @@ const historyData = async (req, res, next) => {
   const studentId = req.user.studentId;
   if (!ObjectId.isValid(studentId))
     return res.status(404).json("Student ID not valid.");
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
+  let page = req.query.page || 1;
+
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let data;
+  let count = 0;
+  try {
+    count = await StudentExamVsQuestionsMcq.find({
+      studentId: studentIdObj,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (count == 0) res.status(200).json("No data found.");
+  let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({
       studentId: studentIdObj,
     })
       .populate("examId")
-      .skip(skippedItem)
-      .limit(Limit);
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
@@ -703,7 +697,7 @@ const historyData = async (req, res, next) => {
       flag = true;
       break;
     }
-    data["examId"] = data[i].examId._id;
+    data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
@@ -717,7 +711,7 @@ const historyData = async (req, res, next) => {
     i++;
   }
   if (flag == true) return res.status(404).json("data not found.");
-  else return res.status(200).json(resultData);
+  else return res.status(200).json({ resultData, paginateData });
 };
 const missedExam = async (req, res, next) => {
   const studentId = req.user.studentId;
@@ -725,17 +719,6 @@ const missedExam = async (req, res, next) => {
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(courseId)) {
     return res.status(404).json("Student Id or Course Id is not valid.");
   }
-  //pagination:start
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
-  //pagination:end
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let allExam = null;
@@ -778,13 +761,26 @@ const missedExam = async (req, res, next) => {
       return !doneExamArr.includes(el);
     });
   }
+  let page = Number(req.query.page) || 1;
+  let count = 0;
+  try {
+    count = await Exam.find({
+      $and: [{ _id: { $in: removedArray } }, { status: true }],
+    }).count();
+  } catch (err) {
+    return res.status(200).json("Something went wrong.");
+  }
+  if (count == 0) {
+    return res.status(200).json("No data found.");
+  }
+  let paginateData = pagination(count, page);
   try {
     resultData = await Exam.find({
       $and: [{ _id: { $in: removedArray } }, { status: true }],
     })
       .populate("subjectId courseId")
-      .skip(skippedItem)
-      .limit(Limit);
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
@@ -802,7 +798,7 @@ const missedExam = async (req, res, next) => {
     result["negativeMarks"] = resultData[i].negativeMarks;
     resultFinal.push(result);
   }
-  return res.status(200).json(resultFinal);
+  return res.status(200).json({ resultFinal, paginateData });
 };
 const retakeExam = async (req, res, next) => {
   const examId = req.query.examId;

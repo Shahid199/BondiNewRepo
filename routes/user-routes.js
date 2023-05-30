@@ -23,43 +23,46 @@ router.get(
 //router.post("/createofficeuser", [passport.authenticate('jwt', { session: false }), authorize(['admin','superadmin'])], createOfficeUser);
 router.post(
   "/createofficeuser",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   createOfficeUser
 );
 router.get(
   "/getuserbyrole",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin"]),
-  ],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getUserByRole
 );
 router.get(
   "/getuserbyid",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin"]),
+    authorize(),
   ],
   getUserById
 );
 router.get(
   "/getuserrole",
-  [passport.authenticate("jwt", { session: false }), authorize(["admin"])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getUserRole
 );
 router.put(
   "/updateofficeuser",
-  //[passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
   updateOfficeUser
 );
 router.put(
   "/deactivateuser",
-  // [passport.authenticate("jwt", { session: false })],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   deactivateUser
 );
 router.put(
   "/updatepassword",
-  //[passport.authenticate("jwt", { session: false })],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "teacher", "moderator"]),
+  ],
   updatePassword
 );
 router.post("/login", loginSuperAdmin);

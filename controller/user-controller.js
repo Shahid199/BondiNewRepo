@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
+const pagination = require("../utilities/pagination");
 const Limit = 10;
 
 const validateToken = async (req, res) => {
@@ -11,30 +12,29 @@ const validateToken = async (req, res) => {
 const getUserByRole = async (req, res, next) => {
   const role = Number(req.query.role);
   if (role == null) return res.status(404).json("Role not found.");
-  let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
+  let page = Number(req.query.page) || 1;
+  let count = 0;
+  try {
+    count = await User.find({ role: role, status: true }).count();
+  } catch (err) {
+    return res.status(404).json("Something went wrong.");
   }
-
+  if (count == 0) res.status(404).json("No data found");
+  let paginaeData = pagination(count, page);
   console.log(role);
   let user;
   try {
-    user = await User.find({ role: role ,status:true})
+    user = await User.find({ role: role, status: true })
       .select("name userName mobileNo address")
-      .skip(skippedItem)
-      .limit(Limit);
+      .skip(paginaeData.skippedIndex)
+      .limit(paginaeData.perPage);
   } catch (err) {
-    return new Error(err);
+    return res.status(404).json("Something went wrong.");
   }
   if (!user) {
     return res.status(404).json({ message: "user Not Found" });
   }
-  return res.status(200).json(user);
+  return res.status(200).json({ user, paginaeData });
 };
 const getUserById = async (req, res, next) => {
   const id = req.query.id;
@@ -51,7 +51,7 @@ const getUserById = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findOne({ _id: id ,status:true})
+    user = await User.find({ _id: id, status: true })
       .select("name userName mobileNo address")
       .skip(skippedItem)
       .limit(Limit);
@@ -150,7 +150,6 @@ const deactivateUser = async (req, res, next) => {
   }
   return res.status(201).json("User deactivated successfully.");
 };
-
 
 const updatePassword = async (req, res, next) => {
   const { userId, oldPassowrd, newPassword } = req.body;

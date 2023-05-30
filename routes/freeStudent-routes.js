@@ -1,6 +1,7 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
 const passport = require("passport");
+const authorize = require("../utilities/authorizationMiddleware");
 const {
   addFreeStudent,
   getAllFreeStudent,
@@ -9,19 +10,19 @@ const {
   getRunningData,
   updateAssignQuestion,
   assignQuestion,
+  submitAnswer,
 } = require("../controller/freeStudent-controller");
-const authorize = require("../utilities/authorizationMiddleware");
 
 const router = express.Router();
 
 router.post(
   "/addfreestudent",
-  [passport.authenticate("jwt", { session: false }), passport.authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   addFreeStudent
 );
 router.get(
   "/getallfreestudent",
-  [passport.authenticate("jwt", { session: false }), passport.authorize([])],
+  [passport.authenticate("jwt", { session: false }), passport.authorize()],
   getAllFreeStudent
 );
 
@@ -60,6 +61,15 @@ router.get(
   ],
   getRunningData
 );
+router.post(
+  "/submitanswer",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  submitAnswer
+);
+
 //end:free student exam route
 
 module.exports = router;
