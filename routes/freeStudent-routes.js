@@ -9,6 +9,9 @@ const {
   getRunningData,
   updateAssignQuestion,
   assignQuestion,
+  submitAnswer,
+  retakeSubmit,
+  retakeExam,
 } = require("../controller/freeStudent-controller");
 const authorize = require("../utilities/authorizationMiddleware");
 
@@ -59,22 +62,6 @@ router.get(
     authorize(["freeStudent", "superadmin", "moderator"]),
   ],
   getRunningData
-);
-router.get(
-  "/retake",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator"]),
-  ],
-  retakeExam
-);
-router.get(
-  "/retakesubmit",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator"]),
-  ],
-  retakeSubmit
 );
 router.post(
   "/submitanswer",
