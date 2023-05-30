@@ -292,7 +292,7 @@ const getExamBySubject = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  if (count == 0) return res.status(200).json("No data found.");
+  if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
   let exams = null;
   exams = await Exam.find(

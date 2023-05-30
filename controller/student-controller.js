@@ -248,7 +248,6 @@ const assignQuestion = async (req, res, next) => {
   //data get from examcheck function req.body
   const eId = req.query.eId;
   const studentId = req.user.studentId;
-  console.log(eId);
   //start:check student already complete the exam or not
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
@@ -283,36 +282,48 @@ const assignQuestion = async (req, res, next) => {
     rand = rand * Number(max);
     rand = Math.floor(rand);
     rand = rand + Number(min);
-    if (!doc.includes(rand)) doc.push(rand);
+    if (!doc.includes(rand)) {
+      doc.push(rand);
+    }
     if (doc.length == totalQues) break;
   }
   //end:generating random index of questions
   let doc1;
   try {
-    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 })
-      .select("mId")
-      .populate({
-        path: "mId",
-        match: { status: { $eq: true } },
-        select: "_id",
-      });
+    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 }).select("mId");
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  let doc2 = [];
-  doc1 = doc1.mId;
+  let statQues = [];
+  for (let i = 0; i < doc1.mId.length; i++) {
+    let quesId = String(doc1.mId[i]);
+    let stat;
+    try {
+      stat = await QuestionsMcq.findById(quesId).select("status");
+      stat = stat.status;
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
+  }
+  if (totalQues > statQues.length)
+    return res
+      .status(404)
+      .json("Total exam questions is less then exam's questions.");
+  let doc2 = statQues;
+  let resultQuestion = [];
   for (let i = 0; i < totalQues; i++) {
-    let data = doc1[doc[i]];
-    doc2.push(data);
+    let data = doc2[doc[i]];
+    resultQuestion.push(data);
   }
   let questions;
   try {
     questions = await QuestionsMcq.find(
-      { _id: { $in: doc2 } },
+      { _id: { $in: resultQuestion } },
       "question type options"
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Something went wrong.");
   }
   console.log(questions);
   if (sId == null)
@@ -344,6 +355,7 @@ const assignQuestion = async (req, res, next) => {
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
+    console.log(err);
     return res.status(500).json("4.Something went wrong.");
   }
   try {
@@ -355,7 +367,6 @@ const assignQuestion = async (req, res, next) => {
   questions.push({ studEndTime: examEndTime });
   questions.push({ examEndTime: examFinishTime });
   questions.push({ answeredOption: answered });
-  console.log(questions);
   if (saveStudentQuestion == null || saveStudentExam == null) {
     return res.status(404).json("Problem occur to assign question.");
   }
@@ -651,7 +662,9 @@ const historyData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (count == 0) res.status(200).json("No data found.");
+  //return res.status(200).json(count);
+  console.log(count);
+  if (count == 0) return res.status(404).json("1.No data found.");
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({
@@ -696,8 +709,6 @@ const historyData = async (req, res, next) => {
     }
     subjectName = subjectName.name;
     if (rank == null || subjectName == null) {
-      flag = true;
-      break;
     }
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
@@ -711,8 +722,7 @@ const historyData = async (req, res, next) => {
     data1["subjectName"] = subjectName;
     resultData.push(data1);
   }
-  if (flag == true) return res.status(404).json("data not found.");
-  else return res.status(200).json({ resultData, paginateData });
+  return res.status(200).json({ resultData, paginateData });
 };
 const missedExam = async (req, res, next) => {
   const studentId = req.user.studentId;
@@ -900,6 +910,7 @@ const retakeSubmit = async (req, res, next) => {
   let answerScript = {};
   answerScript["totalQuestion"] = qIdObj.length;
   answerScript["negativePercentage"] = negativeMarks;
+  answerScript["correcMarks"] = correctMarks;
   answerScript["negativeValue"] = negativeValue;
   answerScript["totalCorrect"] = totalCorrect;
   answerScript["totalWrong"] = totalWrong;

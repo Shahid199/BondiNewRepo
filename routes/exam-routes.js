@@ -70,7 +70,10 @@ router.get(
 
 router.get(
   "/getexambysub",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","student"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
   getExamBySub
 );
 
@@ -86,22 +89,31 @@ router.post(
 router.get(
   "/examruleget",
   [passport.authenticate("jwt", { session: false })],
-  authorize(),
+  authorize(["superadmin", "moderator", "student"]),
   examRuleGet
 );
 router.get(
   "/examrulegetall",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","student"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
   examRuleGetAll
 );
 router.get(
   "/exambycoursesubject",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","student"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
   examByCourseSubject
 );
 router.get(
   "/getexambyid",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","student"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
   getExamById
 );
 router.get(

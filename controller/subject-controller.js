@@ -63,6 +63,7 @@ const getSubjectByCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
+
   // if (!subjects) return res.status().json(su);
   return res.status(200).json({ subjects, paginateData });
 };
