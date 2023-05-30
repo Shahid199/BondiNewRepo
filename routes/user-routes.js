@@ -9,6 +9,7 @@ const {
   updateOfficeUser,
   deactivateUser,
   updatePassword,
+  getUserById,
   // createSuperAdmin
 } = require("../controller/user-controller");
 const authorize = require("../utilities/authorizationMiddleware");
@@ -29,6 +30,14 @@ router.get(
   "/getuserbyrole",
   [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
   getUserByRole
+);
+router.get(
+  "/getuserbyid",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin"]),
+  ],
+  getUserById
 );
 router.get(
   "/getuserrole",

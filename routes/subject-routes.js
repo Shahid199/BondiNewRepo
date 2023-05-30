@@ -15,34 +15,34 @@ router.post(
   "/createsubject",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize([]),
+    authorize(),
     upload.single("iLink"),
   ],
   createSubject
 );
 router.put(
   "/updatesubject",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   updateSubject
 );
 router.get(
   "/getsubjectbyid",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getSubjectById
 );
 router.get(
   "/getsubjectbycourse",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getSubjectByCourse
 );
 router.get(
   "/getallsubject",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getAllSubject
 );
 router.put(
   "/deactivatesubject",
-  [passport.authenticate("jwt", { session: false }), authorize([])],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   subjectDeactivate
 );
 

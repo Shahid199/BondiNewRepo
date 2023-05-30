@@ -4,6 +4,7 @@ const { default: mongoose } = require("mongoose");
 const Exam = require("../model/Exam");
 const moment = require("moment");
 const { ObjectId } = require("mongodb");
+const pagination = require("../utilities/pagination");
 //Create Subject
 const createSubject = async (req, res) => {
   const { courseId, name, descr } = req.body;
@@ -111,10 +112,22 @@ const updateSubject = async (req, res, next) => {
 const getAllSubject = async (req, res, next) => {
   let subjects = null;
   let data = [];
+  let page = Number(req.query.page) || 1;
+  let count = 0;
   try {
-    subjects = await Subject.find({ status: true }).populate("courseId");
+    count = await Subject.find({ status: true }).count();
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  if (count == 0) return res.status(200).json("No data found.");
+  let paginateData = pagination(count, page);
+  try {
+    subjects = await Subject.find({ status: true })
+      .populate("courseId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
   }
   //return res.status(200).json(subjects);
   for (let i = 0; i < subjects.length; i++) {
@@ -133,7 +146,7 @@ const getAllSubject = async (req, res, next) => {
     data.push(subjectDataAll);
   }
 
-  return res.status(200).json(data);
+  return res.status(200).json({ data, paginateData });
 };
 const subjectDeactivate = async (req, res, nex) => {
   const subjectId = req.body.subjectId;

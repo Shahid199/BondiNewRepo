@@ -54,7 +54,7 @@ const loginStudent = async (req, res) => {
       {
         studentId: studentIdStr,
         courseId: courseIdStr,
-        role: "student",
+        role: 4,
       },
       process.env.SALT,
       { expiresIn: "1d" }
@@ -697,7 +697,7 @@ const historyData = async (req, res, next) => {
       flag = true;
       break;
     }
-    data["examId"] = data[i].examId._id;
+    data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
