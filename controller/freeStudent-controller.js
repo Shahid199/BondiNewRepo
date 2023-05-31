@@ -183,24 +183,41 @@ const assignQuestion = async (req, res, next) => {
   try {
     doc1 = await McqQuestionVsExam.findOne({ eId: eId1 })
       .select("mId")
-      .populate({
-        path: "mId",
-        match: { status: { $eq: true } },
-        select: "_id",
-      });
+      .populate("mId");
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  let doc2 = [];
   doc1 = doc1.mId;
+  //new wrok
+  let statQues = [];
+  for (let i = 0; i < doc1.mId.length; i++) {
+    let quesId = String(doc1.mId[i]);
+    let stat;
+    try {
+      stat = await QuestionsMcq.findById(quesId).select("status");
+      stat = stat.status;
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
+  }
+  if (totalQues > statQues.length)
+    return res
+      .status(404)
+      .json("Total exam questions is less then exam's questions.");
+
+  //new work
+
+  let doc2 = statQues;
+  let resultData = [];
   for (let i = 0; i < totalQues; i++) {
-    let data = doc1[doc[i]];
-    doc2.push(data);
+    let data = doc2[doc[i]];
+    resultData.push(data);
   }
   let questions;
   try {
     questions = await QuestionsMcq.find(
-      { _id: { $in: doc2 } },
+      { _id: { $in: resultData } },
       "question type options"
     );
   } catch (err) {
