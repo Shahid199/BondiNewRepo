@@ -495,6 +495,212 @@ const submitAnswer = async (req, res, next) => {
   console.log(sendResult);
   return res.status(200).json(sendResult);
 };
+
+const freeStudentViewSollutionAdmin = async (req, res, next) => {
+  const studentId = req.query.freeStudentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await FreeStudentExamVsQuestionsMcq.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null)
+    return res.status(200).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["id"] = data[0].mcqQuestionId[i]._id;
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    resultData.push(data1);
+  }
+  return res.status(200).json(resultData);
+};
+const freeStudentHistoryDataAdmin = async (req, res, next) => {
+  const studentId = req.query.studentId;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let data2;
+  let count = 0;
+  try {
+    count = await FreeStudentExamVsQuestionsMcq.find({
+      studentId: studentIdObj,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //return res.status(200).json(count);
+  console.log(count);
+  if (count == 0) return res.status(404).json("1.No data found.");
+  let paginateData = pagination(count, page);
+  try {
+    data2 = await FreeStudentExamVsQuestionsMcq.find({
+      studentId: studentIdObj,
+    })
+      .populate("examId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("1.SOmething went wrong.");
+  }
+  if (data2 == null)
+    return res.status(404).json("No exam data found for the student.");
+  let flag = false;
+  for (let i = 0; i < data2.length; i++) {
+    let data1 = {};
+    let rank = null;
+    let examIdObj = new mongoose.Types.ObjectId(data2[i].examId._id);
+    try {
+      rank = await FreestudentMarksRank.findOne(
+        {
+          $and: [
+            { studentId: studentIdObj },
+            { examId: examIdObj },
+            { finishedStatus: true },
+          ],
+        },
+        "rank totalObtainedMarks examStartTime examEndtime"
+      );
+    } catch (err) {
+      return res.status(500).json("2.Something went wrong.");
+    }
+    if (rank == null)
+      return res.status(404).json("No exam data forunf for the student.");
+    let subjectIdObj = String(data2[i].examId.subjectId);
+    let subjectName = null;
+    try {
+      subjectName = await Subject.findById(subjectIdObj).select("name");
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    subjectName = subjectName.name;
+    if (rank == null || subjectName == null) {
+    }
+    let data = [];
+    data1["examId"] = data2[i].examId._id;
+    data1["title"] = data2[i].examId.name;
+    data1["type"] = data2[i].examId.examType;
+    data1["variation"] = data2[i].examId.examVariation;
+    data1["totalMarksMcq"] = data2[i].examId.totalMarksMcq;
+    data1["totalObtainedMarks"] = rank.totalObtainedMarks;
+    data1["meritPosition"] = rank.rank;
+    data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
+    data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
+    data1["subjectName"] = subjectName;
+    data.push(data2);
+  }
+  return res.status(200).json({ data, paginateData });
+};
+const freeStudentMissedExamAdmin = async (req, res, next) => {
+  const studentId = req.query.studentId;
+  const courseId = req.query.courseId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(courseId)) {
+    return res.status(404).json("Student Id or Course Id is not valid.");
+  }
+  const courseIdObj = new mongoose.Types.ObjectId(courseId);
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let allExam = null;
+  try {
+    allExam = await Exam.find({
+      $and: [
+        { status: true },
+        { examFreeOrNot: true },
+        { courseId: courseIdObj },
+        { endtime: { $lt: new Date() } },
+      ],
+    }).select("_id");
+  } catch (err) {
+    return res.status(500).json("1.Sometihing went wrong.");
+  }
+  let doneExam = null;
+  try {
+    doneExam = await FreestudentMarksRank.find(
+      {
+        studentId: studentIdObj,
+      },
+      "examId"
+    );
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (allExam == null) return res.status(404).json("No Exam data found.");
+  let data2 = [];
+  for (let i = 0; i < allExam.length; i++) {
+    data2[i] = String(allExam[i]._id);
+  }
+  let doneExamArr = [];
+  for (let i = 0; i < doneExam.length; i++) {
+    doneExamArr.push(String(doneExam[i].examId));
+  }
+  let removedArray = null;
+  let resultData = null;
+  if (doneExam == null) removedArray = data2;
+  else {
+    removedArray = data2.filter(function (el) {
+      return !doneExamArr.includes(el);
+    });
+  }
+  let page = Number(req.query.page) || 1;
+  let count = 0;
+  try {
+    count = await Exam.find({
+      $and: [
+        { _id: { $in: removedArray } },
+        { status: true },
+        { examFreeOrNot: true },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(200).json("Something went wrong.");
+  }
+  if (count == 0) {
+    return res.status(200).json("No data found.");
+  }
+  let paginateData = pagination(count, page);
+  try {
+    resultData = await Exam.find({
+      $and: [
+        { _id: { $in: removedArray } },
+        { status: true },
+        { examFreeOrNot: true },
+      ],
+    })
+      .populate("subjectId courseId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  if (resultData == null) return res.status(200).json("No missed exam found.");
+  let data = [];
+  for (let i = 0; i < resultData.length; i++) {
+    let result = {};
+    result["id"] = resultData[i]._id;
+    result["exanName"] = resultData[i].name;
+    result["subject"] = resultData[i].subjectId.name;
+    result["startTime"] = moment(resultData[i].startTime).format("LL");
+    result["duration"] = resultData[i].duration;
+    result["examType"] = resultData[i].examType;
+    result["examVariation"] = resultData[i].examVariation;
+    result["negativeMarks"] = resultData[i].negativeMarks;
+    data.push(result);
+  }
+  return res.status(200).json({ data, paginateData });
+};
 //end:free student exam system
 
 exports.addFreeStudent = addFreeStudent;
@@ -506,3 +712,6 @@ exports.assignQuestion = assignQuestion;
 exports.updateAssignQuestion = updateAssignQuestion;
 exports.getRunningData = getRunningData;
 exports.submitAnswer = submitAnswer;
+exports.freeStudentViewSollutionAdmin = freeStudentViewSollutionAdmin;
+exports.freeStudentHistoryDataAdmin = freeStudentHistoryDataAdmin;
+exports.freeStudentMissedExamAdmin = freeStudentMissedExamAdmin;

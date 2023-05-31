@@ -11,6 +11,9 @@ const {
   updateAssignQuestion,
   assignQuestion,
   submitAnswer,
+  freeStudentViewSollutionAdmin,
+  freeStudentHistoryDataAdmin,
+  freeStudentMissedExamAdmin,
 } = require("../controller/freeStudent-controller");
 
 const router = express.Router();
@@ -33,7 +36,7 @@ router.get(
   "/examcheckmiddleware",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["freeStudent", "superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   examCheckMiddleware
 );
@@ -41,7 +44,7 @@ router.get(
   "/startexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["freeStudent", "superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   assignQuestion
 );
@@ -49,7 +52,7 @@ router.put(
   "/updatequestion",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["freeStudent", "superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   updateAssignQuestion
 );
@@ -57,7 +60,7 @@ router.get(
   "/getrunningdata",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["freeStudent", "superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   getRunningData
 );
@@ -65,9 +68,36 @@ router.post(
   "/submitanswer",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   submitAnswer
+);
+//Free student data view api Route.
+router.get(
+  "/freestudentviewsollutionadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  freeStudentViewSollutionAdmin
+);
+
+router.get(
+  "/freestudenthistorydataadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  freeStudentHistoryDataAdmin
+);
+
+router.get(
+  "/freestudentmissedexamadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  freeStudentMissedExamAdmin
 );
 
 //end:free student exam route
