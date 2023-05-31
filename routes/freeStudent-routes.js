@@ -29,8 +29,7 @@ router.post(
   addFreeStudent
 );
 
-exports.getFreeStudenInfoById = getFreeStudenInfoById;
-exports.getFreeStudenInfoByMobile = getFreeStudenInfoByMobile;
+
 
 router.get(
   "/getfreestudentbyid",
