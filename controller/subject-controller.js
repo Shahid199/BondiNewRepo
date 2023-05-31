@@ -31,6 +31,7 @@ const createSubject = async (req, res) => {
     descr: descr,
     iLink: iLinkPath,
     courseId: courseId1,
+    status:true
   });
   try {
     const doc = await subject.save();
