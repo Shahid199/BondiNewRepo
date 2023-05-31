@@ -61,7 +61,7 @@ const addStudentToCourse = async (req, res, next) => {
     students.push(users);
   }
 
-  if (problemStudent.length > 0) return res.status(202).json(problemStudent);
+  if (problemStudent.length > 0) return res.status(202).json({message:"Student not tadded.",problemStudent});
   let doc;
   try {
     doc = await CourseVsStudent.insertMany(students, { ordered: false });
@@ -84,14 +84,14 @@ const getStudentByCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.pagination.");
   }
-  if (count == 0) return res.status(200).json("No data found.");
+  if (count == 0) return res.status(404).json("No data found.");
 
   const paginateData = pagination(count, page);
   if (!ObjectId.isValid(courseId))
     return res.status(404).json("courseId is invalid.");
-  let students;
+  let data = [];
   try {
-    students = await CourseVsStudent.find({
+    data = await CourseVsStudent.find({
       $and: [{ courseId: courseId }, { status: true }],
     })
       .populate("studentId")
@@ -101,7 +101,7 @@ const getStudentByCourse = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  if (students != null) return res.status(200).json({ students, paginateData });
+  if (data != null) return res.status(200).json({ data, paginateData });
   else return res.status(404).json("student not found in course.");
 };
 //get courses by student

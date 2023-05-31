@@ -723,7 +723,25 @@ const updateQuestionStatus = async (req, res, next) => {
 const getStudentByExam = async (req, res, next) => {
   const courseId = req.query.courseId;
   const examId = req.query.examId;
-  
+};
+const freeExamStatus = async () => {
+  let freeExamStatus = [];
+  try {
+    freeExamStatus = await Exam.find({
+      $and: [
+        { examFreeOrNot: true },
+        { status: true },
+        { startTime: { $gt: new Date() } },
+      ],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (freeExamStatus.length > 0)
+    return res.status(404).json("There is already upcoming free exam.");
+  if (freeExamStatus.length == 0) return res.status(200).json(true);
+  let data = String(freeExamStatus[0]._id);
+  return res.status(200).json({ data });
 };
 //export functions
 exports.createExam = createExam;
@@ -742,3 +760,4 @@ exports.updateQuestionStatus = updateQuestionStatus;
 exports.updateExam = updateExam;
 exports.addQuestionMcqBulk = addQuestionMcqBulk;
 exports.deactivateExam = deactivateExam;
+exports.freeExamStatus = freeExamStatus;

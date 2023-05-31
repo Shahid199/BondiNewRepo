@@ -19,6 +19,7 @@ const {
   updateExam,
   addQuestionMcqBulk,
   deactivateExam,
+  freeExamStatus,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -140,5 +141,11 @@ router.put(
   "/deactivateexam",
   [passport.authenticate("jwt", { session: false }), authorize()],
   deactivateExam
+);
+
+router.get(
+  "/freeExamStatus",
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","freeStudent"])],
+  freeExamStatus
 );
 module.exports = router;

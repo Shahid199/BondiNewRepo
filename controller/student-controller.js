@@ -616,12 +616,13 @@ const submitAnswer = async (req, res, next) => {
 };
 //student can view the following info
 const viewSollution = async (req, res, next) => {
+  console.log(req.query);
   const studentId = req.user.studentId;
   const examId = req.query.examId;
-  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
-    return res.status(404).json("student Id or examId is not valid.");
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) return res.status(404).json("student Id or examId is not valid.");
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
+  console.log(studentIdObj,examIdObj)
   let data = null;
   try {
     data = await StudentExamVsQuestionsMcq.find({
@@ -834,11 +835,28 @@ const retakeExam = async (req, res, next) => {
     return res.status(404).json("No data found against this exam.");
   let examDataNew = examData;
   examData = examData.mId;
+  let questData = [];
+  for (let i = 0; i < examData.length; i++) {
+    let quesId = String(examData[i]._id);
+    let status = null;
+    try {
+      status = await QuestionsMcq.findById(quesId);
+      status = status.status;
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (status == true) questData.push(examData[i]._id);
+  }
+  let questDataFull = [];
+  try {
+    questDataFull = await QuestionsMcq.find({ _id: { $in: questData } });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   //return res.status(200).json(examData);
   //start:generating random index of questions
-  max = examData.length - 1;
+  max = questData.length - 1;
   max = max - min;
-  console.log(max);
   for (let i = 0; ; i++) {
     rand = Math.random();
     rand = rand * Number(max);
@@ -847,7 +865,7 @@ const retakeExam = async (req, res, next) => {
     if (!doc.includes(rand)) doc.push(rand);
     if (doc.length == examDataNew.eId.totalQuestionMcq) break;
   }
-  // let ids = [];
+  examData = questDataFull;
   for (let i = 0; i < doc.length; i++) {
     let questions = {};
     questions["id"] = examData[doc[i]]._id;
@@ -856,7 +874,6 @@ const retakeExam = async (req, res, next) => {
     questions["optionCount"] = examData[doc[i]].optionCount;
     questions["type"] = examData[doc[i]].type;
     questionData.push(questions);
-    //ids.push(examData[doc[i]]._id);
   }
   let duration = examDataNew.eId.duration;
   //end:generating random index of questions
@@ -871,6 +888,9 @@ const retakeSubmit = async (req, res, next) => {
   if (!ObjectId.isValid(examId) || !qId || !answerArr || !doc) {
     return res.status(404).json("Data not fond.");
   }
+  console.log(qId);
+  console.log(answerArr);
+  console.log(doc);
   let marks = Number(0),
     totalCorrect = Number(0),
     totalWrong = Number(0),
@@ -892,19 +912,21 @@ const retakeSubmit = async (req, res, next) => {
     return res.status(404).json("No exam data found for the student.");
 
   negativeMarks = Number(examData.eId.negativeMarks);
-  correctMarks = Number(examData.eId.correctMarks); //totalMarksMcq / qIdObj.length;
+  correctMarks = Number(examData.eId.marksPerMcq); //totalMarksMcq / qIdObj.length;
   examData = examData.mId;
 
   for (let i = 0; i < qIdObj.length; i++) {
+    //console.log(examData[doc[i]]);
     let answer = answered[i];
+    console.log(answer);
+    console.log(examData[doc[i]]);
     if (String(examData[doc[i]]._id) == String(qIdObj[i])) {
       if (answer == "-1") notAnswered = notAnswered + 1;
-      else if (answer == examData[doc[i]].answeredOption)
+      else if (answer == examData[doc[i]].correctOption)
         totalCorrect = totalCorrect + 1;
       else totalWrong = totalWrong + 1;
     }
   }
-
   let negativeValue = (correctMarks * negativeMarks) / 100;
   marks = totalCorrect * correctMarks - negativeValue * totalWrong;
   let answerScript = {};
@@ -1040,6 +1062,7 @@ const filterHistory = async (req, res, next) => {
 };
 //use for admin
 const viewSollutionAdmin = async (req, res, next) => {
+  console.log(req.query);
   const studentId = req.query.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
@@ -1254,7 +1277,9 @@ const getHistoryByExamId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (count == 0) res.status(200).json("No data found.");
+  if (count == 0){
+    return res.status(200).json("No data found.");
+  }
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({
@@ -1277,10 +1302,7 @@ const getHistoryByExamId = async (req, res, next) => {
     try {
       rank = await StudentMarksRank.findOne(
         {
-          $and: [
-            { examId: examIdObj },
-            { finishedStatus: true },
-          ],
+          $and: [{ examId: examIdObj }, { finishedStatus: true }],
         },
         "rank totalObtainedMarks examStartTime examEndtime"
       );
@@ -1302,6 +1324,7 @@ const getHistoryByExamId = async (req, res, next) => {
       break;
     }
     data1["examId"] = data[i].examId._id;
+    data1["studentId"] = data[i].studentId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
@@ -1312,7 +1335,6 @@ const getHistoryByExamId = async (req, res, next) => {
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
     resultData.push(data1);
-    i++;
   }
   if (flag == true) return res.status(404).json("data not found.");
   else return res.status(200).json({ resultData, paginateData });
