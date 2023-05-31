@@ -1078,7 +1078,7 @@ const viewSollutionAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
-  if (data == null)
+  if (data.length == 0)
     return res.status(200).json("No exam found under this student.");
   let resultData = [];
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
