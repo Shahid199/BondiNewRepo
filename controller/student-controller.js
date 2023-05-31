@@ -993,7 +993,7 @@ const studentSubmittedExamDetail = async (req, re, snext) => {
   return res.status(200).json(dataObject);
 };
 
-const studentSubmittedExamDetailAdmin = async (req, re, snext) => {
+const studentSubmittedExamDetailAdmin = async (req, res, snext) => {
   const studentId = req.query.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
@@ -1261,7 +1261,6 @@ const historyDataAdmin = async (req, res, next) => {
   if (flag == true) return res.status(404).json("data not found.");
   else return res.status(200).json({ resultData, paginateData });
 };
-
 const getHistoryByExamId = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
