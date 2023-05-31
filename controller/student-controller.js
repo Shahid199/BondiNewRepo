@@ -234,6 +234,42 @@ const getAllStudent = async (req, res, next) => {
   }
   return res.status(200).json({ students, paginateData });
 };
+
+const getStudentByCourseReg = async (req, res, next) => {
+  let courseId = req.query.courseId;
+  let regNo = req.query.regNo;
+  if (!ObjectId.isValid(courseId) || !regNo)
+    return res.status(404).json("Invalid Id or reg No.");
+  let studentId;
+  let courseIdObj = new mongoose.Types.ObjectId(courseId);
+  try {
+    studentId = await Student.findOne({ regNo: regNo });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  studentId = studentId._id;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Student Id Invalid.");
+  let data = null;
+  try {
+    data = await CourseVsStudent.findOne({
+      $and: [
+        { courseId: courseIdObj },
+        { studentId: studentId },
+        { status: true },
+      ],
+    }).populate("studentId");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("Data not found or deactivated student.");
+  data = data.studentId;
+  return res.status(200).json(data);
+};
+
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.eId;
   const studentId = req.user.studentId;
@@ -1366,3 +1402,4 @@ exports.historyDataAdmin = historyDataAdmin;
 exports.studentSubmittedExamDetailAdmin = studentSubmittedExamDetailAdmin;
 exports.getHistoryByExamId = getHistoryByExamId;
 exports.getStudenInfoById = getStudenInfoById;
+exports.getStudentByCourseReg = getStudentByCourseReg;
