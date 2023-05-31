@@ -1298,7 +1298,7 @@ const getHistoryByExamId = async (req, res, next) => {
     try {
       examStud = await StudentExamVsQuestionsMcq.findOne({
         $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
-      });
+      }).populate("studentId");
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
