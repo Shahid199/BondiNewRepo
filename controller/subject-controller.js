@@ -50,17 +50,18 @@ const getSubjectByCourse = async (req, res, next) => {
   let page = Number(req.query.page) || 1;
   let count = 0;
   try {
-    count = await Subject.find(
-      { courseId: courseIdOb },
-      { status: true }
-    ).count();
+    count = await Subject.find({
+      $and: [{ courseId: courseIdOb }, { status: true }],
+    }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
   if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
   try {
-    data = await Subject.find({ courseId: courseIdOb })
+    data = await Subject.find({
+      $and: [{ courseId: courseIdOb }, { status: true }],
+    })
       .skip(paginateData.skippedIndex)
       .limit(paginateData.perPage);
   } catch (err) {
