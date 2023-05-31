@@ -616,12 +616,13 @@ const submitAnswer = async (req, res, next) => {
 };
 //student can view the following info
 const viewSollution = async (req, res, next) => {
+  console.log(req.query);
   const studentId = req.user.studentId;
   const examId = req.query.examId;
-  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
-    return res.status(404).json("student Id or examId is not valid.");
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) return res.status(404).json("student Id or examId is not valid.");
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
+  console.log(studentIdObj,examIdObj)
   let data = null;
   try {
     data = await StudentExamVsQuestionsMcq.find({
@@ -1040,6 +1041,7 @@ const filterHistory = async (req, res, next) => {
 };
 //use for admin
 const viewSollutionAdmin = async (req, res, next) => {
+  console.log(req.query);
   const studentId = req.query.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
@@ -1254,7 +1256,9 @@ const getHistoryByExamId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (count == 0) res.status(200).json("No data found.");
+  if (count == 0){
+    return res.status(200).json("No data found.");
+  }
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({
@@ -1302,6 +1306,7 @@ const getHistoryByExamId = async (req, res, next) => {
       break;
     }
     data1["examId"] = data[i].examId._id;
+    data1["studentId"] = data[i].studentId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
