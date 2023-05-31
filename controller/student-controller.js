@@ -204,6 +204,18 @@ const getStudentId = async (req, res, next) => {
     return res.status(200).json({ studentId });
   }
 };
+const getStudenInfoById = async (req, res, next) => {
+  let studentId = req.query.studentId;
+  let data = null;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Invalid User Id.");
+  try {
+    data = await Student.findById(studentId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(200).json(data);
+};
 //get all student info
 const getAllStudent = async (req, res, next) => {
   let students;
@@ -1353,3 +1365,4 @@ exports.missedExamAdmin = missedExamAdmin;
 exports.historyDataAdmin = historyDataAdmin;
 exports.studentSubmittedExamDetailAdmin = studentSubmittedExamDetailAdmin;
 exports.getHistoryByExamId = getHistoryByExamId;
+exports.getStudenInfoById = getStudenInfoById;

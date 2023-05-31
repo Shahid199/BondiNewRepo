@@ -14,15 +14,36 @@ const {
   freeStudentViewSollutionAdmin,
   freeStudentHistoryDataAdmin,
   freeStudentMissedExamAdmin,
+  getFreeExamId,
+  getFreeStudenInfoById,
+  getFreeStudenInfoByMobile,
 } = require("../controller/freeStudent-controller");
 
 const router = express.Router();
+
+router.get("/getfreeexamid", getFreeExamId);
 
 router.post(
   "/addfreestudent",
   [passport.authenticate("jwt", { session: false }), authorize()],
   addFreeStudent
 );
+
+exports.getFreeStudenInfoById = getFreeStudenInfoById;
+exports.getFreeStudenInfoByMobile = getFreeStudenInfoByMobile;
+
+router.get(
+  "/getfreestudentbyid",
+  [passport.authenticate("jwt", { session: false }), passport.authorize()],
+  getFreeStudenInfoById
+);
+
+router.get(
+  "/getfreestudentmobile",
+  [passport.authenticate("jwt", { session: false }), passport.authorize()],
+  getFreeStudenInfoByMobile
+);
+
 router.get(
   "/getallfreestudent",
   [passport.authenticate("jwt", { session: false }), passport.authorize()],

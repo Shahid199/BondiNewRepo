@@ -25,6 +25,7 @@ const {
   studentSubmittedExamDetail,
   studentSubmittedExamDetailAdmin,
   getHistoryByExamId,
+  getStudenInfoById,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -35,6 +36,18 @@ router.get(
   validateToken
 );
 //need query parameter eid(examid).
+
+getStudenInfoById
+
+router.get(
+  "/getstudentinfobyid",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getStudenInfoById
+);
+
 router.get(
   "/examcheckmiddleware",
   [

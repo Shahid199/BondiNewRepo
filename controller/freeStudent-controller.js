@@ -114,6 +114,55 @@ const freeLoginStudent = async (req, res) => {
 const validateToken = async (req, res) => {
   return res.json(req.user);
 };
+
+const getFreeStudenInfoById = async (req, res, next) => {
+  let studentId = req.query.freeStudentId;
+  let data = null;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Invalid User Id.");
+  try {
+    data = await FreeStudent.findById(studentId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(200).json(data);
+};
+const getFreeStudenInfoByMobile = async (req, res, next) => {
+  let mobileNo = req.query.mobileNo;
+  let data = null;
+  if (!mobileNo) return res.status(404).json("Invalid mobile No.");
+  try {
+    data = await FreeStudent.findOne({ mobileNo: mobileNo });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(200).json(data);
+};
+
+const getFreeExamId = async (req, res, next) => {
+  let examId = [];
+  try {
+    examId = await Exam.find(
+      {
+        $and: [
+          { examFreeOrNot: true },
+          { startTime: { $lt: new Date() } },
+          { endTime: { $gt: new Date() } },
+        ],
+      },
+      "_id"
+    );
+  } catch (err) {
+    return res.status(404).json("Something went wrong.");
+  }
+  console.log(moment(examId[0].startTime).format("LLL"));
+  if (examId.length == 0)
+    return res
+      .status(404)
+      .json("No Free exam has been announced yet.Keep follow the site.");
+  if (examId.length > 1) return res.status(404).json("Something went wrong.");
+  return res.status(200).json(examId);
+};
 //start:free student exam system
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.eId;
@@ -756,3 +805,6 @@ exports.submitAnswer = submitAnswer;
 exports.freeStudentViewSollutionAdmin = freeStudentViewSollutionAdmin;
 exports.freeStudentHistoryDataAdmin = freeStudentHistoryDataAdmin;
 exports.freeStudentMissedExamAdmin = freeStudentMissedExamAdmin;
+exports.getFreeExamId = getFreeExamId;
+exports.getFreeStudenInfoById = getFreeStudenInfoById;
+exports.getFreeStudenInfoByMobile = getFreeStudenInfoByMobile;

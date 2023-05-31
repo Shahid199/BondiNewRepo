@@ -23,7 +23,7 @@ const createExam = async (req, res, next) => {
     return res.status(404).json("Fil not uploaded.");
   }
   iLinkPath = "uploads/".concat(file.filename);
-  const examFromQuery = JSON.parse(req.query.exam);
+  //const examFromQuery = JSON.parse(req.query.exam);
   const {
     courseId,
     subjectId,
@@ -40,7 +40,7 @@ const createExam = async (req, res, next) => {
     sscStatus,
     hscStatus,
     negativeMarks,
-  } = examFromQuery;
+  } = req.query;
 
   //data upload from API
   // const examFromQuery = req.body;
