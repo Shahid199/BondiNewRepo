@@ -50,7 +50,10 @@ const getSubjectByCourse = async (req, res, next) => {
   let page = Number(req.query.page) || 1;
   let count = 0;
   try {
-    count = await Subject.find({ courseId: courseIdOb }).count();
+    count = await Subject.find(
+      { courseId: courseIdOb },
+      { status: true }
+    ).count();
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
