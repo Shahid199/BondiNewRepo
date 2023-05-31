@@ -1318,7 +1318,7 @@ const getHistoryByExamId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  data.push({
+  let examInfo = {
     id: String(examDetails._id),
     name: examDetails.name,
     courseName: examDetails.courseId.name,
@@ -1329,8 +1329,8 @@ const getHistoryByExamId = async (req, res, next) => {
     type: examType[Number(examDetails.examType)],
     variation: examVariation[Number(examDetails.examVariation)],
     totalMarksMcq: examDetails.totalMarksMcq,
-  });
-  return res.status(200).json({ data, paginateData });
+  };
+  return res.status(200).json({ data, examInfo, paginateData });
 };
 exports.loginStudent = loginStudent;
 exports.validateToken = validateToken;
