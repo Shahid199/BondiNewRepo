@@ -762,8 +762,8 @@ const historyData = async (req, res, next) => {
     }
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
-    data1["type"] = data[i].examId.examType;
-    data1["variation"] = data[i].examId.examVariation;
+    data1["type"] = examType[Number(data[i].examId.examType)];
+    data1["variation"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
     data1["meritPosition"] = rank.rank;
