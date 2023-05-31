@@ -31,7 +31,7 @@ const createSubject = async (req, res) => {
     descr: descr,
     iLink: iLinkPath,
     courseId: courseId1,
-    status:true
+    status: true,
   });
   try {
     const doc = await subject.save();
@@ -175,15 +175,14 @@ const subjectDeactivate = async (req, res, nex) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   try {
-    subjectExam = await Exam.updateOne(
-      {
-        subjectId: new mongoose.Types.ObjectId(subjectId),
-      },
-      { status: false }
+    subjectExam = await Exam.updateMany(
+      { subjectId: subjectIdObj },
+      { $set: { status: false } }
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Something went wrong.");
   }
 
   return res.status(201).json("Deactivated.");
