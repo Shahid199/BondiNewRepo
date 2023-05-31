@@ -23,6 +23,11 @@ const subjectSchema = new Schema(
       ref: courses,
       required: true,
     },
+    status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
