@@ -922,7 +922,7 @@ const retakeSubmit = async (req, res, next) => {
 
   return res.status(200).json(answerScript);
 };
-const studentSubmittedExamDetail = async (req, re, snext) => {
+const studentSubmittedExamDetail = async (req, res) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
