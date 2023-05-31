@@ -122,7 +122,7 @@ const getAllExam = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.Pagination.");
     }
-    if (count == 0) return res.status(200).json("No data found.");
+    if (count == 0) return res.status(404).json("No data found.");
     paginateData = pagination(count, page);
     try {
       exams = await Exam.find({
@@ -147,7 +147,7 @@ const getAllExam = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
-    if (count == 0) return res.status(200).json("No data found");
+    if (count == 0) return res.status(404).json("No data found");
     paginateData = pagination(count, page);
     exams = await Exam.find({
       $and: [{ examFreeOrNot: false }, { status: true }],

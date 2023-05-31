@@ -29,8 +29,6 @@ router.post(
   addFreeStudent
 );
 
-
-
 router.get(
   "/getfreestudentbyid",
   [passport.authenticate("jwt", { session: false }), passport.authorize()],

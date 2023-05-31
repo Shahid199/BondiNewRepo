@@ -61,7 +61,7 @@ const getAllCourse = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   count = Number(count);
-  if (count == 0) return res.status(200).json("No courses found.");
+  if (count == 0) return res.status(404).json("No courses found.");
   const paginateData = pagination(count, page);
   try {
     courses = await Course.find({ status: true })

@@ -222,7 +222,7 @@ const getAllStudent = async (req, res, next) => {
   let page = Number(req.query.page) || 1;
   let count = 0;
 
-  if (count == 0) return res.status(200).json("No data found.");
+  if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
   try {
     students = await Student.find({})
@@ -645,7 +645,7 @@ const viewSollution = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   if (data == null)
-    return res.status(200).json("No exam found under this student.");
+    return res.status(404).json("No exam found under this student.");
   let resultData = [];
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
     let data1 = {};
@@ -793,10 +793,10 @@ const missedExam = async (req, res, next) => {
       $and: [{ _id: { $in: removedArray } }, { status: true }],
     }).count();
   } catch (err) {
-    return res.status(200).json("Something went wrong.");
+    return res.status(500).json("Something went wrong.");
   }
   if (count == 0) {
-    return res.status(200).json("No data found.");
+    return res.status(404).json("No data found.");
   }
   let paginateData = pagination(count, page);
   try {
@@ -809,7 +809,7 @@ const missedExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  if (resultData == null) return res.status(200).json("No missed exam found.");
+  if (resultData == null) return res.status(404).json("No missed exam found.");
   let resultFinal = [];
   for (let i = 0; i < resultData.length; i++) {
     let result = {};
@@ -1091,7 +1091,7 @@ const viewSollutionAdmin = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   if (data.length == 0)
-    return res.status(200).json("No exam found under this student.");
+    return res.status(404).json("No exam found under this student.");
   let resultData = [];
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
     let data1 = {};
@@ -1161,10 +1161,10 @@ const missedExamAdmin = async (req, res, next) => {
       $and: [{ _id: { $in: removedArray } }, { status: true }],
     }).count();
   } catch (err) {
-    return res.status(200).json("Something went wrong.");
+    return res.status(500).json("Something went wrong.");
   }
   if (count == 0) {
-    return res.status(200).json("No data found.");
+    return res.status(404).json("No data found.");
   }
   let paginateData = pagination(count, page);
   try {
@@ -1177,7 +1177,7 @@ const missedExamAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  if (resultData == null) return res.status(200).json("No missed exam found.");
+  if (resultData == null) return res.status(404).json("No missed exam found.");
   let resultFinal = [];
   for (let i = 0; i < resultData.length; i++) {
     let result = {};
@@ -1209,7 +1209,7 @@ const historyDataAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (count == 0) res.status(200).json("No data found.");
+  if (count == 0) res.status(400).json("No data found.");
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({
@@ -1287,7 +1287,7 @@ const getHistoryByExamId = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (count == 0) {
-    return res.status(200).json("No data found.");
+    return res.status(404).json("No data found.");
   }
   let paginateData = pagination(count, page);
   let data = [],

@@ -134,7 +134,7 @@ const updateOfficeUser = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   if (upd == null) return res.status(404).json("Update not done.");
-  return res.status(200).json("Updated user Info");
+  return res.status(201).json("Updated user Info");
 };
 
 const deactivateUser = async (req, res, next) => {
@@ -163,7 +163,7 @@ const updatePassword = async (req, res, next) => {
   }
   const hashedOldPassword = bcrypt.hashSync(oldPassowrd);
   if (hashedOldPassword != userInfo.password)
-    return res.status(200).json("Old password did not match.");
+    return res.status(404).json("Old password did not match.");
   const hashedNewPassword = bcrypt.hashSync(newPassword);
   let upd = null;
   try {
@@ -171,8 +171,8 @@ const updatePassword = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.Something went wrong.");
   }
-  if (upd == null) return res.status(200).json("Password Mot Updated.");
-  return res.status(200).json("Password Updated.");
+  if (upd == null) return res.status(404).json("Password Mot Updated.");
+  return res.status(201).json("Password Updated.");
 };
 //New Work:User End
 /**

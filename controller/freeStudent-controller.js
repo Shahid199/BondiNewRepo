@@ -68,7 +68,7 @@ const getAllFreeStudent = async (req, res, next) => {
   } catch (err) {
     return res.status.json("Something went wrong.");
   }
-  if (count == 0) return res.status(200).json("No data found.");
+  if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
   try {
     data = await FreeStudent.find({})
@@ -602,7 +602,7 @@ const freeStudentViewSollutionAdmin = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   if (data == null)
-    return res.status(200).json("No exam found under this student.");
+    return res.status(404).json("No exam found under this student.");
   let resultData = [];
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
     let data1 = {};
@@ -755,10 +755,10 @@ const freeStudentMissedExamAdmin = async (req, res, next) => {
       ],
     }).count();
   } catch (err) {
-    return res.status(200).json("Something went wrong.");
+    return res.status(500).json("Something went wrong.");
   }
   if (count == 0) {
-    return res.status(200).json("No data found.");
+    return res.status(404).json("No data found.");
   }
   let paginateData = pagination(count, page);
   try {
@@ -775,7 +775,7 @@ const freeStudentMissedExamAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  if (resultData == null) return res.status(200).json("No missed exam found.");
+  if (resultData == null) return res.status(404).json("No missed exam found.");
   let data = [];
   for (let i = 0; i < resultData.length; i++) {
     let result = {};
