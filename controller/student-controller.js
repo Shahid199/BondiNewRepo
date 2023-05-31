@@ -945,7 +945,7 @@ const retakeSubmit = async (req, res, next) => {
 
   return res.status(200).json(answerScript);
 };
-const studentSubmittedExamDetail = async (req, res) => {
+const studentSubmittedExamDetail = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
@@ -993,7 +993,7 @@ const studentSubmittedExamDetail = async (req, res) => {
   return res.status(200).json(dataObject);
 };
 
-const studentSubmittedExamDetailAdmin = async (req, res, snext) => {
+const studentSubmittedExamDetailAdmin = async (req, res, next) => {
   const studentId = req.query.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
