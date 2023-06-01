@@ -34,7 +34,7 @@ router.post(
 );
 router.get(
   "/getallexam",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","mdoerator","student"])],
   getAllExam
 );
 router.post(

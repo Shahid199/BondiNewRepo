@@ -272,8 +272,9 @@ const getExamBySubject = async (req, res, next) => {
   let courseId = null;
   try {
     courseId = await Subject.findById(subjectId).select("courseId");
-    courseId = courseId.courseId;
+    courseId = courseId?.courseId;
   } catch (err) {
+    console.log(err)
     return res.status(500).json("Something went wrong!");
   }
   let page = Number(req.query.page) || 1;
@@ -304,7 +305,7 @@ const getExamBySubject = async (req, res, next) => {
         { endTime: { $gt: Date.now() } },
       ],
     },
-    "name examVariation startTime endTime"
+    "name examVariation startTime endTime examType"
   )
     .populate("courseId subjectId")
     .skip(paginateData.skippedIndex)
