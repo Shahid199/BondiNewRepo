@@ -96,9 +96,11 @@ const addStudentToCourse = async (req, res, next) => {
   let excelFilePath = null;
   excelFilePath = "uploads/".concat(file.filename);
   const data1 = await fsp.readFile(excelFilePath, "utf8");
-  console.log(data1);
-  const linesExceptFirst = data1.split("\n");
+  // console.log(data1);
+  const linesExceptFirst = data1.split(",");
   const linesArr = linesExceptFirst;
+  //console.log(linesArr.length);
+  // return res.status(200).json("ok");
   //end file work
   let students = [];
   let problemStudent = [];
@@ -113,18 +115,36 @@ const addStudentToCourse = async (req, res, next) => {
   } catch (err) {
     return res.statu(500).json("Something went wrong.");
   }
+  //console.log(studentIds);
   let sIds = [];
+  //studentIds = [... studentIdsa["studentId"]];
   for (let i = 0; i < studentIds.length; i++) {
     sIds.push(String(studentIds[i].studentId));
   }
-  let regNo;
-  for (let i = 1; i < linesArr.length; i++) {
+  //console.log(sIds);
+
+  //let studentIdsMap = studentIds.map((e) => String(e));
+
+  //console.log(studentIds);
+  //console.log(studentIdsMap);
+  // for(let i =0;i<linesArr;i++){
+
+  // }
+  console.log(linesArr);
+  for (let i = 0; i < linesArr.length; i++) {
+    let regNo;
+    //console.log(i);
     regNo = String(linesArr[i].replace(/[\r"]/g, ""));
-    console.log(typeof regNo);
+    //console.log(regNo);
+    regNo = regNo.trim();
+    if (i == 0) regNo = regNo.substring(1);
+    if (i == linesArr.length - 1) regNo = regNo.substring(0, regNo.length - 1);
+    console.log(regNo);
     if (regNo == "undefined") {
       continue;
     }
     if (sIds.includes(regNo)) {
+      console.log("k");
       continue;
     }
     const users = {};
@@ -138,7 +158,10 @@ const addStudentToCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  return res.status(201).json("Successfully inserted all student.");
+
+  return res
+    .status(201)
+    .json({ message: "Successfully inserted all student.", existStudent });
 };
 //get students by course
 const getStudentByCourse = async (req, res, next) => {
