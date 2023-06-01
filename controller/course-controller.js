@@ -123,10 +123,10 @@ const getAllCourseAdmin = async (req, res, next) => {
   try {
     courses = await Course.find({ status: true }, "name status").exec();
   } catch (err) {
-    return new Error(err);
+    return res.status(500).json("Something went wrong.");
   }
   if (!courses) {
-    return res.status(404).json({ message: "Courses Not Found" });
+    return res.status(404).json("Courses Not Found");
   }
   return res.status(200).json(courses);
 };
@@ -141,13 +141,22 @@ const updateSingle = async (req, res, next) => {
 const deactivateCourse = async (req, res, next) => {
   const id = req.query.id;
   const filter = { _id: new ObjectId(id) };
-  const result = await Course.findByIdAndUpdate(filter, { status: false });
+  let result;
+  try {
+    result = await Course.findByIdAndUpdate(filter, { status: false });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   let result2;
   if (result) {
-    result2 = await CourseVsStudent.updateMany(
-      { courseId: id },
-      { status: false }
-    );
+    try {
+      result2 = await CourseVsStudent.updateMany(
+        { courseId: id },
+        { $set: { status: false } }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
   }
   console.log(result2);
   return res.status(200).json(result);

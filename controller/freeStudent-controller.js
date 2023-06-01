@@ -141,26 +141,30 @@ const getFreeStudenInfoByMobile = async (req, res, next) => {
 
 const getFreeExamId = async (req, res, next) => {
   let examId = [];
+  let currentTime = new Date();
   try {
     examId = await Exam.find(
       {
         $and: [
+          { status: true },
           { examFreeOrNot: true },
-          { startTime: { $lt: new Date() } },
-          { endTime: { $gt: new Date() } },
+          { startTime: { $lt: currentTime } },
+          { endTime: { $gt: currentTime } },
         ],
       },
       "_id"
     );
   } catch (err) {
-    return res.status(404).json("Something went wrong.");
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
   }
-  console.log(moment(examId[0].startTime).format("LLL"));
+  // console.log(moment(examId[0].startTime).format("LLL"));
+  console.log(examId.length);
   if (examId.length == 0)
     return res
       .status(404)
       .json("No Free exam has been announced yet.Keep follow the site.");
-  if (examId.length > 1) return res.status(404).json("Something went wrong.");
+  //if (examId.length > 1) return res.status(404).json("Something went wrong.");
   return res.status(200).json(examId);
 };
 //start:free student exam system
