@@ -164,7 +164,7 @@ const getFreeExamId = async (req, res, next) => {
     return res
       .status(404)
       .json("No Free exam has been announced yet.Keep follow the site.");
-  //if (examId.length > 1) return res.status(404).json("Something went wrong.");
+  if (examId.length > 1) return res.status(404).json("Something went wrong.");
   return res.status(200).json(examId);
 };
 //start:free student exam system

@@ -724,7 +724,7 @@ const getStudentByExam = async (req, res, next) => {
   const courseId = req.query.courseId;
   const examId = req.query.examId;
 };
-const freeExamStatus = async () => {
+const freeExamStatus = async (req, res, next) => {
   let freeExamStatus = [];
   try {
     freeExamStatus = await Exam.find({

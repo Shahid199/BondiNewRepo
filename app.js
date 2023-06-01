@@ -56,7 +56,9 @@ app.use("/api/freestudent", freeStudentRouter);
 
 mongoose
   .connect(
-    "mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
+    //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
+    //"mongodb+srv://admin:XSRFrPAsVzBWImXx@cluster0.mlygv5j.mongodb.net/Bondi?retryWrites=true&w=majority"
+    "mongodb+srv://admin:XSRFrPAsVzBWImXx@cluster1.vvfaman.mongodb.net/BondiPathshala?retryWrites=true&w=majority"
   )
   .then(() => {
     app.listen(5011);
