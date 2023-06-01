@@ -33,7 +33,7 @@ router.get(
 );
 router.get(
   "/getsubjectbycourse",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","student"])],
   getSubjectByCourse
 );
 
