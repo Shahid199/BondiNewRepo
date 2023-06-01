@@ -20,10 +20,10 @@ const createExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
-    return res.status(404).json("Fil not uploaded.");
+    return res.status(404).json("File not uploaded.");
   }
   iLinkPath = "uploads/".concat(file.filename);
-  //const examFromQuery = JSON.parse(req.query.exam);
+  const examFromQuery = JSON.parse(req.query.exam);
   const {
     courseId,
     subjectId,
@@ -40,7 +40,7 @@ const createExam = async (req, res, next) => {
     sscStatus,
     hscStatus,
     negativeMarks,
-  } = req.query;
+  } = examFromQuery;
 
   //data upload from API
   // const examFromQuery = req.body;
@@ -420,7 +420,9 @@ const addQuestionMcq = async (req, res, next) => {
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
-    options = [];
+
+    for (let i = 0; i < Number(optionCount); i++)
+      options.push(String.fromCharCode(65 + parseInt(i)));
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
   //insert question

@@ -113,27 +113,20 @@ const addStudentToCourse = async (req, res, next) => {
   } catch (err) {
     return res.statu(500).json("Something went wrong.");
   }
-  //console.log(studentIds);
-  let sIds=[];
-  //studentIds = [... studentIdsa["studentId"]];
-  for(let i=0;i<studentIds.length;i++){
+  let sIds = [];
+  for (let i = 0; i < studentIds.length; i++) {
     sIds.push(String(studentIds[i].studentId));
-
   }
-  console.log(sIds);
   let regNo;
-  let studentIdsMap = studentIds.map((e) => String(e));
-
-   //console.log(studentIds);
-   //console.log(studentIdsMap);
   for (let i = 1; i < linesArr.length; i++) {
-   // console.log(i);
     regNo = String(linesArr[i].replace(/[\r"]/g, ""));
-    console.log(typeof(regNo));
+    console.log(typeof regNo);
     if (regNo == "undefined") {
       continue;
     }
-    if (sIds.includes(regNo)) {console.log("k");continue;}
+    if (sIds.includes(regNo)) {
+      continue;
+    }
     const users = {};
     users["courseId"] = courseId1;
     users["studentId"] = new mongoose.Types.ObjectId(regNo);
@@ -145,9 +138,7 @@ const addStudentToCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  return res
-    .status(201)
-    .json({ message: "Successfully inserted all student.", existStudent });
+  return res.status(201).json("Successfully inserted all student.");
 };
 //get students by course
 const getStudentByCourse = async (req, res, next) => {

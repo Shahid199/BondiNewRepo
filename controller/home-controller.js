@@ -17,26 +17,30 @@ const getHomePage = async (req, res, next) => {
   let studentId = new mongoose.Types.ObjectId(req.user.studentId);
   //Top
   if (section == "top") {
-    let currentTime = Date.now();
+    let currentTime = new Date();
+    console.log(currentTime);
+    console.log(courseId);
     try {
       coming = await Exam.find(
         {
           $and: [
             { status: true },
             { courseId: courseId },
-            { startTime: { $gte: currentTime } },
+            { startTime: { $gt: currentTime } },
           ],
         },
         "_id name startTime endTime iLink"
       )
         .sort("startTime")
         .limit(2);
+      console.log(coming);
     } catch (err) {
       console.log(err);
       return res.status(500).json("Something went wrong!");
     }
+
     try {
-      let currentTime = Date.now();
+      currentTime = new Date();
       running = await Exam.find(
         {
           $and: [
@@ -66,6 +70,7 @@ const getHomePage = async (req, res, next) => {
       console.log(err);
       return res.status(500).json("Something went wrong!");
     }
+    console.log(courseId);
     if (courseId == null || studentId == null)
       return res.status(404).json({ message: "course or student not found." });
     try {
@@ -77,6 +82,7 @@ const getHomePage = async (req, res, next) => {
       console.log(err);
       return res.status(500).json("Something went wrong!");
     }
+    console.log(subjectDataDaily);
     subjectDataMonthly = subjectDataDaily;
     subjectDataweekly = subjectDataDaily;
     homeDataBottom["daily"] = subjectDataDaily;
