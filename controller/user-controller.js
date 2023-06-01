@@ -210,24 +210,24 @@ const loginSuperAdmin = async (req, res) => {
 };
 
 //create superAdmin use only once
-// exports.createSuperAdmin = async (req,res) =>{
+exports.createSuperAdmin = async (req,res) =>{
 
-//   const hashedPassword = bcrypt.hashSync('qwerty');
-//   const user = new User({
-//     name: 'Super Admin Test',
-//     userName: 'superadmintest',
-//     mobileNo: '01677732635',
-//     address: 'Dhaka',
-//     password: hashedPassword,
-//     role: 1,
-//   });
-//   try {
-//     const doc = await user.save();
-//   } catch (err) {
-//     console.log(err);
-//   }
-//   return res.status(201).json("OK");
-// }
+  const hashedPassword = bcrypt.hashSync('qwerty');
+  const user = new User({
+    name: 'Super Admin Test',
+    userName: 'superadmintest',
+    mobileNo: '01677732635',
+    address: 'Dhaka',
+    password: hashedPassword,
+    role: 1,
+  });
+  try {
+    const doc = await user.save();
+  } catch (err) {
+    console.log(err);
+  }
+  return res.status(201).json("OK");
+}
 
 exports.createOfficeUser = createOfficeUser;
 exports.getUserByRole = getUserByRole;

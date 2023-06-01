@@ -7,7 +7,7 @@ const pagination = require("../utilities/pagination");
 const fsp = fs.promises;
 const ObjectId = mongoose.Types.ObjectId;
 //add Student To Course
-const addStudentToCourse = async (req, res, next) => {
+const addStudentToCourse1 = async (req, res, next) => {
   //start file work
   const file = req.file;
   if (!file)
@@ -25,7 +25,17 @@ const addStudentToCourse = async (req, res, next) => {
   let problemStudent = [];
   let existStudent = [];
   let courseId1;
+  let studentIds = [];
   courseId1 = new mongoose.Types.ObjectId(courseId);
+  try {
+    studentIds = await CourseVsStudent.find({ courseId: courseId1 }).select(
+      "_id"
+    );
+  } catch (err) {
+    return res.statu(500).json("Something went wrong.");
+  }
+  let studentIdsMap = studentIds.map((e) => String(e));
+
   for (let i = 1; i < linesArr.length; i++) {
     const regNo = String(linesArr[i].replace(/[\r]/g, ""));
     if (regNo == "undefined") {
@@ -61,8 +71,61 @@ const addStudentToCourse = async (req, res, next) => {
     students.push(users);
   }
 
-  if (problemStudent.length > 0) return res.status(202).json({message:"Student not tadded.",problemStudent});
+  if (problemStudent.length > 0)
+    return res
+      .status(202)
+      .json({ message: "Student not tadded.", problemStudent });
   let doc;
+  try {
+    doc = await CourseVsStudent.insertMany(students, { ordered: false });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res
+    .status(201)
+    .json({ message: "Successfully inserted all student.", existStudent });
+};
+const addStudentToCourse = async (req, res, next) => {
+  //start file work
+  const file = req.file;
+  if (!file)
+    return res.status(404).json("CSV file is not uploaded or wrong file name.");
+  let courseId = req.query.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("courseId is invalid.");
+  let excelFilePath = null;
+  excelFilePath = "uploads/".concat(file.filename);
+  const data1 = await fsp.readFile(excelFilePath, "utf8");
+  const linesExceptFirst = data1.split("\n");
+  const linesArr = linesExceptFirst;
+  //end file work
+  let students = [];
+  let problemStudent = [];
+  let existStudent = [];
+  let courseId1;
+  let studentIds = [];
+  courseId1 = new mongoose.Types.ObjectId(courseId);
+  try {
+    studentIds = await CourseVsStudent.find({ courseId: courseId1 }).select(
+      "_id"
+    );
+  } catch (err) {
+    return res.statu(500).json("Something went wrong.");
+  }
+  let studentIdsMap = studentIds.map((e) => String(e));
+
+  for (let i = 1; i < linesArr.length; i++) {
+    const regNo = String(linesArr[i].replace(/[\r]/g, ""));
+    if (regNo == "undefined") {
+      continue;
+    }
+    if (studentIdsMap.includes(regNo)) continue;
+    const users = {};
+    users["courseId"] = courseId1;
+    users["studentId"] = new mongoose.Types.ObjectId(regNo);
+    users["status"] = true;
+    students.push(users);
+  }
   try {
     doc = await CourseVsStudent.insertMany(students, { ordered: false });
   } catch (err) {

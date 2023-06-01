@@ -10,7 +10,7 @@ const {
   deactivateUser,
   updatePassword,
   getUserById,
-  // createSuperAdmin
+  createSuperAdmin,
 } = require("../controller/user-controller");
 const authorize = require("../utilities/authorizationMiddleware");
 const router = express.Router();
@@ -33,10 +33,7 @@ router.get(
 );
 router.get(
   "/getuserbyid",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(),
-  ],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   getUserById
 );
 router.get(
@@ -67,6 +64,6 @@ router.put(
 );
 router.post("/login", loginSuperAdmin);
 
-// router.get('/create_super_admin',createSuperAdmin);
+router.get("/create_super_admin", createSuperAdmin);
 
 module.exports = router;
