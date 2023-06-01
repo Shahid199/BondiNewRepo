@@ -112,12 +112,14 @@ const addStudent = async (req, res, next) => {
     students.push(users);
   }
   //end file work
+  let doc=[];
   try {
-    const doc = await Student.insertMany(students, { ordered: false });
+    doc = await Student.insertMany(students, { ordered: false });
   } catch (err) {
     console.log(err);
   }
-  return res.status(201).json("Success!");
+  console.log(doc);
+  return res.status(201).json(doc);
 };
 //update student
 const updateStudent = async (req, res, next) => {
