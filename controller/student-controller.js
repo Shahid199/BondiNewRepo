@@ -136,6 +136,7 @@ const addStudent = async (req, res, next) => {
   for (let i = 0; i < doc2.length; i++) {
     doc4.push(String(doc2[i]._id));
   }
+  //console.log(students);
   console.log(doc4);
   return res.status(201).json(doc4);
 };
