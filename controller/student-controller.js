@@ -345,6 +345,7 @@ const assignQuestion = async (req, res, next) => {
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
   let totalQues = Number(totalQuesData.totalQuestionMcq);
+  console.log(totalQues,'totalQues')
   max = size - 1;
   for (let i = 0; ; i++) {
     rand = Math.random();
@@ -356,6 +357,7 @@ const assignQuestion = async (req, res, next) => {
     }
     if (doc.length == totalQues) break;
   }
+  // console.log(doc,'doc')
   //end:generating random index of questions
   let doc1;
   try {
@@ -364,6 +366,7 @@ const assignQuestion = async (req, res, next) => {
     return res.status(500).json("3.Something went wrong.");
   }
   let statQues = [];
+  // console.log(doc1.mId,'doc1.mId');
   for (let i = 0; i < doc1.mId.length; i++) {
     let quesId = String(doc1.mId[i]);
     let stat;
@@ -375,6 +378,7 @@ const assignQuestion = async (req, res, next) => {
     }
     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
   }
+
   if (totalQues > statQues.length)
     return res
       .status(404)
@@ -382,10 +386,12 @@ const assignQuestion = async (req, res, next) => {
   let doc2 = statQues;
   let resultQuestion = [];
   for (let i = 0; i < totalQues; i++) {
-    let data = doc2[doc[i]];
+    let data = String(doc2[doc[i]]);
     resultQuestion.push(data);
   }
-  let questions;
+  // console.log(totalQues,'totalQues')
+  console.log(resultQuestion,'resultQuestion')
+  let questions= [];
   try {
     questions = await QuestionsMcq.find(
       { _id: { $in: resultQuestion } },
@@ -394,7 +400,7 @@ const assignQuestion = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(questions);
+  // console.log(questions);
   if (sId == null)
     return res
       .status(404)
@@ -406,7 +412,7 @@ const assignQuestion = async (req, res, next) => {
   let studentExamVsQuestionsMcq = new StudentExamVsQuestionsMcq({
     studentId: sId,
     examId: eId1,
-    mcqQuestionId: doc2,
+    mcqQuestionId: resultQuestion,
     answeredOption: answered,
   });
   let saveStudentQuestion = null,
