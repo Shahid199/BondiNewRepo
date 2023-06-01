@@ -37,7 +37,7 @@ const addStudentToCourse1 = async (req, res, next) => {
   let studentIdsMap = studentIds.map((e) => String(e));
 
   for (let i = 1; i < linesArr.length; i++) {
-    const regNo = String(linesArr[i].replace(/[\r]/g, ""));
+    const regNo = String(linesArr[i].replace(/["'\r]/g, ""));
     if (regNo == "undefined") {
       continue;
     }
@@ -96,6 +96,7 @@ const addStudentToCourse = async (req, res, next) => {
   let excelFilePath = null;
   excelFilePath = "uploads/".concat(file.filename);
   const data1 = await fsp.readFile(excelFilePath, "utf8");
+  console.log(data1);
   const linesExceptFirst = data1.split("\n");
   const linesArr = linesExceptFirst;
   //end file work
@@ -107,19 +108,32 @@ const addStudentToCourse = async (req, res, next) => {
   courseId1 = new mongoose.Types.ObjectId(courseId);
   try {
     studentIds = await CourseVsStudent.find({ courseId: courseId1 }).select(
-      "_id"
+      "studentId"
     );
   } catch (err) {
     return res.statu(500).json("Something went wrong.");
   }
+  //console.log(studentIds);
+  let sIds=[];
+  //studentIds = [... studentIdsa["studentId"]];
+  for(let i=0;i<studentIds.length;i++){
+    sIds.push(String(studentIds[i].studentId));
+
+  }
+  console.log(sIds);
+  let regNo;
   let studentIdsMap = studentIds.map((e) => String(e));
 
+   //console.log(studentIds);
+   //console.log(studentIdsMap);
   for (let i = 1; i < linesArr.length; i++) {
-    const regNo = String(linesArr[i].replace(/[\r]/g, ""));
+   // console.log(i);
+    regNo = String(linesArr[i].replace(/[\r"]/g, ""));
+    console.log(typeof(regNo));
     if (regNo == "undefined") {
       continue;
     }
-    if (studentIdsMap.includes(regNo)) continue;
+    if (sIds.includes(regNo)) {console.log("k");continue;}
     const users = {};
     users["courseId"] = courseId1;
     users["studentId"] = new mongoose.Types.ObjectId(regNo);
