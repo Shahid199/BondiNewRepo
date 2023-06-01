@@ -196,7 +196,7 @@ const updateStudent = async (req, res, next) => {
       institution: institution,
     };
     try {
-      const doc = await Student.findOneAndUpdate({ id: id }, stud);
+      const doc = await Student.findByIdAndUpdate(studentId, stud);
       flag = true;
     } catch (err) {
       return res.status(500).json("Something went wrong!");
