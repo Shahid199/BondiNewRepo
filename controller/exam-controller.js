@@ -420,9 +420,7 @@ const addQuestionMcq = async (req, res, next) => {
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
-
-    for (let i = 0; i < Number(optionCount); i++)
-      options.push(String.fromCharCode(65 + parseInt(i)));
+    options = [];
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
   //insert question

@@ -529,13 +529,14 @@ const getRunningData = async (req, res, next) => {
   let examData = new Object();
   let questionData = new Object();
   let timeData = new Object();
-
   for (let i = 0; i < getQuestionMcq.mcqQuestionId.length; i++) {
     let runningResponse = {};
     runningResponse["question"] = getQuestionMcq.mcqQuestionId[i].question;
     runningResponse["options"] = getQuestionMcq.mcqQuestionId[i].options;
     runningResponse["type"] = getQuestionMcq.mcqQuestionId[i].type;
     runningResponse["answeredOption"] = getQuestionMcq.answeredOption[i];
+    runningResponse["optionCount"] =
+      getQuestionMcq.mcqQuestionId[i].optionCount;
     runningResponseLast.push(runningResponse);
   }
   timeData["startTime"] = getExamData.examStartTime;
