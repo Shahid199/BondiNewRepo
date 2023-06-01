@@ -40,21 +40,11 @@ const getUserById = async (req, res, next) => {
   const id = req.query.id;
   if (id == null) return res.status(404).json("id not found.");
   let page = req.query.page;
-  let skippedItem;
-  if (page == null) {
-    page = Number(1);
-    skippedItem = (page - 1) * Limit;
-  } else {
-    page = Number(page);
-    skippedItem = (page - 1) * Limit;
-  }
-
   let user;
   try {
     user = await User.find({ _id: id, status: true })
       .select("name userName mobileNo address")
-      .skip(skippedItem)
-      .limit(Limit);
+     
   } catch (err) {
     return new Error(err);
   }
