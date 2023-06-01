@@ -115,11 +115,11 @@ const addStudentToCourse = async (req, res, next) => {
   let studentIdsMap = studentIds.map((e) => String(e));
 
   for (let i = 1; i < linesArr.length; i++) {
-    const regNo = String(linesArr[i].replace(/[\r]/g, ""));
+    const regNo = String(linesArr[i].replace(/[\r"]/g, ""));
     if (regNo == "undefined") {
       continue;
     }
-    if (studentIdsMap.includes(regNo)) continue;
+    if (studentIdsMap.includes(regNo) == true) continue;
     const users = {};
     users["courseId"] = courseId1;
     users["studentId"] = new mongoose.Types.ObjectId(regNo);
