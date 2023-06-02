@@ -893,9 +893,9 @@ const missedExam = async (req, res, next) => {
     result["exanName"] = resultData[i].name;
     result["subject"] = resultData[i].subjectId.name;
     result["startTime"] = moment(resultData[i].startTime).format("LL");
-    result["duration"] = resultData[i].duration;
-    result["examType"] = resultData[i].examType;
-    result["examVariation"] = resultData[i].examVariation;
+    result["duration"] = Number(resultData[i].duration);
+    result["examType"] = moment(resultData[i].examType).format("lll");
+    result["examVariation"] = examType(Number(resultData[i].examVariation));
     result["negativeMarks"] = resultData[i].negativeMarks;
     resultFinal.push(result);
   }
