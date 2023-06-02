@@ -82,8 +82,8 @@ const createExam = async (req, res, next) => {
     examType: Number(examType),
     examVariation: Number(examVariation),
     examFreeOrNot: JSON.parse(examFreeOrNot),
-    startTime: new Date(moment(startTime1).add(6,"hours")),
-    endTime: new Date(moment(endTime1).add(6,"hours")),
+    startTime: new Date(moment(startTime1).add(6, "hours")),
+    endTime: new Date(moment(endTime1).add(6, "hours")),
     duration: Number(duration),
     totalQuestionMcq: tqm,
     marksPerMcq: tmm,
@@ -274,7 +274,7 @@ const getExamBySubject = async (req, res, next) => {
     courseId = await Subject.findById(subjectId).select("courseId");
     courseId = courseId?.courseId;
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   let page = Number(req.query.page) || 1;

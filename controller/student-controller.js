@@ -418,7 +418,7 @@ const assignQuestion = async (req, res, next) => {
   let saveStudentQuestion = null,
     saveStudentExam = null;
   let duration = Number(totalQues.duration);
-  const examStartTime = new Date();
+  const examStartTime = new Date(moment(new Date()).add(6, "hours"));
   const examEndTime = new Date(moment(examStartTime).add(duration, "minutes"));
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
@@ -727,6 +727,7 @@ const viewSollution = async (req, res, next) => {
     data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
     data1["type"] = data[0].mcqQuestionId[i].type;
     data1["answeredOption"] = data[0].answeredOption[i];
+    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
     resultData.push(data1);
   }
   return res.status(200).json(resultData);
@@ -895,7 +896,8 @@ const missedExam = async (req, res, next) => {
     result["startTime"] = moment(resultData[i].startTime).format("LL");
     result["duration"] = Number(resultData[i].duration);
     result["examType"] = examType[Number(resultData[i].examType)];
-    result["examVariation"] = examVariation[Number(resultData[i].examVariation)];
+    result["examVariation"] =
+      examVariation[Number(resultData[i].examVariation)];
     result["negativeMarks"] = resultData[i].negativeMarks;
     resultFinal.push(result);
   }
