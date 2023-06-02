@@ -424,7 +424,7 @@ const assignQuestionFree = async (req, res, next) => {
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
   let totalQues = Number(totalQuesData.totalQuestionMcq);
-  console.log(totalQues,'totalQues')
+  console.log(totalQues, "totalQues");
   max = size - 1;
   for (let i = 0; ; i++) {
     rand = Math.random();
@@ -469,8 +469,8 @@ const assignQuestionFree = async (req, res, next) => {
     resultQuestion.push(data);
   }
   // console.log(totalQues,'totalQues')
-  console.log(resultQuestion,'resultQuestion')
-  let questions= [];
+  console.log(resultQuestion, "resultQuestion");
+  let questions = [];
   try {
     questions = await QuestionsMcq.find(
       { _id: { $in: resultQuestion } },
@@ -496,7 +496,7 @@ const assignQuestionFree = async (req, res, next) => {
   });
   let saveStudentQuestion = null,
     saveStudentExam = null;
-  let duration = totalQues.duration;
+  let duration = Number(totalQues.duration);
   const examStartTime = new Date();
   const examEndTime = new Date(moment(examStartTime).add(duration, "minutes"));
   let studentMarksRank = new FreestudentMarksRank({
@@ -555,9 +555,12 @@ const updateAssignQuestionFree = async (req, res, next) => {
   console.log(optionIndexNumber);
   answered[questionIndexNumber] = String(optionIndexNumber);
   try {
-    updateAnswer = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(docId1, {
-      answeredOption: answered,
-    });
+    updateAnswer = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(
+      docId1,
+      {
+        answeredOption: answered,
+      }
+    );
   } catch (err) {
     return res.status(500).json("DB error!");
   }
@@ -726,7 +729,9 @@ const submitAnswerFree = async (req, res, next) => {
     return res.status(500).json("Problem when update total obtained marks.");
   }
   try {
-    getResult = await FreeStudentExamVsQuestionsMcq.findById(id).populate("examId");
+    getResult = await FreeStudentExamVsQuestionsMcq.findById(id).populate(
+      "examId"
+    );
   } catch (err) {
     return res.status(500).json("Problem when get Student Exam info.");
   }
@@ -764,7 +769,6 @@ const submitAnswerFree = async (req, res, next) => {
   console.log(sendResult);
   return res.status(200).json(sendResult);
 };
-
 
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;

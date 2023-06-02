@@ -345,7 +345,7 @@ const assignQuestion = async (req, res, next) => {
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
   let totalQues = Number(totalQuesData.totalQuestionMcq);
-  console.log(totalQues,'totalQues')
+  console.log(totalQues, "totalQues");
   max = size - 1;
   for (let i = 0; ; i++) {
     rand = Math.random();
@@ -390,8 +390,8 @@ const assignQuestion = async (req, res, next) => {
     resultQuestion.push(data);
   }
   // console.log(totalQues,'totalQues')
-  console.log(resultQuestion,'resultQuestion')
-  let questions= [];
+  console.log(resultQuestion, "resultQuestion");
+  let questions = [];
   try {
     questions = await QuestionsMcq.find(
       { _id: { $in: resultQuestion } },
@@ -417,7 +417,7 @@ const assignQuestion = async (req, res, next) => {
   });
   let saveStudentQuestion = null,
     saveStudentExam = null;
-  let duration = totalQues.duration;
+  let duration = Number(totalQues.duration);
   const examStartTime = new Date();
   const examEndTime = new Date(moment(examStartTime).add(duration, "minutes"));
   let studentMarksRank = new StudentMarksRank({
@@ -1138,7 +1138,7 @@ const filterHistory = async (req, res, next) => {
   }
 };
 //use for admin
-const viewSollutionAdmin = async (req, res, next) => {
+const viewSollutionAdmin1 = async (req, res, next) => {
   console.log(req.query);
   const studentId = req.query.studentId;
   const examId = req.query.examId;
@@ -1170,6 +1170,40 @@ const viewSollutionAdmin = async (req, res, next) => {
   }
   return res.status(200).json(resultData);
 };
+const viewSollutionAdmin = async (req, res, next) => {
+  console.log(req.query);
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await StudentExamVsQuestionsMcq.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["id"] = data[0].mcqQuestionId[i]._id;
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    resultData.push(data1);
+  }
+  return res.status(200).json(resultData);
+};
+
 const missedExamAdmin = async (req, res, next) => {
   const studentId = req.query.studentId;
   const courseId = req.query.courseId;
