@@ -690,6 +690,13 @@ const submitAnswer = async (req, res, next) => {
   console.log(sendResult);
   return res.status(200).json(sendResult);
 };
+
+// const setAllRank = async (req, res, next) => {
+//   let examId = req.query.examId;
+//   if (!ObjectId.isValid(examId)) return res.status(404).json("Invalid Id.");
+//   let 
+// };
+
 //student can view the following info
 const viewSollution = async (req, res, next) => {
   console.log(req.query);
