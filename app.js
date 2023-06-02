@@ -62,11 +62,6 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
-    let examStartTime = new Date();
-    //examStartTime = moment(examStartTime).add(6, "hours");
-    let examEndTime = moment(examStartTime).add(20, "minutes");
-    console.log(examStartTime);
-    console.log(new Date(examEndTime));
     console.log("running on 5011");
   })
   .catch((err) => console.log(err));

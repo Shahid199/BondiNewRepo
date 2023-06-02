@@ -19,6 +19,7 @@ const { ObjectId } = require("mongodb");
 const pagination = require("../utilities/pagination");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
+const isodate = require("isodate");
 
 const Limit = 100;
 
@@ -418,13 +419,7 @@ const assignQuestion = async (req, res, next) => {
   let saveStudentQuestion = null,
     saveStudentExam = null;
   let duration = Number(totalQuesData.duration);
-  console.log(duration);
-  // const examStartTime = moment(new Date());
-  // const examEndTime = moment(examStartTime).add(duration / 60, "hours");
-  // console.log(examStartTime);
-  // console.log(examEndTime);
-  let examStartTime = new Date();
-  examStartTime = moment(examStartTime).add(6, "hours");
+  let examStartTime = moment(Date.now()).add(6, "hours");
   let examEndTime = moment(examStartTime).add(duration, "minutes");
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
@@ -513,10 +508,9 @@ const getRunningData = async (req, res, next) => {
   }
   try {
     getExamData = await StudentMarksRank.findOne(
-      { examId: eId1 },
-      { studentId: sId1 }
+      { $and: [{ examId: eId1 }, { studentId: sId1 }] },
+      "examStartTime examEndTime examId"
     )
-      .select("examStartTime examEndTime examId")
       .populate({
         path: "examId",
         populate: {
@@ -536,7 +530,6 @@ const getRunningData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Can't get exam info.");
   }
-  console.log(getQuestionMcq);
   let runningResponseLast = [];
   let examData = new Object();
   let questionData = new Object();
@@ -552,20 +545,12 @@ const getRunningData = async (req, res, next) => {
     runningResponseLast.push(runningResponse);
   }
   timeData["examDuration"] = getExamData.examId.duration;
-  let examStartTime1 = getExamData.examStartTime;
-  examStartTime1 = moment(examStartTime1).add(6, "hours");
-  let examEndTime1 = moment(examStartTime1).add(
-    Number(timeData["examDuration"]),
-    "minutes"
-  );
-  timeData["startTime"] = examStartTime1;
-  timeData["endTine"] = examEndTime1;
+  let examStartTime = moment(getExamData.examStartTime);
+  let examEndTime = moment(getExamData.examEndTime);
+  timeData["startTime"] = examStartTime;
+  timeData["endTine"] = examEndTime;
   questionData = runningResponseLast;
   examData = getExamData.examId;
-  console.log("get");
-  console.log(getExamData);
-  console.log(timeData["startTime"]);
-  console.log(timeData["endTine"]);
   return res.status(200).json({ timeData, questionData, examData });
 };
 //submit answer or end time
