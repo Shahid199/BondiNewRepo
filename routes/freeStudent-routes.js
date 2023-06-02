@@ -6,17 +6,17 @@ const {
   addFreeStudent,
   getAllFreeStudent,
   freeLoginStudent,
-  examCheckMiddleware,
-  getRunningData,
-  updateAssignQuestion,
-  assignQuestion,
-  submitAnswer,
   freeStudentViewSollutionAdmin,
   freeStudentHistoryDataAdmin,
   freeStudentMissedExamAdmin,
   getFreeExamId,
   getFreeStudenInfoById,
   getFreeStudenInfoByMobile,
+  examCheckMiddlewareFree,
+  assignQuestionFree,
+  updateAssignQuestionFree,
+  getRunningDataFree,
+  submitAnswerFree,
 } = require("../controller/freeStudent-controller");
 
 const router = express.Router();
@@ -56,7 +56,7 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
-  examCheckMiddleware
+  examCheckMiddlewareFree
 );
 router.get(
   "/startexam",
@@ -64,7 +64,7 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
-  assignQuestion
+  assignQuestionFree
 );
 router.put(
   "/updatequestion",
@@ -72,7 +72,7 @@ router.put(
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
-  updateAssignQuestion
+  updateAssignQuestionFree
 );
 router.get(
   "/getrunningdata",
@@ -80,7 +80,7 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
-  getRunningData
+  getRunningDataFree
 );
 router.post(
   "/submitanswer",
@@ -88,7 +88,7 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
-  submitAnswer
+  submitAnswerFree
 );
 //Free student data view api Route.
 router.get(
