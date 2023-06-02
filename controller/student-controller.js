@@ -694,7 +694,7 @@ const submitAnswer = async (req, res, next) => {
 // const setAllRank = async (req, res, next) => {
 //   let examId = req.query.examId;
 //   if (!ObjectId.isValid(examId)) return res.status(404).json("Invalid Id.");
-//   let 
+//   let
 // };
 
 //student can view the following info
@@ -817,18 +817,21 @@ const missedExam = async (req, res, next) => {
   }
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  console.log(studentIdObj);
   let allExam = null;
   try {
     allExam = await Exam.find({
       $and: [
         { courseId: courseIdObj },
         { status: true },
-        { endtime: { $lt: new Date() } },
+        { endTime: { $lt: new Date() } },
       ],
     }).select("_id");
   } catch (err) {
     return res.status(500).json("1.Sometihing went wrong.");
   }
+  console.log("allexam");
+  console.log(allExam);
   let doneExam = null;
   try {
     doneExam = await StudentMarksRank.find(
@@ -837,6 +840,8 @@ const missedExam = async (req, res, next) => {
       },
       "examId"
     );
+    console.log("doneExam");
+    console.log(doneExam);
   } catch (err) {
     return res.status(500).json("2.Something went wrong.");
   }
@@ -1178,8 +1183,7 @@ const viewSollutionAdmin1 = async (req, res, next) => {
   return res.status(200).json(resultData);
 };
 const viewSollutionAdmin = async (req, res, next) => {
-  console.log(req.query);
-  const studentId = req.user.studentId;
+  const studentId = req.query.studentId;
   const examId = req.query.examId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
     return res.status(404).json("student Id or examId is not valid.");
