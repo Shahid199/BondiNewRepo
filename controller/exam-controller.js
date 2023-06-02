@@ -286,7 +286,7 @@ const getExamBySubject = async (req, res, next) => {
         { subjectId: subjectId },
         { examVariation: variation },
         { examFreeOrNot: false },
-        { endTime: { $gt: Date.now() } },
+        { endTime: { $gt: new Date() } },
       ],
     }).count();
   } catch (err) {
@@ -302,7 +302,7 @@ const getExamBySubject = async (req, res, next) => {
         { subjectId: subjectId },
         { examVariation: variation },
         { examFreeOrNot: false },
-        { endTime: { $gt: Date.now() } },
+        { endTime: { $gt: new Date() } },
       ],
     },
     "name examVariation startTime endTime examType"

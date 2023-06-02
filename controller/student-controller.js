@@ -417,9 +417,15 @@ const assignQuestion = async (req, res, next) => {
   });
   let saveStudentQuestion = null,
     saveStudentExam = null;
-  let duration = Number(totalQues.duration);
-  const examStartTime = new Date(moment(new Date()).add(6, "hours"));
-  const examEndTime = new Date(moment(examStartTime).add(duration, "minutes"));
+  let duration = Number(totalQuesData.duration);
+  console.log(duration);
+  // const examStartTime = moment(new Date());
+  // const examEndTime = moment(examStartTime).add(duration / 60, "hours");
+  // console.log(examStartTime);
+  // console.log(examEndTime);
+  let examStartTime = new Date();
+  examStartTime = moment(examStartTime).add(6, "hours");
+  let examEndTime = moment(examStartTime).add(duration, "minutes");
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
     examId: eId1,
@@ -545,12 +551,21 @@ const getRunningData = async (req, res, next) => {
       getQuestionMcq.mcqQuestionId[i].optionCount;
     runningResponseLast.push(runningResponse);
   }
-  timeData["startTime"] = getExamData.examStartTime;
-  timeData["endTine"] = getExamData.examEndTime;
   timeData["examDuration"] = getExamData.examId.duration;
+  let examStartTime1 = getExamData.examStartTime;
+  examStartTime1 = moment(examStartTime1).add(6, "hours");
+  let examEndTime1 = moment(examStartTime1).add(
+    Number(timeData["examDuration"]),
+    "minutes"
+  );
+  timeData["startTime"] = examStartTime1;
+  timeData["endTine"] = examEndTime1;
   questionData = runningResponseLast;
   examData = getExamData.examId;
-
+  console.log("get");
+  console.log(getExamData);
+  console.log(timeData["startTime"]);
+  console.log(timeData["endTine"]);
   return res.status(200).json({ timeData, questionData, examData });
 };
 //submit answer or end time
