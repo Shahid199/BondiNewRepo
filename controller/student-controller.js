@@ -142,7 +142,7 @@ const addStudent = async (req, res, next) => {
   return res.status(201).json(doc4);
 };
 //update student
-const updateStudent = async (req, res, next) => {
+const updateStudent1 = async (req, res, next) => {
   const studentId = req.user.studentId;
   const id = new mongoose.Types.ObjectId(studentId);
   if (studentId == null) return res.status(404).json("Student not found.");
@@ -209,6 +209,36 @@ const updateStudent = async (req, res, next) => {
     }
   }
 };
+
+const updateStudent = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Student not found.");
+  const id = new mongoose.Types.ObjectId(studentId);
+  console.log(req.body);
+  const { name, institution, mobileNo, sscRoll, sscReg, hscRoll, hscReg } =
+    req.body;
+  const stud = {
+    name: name,
+    mobileNo: mobileNo,
+    sscRoll: sscRoll,
+    sscReg: sscReg,
+    hscRoll: hscRoll,
+    hscReg: hscReg,
+    institution: institution,
+  };
+  let doc = null;
+  try {
+    doc = await Student.findByIdAndUpdate(studentId, stud);
+  } catch (err) {
+    return res.status(500).json("Something went wrong!");
+  }
+  if (doc == null) return res.status(404).json("Data not updated.");
+  return res
+    .status(201)
+    .json({ message: "Succesfully updated student information." });
+};
+
 //get student ID
 const getStudentId = async (req, res, next) => {
   const regNo = req.query.regNo;
@@ -300,12 +330,23 @@ const examCheckMiddleware = async (req, res, next) => {
   studentIdObj = new mongoose.Types.ObjectId(studentId);
   examIdObj = new mongoose.Types.ObjectId(examId);
   let status = null;
+  let query = null;
+  let examEndTime = null;
+  let currentDate = moment(Date.now());
+  try {
+    query = await Exam.findById(examId, "endTime");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  examEndTime = query.endTime;
+  if (examEndTime <= currentDate) return res.status(200).json("ended");
+
   try {
     status = await StudentMarksRank.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     });
   } catch (err) {
-    return res.status(500).json("DB error");
+    return res.status(500).json("Something went wrong.");
   }
   if (status == null) return res.status(200).json("assign");
   else {
@@ -797,8 +838,6 @@ const historyData = async (req, res, next) => {
       return res.status(500).json("3.Something went wrong.");
     }
     subjectName = subjectName.name;
-    if (rank == null || subjectName == null) {
-    }
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = examType[Number(data[i].examId.examType)];
@@ -1332,7 +1371,7 @@ const historyDataAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (count == 0) res.status(400).json("No data found.");
+  if (count == 0) return res.status(400).json("No data found.");
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({
