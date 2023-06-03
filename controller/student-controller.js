@@ -19,6 +19,7 @@ const { ObjectId } = require("mongodb");
 const pagination = require("../utilities/pagination");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
+const isodate = require("isodate");
 
 const Limit = 100;
 
@@ -141,7 +142,7 @@ const addStudent = async (req, res, next) => {
   return res.status(201).json(doc4);
 };
 //update student
-const updateStudent = async (req, res, next) => {
+const updateStudent1 = async (req, res, next) => {
   const studentId = req.user.studentId;
   const id = new mongoose.Types.ObjectId(studentId);
   if (studentId == null) return res.status(404).json("Student not found.");
@@ -208,6 +209,36 @@ const updateStudent = async (req, res, next) => {
     }
   }
 };
+
+const updateStudent = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Student not found.");
+  const id = new mongoose.Types.ObjectId(studentId);
+  console.log(req.body);
+  const { name, institution, mobileNo, sscRoll, sscReg, hscRoll, hscReg } =
+    req.body;
+  const stud = {
+    name: name,
+    mobileNo: mobileNo,
+    sscRoll: sscRoll,
+    sscReg: sscReg,
+    hscRoll: hscRoll,
+    hscReg: hscReg,
+    institution: institution,
+  };
+  let doc = null;
+  try {
+    doc = await Student.findByIdAndUpdate(studentId, stud);
+  } catch (err) {
+    return res.status(500).json("Something went wrong!");
+  }
+  if (doc == null) return res.status(404).json("Data not updated.");
+  return res
+    .status(201)
+    .json({ message: "Succesfully updated student information." });
+};
+
 //get student ID
 const getStudentId = async (req, res, next) => {
   const regNo = req.query.regNo;
@@ -299,12 +330,23 @@ const examCheckMiddleware = async (req, res, next) => {
   studentIdObj = new mongoose.Types.ObjectId(studentId);
   examIdObj = new mongoose.Types.ObjectId(examId);
   let status = null;
+  let query = null;
+  let examEndTime = null;
+  let currentDate = moment(Date.now());
+  try {
+    query = await Exam.findById(examId, "endTime");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  examEndTime = query.endTime;
+  if (examEndTime <= currentDate) return res.status(200).json("ended");
+
   try {
     status = await StudentMarksRank.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     });
   } catch (err) {
-    return res.status(500).json("DB error");
+    return res.status(500).json("Something went wrong.");
   }
   if (status == null) return res.status(200).json("assign");
   else {
@@ -357,7 +399,7 @@ const assignQuestion = async (req, res, next) => {
     }
     if (doc.length == totalQues) break;
   }
-  // console.log(doc,'doc')
+  console.log(doc, "doc");
   //end:generating random index of questions
   let doc1;
   try {
@@ -417,9 +459,9 @@ const assignQuestion = async (req, res, next) => {
   });
   let saveStudentQuestion = null,
     saveStudentExam = null;
-  let duration = Number(totalQues.duration);
-  const examStartTime = new Date();
-  const examEndTime = new Date(moment(examStartTime).add(duration, "minutes"));
+  let duration = Number(totalQuesData.duration);
+  let examStartTime = moment(Date.now()).add(6, "hours");
+  let examEndTime = moment(examStartTime).add(duration, "minutes");
   let studentMarksRank = new StudentMarksRank({
     studentId: sId,
     examId: eId1,
@@ -507,10 +549,9 @@ const getRunningData = async (req, res, next) => {
   }
   try {
     getExamData = await StudentMarksRank.findOne(
-      { examId: eId1 },
-      { studentId: sId1 }
+      { $and: [{ examId: eId1 }, { studentId: sId1 }] },
+      "examStartTime examEndTime examId"
     )
-      .select("examStartTime examEndTime examId")
       .populate({
         path: "examId",
         populate: {
@@ -530,7 +571,6 @@ const getRunningData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Can't get exam info.");
   }
-  console.log(getQuestionMcq);
   let runningResponseLast = [];
   let examData = new Object();
   let questionData = new Object();
@@ -545,12 +585,13 @@ const getRunningData = async (req, res, next) => {
       getQuestionMcq.mcqQuestionId[i].optionCount;
     runningResponseLast.push(runningResponse);
   }
-  timeData["startTime"] = getExamData.examStartTime;
-  timeData["endTine"] = getExamData.examEndTime;
   timeData["examDuration"] = getExamData.examId.duration;
+  let examStartTime = moment(getExamData.examStartTime);
+  let examEndTime = moment(getExamData.examEndTime);
+  timeData["startTime"] = examStartTime;
+  timeData["endTine"] = examEndTime;
   questionData = runningResponseLast;
   examData = getExamData.examId;
-
   return res.status(200).json({ timeData, questionData, examData });
 };
 //submit answer or end time
@@ -727,6 +768,7 @@ const viewSollution = async (req, res, next) => {
     data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
     data1["type"] = data[0].mcqQuestionId[i].type;
     data1["answeredOption"] = data[0].answeredOption[i];
+    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
     resultData.push(data1);
   }
   return res.status(200).json(resultData);
@@ -765,10 +807,13 @@ const historyData = async (req, res, next) => {
     return res.status(404).json("No exam data found for the student.");
   let resultData = [];
   let flag = false;
+  console.log(data.length);
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+    console.log(examIdObj);
+    console.log(studentIdObj);
     try {
       rank = await StudentMarksRank.findOne(
         {
@@ -783,8 +828,8 @@ const historyData = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
-    if (rank == null)
-      return res.status(404).json("No exam data forunf for the student.");
+    if (rank == null) continue;
+    //return res.status(404).json("No exam data found for the student.");
     let subjectIdObj = String(data[i].examId.subjectId);
     let subjectName = null;
     try {
@@ -793,8 +838,6 @@ const historyData = async (req, res, next) => {
       return res.status(500).json("3.Something went wrong.");
     }
     subjectName = subjectName.name;
-    if (rank == null || subjectName == null) {
-    }
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = examType[Number(data[i].examId.examType)];
@@ -895,7 +938,8 @@ const missedExam = async (req, res, next) => {
     result["startTime"] = moment(resultData[i].startTime).format("LL");
     result["duration"] = Number(resultData[i].duration);
     result["examType"] = examType[Number(resultData[i].examType)];
-    result["examVariation"] = examVariation[Number(resultData[i].examVariation)];
+    result["examVariation"] =
+      examVariation[Number(resultData[i].examVariation)];
     result["negativeMarks"] = resultData[i].negativeMarks;
     resultFinal.push(result);
   }
@@ -955,6 +999,7 @@ const retakeExam = async (req, res, next) => {
     if (doc.length == examDataNew.eId.totalQuestionMcq) break;
   }
   examData = questDataFull;
+  console.log(examData);
   for (let i = 0; i < doc.length; i++) {
     let questions = {};
     questions["id"] = examData[doc[i]]._id;
@@ -977,8 +1022,8 @@ const retakeSubmit = async (req, res, next) => {
   if (!ObjectId.isValid(examId) || !qId || !answerArr || !doc) {
     return res.status(404).json("Data not fond.");
   }
-  console.log(qId);
-  console.log(answerArr);
+  //console.log(qId);
+  //console.log(answerArr);
   console.log(doc);
   let marks = Number(0),
     totalCorrect = Number(0),
@@ -999,7 +1044,14 @@ const retakeSubmit = async (req, res, next) => {
   }
   if (examData == null)
     return res.status(404).json("No exam data found for the student.");
-
+  let validQues = [];
+  try {
+    validQues = await QuestionsMcq.find({
+      $and: [{ _id: { $in: examData.mId } }, { status: true }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
   negativeMarks = Number(examData.eId.negativeMarks);
   correctMarks = Number(examData.eId.marksPerMcq); //totalMarksMcq / qIdObj.length;
   examData = examData.mId;
@@ -1007,11 +1059,12 @@ const retakeSubmit = async (req, res, next) => {
   for (let i = 0; i < qIdObj.length; i++) {
     //console.log(examData[doc[i]]);
     let answer = answered[i];
+    console.log("qidobj", qIdObj[i]);
+    console.log("examdata", validQues[doc[i]]._id);
     console.log(answer);
-    console.log(examData[doc[i]]);
-    if (String(examData[doc[i]]._id) == String(qIdObj[i])) {
+    if (String(validQues[doc[i]]._id) == String(qIdObj[i])) {
       if (answer == "-1") notAnswered = notAnswered + 1;
-      else if (answer == examData[doc[i]].correctOption)
+      else if (answer == validQues[doc[i]].correctOption)
         totalCorrect = totalCorrect + 1;
       else totalWrong = totalWrong + 1;
     }
@@ -1318,7 +1371,7 @@ const historyDataAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (count == 0) res.status(400).json("No data found.");
+  if (count == 0) return res.status(400).json("No data found.");
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({

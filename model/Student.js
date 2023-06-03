@@ -14,7 +14,8 @@ const studentsSchema = new Schema(
     },
     institution: {
       type: String,
-      required: false,
+      required: true,
+      default: null,
     },
     mobileNo: {
       type: String,

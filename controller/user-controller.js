@@ -19,7 +19,7 @@ const getUserByRole = async (req, res, next) => {
   } catch (err) {
     return res.status(404).json("Something went wrong.");
   }
-  if (count == 0) res.status(404).json("No data found");
+  if (count == 0) return res.status(404).json("No data found");
   let paginaeData = pagination(count, page);
   console.log(role);
   let user;
@@ -61,7 +61,7 @@ const getUserRole = async (req, res, next) => {
   try {
     userRole = await User.find({ userName: userName }).select("role");
   } catch (err) {
-    return new Error(err);
+    return res.status(404).json("Something went wrong.");
   }
   if (!userRole) {
     return res.status(404).json({ message: "user Not Found" });

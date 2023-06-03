@@ -2,6 +2,7 @@ const Course = require("../model/Course");
 const Exam = require("../model/Exam");
 const Student = require("../model/Student");
 const Subject = require("../model/Subject");
+const moment = require("moment");
 const { default: mongoose } = require("mongoose");
 
 const getHomePage = async (req, res, next) => {
@@ -15,9 +16,10 @@ const getHomePage = async (req, res, next) => {
     subjectDataweekly;
   let courseId = new mongoose.Types.ObjectId(req.user.courseId);
   let studentId = new mongoose.Types.ObjectId(req.user.studentId);
+  let currentTime = moment(Date.now());
   //Top
   if (section == "top") {
-    let currentTime = new Date();
+    //let currentTime = new Date();
     console.log(currentTime);
     console.log(courseId);
     try {
@@ -33,14 +35,11 @@ const getHomePage = async (req, res, next) => {
       )
         .sort("startTime")
         .limit(2);
-      console.log(coming);
     } catch (err) {
-      console.log(err);
       return res.status(500).json("Something went wrong!");
     }
-
+    //console.log(coming);
     try {
-      currentTime = new Date();
       running = await Exam.find(
         {
           $and: [
@@ -54,9 +53,9 @@ const getHomePage = async (req, res, next) => {
         .sort("startTime")
         .limit(2);
     } catch (err) {
-      console.log(err);
       return res.status(500).json("Something went wrong!");
     }
+    //console.log(running);
     homeDataTop["runningExam"] = running;
     homeDataTop["comingExam"] = coming;
     return res.status(200).json(homeDataTop);
@@ -67,7 +66,7 @@ const getHomePage = async (req, res, next) => {
       courseId = await Course.findById(courseId).select("_id");
       studentId = await Student.findById(studentId).select("_id");
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json("Something went wrong!");
     }
     console.log(courseId);
@@ -79,10 +78,10 @@ const getHomePage = async (req, res, next) => {
         "_id name iLink descr"
       );
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json("Something went wrong!");
     }
-    console.log(subjectDataDaily);
+    //console.log(subjectDataDaily);
     subjectDataMonthly = subjectDataDaily;
     subjectDataweekly = subjectDataDaily;
     homeDataBottom["daily"] = subjectDataDaily;
