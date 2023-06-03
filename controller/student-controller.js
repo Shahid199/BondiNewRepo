@@ -1452,6 +1452,19 @@ const getHistoryByExamId = async (req, res, next) => {
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
+
+const updateRank = async(req,res,next) =>{
+  let ranks = await StudentMarksRank.find(req.query).sort({totalObtainedMarks:-1});
+  
+  for(let i = 0 ; i < ranks.length ; i++ ){
+    ranks[i].rank = i+1;
+  }
+  console.log(ranks);
+  res.send(ranks);
+}
+
+
+exports.updateRank = updateRank;
 exports.loginStudent = loginStudent;
 exports.validateToken = validateToken;
 exports.addStudent = addStudent;

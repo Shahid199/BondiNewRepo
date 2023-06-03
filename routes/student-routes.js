@@ -27,6 +27,7 @@ const {
   getHistoryByExamId,
   getStudenInfoById,
   getStudentByCourseReg,
+  updateRank,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -46,6 +47,14 @@ router.get(
     authorize(["superadmin", "moderator"]),
   ],
   getStudenInfoById
+);
+router.get(
+  "/updaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  updateRank
 );
 
 router.get(
