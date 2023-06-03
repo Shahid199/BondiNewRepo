@@ -1507,8 +1507,8 @@ const getHistoryByExamId = async (req, res, next) => {
 };
 
 const updateRank = async(req,res,next) =>{
-  let ranks = await StudentMarksRank.find(req.query).sort({totalObtainedMarks:-1});
-  
+  let ranks = await StudentMarksRank.find(req.query,{_id:0,examId:1,rank:1}).sort({totalObtainedMarks:-1});
+
   for(let i = 0 ; i < ranks.length ; i++ ){
     ranks[i].rank = i+1;
   }
