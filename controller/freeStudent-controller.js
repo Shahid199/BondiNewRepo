@@ -290,7 +290,7 @@ const getFreeExamId = async (req, res, next) => {
       .status(404)
       .json("No Free exam has been announced yet.Keep follow the site.");
   if (examId.length > 1) return res.status(404).json("Something went wrong.");
-  return res.status(200).json(String(examId._id));
+  return res.status(200).json(examId);
 };
 const addFreeStudent = async (req, res, next) => {
   const { name, mobileNo, institution, sscRoll, sscReg, hscRoll, hscReg } =
