@@ -290,7 +290,7 @@ const getFreeExamId = async (req, res, next) => {
       .status(404)
       .json("No Free exam has been announced yet.Keep follow the site.");
   if (examId.length > 1) return res.status(404).json("Something went wrong.");
-  return res.status(200).json(examId);
+  return res.status(200).json(String(examId[0]._id));
 };
 const addFreeStudent = async (req, res, next) => {
   const { name, mobileNo, institution, sscRoll, sscReg, hscRoll, hscReg } =
@@ -731,7 +731,9 @@ const submitAnswerFree = async (req, res, next) => {
     return res.status(500).json("Problem when update total obtained marks.");
   }
   try {
-    getResult = await FreeStudentExamVsQuestionsMcq.findById(id).populate("examId");
+    getResult = await FreeStudentExamVsQuestionsMcq.findById(id).populate(
+      "examId"
+    );
   } catch (err) {
     return res.status(500).json("Problem when get Student Exam info.");
   }
