@@ -28,6 +28,8 @@ const {
   getStudenInfoById,
   getStudentByCourseReg,
   updateRank,
+  updateStudentExamInfo,
+  getRank,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -39,7 +41,6 @@ router.get(
 );
 //need query parameter eid(examid).
 
-
 router.get(
   "/getstudentinfobyid",
   [
@@ -48,14 +49,16 @@ router.get(
   ],
   getStudenInfoById
 );
-router.get(
-  "/updaterank",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  updateRank
-);
+// router.get(
+//   "/updaterank",
+//   [
+//     passport.authenticate("jwt", { session: false }),
+//     authorize(["superadmin", "moderator"]),
+//   ],
+//   updateRank
+// );
+router.post("/updaterank", updateRank);
+router.get("/getrank", getRank);
 
 router.get(
   "/getstudentbycoursereg",
@@ -100,7 +103,7 @@ router.post(
   ],
   submitAnswer
 );
-router.get('/gethistorybyexamid',getHistoryByExamId);
+router.get("/gethistorybyexamid", getHistoryByExamId);
 router.get(
   "/getrunningdata",
   [
@@ -221,6 +224,7 @@ router.get(
   ],
   studentSubmittedExamDetailAdmin
 );
+router.put("/updatestudentexaminfo", updateStudentExamInfo);
 
 module.exports = router;
 //new node

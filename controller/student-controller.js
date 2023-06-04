@@ -20,6 +20,7 @@ const pagination = require("../utilities/pagination");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const isodate = require("isodate");
+const McqRank = require("../model/McqRank");
 
 const Limit = 100;
 
@@ -1506,16 +1507,95 @@ const getHistoryByExamId = async (req, res, next) => {
   return res.status(200).json({ data, examInfo, paginateData });
 };
 
-const updateRank = async(req,res,next) =>{
-  let ranks = await StudentMarksRank.find(req.query).sort({totalObtainedMarks:-1});
-  
-  for(let i = 0 ; i < ranks.length ; i++ ){
-    ranks[i].rank = i+1;
+//error handle and ranks update
+const updateStudentExamInfo = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  console.log(examIdObj, "examIdObj");
+  let examUncheckStudent = null;
+  try {
+    examUncheckStudent = await StudentMarksRank.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishedStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(examUncheckStudent, "examUncheckStudent");
+  if (examUncheckStudent.length == 0)
+    return res.status(200).json("All student submit the exam.");
+  let updateStatus = null;
+  try {
+    updateStatus = await StudentMarksRank.updateMany(
+      {
+        _id: { $in: examUncheckStudent },
+      },
+      { $set: { runningStatus: false, finishedStatus: true } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(updateStatus, "updateStatus");
+  if (updateStatus.modifiedCount == 0)
+    return res.status(404).json("Not updated.");
+  return res.status(201).json("Updated successfully.");
+};
+const updateRank = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid exam Id.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let ranks = null;
+  try {
+    ranks = await StudentMarksRank.find({ examId: examIdObj })
+      .select("examId totalObtainedMarks studentId -_id")
+      .sort({
+        totalObtainedMarks: -1,
+      });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let dataLength = ranks.length;
+  for (let i = 0; i < dataLength; i++) {
+    ranks[i].rank = i + 1;
   }
   console.log(ranks);
-  res.send(ranks);
-}
-
+  let sav = null;
+  try {
+    sav = await McqRank.insertMany(ranks, { ordered: false });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(201).json("Success!");
+};
+const getRank = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.query.studentId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
+    return res.status(200).json("Invalid examId or studentId.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let resultRank = null;
+  try {
+    resultRank = await McqRank.findOne({
+      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+    }).select("rank -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!resultRank) return res.status(404).json("Exam not finshed yet.");
+  console.log(resultRank.rank);
+  resultRank = Number(resultRank.rank);
+  return res.status(200).json(resultRank);
+};
 
 exports.updateRank = updateRank;
 exports.loginStudent = loginStudent;
@@ -1542,3 +1622,5 @@ exports.studentSubmittedExamDetailAdmin = studentSubmittedExamDetailAdmin;
 exports.getHistoryByExamId = getHistoryByExamId;
 exports.getStudenInfoById = getStudenInfoById;
 exports.getStudentByCourseReg = getStudentByCourseReg;
+exports.updateStudentExamInfo = updateStudentExamInfo;
+exports.getRank = getRank;
