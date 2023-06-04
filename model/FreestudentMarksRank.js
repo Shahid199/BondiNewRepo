@@ -3,7 +3,7 @@ const exams = require("./Exam");
 const freeStudents = require("./FreeStudent");
 const Schema = mongoose.Schema;
 
-const freeStudentMarkRanksSchema = new Schema(
+const FreestudentMarkRanksSchema = new Schema(
   {
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,6 +54,6 @@ const freeStudentMarkRanksSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 module.exports = mongoose.model(
-  "FreeStudentMarkRank",
-  freeStudentMarkRanksSchema
+  "FreestudentMarkRank",
+  FreestudentMarkRanksSchema
 );

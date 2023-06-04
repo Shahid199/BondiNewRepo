@@ -17,6 +17,9 @@ const {
   updateAssignQuestionFree,
   getRunningDataFree,
   submitAnswerFree,
+  updateStudentExamInfoFree,
+  updateRankFree,
+  getRankFree,
 } = require("../controller/freeStudent-controller");
 
 const router = express.Router();
@@ -89,6 +92,30 @@ router.post(
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   submitAnswerFree
+);
+router.put(
+  "/updatestudentexaminfofree",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  updateStudentExamInfoFree
+);
+router.post(
+  "/updaterankfree",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  updateRankFree
+);
+router.get(
+  "/getrankfree",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  getRankFree
 );
 //Free student data view api Route.
 router.get(

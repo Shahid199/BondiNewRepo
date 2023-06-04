@@ -4,7 +4,7 @@ const freeStudents = require("./FreeStudent");
 const questionsMcq = require("./QuestionsMcq");
 const Schema = mongoose.Schema;
 
-const freeStudentExamVsQuestionsMcqSchema = new Schema(
+const FreeStudentExamVsQuestionsMcqSchema = new Schema(
   {
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -57,6 +57,7 @@ const freeStudentExamVsQuestionsMcqSchema = new Schema(
     totalObtainedMarks: {
       type: Number,
       required: false,
+      default: null,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
@@ -64,5 +65,5 @@ const freeStudentExamVsQuestionsMcqSchema = new Schema(
 
 module.exports = mongoose.model(
   "FreeStudentExamVsQuestionMcq",
-  freeStudentExamVsQuestionsMcqSchema
+  FreeStudentExamVsQuestionsMcqSchema
 );

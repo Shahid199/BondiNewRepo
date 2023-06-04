@@ -57,8 +57,22 @@ router.get(
 //   ],
 //   updateRank
 // );
-router.post("/updaterank", updateRank);
-router.get("/getrank", getRank);
+router.post(
+  "/updaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  updateRank
+);
+router.get(
+  "/getrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getRank
+);
 
 router.get(
   "/getstudentbycoursereg",
@@ -224,7 +238,14 @@ router.get(
   ],
   studentSubmittedExamDetailAdmin
 );
-router.put("/updatestudentexaminfo", updateStudentExamInfo);
+router.put(
+  "/updatestudentexaminfo",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  updateStudentExamInfo
+);
 
 module.exports = router;
 //new node
