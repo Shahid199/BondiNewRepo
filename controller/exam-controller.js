@@ -164,7 +164,7 @@ const getExamById = async (req, res, next) => {
   let examData = null;
   try {
     examData = await Exam.findOne({
-      $and: [{ _id: examId }, { examFreeOrNot: false }, { status: true }],
+      $and: [{ _id: examId }, { status: true }],
     }).populate("courseId subjectId");
   } catch (err) {
     return res.status(500).json(err);
@@ -252,7 +252,7 @@ const getExamBySub = async (req, res, next) => {
     examData = await Exam.find({
       $and: [
         { subjectId: subjectIdObj },
-        { examFreeOrNot: false },
+       // { examFreeOrNot: false },
         { status: true },
       ],
     });
@@ -285,7 +285,6 @@ const getExamBySubject = async (req, res, next) => {
         { status: true },
         { subjectId: subjectId },
         { examVariation: variation },
-        { examFreeOrNot: false },
         { endTime: { $gt: new Date() } },
       ],
     }).count();
@@ -301,7 +300,6 @@ const getExamBySubject = async (req, res, next) => {
         { status: true },
         { subjectId: subjectId },
         { examVariation: variation },
-        { examFreeOrNot: false },
         { endTime: { $gt: new Date() } },
       ],
     },
