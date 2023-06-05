@@ -268,17 +268,14 @@ const getFreeExamId = async (req, res, next) => {
   let examId = [];
   let currentTime = Date.now();
   try {
-    examId = await Exam.find(
-      {
-        $and: [
-          { status: true },
-          { examFreeOrNot: true },
-          { startTime: { $lt: currentTime } },
-          { endTime: { $gt: currentTime } },
-        ],
-      },
-      "_id"
-    );
+    examId = await Exam.find({
+      $and: [
+        { status: true },
+        { examFreeOrNot: true },
+        { startTime: { $lt: currentTime } },
+        { endTime: { $gt: currentTime } },
+      ],
+    });
   } catch (err) {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
