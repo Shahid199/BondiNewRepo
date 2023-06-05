@@ -26,11 +26,7 @@ const router = express.Router();
 
 router.get("/getfreeexamid", getFreeExamId);
 
-router.post(
-  "/addfreestudent",
-  [passport.authenticate("jwt", { session: false }), authorize()],
-  addFreeStudent
-);
+router.post("/addfreestudent", addFreeStudent);
 
 router.get(
   "/getfreestudentbyid",

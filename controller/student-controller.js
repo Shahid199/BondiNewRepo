@@ -304,9 +304,9 @@ const getStudentByCourseReg = async (req, res, next) => {
   studentId = studentId._id;
   if (!ObjectId.isValid(studentId))
     return res.status(404).json("Student Id Invalid.");
-  let data = null;
+  let data1 = null;
   try {
-    data = await CourseVsStudent.findOne({
+    data1 = await CourseVsStudent.findOne({
       $and: [
         { courseId: courseIdObj },
         { studentId: studentId },
@@ -317,9 +317,11 @@ const getStudentByCourseReg = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  if (data == null)
+  if (data1 == null)
     return res.status(404).json("Data not found or deactivated student.");
-  data = data.studentId;
+  let data = [];
+  data.push(data1);
+  //data = data.studentId;
   return res.status(200).json(data);
 };
 
@@ -728,7 +730,8 @@ const submitAnswer = async (req, res, next) => {
   sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
   sendResult["totalObtained"] = getResult.totalObtainedMarks;
   sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
-  sendResult["rank"] = getRank;
+  //sendResult["rank"] = getRank;
+  sendResult["rank"] = -1;
   console.log(sendResult);
   return res.status(200).json(sendResult);
 };

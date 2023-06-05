@@ -34,7 +34,10 @@ router.post(
 );
 router.get(
   "/getallexam",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","mdoerator","student"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "mdoerator", "student"]),
+  ],
   getAllExam
 );
 router.post(
@@ -90,7 +93,7 @@ router.post(
 router.get(
   "/examruleget",
   [passport.authenticate("jwt", { session: false })],
-  authorize(["superadmin", "moderator", "student"]),
+  authorize(["superadmin", "moderator", "student", "freeStudent"]),
   examRuleGet
 );
 router.get(
@@ -145,7 +148,10 @@ router.put(
 
 router.get(
   "/freeExamStatus",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","freeStudent"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
   freeExamStatus
 );
 module.exports = router;
