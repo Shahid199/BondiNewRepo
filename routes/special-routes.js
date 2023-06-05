@@ -7,6 +7,7 @@ const {
   updateSpecialExam,
   showSpecialExamAll,
   showSpecialExamById,
+  deactivateSpecialExam,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -15,13 +16,11 @@ router.post(
   [passport.authenticate("jwt", { session: false }), authorize()],
   createSpecialExam
 );
-
 router.put(
   "/updatespecialexam",
   [passport.authenticate("jwt", { session: false }), authorize()],
   updateSpecialExam
 );
-
 router.get(
   "/showspecialexamall",
   [passport.authenticate("jwt", { session: false }), authorize()],
@@ -32,6 +31,12 @@ router.get(
   "/showspecialexambyid",
   [passport.authenticate("jwt", { session: false }), authorize()],
   showSpecialExamById
+);
+
+router.put(
+  "/deactivatespecialexam",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  deactivateSpecialExam
 );
 
 module.exports = router;

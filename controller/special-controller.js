@@ -149,8 +149,22 @@ const showSpecialExamAll = async (req, res, next) => {
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json(data, paginateData);
 };
+const deactivateSpecialExam = async (req, res, next) => {
+  let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId is not valid.");
+  let upd = null;
+  try {
+    upd = await SpecialExam.findByIdAndUpdate(examId, { status: false });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (upd == null) return res.status(404).json("No data found.");
+  return res.status(201).json("Deactivated.");
+};
 
 exports.createSpecialExam = createSpecialExam;
 exports.updateSpecialExam = updateSpecialExam;
 exports.showSpecialExamById = showSpecialExamById;
 exports.showSpecialExamAll = showSpecialExamAll;
+exports.deactivateSpecialExam = deactivateSpecialExam;
