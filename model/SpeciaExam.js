@@ -23,18 +23,6 @@ const SpecialExamSchema = new Schema(
       type: Number,
       required: true,
     },
-    totalQuestionMcq: [
-      {
-        type: Object,
-        required: false,
-      },
-    ],
-    mandatory: [
-      {
-        type: Object,
-        required: false,
-      },
-    ],
     marksPerMcq: {
       type: Number,
       required: false,
@@ -48,13 +36,6 @@ const SpecialExamSchema = new Schema(
       required: true,
       default: false,
     },
-    subjectId: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: subjects,
-        required: true,
-      },
-    ],
     courseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: courses,
