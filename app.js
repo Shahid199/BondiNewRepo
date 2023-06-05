@@ -41,6 +41,7 @@ const subjectRouter = require("./routes/subject-routes");
 const examRouter = require("./routes/exam-routes");
 const homeRouter = require("./routes/home-routes");
 const freeStudentRouter = require("./routes/freeStudent-routes");
+const specialRouter = require("./routes/special-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
@@ -53,6 +54,7 @@ app.use("/api/subject", subjectRouter);
 app.use("/api/exam", examRouter);
 app.use("/api/home", homeRouter);
 app.use("/api/freestudent", freeStudentRouter);
+app.use("/api/special", specialRouter);
 
 mongoose
   .connect(

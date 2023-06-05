@@ -161,6 +161,30 @@ const deactivateCourse = async (req, res, next) => {
   console.log(result2);
   return res.status(200).json(result);
 };
+
+const deactivateStudent = async (req, res, next) => {
+  const id = req.query.id;
+  if (!ObjectId.isValid(id)) return res.status.json("Course Id invalid.");
+  // const filter = { _id: new ObjectId(id) };
+  // let result;
+  // try {
+  //   result = await Course.findByIdAndUpdate(filter, { status: false });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
+  // let result2;
+  // if (result) {
+  try {
+    result2 = await CourseVsStudent.updateMany(
+      { courseId: id },
+      { $set: { status: false } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(result2);
+  return res.status(200).json(result);
+};
 exports.createCourse = createCourse;
 exports.getCourse = getCourse;
 exports.getAllCourse = getAllCourse;
@@ -168,3 +192,4 @@ exports.getAllCourseAdmin = getAllCourseAdmin;
 exports.updateStatusCourse = updateStatusCourse;
 exports.updateSingle = updateSingle;
 exports.deactivateCourse = deactivateCourse;
+exports.deactivateStudent = deactivateStudent;

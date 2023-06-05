@@ -9,6 +9,7 @@ const {
   updateStatusCourse,
   updateSingle,
   deactivateCourse,
+  deactivateStudent,
 } = require("../controller/course-controller");
 const router = express.Router();
 
@@ -37,6 +38,12 @@ router.put(
   [passport.authenticate("jwt", { session: false }), authorize()],
   deactivateCourse
 );
+router.put(
+  "/deactivatestudent",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  deactivateStudent
+);
+
 router.put(
   "/updatesingle",
   [passport.authenticate("jwt", { session: false }), authorize()],

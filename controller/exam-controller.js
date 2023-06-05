@@ -167,7 +167,7 @@ const getExamById = async (req, res, next) => {
       $and: [{ _id: examId }, { status: true }],
     }).populate("courseId subjectId");
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Something went wrong.");
   }
   return res.status(200).json(examData);
 };
