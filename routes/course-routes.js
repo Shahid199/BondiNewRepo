@@ -10,6 +10,7 @@ const {
   updateSingle,
   deactivateCourse,
   deactivateStudent,
+  getAllCourseSearch,
 } = require("../controller/course-controller");
 const router = express.Router();
 
@@ -54,5 +55,11 @@ router.post(
   [passport.authenticate("jwt", { session: false }), authorize()],
   updateStatusCourse
 );
+router.get(
+  "/getallcoursesearch",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  getAllCourseSearch
+);
+
 
 module.exports = router;

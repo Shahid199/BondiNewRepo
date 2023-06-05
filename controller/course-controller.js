@@ -76,6 +76,52 @@ const getAllCourse = async (req, res, next) => {
   }
   return res.status(200).json({ courses, paginateData });
 };
+//get all course search
+const getAllCourseSearch = async (req, res, next) => {
+  let courseName = req.body.courseName;
+  if (!courseName) return res.status(404).json("Please place some letter.");
+  let data = null;
+  let page = Number(req.query.page) || 1;
+  let count = 0;
+  try {
+    count = await Course.find({
+      $and: [
+        {
+          name: {
+            $regex: new RegExp(".*" + courseName.toLowerCase() + ".*", "i"),
+          },
+        },
+        { status: true },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  count = Number(count);
+  if (count == 0) return res.status(404).json("No courses found.");
+  const paginateData = pagination(count, page);
+  try {
+    data = await Course.find({
+      $and: [
+        {
+          name: {
+            $regex: new RegExp(".*" + courseName.toLowerCase() + ".*", "i"),
+          },
+        },
+        { status: true },
+      ],
+    })
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage)
+      .exec();
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (!data) {
+    return res.status(404).json("No data found.");
+  }
+  return res.status(200).json({ data, paginateData });
+};
 //update status of course
 const updateStatusCourse = async (req, res, next) => {
   const ObjectId = mongoose.Types.ObjectId;
@@ -193,3 +239,4 @@ exports.updateStatusCourse = updateStatusCourse;
 exports.updateSingle = updateSingle;
 exports.deactivateCourse = deactivateCourse;
 exports.deactivateStudent = deactivateStudent;
+exports.getAllCourseSearch = getAllCourseSearch;
