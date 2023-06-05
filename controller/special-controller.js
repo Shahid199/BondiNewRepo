@@ -10,7 +10,6 @@ const createSpecialExam = async (req, res, next) => {
     return res.status(404).json("File not uploaded.");
   }
   iLinkPath = "uploads/".concat(file.filename);
-  const examFromQuery = JSON.parse(req.query.exam);
   const {
     courseId,
     subjectId, //array
@@ -23,7 +22,8 @@ const createSpecialExam = async (req, res, next) => {
     duration,
     negativeMarks,
     totalMarksMcq,
-  } = examFromQuery;
+    mandatory, //mandatory subject (subjectId:true or false)(array of object.)
+  } = req.body;
   if (!ObjectId.isValid(courseId) || subjectId.length == 0)
     return res.status(404).json("course Id or subject Id is invalid.");
   let startTime1, endTime1;
@@ -44,6 +44,7 @@ const createSpecialExam = async (req, res, next) => {
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     iLink: iLinkPath,
+    mandatory: mandatory,
   });
   let doc;
   try {
@@ -54,7 +55,6 @@ const createSpecialExam = async (req, res, next) => {
   }
   return res.status(201).json(doc);
 };
-
 const updateSpecialExam = async (req, res, next) => {
   const {
     examId,
@@ -69,6 +69,7 @@ const updateSpecialExam = async (req, res, next) => {
     status,
     duration,
     negativeMarks,
+    mandatory,
   } = req.body;
   if (
     !ObjectId.isValid(examId) ||
@@ -80,18 +81,18 @@ const updateSpecialExam = async (req, res, next) => {
       .json("exam Id or course Id or subject Id is not valid.");
   }
   subjectId = subjectId.map((e) => new mongoose.Types.ObjectId(e));
-  let subjectIdOld = [];
-  try {
-    subjectIdOld = await SpecialExam.findById(String(examId)).select(
-      "subjectId -_id"
-    );
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  subjectIdOld = subjectIdOld.subjectId;
-  if (subjectIdOld.length != 0) {
-    subjectId = subjectId.concat(subjectIdOld);
-  }
+//   let subjectIdOld = [];
+//   try {
+//     subjectIdOld = await SpecialExam.findById(String(examId)).select(
+//       "subjectId -_id"
+//     );
+//   } catch (err) {
+//     return res.status(500).json("Something went wrong.");
+//   }
+//   subjectIdOld = subjectIdOld.subjectId;
+//   if (subjectIdOld.length != 0) {
+//     subjectId = subjectId.concat(subjectIdOld);
+//   }
   let saveExamUpd = {
     courseId: new mongoose.Types.ObjectId(courseId),
     subjectId: subjectId,
@@ -104,6 +105,7 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksMcq: totalMarksMcq,
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
+    mandatory: mandatory,
   };
   let updStatus = null;
   try {
@@ -114,7 +116,6 @@ const updateSpecialExam = async (req, res, next) => {
   if (updStatus == null) return res.status(404).json("Problem at update.");
   else return res.status(201).json("Updated special exam.");
 };
-
 const showSpecialExamById = async (req, res, next) => {
   let examId = req.body.examId;
   if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");

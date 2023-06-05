@@ -29,6 +29,12 @@ const SpecialExamSchema = new Schema(
         required: false,
       },
     ],
+    mandatory: [
+      {
+        type: Object,
+        required: false,
+      },
+    ],
     marksPerMcq: {
       type: Number,
       required: false,
