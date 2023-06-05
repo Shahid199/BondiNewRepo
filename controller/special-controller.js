@@ -1,6 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { default: mongoose, Mongoose } = require("mongoose");
-const SpecialExam = require("../model/SpeciaExam");
+const SpecialExam = require("../model/SpecialExam");
 const pagination = require("../utilities/pagination");
 
 const createSpecialExam = async (req, res, next) => {
