@@ -2,6 +2,7 @@ const { ObjectId } = require("mongodb");
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
 const pagination = require("../utilities/pagination");
+//const session = require("express-session");
 const Limit = 10;
 
 const validateToken = async (req, res) => {
@@ -42,9 +43,9 @@ const getUserById = async (req, res, next) => {
   let page = req.query.page;
   let user;
   try {
-    user = await User.find({ _id: id, status: true })
-      .select("name userName mobileNo address")
-     
+    user = await User.find({ _id: id, status: true }).select(
+      "name userName mobileNo address"
+    );
   } catch (err) {
     return new Error(err);
   }
@@ -96,7 +97,7 @@ const createOfficeUser = async (req, res, next) => {
     mobileNo: mobileNo,
     address: address,
     password: hashedPassword,
-    status:true,
+    status: true,
     role: role,
   });
   try {
@@ -134,7 +135,10 @@ const deactivateUser = async (req, res, next) => {
     return res.status(404).json("Invalid user Id.");
   let upd = null;
   try {
-    upd = await User.findByIdAndUpdate({_id: new ObjectId(userId._id)}, { status: false });
+    upd = await User.findByIdAndUpdate(
+      { _id: new ObjectId(userId._id) },
+      { status: false }
+    );
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
@@ -208,16 +212,14 @@ const loginSuperAdmin = async (req, res) => {
     return res.status(301).redirect("/dashboard");
   }
 };
-
 //create superAdmin use only once
-exports.createSuperAdmin = async (req,res) =>{
-
-  const hashedPassword = bcrypt.hashSync('qwerty');
+exports.createSuperAdmin = async (req, res) => {
+  const hashedPassword = bcrypt.hashSync("qwerty");
   const user = new User({
-    name: 'Super Admin Test',
-    userName: 'superadmintest',
-    mobileNo: '01677732635',
-    address: 'Dhaka',
+    name: "Super Admin Test",
+    userName: "superadmintest",
+    mobileNo: "01677732635",
+    address: "Dhaka",
     password: hashedPassword,
     role: 1,
   });
@@ -227,7 +229,7 @@ exports.createSuperAdmin = async (req,res) =>{
     console.log(err);
   }
   return res.status(201).json("OK");
-}
+};
 
 exports.createOfficeUser = createOfficeUser;
 exports.getUserByRole = getUserByRole;

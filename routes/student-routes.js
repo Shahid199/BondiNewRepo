@@ -30,6 +30,9 @@ const {
   updateRank,
   updateStudentExamInfo,
   getRank,
+  getStudentRegSearch,
+  getStudentNameSearch,
+  getStudentMobileSearch,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -245,6 +248,24 @@ router.put(
     authorize(["superadmin", "moderator"]),
   ],
   updateStudentExamInfo
+);
+
+router.get(
+  "/getstudentregsearch",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  getStudentRegSearch
+);
+
+router.get(
+  "/getstudentnamesearch",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  getStudentNameSearch
+);
+
+router.get(
+  "/getstudentmobilesearch",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  getStudentMobileSearch
 );
 
 module.exports = router;

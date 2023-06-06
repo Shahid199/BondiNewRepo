@@ -6,6 +6,7 @@ const moment = require("moment");
 const path = require("path");
 
 const app = express();
+const session = require("express-session");
 
 const passport = require("passport");
 const cors = require("./utilities/cors");
@@ -24,6 +25,8 @@ app.use((req, res, next) => {
   next();
 });
 app.use(passport.initialize());
+//app.use(passport.session());
+//app.use(session({}));
 
 cors(app);
 

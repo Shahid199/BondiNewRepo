@@ -11,6 +11,7 @@ const {
   updatePassword,
   getUserById,
   createSuperAdmin,
+  logoutStudent,
 } = require("../controller/user-controller");
 const authorize = require("../utilities/authorizationMiddleware");
 const router = express.Router();
@@ -63,6 +64,7 @@ router.put(
   updatePassword
 );
 router.post("/login", loginSuperAdmin);
+
 
 router.get("/create_super_admin", createSuperAdmin);
 

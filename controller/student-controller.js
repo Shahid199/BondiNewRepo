@@ -21,6 +21,7 @@ const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const isodate = require("isodate");
 const McqRank = require("../model/McqRank");
+const passport = require("passport");
 
 const Limit = 100;
 
@@ -75,6 +76,11 @@ const loginStudent = async (req, res) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
+
+// const logoutStudent = async (req, res, next) => {
+//   req.logout();
+//   res.redirect("/");
+// };
 /**
  * validate if the token is valid or retur to login state
  */
@@ -322,6 +328,69 @@ const getStudentByCourseReg = async (req, res, next) => {
   let data = [];
   data.push(data1);
   //data = data.studentId;
+  return res.status(200).json(data);
+};
+
+const getStudentRegSearch = async (req, res, next) => {
+  let regNo = req.query.regNo;
+  if (!regNo) return res.status(404).json("Please insert reg No.");
+  let data1 = null;
+  try {
+    data1 = await Student.find({
+      regNo: {
+        $regex: new RegExp(".*" + regNo.toLowerCase() + ".*", "i"),
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data1 == null)
+    return res.status(404).json("Data not found or deactivated student.");
+  let data = [];
+  data = data1;
+  return res.status(200).json(data);
+};
+
+const getStudentMobileSearch = async (req, res, next) => {
+  let mobileNo = req.query.mobileNo;
+  if (!mobileNo) return res.status(404).json("Please insert reg No.");
+  let data1 = null;
+  try {
+    data1 = await Student.find({
+      mobileNo: {
+        $regex: new RegExp(".*" + mobileNo.toLowerCase() + ".*", "i"),
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data1 == null)
+    return res.status(404).json("Data not found or deactivated student.");
+  let data = [];
+  data = data1;
+  return res.status(200).json(data);
+};
+
+const getStudentNameSearch = async (req, res, next) => {
+  let name = req.query.name;
+  if (!name) return res.status(404).json("Please insert name.");
+  let data1 = null;
+  try {
+    data1 = await Student.find({
+      name: {
+        $regex: new RegExp(".*" + name.toLowerCase() + ".*", "i"),
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data1 == null)
+    return res.status(404).json("Data not found or deactivated student.");
+  let data = [];
+  data = data1;
   return res.status(200).json(data);
 };
 
@@ -1627,3 +1696,6 @@ exports.getStudenInfoById = getStudenInfoById;
 exports.getStudentByCourseReg = getStudentByCourseReg;
 exports.updateStudentExamInfo = updateStudentExamInfo;
 exports.getRank = getRank;
+exports.getStudentRegSearch = getStudentRegSearch;
+exports.getStudentNameSearch = getStudentNameSearch;
+exports.getStudentMobileSearch = getStudentMobileSearch;
