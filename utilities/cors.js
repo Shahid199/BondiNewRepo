@@ -1,7 +1,7 @@
 const cors = require("cors");
 let options = {
-    "origin":["http://localhost:3001","http://localhost:3000","admin.bpexam.live","bpexam.live"],
-    "Access-Control-Allow-Origin": ["http://localhost:3001","http://localhost:3000","admin.bpexam.live","bpexam.live"],
+    "origin":["http://localhost:3001","http://localhost:3000","https://admin.bpexam.live","https://bpexam.live"],
+    "Access-Control-Allow-Origin": ["http://localhost:3001","http://localhost:3000","https://admin.bpexam.live","https://bpexam.live"],
     "Access-Control-Request-Methods": "GET,PUT,POST,DELETE,OPTIONS",
     "X-Requested-With": "XMLHttpRequest",
     "X-Frame-Options": "SAMEORIGIN",
