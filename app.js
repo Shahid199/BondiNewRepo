@@ -63,8 +63,9 @@ mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
     //"mongodb+srv://admin:XSRFrPAsVzBWImXx@cluster0.mlygv5j.mongodb.net/Bondi?retryWrites=true&w=majority"
-    "mongodb+srv://admin:XSRFrPAsVzBWImXx@cluster1.vvfaman.mongodb.net/BondiPathshala?retryWrites=true&w=majority"
-  )
+    //"mongodb+srv://admin:XSRFrPAsVzBWImXx@cluster1.vvfaman.mongodb.net/BondiPathshala?retryWrites=true&w=majority"
+    process.env.MONGO_CONNECTION_STRING
+    )
   .then(() => {
     app.listen(5011);
     console.log("running on 5011");

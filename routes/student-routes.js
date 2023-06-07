@@ -264,7 +264,7 @@ router.get(
 
 router.get(
   "/getstudentmobilesearch",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  //[passport.authenticate("jwt", { session: false }), authorize()],
   getStudentMobileSearch
 );
 

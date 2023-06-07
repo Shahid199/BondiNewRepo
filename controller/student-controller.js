@@ -667,6 +667,143 @@ const getRunningData = async (req, res, next) => {
   return res.status(200).json({ timeData, questionData, examData });
 };
 //submit answer or end time
+// const submitAnswer1 = async (req, res, next) => {
+//   const eId = req.query.eId;
+//   const sId = req.user.studentId;
+//   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
+//     return res.status(404).json("Invalid studnet Id or Exam Id");
+//   const examEndTime = new Date();
+//   let eId1, sId1;
+//   sId1 = new mongoose.Types.ObjectId(sId);
+//   eId1 = new mongoose.Types.ObjectId(eId);
+//   let findId = null;
+//   try {
+//     findId = await StudentMarksRank.find({
+//       $and: [{ examId: eId1 }, { studentId: sId1 }],
+//     }).select("_id");
+//   } catch (err) {
+//     return res
+//       .status(500)
+//       .json("Proble when get student info from student marks table.");
+//   }
+//   if (findId == null) return res.status(404).json("data not found.");
+//   findId = String(findId[0]._id);
+//   let saveStudentExamEnd;
+//   let update = {
+//     finishedStatus: true,
+//     runningStatus: false,
+//   };
+//   try {
+//     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
+//       findId,
+//       update
+//     );
+//   } catch (err) {
+//     return res.status(500).json("Problem when updating student marks rank.");
+//   }
+//   let sIeIObj = await StudentMarksRank.find(
+//     { $and: [{ studentId: sId1 }, { examId: eId1 }] },
+//     "_id"
+//   );
+//   sIeIObj = sIeIObj[0]._id;
+//   let examData = null;
+//   try {
+//     examData = await StudentExamVsQuestionsMcq.findOne({
+//       $and: [{ examId: eId1 }, { studentId: sId1 }],
+//     }).populate("mcqQuestionId examId");
+//   } catch (err) {
+//     return res.status(500).json("Problem when get exam data.");
+//   }
+//   let id = String(examData._id);
+//   let correctMarks = examData.examId.marksPerMcq;
+//   let negativeMarks = examData.examId.negativeMarks;
+//   let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+//   let examDataMcq = examData.mcqQuestionId;
+//   let answered = examData.answeredOption;
+//   let notAnswered = 0;
+//   let totalCorrectAnswer = 0;
+//   let totalWrongAnswer = 0;
+//   let totalObtainedMarks = 0;
+//   let totalCorrectMarks = 0;
+//   let totalWrongMarks = 0;
+//   for (let i = 0; i < examDataMcq.length; i++) {
+//     if (answered[i] == "-1") {
+//       notAnswered = notAnswered + 1;
+//     } else if (answered[i] == examDataMcq[i].correctOption) {
+//       totalCorrectAnswer = totalCorrectAnswer + 1;
+//     } else totalWrongAnswer = totalWrongAnswer + 1;
+//   }
+//   totalCorrectMarks = totalCorrectAnswer * correctMarks;
+//   totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+//   totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+//   const update1 = {
+//     totalCorrectAnswer: totalCorrectAnswer,
+//     totalWrongAnswer: totalWrongAnswer,
+//     totalNotAnswered: notAnswered,
+//     totalCorrectMarks: totalCorrectMarks,
+//     totalWrongMarks: totalWrongMarks,
+//     totalObtainedMarks: totalObtainedMarks,
+//   };
+//   let result = null,
+//     getResult = null,
+//     sendResult = {},
+//     rank = null,
+//     //dataRank = null,
+//     upd = null,
+//     upd1 = null,
+//     upd2 = null,
+//     //getRank = null;
+//   try {
+//     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+//     upd = await StudentMarksRank.updateOne(
+//       {
+//         $and: [{ examId: eId1 }, { studentId: sId1 }],
+//       },
+//       { totalObtainedMarks: totalObtainedMarks }
+//     );
+//   } catch (err) {
+//     return res.status(500).json("Problem when update total obtained marks.");
+//   }
+//   try {
+//     getResult = await StudentExamVsQuestionsMcq.findById(id).populate("examId");
+//   } catch (err) {
+//     return res.status(500).json("Problem when get Student Exam info.");
+//   }
+//   try {
+//     dataRank = await StudentMarksRank.find(
+//       { examId: eId1 },
+//       "studentId totalObtainedMarks"
+//     ).sort({ totalObtainedMarks: -1 });
+//   } catch (err) {
+//     return res.status(500).json("Problem when get all student of an exam Id.");
+//   }
+//   let dataRankId = dataRank.map((e) => e._id.toString());
+//   rank = dataRankId.findIndex((e) => e == sIeIObj.toString()) + 1;
+//   try {
+//     upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
+//       rank: rank,
+//     });
+//   } catch (err) {
+//     return res.status(500).json("Problem when update rank.");
+//   }
+//   try {
+//     upd2 = await StudentMarksRank.findById(String(sIeIObj), "rank");
+//   } catch (err) {
+//     return res.status(500).json("Problem get rank.");
+//   }
+//   getRank = upd2.rank;
+//   sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
+//   sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
+//   sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
+//   sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
+//   sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
+//   sendResult["totalObtained"] = getResult.totalObtainedMarks;
+//   sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+//   //sendResult["rank"] = getRank;
+//   sendResult["rank"] = -1;
+//   console.log(sendResult);
+//   return res.status(200).json(sendResult);
+// };
 const submitAnswer = async (req, res, next) => {
   const eId = req.query.eId;
   const sId = req.user.studentId;
@@ -748,10 +885,8 @@ const submitAnswer = async (req, res, next) => {
     getResult = null,
     sendResult = {},
     rank = null,
-    dataRank = null,
     upd = null,
-    upd1 = null,
-    upd2 = null,
+    //upd1 = null,
     getRank = null;
   try {
     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
@@ -759,7 +894,7 @@ const submitAnswer = async (req, res, next) => {
       {
         $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
-      { totalObtainedMarks: totalObtainedMarks }
+      { totalObtainedMarks: totalObtainedMarks, rank: -1 }
     );
   } catch (err) {
     return res.status(500).json("Problem when update total obtained marks.");
@@ -769,29 +904,13 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Problem when get Student Exam info.");
   }
-  try {
-    dataRank = await StudentMarksRank.find(
-      { examId: eId1 },
-      "studentId totalObtainedMarks"
-    ).sort({ totalObtainedMarks: -1 });
-  } catch (err) {
-    return res.status(500).json("Problem when get all student of an exam Id.");
-  }
-  let dataRankId = dataRank.map((e) => e._id.toString());
-  rank = dataRankId.findIndex((e) => e == sIeIObj.toString()) + 1;
-  try {
-    upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
-      rank: rank,
-    });
-  } catch (err) {
-    return res.status(500).json("Problem when update rank.");
-  }
-  try {
-    upd2 = await StudentMarksRank.findById(String(sIeIObj), "rank");
-  } catch (err) {
-    return res.status(500).json("Problem get rank.");
-  }
-  getRank = upd2.rank;
+  // try {
+  //   upd1 = await StudentMarksRank.findByIdAndUpdate(sIeIObj, {
+  //     rank: -1,
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Problem when update rank.");
+  // }
   sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
   sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
   sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
@@ -799,7 +918,6 @@ const submitAnswer = async (req, res, next) => {
   sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
   sendResult["totalObtained"] = getResult.totalObtainedMarks;
   sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
-  //sendResult["rank"] = getRank;
   sendResult["rank"] = -1;
   console.log(sendResult);
   return res.status(200).json(sendResult);
@@ -846,6 +964,86 @@ const viewSollution = async (req, res, next) => {
   }
   return res.status(200).json(resultData);
 };
+// const historyData1 = async (req, res, next) => {
+//   const studentId = req.user.studentId;
+//   if (!ObjectId.isValid(studentId))
+//     return res.status(404).json("Student ID not valid.");
+//   let page = req.query.page || 1;
+
+//   let studentIdObj = new mongoose.Types.ObjectId(studentId);
+//   let data;
+//   let count = 0;
+//   try {
+//     count = await StudentExamVsQuestionsMcq.find({
+//       studentId: studentIdObj,
+//     }).count();
+//   } catch (err) {
+//     return res.status(500).json("Something went wrong.");
+//   }
+//   //return res.status(200).json(count);
+//   console.log(count);
+//   if (count == 0) return res.status(404).json("1.No data found.");
+//   let paginateData = pagination(count, page);
+//   try {
+//     data = await StudentExamVsQuestionsMcq.find({
+//       studentId: studentIdObj,
+//     })
+//       .populate("examId")
+//       .skip(paginateData.skippedIndex)
+//       .limit(paginateData.perPage);
+//   } catch (err) {
+//     return res.status(500).json("1.SOmething went wrong.");
+//   }
+//   if (data == null)
+//     return res.status(404).json("No exam data found for the student.");
+//   let resultData = [];
+//   let flag = false;
+//   console.log(data.length);
+//   for (let i = 0; i < data.length; i++) {
+//     let data1 = {};
+//     let rank = null;
+//     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+//     console.log(examIdObj);
+//     console.log(studentIdObj);
+//     try {
+//       rank = await StudentMarksRank.findOne(
+//         {
+//           $and: [
+//             { studentId: studentIdObj },
+//             { examId: examIdObj },
+//             { finishedStatus: true },
+//           ],
+//         },
+//         "rank totalObtainedMarks examStartTime examEndtime"
+//       );
+//     } catch (err) {
+//       return res.status(500).json("2.Something went wrong.");
+//     }
+//     if (rank == null) continue;
+
+//     //return res.status(404).json("No exam data found for the student.");
+//     let subjectIdObj = String(data[i].examId.subjectId);
+//     let subjectName = null;
+//     try {
+//       subjectName = await Subject.findById(subjectIdObj).select("name");
+//     } catch (err) {
+//       return res.status(500).json("3.Something went wrong.");
+//     }
+//     subjectName = subjectName.name;
+//     data1["examId"] = data[i].examId._id;
+//     data1["title"] = data[i].examId.name;
+//     data1["type"] = examType[Number(data[i].examId.examType)];
+//     data1["variation"] = examVariation[Number(data[i].examId.examVariation)];
+//     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
+//     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
+//     data1["meritPosition"] = rank.rank;
+//     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
+//     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
+//     data1["subjectName"] = subjectName;
+//     resultData.push(data1);
+//   }
+//   return res.status(200).json({ resultData, paginateData });
+// };
 const historyData = async (req, res, next) => {
   const studentId = req.user.studentId;
   if (!ObjectId.isValid(studentId))
@@ -896,12 +1094,25 @@ const historyData = async (req, res, next) => {
             { finishedStatus: true },
           ],
         },
-        "rank totalObtainedMarks examStartTime examEndtime"
+        "totalObtainedMarks examStartTime examEndtime"
       );
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
+
+    //get rank
     if (rank == null) continue;
+    let resultRank = null;
+    try {
+      resultRank = await McqRank.findOne({
+        $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+      }).select("rank -_id");
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    //resultRank = resultRank.rank;
+    console.log(resultRank);
+
     //return res.status(404).json("No exam data found for the student.");
     let subjectIdObj = String(data[i].examId.subjectId);
     let subjectName = null;
@@ -917,7 +1128,7 @@ const historyData = async (req, res, next) => {
     data1["variation"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
-    data1["meritPosition"] = rank.rank;
+    data1["meritPosition"] = resultRank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
