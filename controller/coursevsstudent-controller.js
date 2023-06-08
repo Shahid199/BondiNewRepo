@@ -99,7 +99,7 @@ const addStudentToCourse = async (req, res, next) => {
   // console.log(data1);
   const linesExceptFirst = data1.split(",");
   const linesArr = linesExceptFirst;
-  //console.log(linesArr.length);
+  console.log(linesArr);
   // return res.status(200).json("ok");
   //end file work
   let students = [];

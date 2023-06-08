@@ -103,6 +103,7 @@ const addStudent = async (req, res, next) => {
   const linesArr = linesExceptFirst.map((line) => line.split(","));
   let students = [];
   let rNo = [];
+
   for (let i = 0; i < linesArr.length; i++) {
     const name = String(linesArr[i][2]).replace(/[-"\r]/g, "");
     const regNo = String(linesArr[i][1]).replace(/[-"\r]/g, "");
@@ -114,13 +115,21 @@ const addStudent = async (req, res, next) => {
     ) {
       continue;
     }
-    const users = {};
-    users["name"] = name;
-    users["regNo"] = regNo;
-    users["mobileNo"] = mobileNo;
+    const users = new Student({
+      regNo: regNo,
+      name: name,
+      institution: null,
+      mobileNo: mobileNo,
+    });
+    // users["regNo"] = regNo;
+    // users["name"] = name;
+    // users["institution"] = "new";
+    // users["mobileNo"] = mobileNo;
+
     students.push(users);
     rNo.push(regNo);
   }
+  console.log(students);
   //end file work
   let doc = [],
     doc2 = [],
@@ -131,6 +140,7 @@ const addStudent = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
+  //, { ordered: false }
   try {
     doc2 = await Student.find({ regNo: { $in: rNo } }).select("_id");
   } catch (err) {
