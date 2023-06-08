@@ -5,7 +5,8 @@ module.exports = {
       instances:'max',
       exec_mode:'cluster',
       script: 'app.js',
-      watch: '.'
+      watch: '.',
+      ignore_watch : ["node_modules", "uploads"]
     }]
   }
   
