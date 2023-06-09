@@ -78,9 +78,9 @@ const getAllCourse = async (req, res, next) => {
 };
 //get all course search
 const getAllCourseSearch = async (req, res, next) => {
-  let courseName = req.body.courseName;
+  let courseName = req.query.courseName;
   if (!courseName) return res.status(404).json("Please place some letter.");
-  let data = null;
+  let courses = null;
   let page = Number(req.query.page) || 1;
   let count = 0;
   try {
@@ -101,7 +101,7 @@ const getAllCourseSearch = async (req, res, next) => {
   if (count == 0) return res.status(404).json("No courses found.");
   const paginateData = pagination(count, page);
   try {
-    data = await Course.find({
+    courses = await Course.find({
       $and: [
         {
           name: {
@@ -117,10 +117,10 @@ const getAllCourseSearch = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
-  if (!data) {
+  if (!courses) {
     return res.status(404).json("No data found.");
   }
-  return res.status(200).json({ data, paginateData });
+  return res.status(200).json({ courses, paginateData });
 };
 //update status of course
 const updateStatusCourse = async (req, res, next) => {
