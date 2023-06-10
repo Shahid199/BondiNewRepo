@@ -1139,7 +1139,7 @@ const historyData = async (req, res, next) => {
     data1["variation"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
-    data1["meritPosition"] = resultRank;
+    data1["meritPosition"] = resultRank.rank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
