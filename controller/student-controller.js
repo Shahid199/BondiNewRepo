@@ -1123,6 +1123,8 @@ const historyData = async (req, res, next) => {
     }
     //resultRank = resultRank.rank;
     console.log(resultRank);
+    if (resultRank == null) resultRank = "-1";
+    else resultRank = resultRank.rank;
 
     //return res.status(404).json("No exam data found for the student.");
     let subjectIdObj = String(data[i].examId.subjectId);
@@ -1139,7 +1141,7 @@ const historyData = async (req, res, next) => {
     data1["variation"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
-    data1["meritPosition"] = resultRank.rank;
+    data1["meritPosition"] = resultRank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
@@ -1406,6 +1408,18 @@ const studentSubmittedExamDetail = async (req, res, next) => {
     return res.status(500).json("2.Something went wrong.");
   }
   if (dataRank == null) return res.status(404).json("No data found.");
+  //star rank
+  let mcqRank = null;
+  try {
+    mcqRank = await McqRank.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (mcqRank != null) mcqRank = mcqRank.rank;
+  else mcqRank = "-1";
+  //end rank
 
   let dataObject = {};
   dataObject["examName"] = data.examId.name;
@@ -1420,7 +1434,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataObject["studExamStartTime"] = dataRank.examStartTime;
   dataObject["studExamEndTime"] = dataRank.examEndTime;
   dataObject["studDuration"] = dataRank.duration;
-  dataObject["rank"] = dataRank.rank;
+  dataObject["rank"] = mcqRank;
   dataObject["totalObtainedMarks"] = dataRank.totalObtainedMarks;
   dataObject["totalWrongAnswer"] = data.totalWrongAnswer;
   dataObject["totalCorrectMarks"] = data.totalCorrectMarks;
@@ -1844,6 +1858,7 @@ const updateStudentExamInfo = async (req, res, next) => {
           { examId: examIdObj },
           { finishedStatus: false },
           { runningStatus: true },
+          { totalObtainedMarks: 0 },
         ],
       },
       "_id"
@@ -1875,7 +1890,12 @@ const updateRank = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Invalid exam Id.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  let ranks = null;
+  let deleteAll = null;
+  try {
+    deleteAll = await McqRank.deleteMany({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   try {
     ranks = await StudentMarksRank.find({ examId: examIdObj })
       .select("examId totalObtainedMarks studentId -_id")

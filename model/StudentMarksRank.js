@@ -33,23 +33,23 @@ const studentMarkRanksSchema = new Schema(
     totalObtainedMarks: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     rank: {
       type: Number,
       required: false,
-      default: null,
+      default: -1,
     },
     finishedStatus: {
       type: Boolean,
       required: true,
       default: false,
     },
-    runningStatus:{
-      type:Boolean,
-      required:false,
-      default:false,
-    }
+    runningStatus: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
