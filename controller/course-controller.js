@@ -174,7 +174,7 @@ const getAllCourseAdmin = async (req, res, next) => {
   if (!courses) {
     return res.status(404).json("Courses Not Found");
   }
-  return res.status(200).json(courses);
+  return res.status(200).json({courses});
 };
 const updateSingle = async (req, res, next) => {
   const id = req.query.id;
