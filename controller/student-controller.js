@@ -1785,6 +1785,7 @@ const getHistoryByExamId = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
     if (mcqRank == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
     //rank data end
 
     let data1 = {},
