@@ -1724,6 +1724,7 @@ const historyDataAdmin = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
     if (mcqRank == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
     //rank data end
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
