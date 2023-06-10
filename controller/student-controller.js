@@ -1750,7 +1750,9 @@ const getHistoryByExamId = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let count = 0;
   try {
-    count = await StudentMarksRank.find({ examId: examIdObj }).count();
+    count = await StudentMarksRank.find({
+      $and: [{ examId: examIdObj }, { finishedStatus: true }],
+    }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
@@ -1770,6 +1772,7 @@ const getHistoryByExamId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(rank);
   for (let i = 0; i < rank.length; i++) {
     //rank data start
     let mcqRank = null;
