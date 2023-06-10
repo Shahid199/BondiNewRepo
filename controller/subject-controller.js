@@ -71,6 +71,25 @@ const getSubjectByCourse = async (req, res, next) => {
   // if (!data) return res.status().json(su);
   return res.status(200).json({ data, paginateData });
 };
+
+//dropdown use
+const getSubjectByCourseAdmin = async (req, res, next) => {
+  const ObjectId = mongoose.Types.ObjectId;
+  let data = [];
+  const courseId = req.query.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("Invalid course Id.");
+  let courseIdOb = new mongoose.Types.ObjectId(courseId);
+  try {
+    data = await Subject.find({
+      $and: [{ courseId: courseIdOb }, { status: true }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong!");
+  }
+  // if (!data) return res.status().json(su);
+  return res.status(200).json({ data });
+};
 //view subject info
 const getSubjectById = async (req, res, next) => {
   const subjectId = req.query.subjectId;
@@ -193,3 +212,4 @@ exports.getSubjectById = getSubjectById;
 exports.updateSubject = updateSubject;
 exports.getAllSubject = getAllSubject;
 exports.subjectDeactivate = subjectDeactivate;
+exports.getSubjectByCourseAdmin = getSubjectByCourseAdmin;

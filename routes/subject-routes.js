@@ -8,6 +8,7 @@ const {
   getSubjectById,
   getAllSubject,
   subjectDeactivate,
+  getSubjectByCourseAdmin,
 } = require("../controller/subject-controller");
 const { upload } = require("../utilities/multer");
 const { getHistoryByExamId } = require("../controller/student-controller");
@@ -33,8 +34,20 @@ router.get(
 );
 router.get(
   "/getsubjectbycourse",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin","moderator","student"])],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
   getSubjectByCourse
+);
+
+router.get(
+  "/getsubjectbycourseadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getSubjectByCourseAdmin
 );
 
 router.get(
