@@ -294,8 +294,8 @@ const getExamBySub = async (req, res, next) => {
     examObj["examType"] = examData1[i].examType;
     examObj["examVariation"] = examData1[i].examVariation;
     examObj["examFreeOrNot"] = examData1[i].examFreeOrNot;
-    examObj["startTime"] = examData1[i].endTime;
-    examObj["endTime"] = examData1[i]._id;
+    examObj["startTime"] = examData1[i].startTime;
+    examObj["endTime"] = examData1[i].endTime;
     examObj["duration"] = examData1[i].duration;
     examObj["totalQuestionMcq"] = examData1[i].totalQuestionMcq;
     examObj["marksPerMcq"] = examData1[i].marksPerMcq;
