@@ -22,6 +22,7 @@ const examVariation = require("../utilities/exam-variation");
 const isodate = require("isodate");
 const McqRank = require("../model/McqRank");
 const passport = require("passport");
+const FreeMcqRank = require("../model/FreeMcqRank");
 
 const Limit = 100;
 
@@ -1713,13 +1714,24 @@ const historyDataAdmin = async (req, res, next) => {
       flag = true;
       break;
     }
+    //rank data start
+    let mcqRank = null;
+    try {
+      mcqRank = await McqRank.findOne({
+        $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (mcqRank == null) mcqRank = "-1";
+    //rank data end
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["type"] = data[i].examId.examType;
     data1["variation"] = data[i].examId.examVariation;
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
-    data1["meritPosition"] = rank.rank;
+    data1["meritPosition"] = mcqRank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
@@ -1759,6 +1771,18 @@ const getHistoryByExamId = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   for (let i = 0; i < rank.length; i++) {
+    //rank data start
+    let mcqRank = null;
+    try {
+      mcqRank = await McqRank.findOne({
+        $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
+      });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (mcqRank == null) mcqRank = "-1";
+    //rank data end
+
     let data1 = {},
       examStud = null;
     data1["studentId"] = rank[i].studentId._id;
@@ -1771,7 +1795,7 @@ const getHistoryByExamId = async (req, res, next) => {
     }
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
-    data1["meritPosition"] = rank[i].rank;
+    data1["meritPosition"] = mcqRank;
     data1["examStartTime"] = moment(rank[i].examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank[i].examEndTime).format("LLL");
     data1["duration"] = rank[i].duration;
@@ -1799,7 +1823,6 @@ const getHistoryByExamId = async (req, res, next) => {
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
-
 //error handle and ranks update
 const updateStudentExamInfo = async (req, res, next) => {
   const examId = req.query.examId;
@@ -1884,7 +1907,27 @@ const getRank = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (!resultRank) return res.status(404).json("Exam not finshed yet.");
+  if (!resultRank) return res.status(200).json(-1);
+  console.log(resultRank.rank);
+  resultRank = Number(resultRank.rank);
+  return res.status(200).json(resultRank);
+};
+const getRankStudent = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.user.studentId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
+    return res.status(200).json("Invalid examId or studentId.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let resultRank = null;
+  try {
+    resultRank = await McqRank.findOne({
+      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+    }).select("rank -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!resultRank) return res.status(200).json(-1);
   console.log(resultRank.rank);
   resultRank = Number(resultRank.rank);
   return res.status(200).json(resultRank);
@@ -1920,3 +1963,4 @@ exports.getRank = getRank;
 exports.getStudentRegSearch = getStudentRegSearch;
 exports.getStudentNameSearch = getStudentNameSearch;
 exports.getStudentMobileSearch = getStudentMobileSearch;
+exports.getRankStudent = getRankStudent;
