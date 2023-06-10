@@ -1844,7 +1844,7 @@ const getHistoryByExamId = async (req, res, next) => {
   return res.status(200).json({ data, examInfo, paginateData });
 };
 //error handle and ranks update
-const updateStudentExamInfo = async (req, res, next) => {
+const updateStudentExamInfo1 = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
@@ -1869,6 +1869,103 @@ const updateStudentExamInfo = async (req, res, next) => {
   console.log(examUncheckStudent, "examUncheckStudent");
   if (examUncheckStudent.length == 0)
     return res.status(200).json("All student submit the exam.");
+  let updateStatus = null;
+  try {
+    updateStatus = await StudentMarksRank.updateMany(
+      {
+        _id: { $in: examUncheckStudent },
+      },
+      { $set: { runningStatus: false, finishedStatus: true } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(updateStatus, "updateStatus");
+  if (updateStatus.modifiedCount == 0)
+    return res.status(404).json("Not updated.");
+  return res.status(201).json("Updated successfully.");
+};
+
+const updateStudentExamInfo = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let examData = null;
+  try {
+    examData = await Exam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  let examUncheckStudent = null;
+  try {
+    examUncheckStudent = await StudentMarksRank.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishedStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(examUncheckStudent, "examUncheckStudent");
+  if (examUncheckStudent.length == 0)
+    return res.status(200).json("All student submit the exam.");
+  for (let i = 0; i < examUncheckStudent.length; i++) {
+    let totalNotAnswered = 0,
+      TotalCorrectAnswer = 0,
+      totalWrongAnswer = 0,
+      totalCorrectMarks = 0,
+      totalWrongMarks = 0,
+      totalMarks = 0;
+    let data = await StudentExamVsQuestionsMcq.findOne(
+      {
+        $and: [
+          { examId: examIdObj },
+          { studentId: examUncheckStudent[i].studentId },
+        ],
+      },
+      "mcqQuestionId answeredOption -_id"
+    ).populate("mcqQuestionId");
+    if (data == null) continue;
+    let mcqDetail = data.mcqQuestionId;
+    for (let i = 0; i < answeredOption.length; i++) {
+      if (answeredOption[i] == "-1") totalNotAnswered = totalNotAnswered + 1;
+      else if (answeredOption[i] == mcqDetail[i].correctOption)
+        totalCorrectAnswer = totalCorrectAnswer + 1;
+      else totalWrongAnswer = totalWrongAnswer + 1;
+    }
+    totalCorrectMarks = Number(totalCorrectAnswer * examData.marksPerMcq);
+    totalWrongMarks = Number(totalWrongAnswer * examData.negativeMarks);
+    totalMarks = Number(totalCorrectMarks - totalWrongMarks);
+    let upd;
+    const update1 = {
+      totalCorrectAnswer: totalCorrectAnswer,
+      totalWrongAnswer: totalWrongAnswer,
+      totalNotAnswered: totalNotAnswered,
+      totalCorrectMarks: totalCorrectMarks,
+      totalWrongMarks: totalWrongMarks,
+      totalObtainedMarks: totalObtainedMarks,
+    };
+    try {
+      upd = await StudentExamVsQuestionsMcq.updateOne(
+        {
+          $and: [
+            { examId: examIdObj },
+            { studentId: examUncheckStudent[i].studentId },
+          ],
+        },
+        update1
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+  }
   let updateStatus = null;
   try {
     updateStatus = await StudentMarksRank.updateMany(

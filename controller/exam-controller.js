@@ -13,6 +13,8 @@ const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
 const moment = require("moment");
 const pagination = require("../utilities/pagination");
+const examType = require("../utilities/exam-type");
+const examVariation = require("../utilities/exam-variation");
 
 const Limit = 100;
 //create Exam
@@ -354,8 +356,8 @@ const getExamBySubject = async (req, res, next) => {
   }
   if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
-  let exams = null;
-  exams = await Exam.find(
+  let exams1 = null;
+  exams1 = await Exam.find(
     {
       $and: [
         { status: true },
@@ -365,14 +367,24 @@ const getExamBySubject = async (req, res, next) => {
       ],
     },
     "name examVariation startTime endTime examType"
-  )
-    .populate("courseId subjectId")
-    .skip(paginateData.skippedIndex)
-    .limit(paginateData.limit);
+  ).populate("courseId subjectId");
+  // .skip(paginateData.skippedIndex)
+  // .limit(paginateData.limit)
+  let exams = [];
+  for (let i = 0; i < exams1.length; i++) {
+    //exams[i].examType
+    let inst = {};
+    inst["name"] = exams1[i].name;
+    inst["examType"] = examType[Number(exams1[i].examType)];
+    inst["examVariation"] = examVariation[Number(exams1[i].examVariation)];
+    inst["startTime"] = moment(exams1[i].startTime).format("LLL");
+    inst["subjectName"] = exams1[0].subjectId.name;
+    exams.push(inst);
+  }
   let examPage = new Object();
   examPage["exam"] = exams;
-  examPage["course"] = exams[0].courseId.name;
-  examPage["subject"] = exams[0].subjectId.name;
+  examPage["course"] = exams1[0].courseId.name;
+  examPage["subject"] = exams1[0].subjectId.name;
   if (
     exams.length > 0 &&
     examPage["course"] != null &&
