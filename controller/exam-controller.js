@@ -375,8 +375,8 @@ const getExamBySubject = async (req, res, next) => {
     //exams[i].examType
     let inst = {};
     inst["name"] = exams1[i].name;
-    inst["examType"] = examType[Number(exams1[i].examType)];
-    inst["examVariation"] = examVariation[Number(exams1[i].examVariation)];
+    inst["examVariation"] = examType[Number(exams1[i].examType)];
+    inst["examType"] = examVariation[Number(exams1[i].examVariation)];
     inst["startTime"] = moment(exams1[i].startTime).format("LLL");
     inst["subjectName"] = exams1[0].subjectId.name;
     exams.push(inst);
