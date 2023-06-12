@@ -1137,8 +1137,8 @@ const historyData = async (req, res, next) => {
     subjectName = subjectName.name;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
-    data1["type"] = examType[Number(data[i].examId.examType)];
-    data1["variation"] = examVariation[Number(data[i].examId.examVariation)];
+    data1["variation"] = examType[Number(data[i].examId.examType)];
+    data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks;
     data1["meritPosition"] = resultRank;
@@ -1426,9 +1426,8 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataObject["totalMarksMcq"] = data.examId.totalMarksMcq;
   dataObject["startTime"] = data.examId.startTime;
   dataObject["endTime"] = data.examId.endTime;
-  dataObject["examType"] = examType[Number(data.examId.examType)];
-  dataObject["examVariation"] =
-    examVariation[Number(data.examId.examVariation)];
+  dataObject["examVariation"] = examType[Number(data.examId.examType)];
+  dataObject["examType"] = examVariation[Number(data.examId.examVariation)];
   dataObject["studExamTime"] = dataObject["totalCorrectAnswer"] =
     data.totalCorrectAnswer;
   dataObject["studExamStartTime"] = dataRank.examStartTime;
@@ -1474,9 +1473,8 @@ const studentSubmittedExamDetailAdmin = async (req, res, next) => {
   dataObject["totalMarksMcq"] = data.examId.totalMarksMcq;
   dataObject["startTime"] = data.examId.startTime;
   dataObject["endTime"] = data.examId.endTime;
-  dataObject["examType"] = examType[Number(data.examId.examType)];
-  dataObject["examVariation"] =
-    examVariation[Number(data.examId.examVariation)];
+  dataObject["examVariation"] = examType[Number(data.examId.examType)];
+  dataObject["examType"] = examVariation[Number(data.examId.examVariation)];
   dataObject["studExamTime"] = dataObject["totalCorrectAnswer"] =
     data.totalCorrectAnswer;
   dataObject["studExamStartTime"] = dataRank.examStartTime;
@@ -1837,8 +1835,8 @@ const getHistoryByExamId = async (req, res, next) => {
     startTime: moment(examDetails.examStartTime).format("LLL"),
     endTime: moment(examDetails.examEndTime).format("LLL"),
     totalQuestion: examDetails.totalQuestionMcq,
-    type: examType[Number(examDetails.examType)],
-    variation: examVariation[Number(examDetails.examVariation)],
+    variation: examType[Number(examDetails.examType)],
+    type: examVariation[Number(examDetails.examVariation)],
     totalMarksMcq: examDetails.totalMarksMcq,
   };
   return res.status(200).json({ data, examInfo, paginateData });
