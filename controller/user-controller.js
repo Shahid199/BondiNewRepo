@@ -37,6 +37,20 @@ const getUserByRole = async (req, res, next) => {
   }
   return res.status(200).json({ user, paginaeData });
 };
+const getTeacher = async (req, res, next) => {
+  let teacher;
+  try {
+    teacher = await User.find({ role: 3, status: true }).select(
+      "name userName"
+    );
+  } catch (err) {
+    return res.status(404).json("Something went wrong.");
+  }
+  if (!teacher) {
+    return res.status(404).json({ message: "Teacher Not Found" });
+  }
+  return res.status(200).json(teacher);
+};
 const getUserById = async (req, res, next) => {
   const id = req.query.id;
   if (id == null) return res.status(404).json("id not found.");
@@ -240,3 +254,4 @@ exports.updateOfficeUser = updateOfficeUser;
 exports.deactivateUser = deactivateUser;
 exports.updatePassword = updatePassword;
 exports.getUserById = getUserById;
+exports.getTeacher = getTeacher;

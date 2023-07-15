@@ -23,41 +23,42 @@ const studentExamVsQuestionsWrittenSchema = new Schema(
     },
     //when students submit image answer script
     submittedScriptILink: [
-      {
-        type: String,
-        required: false,
-      },
+      [
+        {
+          type: String,
+          required: false,
+        },
+      ],
     ],
-    //when students submit pdf answer script
-    //submittedScriptPdfLink: {
-    //    type: String,
-    //    required: false,
-    //  },
-    //For Image
     ansewerScriptILink: [
-      {
-        type: String,
-        required: false,
-      },
+      [
+        {
+          type: String,
+          required: false,
+        },
+      ],
     ],
-    //For Pdf file
-    //ansewerScriptPdfLink: {
-    //  type: String,
-    //  required: false,
-    // },
     obtainedMarks: [
       {
         type: Number,
         required: false,
+        default: 0,
       },
     ],
     totalObtainedMarks: {
       type: Number,
       required: false,
+      default: 0,
     },
     checkStatus: {
       type: Boolean,
-      required: false,
+      required: true,
+      default: false,
+    },
+    uploadStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.

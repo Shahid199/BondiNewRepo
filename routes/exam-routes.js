@@ -20,6 +20,11 @@ const {
   addQuestionMcqBulk,
   deactivateExam,
   freeExamStatus,
+  getExamType,
+  submitStudentScript,
+  assignTeacher,
+  assignStudentToTeacher,
+  removeQuestionWritten,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -147,11 +152,53 @@ router.put(
 );
 
 router.get(
-  "/freeExamStatus",
+  "/freeexamstatus",
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   freeExamStatus
 );
+router.get(
+  "/getexamtype",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getExamType
+);
+router.post(
+  "/submitstudentscript",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  submitStudentScript
+);
+router.post(
+  "/assignteacher",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  assignTeacher
+);
+router.post(
+  "/assignstudenttoteacher",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  assignStudentToTeacher
+);
+router.post(
+  "/removequestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  removeQuestionWritten
+);
+
 module.exports = router;

@@ -12,6 +12,7 @@ const {
   getUserById,
   createSuperAdmin,
   logoutStudent,
+  getTeacher,
 } = require("../controller/user-controller");
 const authorize = require("../utilities/authorizationMiddleware");
 const router = express.Router();
@@ -65,7 +66,15 @@ router.put(
 );
 router.post("/login", loginSuperAdmin);
 
-
 router.get("/create_super_admin", createSuperAdmin);
+
+router.get(
+  "/getteacher",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getTeacher
+);
 
 module.exports = router;

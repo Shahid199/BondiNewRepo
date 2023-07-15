@@ -15,6 +15,8 @@ const moment = require("moment");
 const pagination = require("../utilities/pagination");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
+const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
+const TeacherVsExam = require("../model/TeacherVsExam");
 
 const Limit = 100;
 //create Exam
@@ -243,6 +245,19 @@ const deactivateExam = async (req, res, next) => {
   if (queryResult) return res.status(201).json("Deactivated.");
   else return res.status(404).json("Something went wrong.");
 };
+const getExamType = async (req, res, next) => {
+  const examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  let type = null;
+  try {
+    type = Exam.findById(examId).select("examVariation -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (type == null) return res.status(404).json("Exam variation not found.");
+  return res.status(200).json(type);
+};
 //get all exam for a particular course of particular subject
 const getExamBySub1 = async (req, res, next) => {
   const subjectId = req.query.subjectId;
@@ -464,7 +479,7 @@ const examByCourseSubject = async (req, res, next) => {
   result.push({ examCount: examData.length });
   return res.status(200).json({ result, paginateData });
 };
-//add questions
+
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
@@ -692,6 +707,22 @@ const examRuleGetAll = async (req, res, next) => {
 };
 //add wriiten question function
 const addQuestionWritten = async (req, res, next) => {
+  let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  const status = req.body.status;
+  const totalQuestions = req.body.totalQuestions;
+  const marksPerQuestion = req.body.marksPerQuestion;
+  let isNumber = marksPerQuestion.every((element) => {
+    return typeof element === "number";
+  });
+  if (isNumber == false || length(marksPerQuestion) != Number(totalQuestions))
+    return res
+      .status(404)
+      .json("Marks per question is not valid or someting went wrong.");
+  const totalMarks = marksPerQuestion.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
   //file upload handle
   const file = req.files;
   console.log(file);
@@ -702,45 +733,249 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(400).json("File not uploaded.");
   questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
   //written question save to db table
-  const { status } = req.body;
   let question = new QuestionsWritten({
     questionILink: questionILinkPath,
     status: JSON.parse(status),
+    totalQuestions: Number(totalQuestions),
+    marksPerQuestion: marksPerQuestion,
+    totalMarks: totalMarks,
+    examId: examId,
   });
   let doc;
   try {
     doc = await question.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  //exam block
+
+  return res.status(404).json("Question save correctly.");
+};
+const removeQuestionWritten = async (req, res, next) => {
   let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let currentTime = moment(Date.now());
+  let examTime = null;
   try {
-    examId = await Exam.findById(examId).select("_id");
+    examTime = await Exam.findOne({
+      $and: [{ examId: examId }, { startTime: { $gt: currentTime } }],
+    }).select("-_id");
   } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong4!");
+    return res.status(500).json("SOmething went wrong.");
   }
-  //data insert to reference table
-  let doc1;
-  let questionId = doc._id;
-  let questionExam = new WrittenQuestionVsExam({
-    writtenQuestionId: questionId,
-    examId: examId,
-  });
+  if (!examTime)
+    return res.status(404).json("Cannot remove question.Exam Already started.");
+  let remove = null;
   try {
-    doc1 = await questionExam.save();
+    remove = await QuestionsWritten.findByIdAndRemove(examId);
   } catch (err) {
-    console.log(err);
+    return res.status(500).json("SOmething went wrong.");
+  }
+  return res.status(200).json("Successfully removed question from the exam.");
+};
+const submitStudentScript = async (req, res, next) => {
+  const files = req.files;
+  //file upload handle:start
+  const file = req.files;
+  //console.log(file);
+  let questionILinkPath = [];
+  if (!file.questionILink) return res.status(400).json("Files not uploaded.");
+  for (let i = 0; i < length(file.questionILink); i++) {
+    questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
+  }
+  //file upload handle:end
+  const examId = req.body.examId;
+  const studentId = req.user.studentId;
+  const questionId = req.body.questionId;
+  let questionNo = Number(req.body.questionNo);
+  questionNo = questionNo - 1;
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(questionId) ||
+    !questionNo
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let getQuestionScript = null;
+  try {
+    getQuestionScript = await StudentExamVsQuestionsWritten.find({
+      $and: [
+        { studentId: studentIdObj },
+        { examId: examId },
+        { questionId: questionId },
+      ],
+    }).select("submittedScriptILink uploadStatus checkStatus -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let uploadStatus = getQuestionScript.UploadStatus;
+  let checkStatus = getQuestionScript.checkStatus;
+  if (uploadStatus == true || checkStatus == true)
+    return res.status(404).json("Can not upload file.");
+  getQuestionScript = getQuestionScript.submittedScriptILink;
+  if (length(getQuestionScript[questionNo]) > 0) {
+    for (let i = 0; i < length(getQuestionScript[questionNo]); i++) {
+      fs.unlinkSync(getQuestionScript[questionNo][i]);
+    }
+  }
+  getQuestionScript[questionNo].push(questionILinkPath);
+  let questionUpload = new StudentExamVsQuestionsWritten({
+    studentId: studentIdObj,
+    examId: examId,
+    writtenQuestionId: questionId,
+    submittedScriptILink: getQuestionScript,
+    marksPerQuestion: marksPerQuestion,
+    totalMarks: totalMarks,
+  });
+  let doc;
+  try {
+    doc = await questionUpload.save();
+  } catch (err) {
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  if (doc1 == null) {
-    let delDoc = await QuestionsWritten.findByIdAndDelete(doc._id);
-    return res.status(400).json("DB Error occur for insertion.");
+  return res.status(201).json("Submitted Successfully.");
+};
+const submitWritten = async (req, res, next) => {
+  const examId = req.body.examId;
+  const studentId = req.user.studentId;
+  const questionId = req.body.questionId;
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(questionId)
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
   }
-  if (doc != null && doc1 != null) return res.status(201).json(doc);
-  else return res.status(404).json("Not save correctly.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let uploadStatus = null;
+  try {
+    uploadStatus = await StudentExamVsQuestionsWritten.updateOne(
+      {
+        $and: [
+          { studentId: studentIdObj },
+          { examId: examId },
+          { questionId: questionId },
+        ],
+      },
+      { uploadStatus: true }
+    );
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  return res.status(201).json("Submitted Sccessfully.");
+};
+const assignTeacher = async (req, res, next) => {
+  let examId = req.body.examId;
+  let teacherId = req.body.teacherId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(teacherId))
+    return res.status(404).json("Exam Id or Teacher Id is not valid.");
+  let teacherVsExam = new TeacherVsExam({
+    examId: examId,
+    teacherId: teacherId,
+  });
+  let data = null;
+  try {
+    data = teacherVsExam.save();
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  return res.status(201).json("Successfully assign teacher to exam.");
+};
+const assignStudentToTeacher = async (req, res, next) => {
+  let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  //remove assign students to the teacher
+  let remove = null;
+  try {
+    remove = await TeacherVsExam.deleteMany({ examId: examId });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  let teacher = 0;
+  try {
+    teacher = await TeacherVsExam.find({
+      examId: examId,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  let teachers = null;
+  try {
+    teachers = await TeacherVsExam.find({
+      examId: examId,
+    }).select("teacherId -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  teachers = teachers.teacherId;
+  if (teacher == 0)
+    return res.status(404).json("No teacher assign in this exam.");
+
+  let count = 0;
+  try {
+    count = await StudentExamVsQuestionsWritten.find({
+      examId: examId,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (count == 0)
+    return res.status(404).json("No Student participate in the exam.");
+
+  let students = null;
+  try {
+    students = await StudentExamVsQuestionsWritten.find({
+      examId: examId,
+    }).select("studentId -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  students = students.studentId;
+
+  let range = students / teacher;
+  let start = 0;
+  let end = range;
+  let teacherStudentArr = [];
+  for (let i = 0; i < teacher; i++) {
+    let teacherStudent = {};
+    teacherStudent["examId"] = examId;
+    teacherStudent["teacherId"] = teachers[i];
+    let std = [];
+    for (let j = start; j < end - 1; j++) {
+      std.push(students[j]);
+    }
+    teacherStudent["studentId"] = std;
+    teacherStudentArr.push(teacherStudent);
+    if (i < teacher - 1 && count % teacher != 0) {
+      start = end;
+      end = end + range + (count % teacher);
+    } else {
+      start = end;
+      end = end + range;
+    }
+  }
+  let doc = null;
+  try {
+    doc = await TeacherVsExam.insertMany(teacherStudentArr, { ordered: false });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res
+    .status(201)
+    .json("Successfully assign all student to the teacher.");
 };
 //view questions
 const questionByExamId = async (req, res, next) => {
@@ -776,7 +1011,6 @@ const questionByExamId = async (req, res, next) => {
   // resultAll.push({ examId: String(queryResult.eId) });
   return res.status(200).json(resultAll);
 };
-
 const updateQuestionStatus = async (req, res, next) => {
   const questionId = req.body.questionId;
   if (!ObjectId.isValid(questionId))
@@ -833,3 +1067,9 @@ exports.updateExam = updateExam;
 exports.addQuestionMcqBulk = addQuestionMcqBulk;
 exports.deactivateExam = deactivateExam;
 exports.freeExamStatus = freeExamStatus;
+exports.getExamType = getExamType;
+exports.submitStudentScript = submitStudentScript;
+exports.submitWritten = submitWritten;
+exports.assignTeacher = assignTeacher;
+exports.assignStudentToTeacher = assignStudentToTeacher;
+exports.removeQuestionWritten = removeQuestionWritten;

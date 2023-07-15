@@ -14,6 +14,25 @@ const questionWrittenSchema = new Schema(
       required: true,
       default: true,
     },
+    totalQuestions: {
+      type: Number,
+      required: true,
+    },
+    marksPerQuestion: [
+      {
+        type: Number,
+        required: true,
+      },
+    ],
+    totalMarks: {
+      type: Number,
+      required: true,
+    },
+    examId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: exam,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

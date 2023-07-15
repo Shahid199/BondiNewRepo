@@ -14,6 +14,22 @@ const FreeMcqRank = require("../model/FreeMcqRank");
  * @param {Object} req courseId,regNo
  * @returns token
  */
+
+//exam id
+const getExamById = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId is invalid.");
+  let examData = null;
+  try {
+    examData = await Exam.findOne({
+      $and: [{ _id: examId }, { status: true }],
+    }).populate("courseId subjectId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(200).json(examData);
+};
 //free student Admin side
 const getAllFreeStudent = async (req, res, next) => {
   let page = Number(req.body.page) || 1;
@@ -876,3 +892,4 @@ exports.getFreeStudenInfoByMobile = getFreeStudenInfoByMobile;
 exports.updateStudentExamInfoFree = updateStudentExamInfoFree;
 exports.updateRankFree = updateRankFree;
 exports.getRankFree = getRankFree;
+exports.getExamById = getExamById;

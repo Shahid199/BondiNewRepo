@@ -20,9 +20,19 @@ const {
   updateStudentExamInfoFree,
   updateRankFree,
   getRankFree,
+  getExamById,
 } = require("../controller/freeStudent-controller");
 
 const router = express.Router();
+
+router.get(
+  "/getexambyid",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  getExamById
+);
 
 router.get("/getfreeexamid", getFreeExamId);
 
