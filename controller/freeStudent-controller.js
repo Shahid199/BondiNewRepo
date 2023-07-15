@@ -1,4 +1,5 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, mpngo } = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 const FreeStudent = require("../model/FreeStudent");
 const jwt = require("jsonwebtoken");
 const FreestudentMarksRank = require("../model/FreestudentMarksRank");
