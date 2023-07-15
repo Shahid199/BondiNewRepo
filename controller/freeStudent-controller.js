@@ -387,6 +387,8 @@ const validateToken = async (req, res) => {
 const examCheckMiddlewareFree = async (req, res, next) => {
   const examId = req.query.eId;
   const studentId = req.user.studentId;
+  console.log(req.query.eId);
+  console.log(req.user);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
     return res.status(404).json("Exam Id or Student Id is invalid.");
   //start:check student already complete the exam or not
