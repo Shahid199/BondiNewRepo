@@ -825,10 +825,11 @@ const submitAnswer = async (req, res, next) => {
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
   let findId = null;
+  let timeStudent = [];
   try {
     findId = await StudentMarksRank.find({
       $and: [{ examId: eId1 }, { studentId: sId1 }],
-    }).select("_id");
+    }).select("_id examStartTime examEndTime");
   } catch (err) {
     return res
       .status(500)
@@ -836,6 +837,8 @@ const submitAnswer = async (req, res, next) => {
   }
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
+  timeStudent[0] = findId[0].examStartTime;
+  timeStudent[1] = findId[0].examEndTime;
   let saveStudentExamEnd;
   let update = {
     finishedStatus: true,
@@ -922,16 +925,29 @@ const submitAnswer = async (req, res, next) => {
   // } catch (err) {
   //   return res.status(500).json("Problem when update rank.");
   // }
-  sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
-  sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
-  sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
-  sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
-  sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
-  sendResult["totalObtained"] = getResult.totalObtainedMarks;
-  sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
-  sendResult["rank"] = -1;
-  console.log(sendResult);
-  return res.status(200).json(sendResult);
+
+  // sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
+  // sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  // sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  // sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
+  // sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
+  // sendResult["totalObtained"] = getResult.totalObtainedMarks;
+  // sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  // sendResult["rank"] = -1;
+  // console.log(sendResult);
+  let data1 = {};
+  data1["examId"] = getResult.examId._id;
+  data1["title"] = getResult.examId.name;
+  data1["variation"] = examType[Number(getResult.examId.examType)];
+  data1["type"] = examVariation[Number(getResult.examId.examVariation)];
+  data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  data1["totalObtainedMarks"] = getResult.totalObtainedMarks;
+  data1["meritPosition"] = -1;
+  data1["examStartTime"] = moment(timeStudent[0]).format("LLL");
+  data1["examEndTime"] = moment(timeStudent[1]).format("LLL");
+  //data1["subjectName"] = subjectName;
+
+  return res.status(200).json(data1);
 };
 
 // const setAllRank = async (req, res, next) => {
@@ -1235,8 +1251,7 @@ const missedExam = async (req, res, next) => {
     result["startTime"] = moment(resultData[i].startTime).format("LL");
     result["duration"] = Number(resultData[i].duration);
     result["examVariation"] = examType[Number(resultData[i].examType)];
-    result["examType"] =
-      examVariation[Number(resultData[i].examVariation)];
+    result["examType"] = examVariation[Number(resultData[i].examVariation)];
     result["negativeMarks"] = resultData[i].negativeMarks;
     resultFinal.push(result);
   }
