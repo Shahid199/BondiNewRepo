@@ -813,6 +813,8 @@ const submitAnswerFree = async (req, res, next) => {
   data1["studExamStartTime"] = moment(dataTime.examStartTime).format("LLL");
   data1["studExamEndTime"] = moment(dataTime.examEndTime).format("LLL");
   data1["studExamTime"] = dataTime.duration;
+  data1["marksPerMcq"] = getResult.examId.marksPerMcq;
+  data1["marksPerWrong"] = getresult.examId.negativeMarks / 100;
   return res.status(200).json(data1);
 };
 //error handle and ranks update
