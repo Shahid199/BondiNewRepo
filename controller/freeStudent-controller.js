@@ -771,20 +771,45 @@ const submitAnswerFree = async (req, res, next) => {
     return res.status(500).json("Problem when update rank.");
   }
   try {
-    upd2 = await StudentMarksRank.findById(String(sIeIObj), "rank");
+    upd2 = await FreeStudentMarksRank.findById(String(sIeIObj), "rank");
   } catch (err) {
     return res.status(500).json("Problem get rank.");
   }
   getRank = upd2.rank;
-  sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
-  sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
-  sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
-  sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
-  sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
-  sendResult["totalObtained"] = getResult.totalObtainedMarks;
-  sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
-  sendResult["rank"] = getRank;
-  console.log(sendResult);
+  // sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
+  // sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  // sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  // sendResult["totalWrongMarks"] = getResult.totalWrongMarks;
+  // sendResult["totalNotAnswered"] = getResult.totalNotAnswered;
+  // sendResult["totalObtained"] = getResult.totalObtainedMarks;
+  // sendResult["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  // sendResult["rank"] = getRank;
+  // console.log(sendResult);
+  let dataTime = null;
+  try {
+    dataTime = await FreestudentMarksRank.findOne({
+      $and: [{ examId: eId1 }, { studentId: sId1 }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let data1 = {};
+  data1["examId"] = getResult.examId.name;
+  data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
+  data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
+  data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  data1["examVariation"] = examType[Number(getResult.examId.examType)];
+  data1["examType"] = examVariation[Number(getResult.examId.examVariation)];
+  data1["totalCorrectAnswer"] = getResult.totalCorrectAnswer;
+  data1["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  data1["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  data1["totalWrongMarks"] = getResult.totalWrongMarks;
+  data1["totalNotAnswered"] = getResult.totalNotAnswered;
+  data1["totalObtainedMarks"] = getResult.totalObtainedMarks;
+  data1["rank"] = -1;
+  data1["studExamStartTime"] = moment(dataTime.examStartTime).format("LLL");
+  data1["studExamEndTime"] = moment(dataTime.examEndTime).format("LLL");
+  data1["studExamTime"] = dataTime.duration;
   return res.status(200).json(sendResult);
 };
 //error handle and ranks update

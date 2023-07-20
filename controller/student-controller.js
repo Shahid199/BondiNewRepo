@@ -856,6 +856,7 @@ const submitAnswer = async (req, res, next) => {
     { $and: [{ studentId: sId1 }, { examId: eId1 }] },
     "_id"
   );
+  let rankTable = sIeIObj;
   sIeIObj = sIeIObj[0]._id;
   let examData = null;
   try {
@@ -936,15 +937,22 @@ const submitAnswer = async (req, res, next) => {
   // sendResult["rank"] = -1;
   // console.log(sendResult);
   let data1 = {};
-  data1["examId"] = getResult.examId._id;
-  data1["title"] = getResult.examId.name;
-  data1["variation"] = examType[Number(getResult.examId.examType)];
-  data1["type"] = examVariation[Number(getResult.examId.examVariation)];
+  data1["examId"] = getResult.examId.name;
+  data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
+  data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
   data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  data1["examVariation"] = examType[Number(getResult.examId.examType)];
+  data1["examType"] = examVariation[Number(getResult.examId.examVariation)];
+  data1["totalCorrectAnswer"] = getResult.totalCorrectAnswer;
+  data1["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  data1["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  data1["totalWrongMarks"] = getResult.totalWrongMarks;
+  data1["totalNotAnswered"] = getResult.totalNotAnswered;
   data1["totalObtainedMarks"] = getResult.totalObtainedMarks;
-  data1["meritPosition"] = -1;
-  data1["examStartTime"] = moment(timeStudent[0]).format("LLL");
-  data1["examEndTime"] = moment(timeStudent[1]).format("LLL");
+  data1["rank"] = -1;
+  data1["studExamStartTime"] = moment(timeStudent[0]).format("LLL");
+  data1["studExamEndTime"] = moment(timeStudent[1]).format("LLL");
+  data1["studExamTime"] = rankTable[0].duration;
   //data1["subjectName"] = subjectName;
 
   return res.status(200).json(data1);
