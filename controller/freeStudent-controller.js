@@ -754,29 +754,29 @@ const submitAnswerFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Problem when get Student Exam info.");
   }
-  try {
-    dataRank = await FreestudentMarksRank.find(
-      { examId: eId1 },
-      "studentId totalObtainedMarks"
-    ).sort({ totalObtainedMarks: -1 });
-  } catch (err) {
-    return res.status(500).json("Problem when get all student of an exam Id.");
-  }
-  let dataRankId = dataRank.map((e) => e._id.toString());
-  rank = dataRankId.findIndex((e) => e == sIeIObj.toString()) + 1;
-  try {
-    upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
-      rank: rank,
-    });
-  } catch (err) {
-    return res.status(500).json("Problem when update rank.");
-  }
-  try {
-    upd2 = await FreeStudentMarksRank.findById(String(sIeIObj), "rank");
-  } catch (err) {
-    return res.status(500).json("Problem get rank.");
-  }
-  getRank = upd2.rank;
+  // try {
+  //   dataRank = await FreestudentMarksRank.find(
+  //     { examId: eId1 },
+  //     "studentId totalObtainedMarks"
+  //   ).sort({ totalObtainedMarks: -1 });
+  // } catch (err) {
+  //   return res.status(500).json("Problem when get all student of an exam Id.");
+  // }
+  // let dataRankId = dataRank.map((e) => e._id.toString());
+  // rank = dataRankId.findIndex((e) => e == sIeIObj.toString()) + 1;
+  // try {
+  //   upd1 = await StudentMarksRank.findByIdAndUpdate(String(sIeIObj), {
+  //     rank: rank,
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Problem when update rank.");
+  // }
+  // try {
+  //   upd2 = await FreeStudentMarksRank.findById(String(sIeIObj), "rank");
+  // } catch (err) {
+  //   return res.status(500).json("Problem get rank.");
+  // }
+  // getRank = upd2.rank;
   // sendResult["totalCrrectAnswer"] = getResult.totalCorrectAnswer;
   // sendResult["totalCorrectMarks"] = getResult.totalCorrectMarks;
   // sendResult["totalWrongAnswer"] = getResult.totalWrongAnswer;
