@@ -696,6 +696,7 @@ const submitAnswerFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Problem when get exam data.");
   }
+  console.log(examData);
   let id = String(examData._id);
   let correctMarks = examData.examId.marksPerMcq;
   let negativeMarks = examData.examId.negativeMarks;
@@ -737,7 +738,7 @@ const submitAnswerFree = async (req, res, next) => {
     getRank = null;
   try {
     result = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
-    upd = await StudentMarksRank.updateOne(
+    upd = await FreestudentMarksRank.updateOne(
       {
         $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
