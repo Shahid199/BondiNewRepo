@@ -1462,6 +1462,8 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataObject["totalCorrectMarks"] = data.totalCorrectMarks;
   dataObject["totalWrongMarks"] = data.totalWrongMarks;
   dataObject["totalNotAnswered"] = data.totalNotAnswered;
+  dataObject["marksPerMcq"] = data.examId.marksPerMcq;
+  dataObject["marksPerWrong"] = data.examId.negativeMarks / 100;
   return res.status(200).json(dataObject);
 };
 
