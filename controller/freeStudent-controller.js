@@ -10,6 +10,8 @@ const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestio
 const moment = require("moment");
 const pagination = require("../utilities/pagination");
 const FreeMcqRank = require("../model/FreeMcqRank");
+const examType = require("../utilities/exam-type");
+const examVariation = require("../utilities/exam-variation");
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
