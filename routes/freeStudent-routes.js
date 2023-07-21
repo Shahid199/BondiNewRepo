@@ -23,6 +23,7 @@ const {
   getExamById,
   getFreeExamAll,
 } = require("../controller/freeStudent-controller");
+const { freeExamStatus } = require("../controller/exam-controller");
 
 const router = express.Router();
 
@@ -160,7 +161,14 @@ router.get(
   ],
   getFreeExamAll
 );
-
+router.get(
+  "/freeexamstatus",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  freeExamStatus
+);
 //end:free student exam route
 
 module.exports = router;
