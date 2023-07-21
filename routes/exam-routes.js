@@ -211,14 +211,7 @@ router.get(
   ],
   freeCourseSub
 );
-router.get(
-  "/updatefreeexam",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  updateFreeExam
-);
+
 
 
 module.exports = router;
