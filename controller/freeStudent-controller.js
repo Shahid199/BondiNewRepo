@@ -956,10 +956,17 @@ const getRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  let totalStudent = null;
+  try {
+    totalStudent = await FreestudentMarksRank.find({ examId: examId }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   data1["name"] = studentInfo.name;
   data1["mobileNo"] = studentInfo.mobileNo;
   data1["institution"] = studentInfo.institution;
   data1["rank"] = resultRank;
+  data1["totalStudent"] = totalStudent;
   data1["examId"] = getResult.examId.name;
   data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
   data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
