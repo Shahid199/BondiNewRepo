@@ -1053,6 +1053,7 @@ const freeExamStatus = async (req, res, next) => {
 const freeCourseSub = async (req, res, next) => {
   const course = req.query.course;
   const sub = req.query.sub;
+  if (!course || !sub) return res.status(404).json("No Data.");
   let data = [];
   try {
     data[0] = await Course.findOne({ name: course });
