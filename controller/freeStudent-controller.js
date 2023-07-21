@@ -309,7 +309,7 @@ const getFreeExamId = async (req, res, next) => {
   return res.status(200).json(examId[0]);
 };
 const getFreeExamAll = async (req, res, next) => {
-  let exams = [];
+  let exams;
   let currentTime = Date.now();
   try {
     exams = await Exam.find({
