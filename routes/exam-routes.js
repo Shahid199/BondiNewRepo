@@ -202,7 +202,7 @@ router.post(
   removeQuestionWritten
 );
 
-router.post(
+router.get(
   "/freecoursesub",
   [
     passport.authenticate("jwt", { session: false }),
