@@ -316,9 +316,8 @@ const getFreeExamAll = async (req, res, next) => {
       $and: [
         { status: true },
         { examFreeOrNot: true },
-        { endTime: { $lt: currentTime } },
       ],
-    }).select("name _id");
+    });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
