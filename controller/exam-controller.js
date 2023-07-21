@@ -231,6 +231,49 @@ const updateExam = async (req, res, next) => {
   if (updStatus == null) return res.status(404).json("Prolem at update.");
   else return res.status(201).json("Updated.");
 };
+
+const updateFreeExam = async (req, res, next) => {
+  const {
+    examId,
+    name,
+    startTime,
+    endTime,
+    totalQuestionMcq,
+    marksPerMcq,
+    status,
+    duration,
+    sscStatus,
+    hscStatus,
+    negativeMarks,
+  } = req.body;
+  if (!ObjectId.isValid(examId)) {
+    return res
+      .status(404)
+      .json("exam Id or course Id or subject Id is not valid.");
+  }
+
+  let saveExamUpd = {
+    name: name,
+    startTime: new Date(startTime),
+    endTime: new Date(endTime),
+    duration: Number(duration),
+    totalQuestionMcq: Number(totalQuestionMcq),
+    marksPerMcq: Number(marksPerMcq),
+    totalMarksMcq: Number(totalQuestionMcq) * Number(marksPerMcq),
+    negativeMarks: Number(negativeMarks),
+    status: JSON.parse(status),
+    sscStatus: JSON.parse(sscStatus),
+    hscStatus: JSON.parse(hscStatus),
+  };
+  let updStatus = null;
+  try {
+    updStatus = await Exam.updateOne({ _id: examId }, saveExamUpd);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (updStatus == null) return res.status(404).json("Prolem at update.");
+  else return res.status(201).json("Updated.");
+};
 const deactivateExam = async (req, res, next) => {
   const examId = req.body.examId;
   if (!ObjectId.isValid(examId))

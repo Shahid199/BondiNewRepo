@@ -26,6 +26,7 @@ const {
   assignStudentToTeacher,
   removeQuestionWritten,
   freeCourseSub,
+  updateFreeExam,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -210,7 +211,14 @@ router.get(
   ],
   freeCourseSub
 );
+router.get(
+  "/updatefreeexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  updateFreeExam
+);
 
-freeCourseSub;
 
 module.exports = router;
