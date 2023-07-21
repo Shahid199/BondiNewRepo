@@ -308,6 +308,25 @@ const getFreeExamId = async (req, res, next) => {
   if (examId.length > 1) return res.status(404).json("Something went wrong.");
   return res.status(200).json(examId[0]);
 };
+const getFreeExamAll = async (req, res, next) => {
+  let exams = [];
+  let currentTime = Date.now();
+  try {
+    exams = await Exam.find({
+      $and: [
+        { status: true },
+        { examFreeOrNot: true },
+        { endTime: { $lt: currentTime } },
+      ],
+    }).select("name _id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(exams.length);
+  if (exams.length == 0)
+    return res.status(404).json("No Free exam has been completed.");
+  return res.status(200).json(exams);
+};
 const addFreeStudent = async (req, res, next) => {
   const { name, mobileNo, institution, sscRoll, sscReg, hscRoll, hscReg } =
     req.body;
@@ -920,11 +939,44 @@ const getRankFree = async (req, res, next) => {
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
   console.log(resultRank.rank);
   resultRank = Number(resultRank.rank);
-  let data1 = {};
+  let data1 = {},
+    getResult = null;
+  try {
+    getResult = await FreeStudentExamVsQuestionsMcq.findOne({
+      $and: [{ examId: examId }, { studentId: studentIdObj }],
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("Problem when get Student Exam info.");
+  }
+  let dataTime = null;
+  try {
+    dataTime = await FreestudentMarksRank.findOne({
+      $and: [{ examId: examId }, { studentId: studentIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   data1["name"] = studentInfo.name;
   data1["mobileNo"] = studentInfo.mobileNo;
   data1["institution"] = studentInfo.institution;
   data1["rank"] = resultRank;
+  data1["examId"] = getResult.examId.name;
+  data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
+  data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
+  data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
+  data1["examVariation"] = examType[Number(getResult.examId.examType)];
+  data1["examType"] = examVariation[Number(getResult.examId.examVariation)];
+  data1["totalCorrectAnswer"] = getResult.totalCorrectAnswer;
+  data1["totalWrongAnswer"] = getResult.totalWrongAnswer;
+  data1["totalCorrectMarks"] = getResult.totalCorrectMarks;
+  data1["totalWrongMarks"] = getResult.totalWrongMarks;
+  data1["totalNotAnswered"] = getResult.totalNotAnswered;
+  data1["totalObtainedMarks"] = getResult.totalObtainedMarks;
+  data1["studExamStartTime"] = moment(dataTime.examStartTime).format("LLL");
+  data1["studExamEndTime"] = moment(dataTime.examEndTime).format("LLL");
+  data1["studExamTime"] = dataTime.duration;
+  data1["marksPerMcq"] = getResult.examId.marksPerMcq;
+  data1["marksPerWrong"] = getResult.examId.negativeMarks / 100;
   return res.status(200).json(data1);
 };
 
@@ -947,3 +999,4 @@ exports.updateStudentExamInfoFree = updateStudentExamInfoFree;
 exports.updateRankFree = updateRankFree;
 exports.getRankFree = getRankFree;
 exports.getExamById = getExamById;
+exports.getFreeExamAll = getFreeExamAll;

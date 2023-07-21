@@ -21,6 +21,7 @@ const {
   updateRankFree,
   getRankFree,
   getExamById,
+  getFreeExamAll,
 } = require("../controller/freeStudent-controller");
 
 const router = express.Router();
@@ -149,6 +150,15 @@ router.get(
     authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   freeStudentMissedExamAdmin
+);
+
+router.get(
+  "/getfreeexamall",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  getFreeExamAll
 );
 
 //end:free student exam route
