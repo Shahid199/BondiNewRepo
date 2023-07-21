@@ -823,7 +823,16 @@ const updateStudentExamInfoFree = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
-  console.log(examIdObj, "examIdObj");
+  let getEndTime = null;
+  //console.log(examIdObj, "examIdObj");
+  try {
+    getEndTime = await Exam.findById(examId).select("endTime -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  getEndTime = moment(getEndTime);
+  let currentTime = moment(Date.now());
+  if (currentTime > getEndTime) return res.status(404).json("Exam is running.");
   let examUncheckStudent = null;
   try {
     examUncheckStudent = await FreestudentMarksRank.find(
@@ -888,11 +897,18 @@ const updateRankFree = async (req, res, next) => {
 };
 const getRankFree = async (req, res, next) => {
   let examId = req.query.examId;
-  let studentId = req.query.studentId;
-  if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
-    return res.status(200).json("Invalid examId or studentId.");
+  let mobileNo = req.query.mobileNo;
+  if (!ObjectId.isValid(examId) || !mobileNo)
+    return res.status(200).json("Invalid examId or mobileNo.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let studentIdObj = null,
+    studentInfo = null;
+  try {
+    studentInfo = await FreeStudent.findOne({ mobileNo: mobileNo });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  studentIdObj = studentInfo._id;
   let resultRank = null;
   try {
     resultRank = await FreeMcqRank.findOne({
@@ -904,7 +920,12 @@ const getRankFree = async (req, res, next) => {
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
   console.log(resultRank.rank);
   resultRank = Number(resultRank.rank);
-  return res.status(200).json(resultRank);
+  let data1 = {};
+  data1["name"] = studentInfo.name;
+  data1["mobileNo"] = studentInfo.mobileNo;
+  data1["institution"] = studentInfo.institution;
+  data1["rank"] = resultRank;
+  return res.status(200).json(data1);
 };
 
 exports.addFreeStudent = addFreeStudent;
