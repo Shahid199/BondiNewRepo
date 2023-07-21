@@ -1049,6 +1049,25 @@ const freeExamStatus = async (req, res, next) => {
   let data = String(freeExamStatus[0]._id);
   return res.status(200).json({ data });
 };
+
+const freeCourseSub = async (req, res, next) => {
+  const course = req.query.course;
+  const sub = req.query.sub;
+  let data = [];
+  try {
+    data[0] = await Course.findOne({ name: course });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  try {
+    data[1] = await Subject.findOne({ name: sub });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  if (data.length < 1) return res.status(404).json("No Data.");
+  return res.status(200).json(data);
+};
 //export functions
 exports.createExam = createExam;
 exports.getAllExam = getAllExam;
@@ -1073,3 +1092,4 @@ exports.submitWritten = submitWritten;
 exports.assignTeacher = assignTeacher;
 exports.assignStudentToTeacher = assignStudentToTeacher;
 exports.removeQuestionWritten = removeQuestionWritten;
+exports.freeCourseSub = freeCourseSub;
