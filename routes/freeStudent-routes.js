@@ -117,14 +117,7 @@ router.post(
   ],
   updateRankFree
 );
-router.get(
-  "/getrankfree",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
-  ],
-  getRankFree
-);
+router.get("/getrankfree", getRankFree);
 //Free student data view api Route.
 router.get(
   "/freestudentviewsollutionadmin",
@@ -161,11 +154,12 @@ router.get(
   ],
   getFreeExamAll
 );
+router.get("/getfreeexamdata", getFreeExamAll);
 router.get(
   "/freeexamstatus",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "freeStudent"]),
   ],
   freeExamStatus
 );
