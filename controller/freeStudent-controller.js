@@ -333,9 +333,9 @@ const getFreeExamAll = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
 
-    if (dataRule == null) exams[i]["RuleImage"] = "0";
+    if (dataRule == null) exams[i].RuleImage = "0";
     else {
-      exams[i]["RuleImage"] = dataRule.ruleILink;
+      exams[i].RuleImage = dataRule.ruleILink;
     }
   }
   return res.status(200).json(exams);
