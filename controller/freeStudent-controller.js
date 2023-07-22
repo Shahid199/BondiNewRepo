@@ -12,6 +12,7 @@ const pagination = require("../utilities/pagination");
 const FreeMcqRank = require("../model/FreeMcqRank");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
+const ExamRule = require("../model/ExamRule");
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
@@ -313,10 +314,7 @@ const getFreeExamAll = async (req, res, next) => {
   let currentTime = Date.now();
   try {
     exams = await Exam.find({
-      $and: [
-        { status: true },
-        { examFreeOrNot: true },
-      ],
+      $and: [{ status: true }, { examFreeOrNot: true }],
     });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
@@ -324,6 +322,22 @@ const getFreeExamAll = async (req, res, next) => {
   console.log(exams.length);
   if (exams.length == 0)
     return res.status(404).json("No Free exam has been completed.");
+
+  for (let i = 0; i < exams.length; i++) {
+    let dataRule = null;
+    try {
+      dataRule = await ExamRule.findOne({ examId: exams[i]._id }).select(
+        "ruleILink -_id"
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+
+    if (dataRule == null) exams[i]["RuleImage"] = "0";
+    else {
+      exams[i]["RuleImage"] = dataRule.ruleILink;
+    }
+  }
   return res.status(200).json(exams);
 };
 const addFreeStudent = async (req, res, next) => {
