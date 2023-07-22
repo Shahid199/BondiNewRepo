@@ -322,8 +322,31 @@ const getFreeExamAll = async (req, res, next) => {
   console.log(exams.length);
   if (exams.length == 0)
     return res.status(404).json("No Free exam has been completed.");
-
+  let data1 = [];
   for (let i = 0; i < exams.length; i++) {
+    let dataObj = {};
+    dataObj["courseId"] = exams[i].courseId;
+    dataObj["createdAt"] = exams[i].createdAt;
+    dataObj["duration"] = exams[i].duration;
+    dataObj["endTime"] = exams[i].endTime;
+    dataObj["examFreeOrNot"] = exams[i].examFreeOrNot;
+    dataObj["examType"] = -1;
+    dataObj["examVariation"] = 1;
+    dataObj["hscStatus"] = exams[i].hscStatus;
+    dataObj["iLink"] = exams[i].iLink;
+    dataObj["marksPerMcq"] = exams[i].marksPerMcq;
+    dataObj["name"] = exams[i].name;
+    dataObj["negativeMarks"] = exams[i].negativeMarks;
+    dataObj["sscStatus"] = exams[i].sscStatus;
+    dataObj["startTime"] = exams[i].startTime;
+    dataObj["endTime"] = exams[i].endTime;
+    dataObj["status"] = exams[i].status;
+    dataObj["subjectId"] = exams[i].subjectId;
+    dataObj["totalMarksMcq"] = exams[i].totalMarksMcq;
+    dataObj["totalQuestionMcq"] = exams[i].totalQuestionMcq;
+    dataObj["updatedAt"] = exams[i].updatedAt;
+    dataObj["__v"] = exams[i].__v;
+    dataObj["_id"] = exams[i]._id;
     let dataRule = null;
     try {
       dataRule = await ExamRule.findOne({ examId: exams[i]._id }).select(
@@ -332,13 +355,13 @@ const getFreeExamAll = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-
-    if (dataRule == null) exams[i].RuleImage = "0";
+    if (dataRule == null) dataObj["RuleImage"] = "0";
     else {
-      exams[i].RuleImage = dataRule.ruleILink;
+      dataObj["RuleImage"] = dataRule.ruleILink;
     }
+    data1.push(dataObj);
   }
-  return res.status(200).json(exams);
+  return res.status(200).json(data1);
 };
 const addFreeStudent = async (req, res, next) => {
   const { name, mobileNo, institution, sscRoll, sscReg, hscRoll, hscReg } =
