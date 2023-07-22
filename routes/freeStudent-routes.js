@@ -146,15 +146,7 @@ router.get(
   freeStudentMissedExamAdmin
 );
 
-router.get(
-  "/getfreeexamall",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
-  ],
-  getFreeExamAll
-);
-router.get("/getfreeexamdata", getFreeExamAll);
+router.get("/getfreeexamall", getFreeExamAll);
 router.get(
   "/freeexamstatus",
   [
