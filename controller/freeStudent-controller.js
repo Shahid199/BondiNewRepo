@@ -305,7 +305,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
   let data = [],
     rank;
   try {
-    rank = await FreeStudentMarksRank.find({
+    rank = await FreestudentMarksRank.find({
       $and: [{ examId: examIdObj }, { finishedStatus: true }],
     })
       .populate("studentId")
