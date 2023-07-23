@@ -142,6 +142,7 @@ const freeStudentHistoryDataAdmin = async (req, res, next) => {
   if (data2 == null)
     return res.status(404).json("No exam data found for the student.");
   let flag = false;
+  let data = [];
   for (let i = 0; i < data2.length; i++) {
     let data1 = {};
     let rank = null;
@@ -156,7 +157,8 @@ const freeStudentHistoryDataAdmin = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
-    console.log("rank", rank);
+    console.log("rank");
+
     if (rank == null)
       return res.status(404).json("No exam data forunf for the student.");
     let subjectIdObj = String(data2[i].examId.subjectId);
@@ -169,7 +171,6 @@ const freeStudentHistoryDataAdmin = async (req, res, next) => {
     subjectName = subjectName.name;
     if (rank == null || subjectName == null) {
     }
-    let data = [];
     data1["examId"] = data2[i].examId._id;
     data1["title"] = data2[i].examId.name;
     data1["type"] = data2[i].examId.examType;
@@ -180,7 +181,7 @@ const freeStudentHistoryDataAdmin = async (req, res, next) => {
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
-    data.push(data2);
+    data.push(data1);
   }
   return res.status(200).json({ data, paginateData });
 };
