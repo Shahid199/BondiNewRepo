@@ -296,7 +296,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
       $and: [{ examId: examIdObj }, { finishedStatus: true }],
     }).count();
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   if (count == 0) {
     return res.status(404).json("No data found.");
@@ -313,7 +313,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
       .limit(paginateData.perPage);
   } catch (err) {
     console.log(err);
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("2.Something went wrong.");
   }
   console.log(rank);
   for (let i = 0; i < rank.length; i++) {
@@ -324,7 +324,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
         $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
       });
     } catch (err) {
-      return res.status(500).json("Something went wrong.");
+      return res.status(500).json("3.Something went wrong.");
     }
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
@@ -338,7 +338,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
         $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
       }).populate("studentId");
     } catch (err) {
-      return res.status(500).json("Something went wrong.");
+      return res.status(500).json("4.Something went wrong.");
     }
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
@@ -354,7 +354,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
       "courseId subjectId"
     );
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("5.Something went wrong.");
   }
   let examInfo = {
     id: String(examDetails._id),
