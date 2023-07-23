@@ -324,6 +324,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("3.Something went wrong.");
     }
+    console.log("mcq rank:", mcqRank);
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
     //rank data end
