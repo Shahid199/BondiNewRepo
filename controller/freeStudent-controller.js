@@ -373,14 +373,14 @@ const freeGetHistoryByExamId = async (req, res, next) => {
 //free student exam system
 const getFreeExamId = async (req, res, next) => {
   let examId = [];
-  let currentTime = Date.now();
+  let currentTime = moment(Date.now());
   try {
     examId = await Exam.find({
       $and: [
         { status: true },
         { examFreeOrNot: true },
-        // { startTime: { $lt: currentTime } },
-        // { endTime: { $gt: currentTime } },
+        { startTime: { $lt: currentTime } },
+        { endTime: { $gt: currentTime } },
       ],
     });
   } catch (err) {
