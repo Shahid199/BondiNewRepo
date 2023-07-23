@@ -1027,15 +1027,21 @@ const updateRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(ranks);
+  console.log("ranks:", ranks);
   let dataLength = ranks.length;
+  let dataIns = [];
   for (let i = 0; i < dataLength; i++) {
-    ranks[i].rank = i + 1;
+    let dataFree = {};
+    dataFree["examId"] = ranks[i].examId;
+    dataFree["freeStudentId"] = ranks[i].studentId;
+    dataFree["totalObtainedMarks"] = ranks[i].totalObtainedMarks;
+    dataFree["rank"] = i + 1;
+    dataIns.push(dataFree);
   }
-  console.log(ranks);
+  console.log("dataIns:", dataIns);
   let sav = null;
   try {
-    sav = await FreeMcqRank.insertMany(ranks, { ordered: false });
+    sav = await FreeMcqRank.insertMany(dataIns, { ordered: false });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
