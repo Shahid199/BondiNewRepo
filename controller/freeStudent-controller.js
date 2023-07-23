@@ -974,7 +974,6 @@ const updateStudentExamInfoFree = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let nullArr = [];
-  getEndTime = moment(getEndTime);
   let currentTime = moment(Date.now());
   console.log(currentTime);
   console.log(getEndTime);
