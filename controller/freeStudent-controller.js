@@ -320,7 +320,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
     console.log(rank[i].studentId._id);
     try {
       mcqRank = await FreeMcqRank.findOne({
-        $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
+        $and: [{ examId: examIdObj }, { freeStudentId: rank[i].studentId._id }],
       });
     } catch (err) {
       return res.status(500).json("3.Something went wrong.");
