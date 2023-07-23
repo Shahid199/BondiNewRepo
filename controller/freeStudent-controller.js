@@ -1064,7 +1064,7 @@ const getRankFree = async (req, res, next) => {
   let resultRank = null;
   try {
     resultRank = await FreeMcqRank.findOne({
-      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+      $and: [{ examId: examIdObj }, { freeStudentId: studentIdObj }],
     }).select("rank -_id");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
