@@ -22,6 +22,7 @@ const {
   getRankFree,
   getExamById,
   getFreeExamAll,
+  freeGetHistoryByExamId,
 } = require("../controller/freeStudent-controller");
 const { freeExamStatus } = require("../controller/exam-controller");
 
@@ -155,6 +156,16 @@ router.get(
   ],
   freeExamStatus
 );
+
+router.get(
+  "/freeGetHistoryByExamId",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  freeGetHistoryByExamId
+);
+
 //end:free student exam route
 
 module.exports = router;

@@ -382,6 +382,7 @@ const getExamBySub = async (req, res, next) => {
   }
   return res.status(200).json(examData);
 };
+
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
