@@ -1027,6 +1027,7 @@ const updateRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(ranks);
   let dataLength = ranks.length;
   for (let i = 0; i < dataLength; i++) {
     ranks[i].rank = i + 1;
