@@ -940,7 +940,7 @@ const submitAnswerFree = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let data1 = {};
-  data1["examId"] = getResult.examId.name;
+  data1["examName"] = getResult.examId.name;
   data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
   data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
   data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
