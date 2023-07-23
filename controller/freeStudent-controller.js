@@ -317,6 +317,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
   for (let i = 0; i < rank.length; i++) {
     //rank data start
     let mcqRank = null;
+    console.log(rank[i].studentId._id);
     try {
       mcqRank = await FreeMcqRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
