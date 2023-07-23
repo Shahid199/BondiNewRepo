@@ -292,7 +292,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let count = 0;
   try {
-    count = await FreeStudentMarksRank.find({
+    count = await FreestudentMarksRank.find({
       $and: [{ examId: examIdObj }, { finishedStatus: true }],
     }).count();
   } catch (err) {
