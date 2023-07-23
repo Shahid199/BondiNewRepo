@@ -147,13 +147,9 @@ const freeStudentHistoryDataAdmin = async (req, res, next) => {
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data2[i].examId._id);
     try {
-      rank = await FreestudentMarksRank.findOne(
+      rank = await FreeMcqRank.findOne(
         {
-          $and: [
-            { studentId: studentIdObj },
-            { examId: examIdObj },
-            { finishedStatus: true },
-          ],
+          $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
         },
         "rank totalObtainedMarks examStartTime examEndtime"
       );
