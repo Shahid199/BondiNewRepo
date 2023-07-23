@@ -156,7 +156,7 @@ const freeStudentHistoryDataAdmin = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
-    console.log(rank);
+    console.log("rank", rank);
     if (rank == null)
       return res.status(404).json("No exam data forunf for the student.");
     let subjectIdObj = String(data2[i].examId.subjectId);
