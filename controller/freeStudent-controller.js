@@ -975,11 +975,11 @@ const updateStudentExamInfoFree = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let nullArr = [];
-  let currentTime = moment(Date.now());
+  getEndTime = moment(getEndTime.getEndTime);
+  let currentTime = moment(Date.now()).add(6, "hours");
   console.log(currentTime);
-  console.log(getEndTime.endTime);
-  if (currentTime < moment(getEndTime.endTime))
-    return res.status(200).json("df" + nullArr);
+  console.log(getEndTime);
+  if (currentTime < getEndTime) return res.status(200).json("df" + nullArr);
   let examUncheckStudent = null;
   try {
     examUncheckStudent = await FreestudentMarksRank.find(
