@@ -981,7 +981,7 @@ const updateStudentExamInfoFree = async (req, res, next) => {
   console.log(getEndTime);
   if (currentTime < getEndTime) {
     console.log("11");
-    return res.status(200).json("df" + nullArr);
+    return res.status(200).json(nullArr);
   }
   let examUncheckStudent = null;
   try {
