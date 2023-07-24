@@ -978,7 +978,8 @@ const updateStudentExamInfoFree = async (req, res, next) => {
   let currentTime = moment(Date.now());
   console.log(currentTime);
   console.log(moment(getEndTime));
-  if (currentTime < moment(getEndTime)) return res.status(200).json(nullArr);
+  if (currentTime < moment(getEndTime))
+    return res.status(200).json("df" + nullArr);
   let examUncheckStudent = null;
   try {
     examUncheckStudent = await FreestudentMarksRank.find(
