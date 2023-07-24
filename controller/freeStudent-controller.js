@@ -1061,6 +1061,8 @@ const getRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("student Info", studentInfo);
+  if (!studentInfo) return res.status(404).json("No data found.");
   studentIdObj = studentInfo._id;
   let resultRank = null;
   try {
