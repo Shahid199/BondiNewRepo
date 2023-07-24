@@ -1103,7 +1103,7 @@ const getRankFree = async (req, res, next) => {
   data1["institution"] = studentInfo.institution;
   data1["rank"] = resultRank;
   data1["totalStudent"] = totalStudent;
-  data1["examId"] = getResult.examId.name;
+  data1["examName"] = getResult.examId.name;
   data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
   data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
   data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
