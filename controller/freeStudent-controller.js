@@ -1134,21 +1134,16 @@ const getAllRankFree = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let resultRank = null;
   try {
-    resultRank = await FreeMcqRank.findOne({ examId: examIdObj })
+    resultRank = await FreeMcqRank.find({ examId: examIdObj })
       .sort("rank")
       .populate("examId freeStudentId");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
-  console.log(resultRank.rank);
+  console.log(resultRank);
   let allData = [];
   let totalStudent = null;
-  try {
-    totalStudent = await FreestudentMarksRank.find({ examId: examId }).count();
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
   for (let i = 0; i < resultRank.length; i++) {
     let data1 = {};
     let conData = "*******";
@@ -1160,6 +1155,7 @@ const getAllRankFree = async (req, res, next) => {
     data1["institution"] = resultRank.freeStudentId.institution;
     data1["totalObtainedMarks"] = resultRank.totalObtainedMarks;
     data1["rank"] = resultRank.rank;
+    data1["totalStudent"] = resultRank.length;
     allData.push(data1);
   }
   return res.status(200).json(allData);
