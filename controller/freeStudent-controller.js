@@ -1142,6 +1142,7 @@ const getAllRankFree = async (req, res, next) => {
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
   console.log(resultRank);
+  return res.status(200).json(resultRank);
   let allData = [];
   let totalStudent = null;
   for (let i = 0; i < resultRank.length; i++) {
