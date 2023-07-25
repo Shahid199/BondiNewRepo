@@ -1022,6 +1022,13 @@ const updateRankFree = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Invalid exam Id.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
+  let checkGenerate = null;
+  try {
+    checkGenerate = await FreeMcqRank.find({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (checkGenerate) return res.status(404).json("Already Generated.");
   let ranks = null;
   try {
     ranks = await FreestudentMarksRank.find({ examId: examIdObj })
