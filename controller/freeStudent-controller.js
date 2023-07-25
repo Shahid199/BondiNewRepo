@@ -374,7 +374,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
 const getFreeExamId = async (req, res, next) => {
   let examId = [];
   //let currentTime = new Date(moment(Date.now()).add(6, "hours")).toISOString();
-  let currentTime = Date.now();
+  let currentTime = new Date(Date.now()).toISOString();
   console.log(currentTime);
   try {
     examId = await Exam.find({
