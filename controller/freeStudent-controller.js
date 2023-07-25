@@ -1142,7 +1142,7 @@ const getAllRankFree = async (req, res, next) => {
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
   console.log(resultRank.rank);
-  let allData = {};
+  let allData = [];
   let totalStudent = null;
   try {
     totalStudent = await FreestudentMarksRank.find({ examId: examId }).count();
