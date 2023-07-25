@@ -373,8 +373,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
 //free student exam system
 const getFreeExamId = async (req, res, next) => {
   let examId = [];
-  //let currentTime = new Date(moment(Date.now()).add(6, "hours")).toISOString();
-  let currentTime = new Date(Date.now()).toISOString();
+  let currentTime = new Date(moment(Date.now()).add(6, "hours")).toISOString();
   console.log(currentTime);
   try {
     examId = await Exam.find({
@@ -1129,6 +1128,43 @@ const getRankFree = async (req, res, next) => {
   return res.status(200).json(data1);
 };
 
+const getAllRankFree = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId)) return res.status(200).json("Invalid examId.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let resultRank = null;
+  try {
+    resultRank = await FreeMcqRank.findOne({ examId: examIdObj })
+      .sort("rank")
+      .populate("examId freeStudentId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!resultRank) return res.status(404).json("Exam not finshed yet.");
+  console.log(resultRank.rank);
+  let allData = {};
+  let totalStudent = null;
+  try {
+    totalStudent = await FreestudentMarksRank.find({ examId: examId }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  for (let i = 0; i < resultRank.length; i++) {
+    let data1 = {};
+    let conData = "*******";
+    data1["examName"] = resultRank.examId.name;
+    data1["studentName"] = resultRank.freeStudentId.name;
+    data1["mobile No"] = conData.concat(
+      resultRank.freeStudentId.mobileNo.slice(7)
+    );
+    data1["institution"] = resultRank.freeStudentId.institution;
+    data1["totalObtainedMarks"] = resultRank.totalObtainedMarks;
+    data1["rank"] = resultRank.rank;
+    allData.push(data1);
+  }
+  return res.status(200).json(allData);
+};
+
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
 exports.freeLoginStudent = freeLoginStudent;
@@ -1150,3 +1186,4 @@ exports.getRankFree = getRankFree;
 exports.getExamById = getExamById;
 exports.getFreeExamAll = getFreeExamAll;
 exports.freeGetHistoryByExamId = freeGetHistoryByExamId;
+exports.getAllRankFree = getAllRankFree;
