@@ -1142,20 +1142,20 @@ const getAllRankFree = async (req, res, next) => {
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
   console.log(resultRank);
-  return res.status(200).json(resultRank);
+  //eturn res.status(200).json(resultRank);
   let allData = [];
   let totalStudent = null;
   for (let i = 0; i < resultRank.length; i++) {
     let data1 = {};
     let conData = "*******";
-    data1["examName"] = resultRank.examId.name;
-    data1["studentName"] = resultRank.freeStudentId.name;
+    data1["examName"] = resultRank[i].examId.name;
+    data1["studentName"] = resultRank[i].freeStudentId.name;
     data1["mobile No"] = conData.concat(
-      resultRank.freeStudentId.mobileNo.slice(7)
+      resultRank[i].freeStudentId.mobileNo.slice(7)
     );
-    data1["institution"] = resultRank.freeStudentId.institution;
-    data1["totalObtainedMarks"] = resultRank.totalObtainedMarks;
-    data1["rank"] = resultRank.rank;
+    data1["institution"] = resultRank[i].freeStudentId.institution;
+    data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks;
+    data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
     allData.push(data1);
   }
