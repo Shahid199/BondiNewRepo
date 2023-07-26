@@ -18,7 +18,7 @@ const FreeMcqRanksSchema = new Schema(
     totalObtainedMarks: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     rank: {
       type: Number,
