@@ -1022,8 +1022,7 @@ const updateRankFree = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Invalid exam Id.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  let checkGenerate = nul,
-    delData = null;
+  let delData = null;
   try {
     delData = await FreeMcqRank.deleteMany({ examId: examIdObj });
   } catch (err) {
