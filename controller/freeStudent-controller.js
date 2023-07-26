@@ -557,168 +557,168 @@ const examCheckMiddlewareFree = async (req, res, next) => {
     else return res.status(200).json("running");
   }
 };
-// const assignQuestionFree = async (req, res, next) => {
-//   //data get from examcheck function req.body
-//   const eId = req.query.eId;
-//   const studentId = req.user.studentId;
-//   //start:check student already complete the exam or not
-//   let eId1, sId;
-//   sId = new mongoose.Types.ObjectId(studentId);
-//   eId1 = new mongoose.Types.ObjectId(eId);
-//   let doc = [],
-//     size,
-//     min = 0,
-//     max = 0,
-//     rand;
-//   try {
-//     size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
-//     size = size.mId.length;
-//     //size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
-//   } catch (err) {
-//     return res.status(500).json("1.something went wrong.");
-//   }
-//   if (!size) return res.status(404).json("No question assigned in the exam.");
-//   let totalQuesData;
-//   try {
-//     totalQuesData = await Exam.findById(eId).select(
-//       "totalQuestionMcq duration endTime"
-//     );
-//   } catch (err) {
-//     return res.status(500).json("2.something went wrong");
-//   }
-//   let examFinishTime = totalQuesData.endTime;
-//   //start:generating random index of questions
-//   let totalQues = Number(totalQuesData.totalQuestionMcq);
-//   console.log(totalQues, "totalQues");
-//   max = size - 1;
-//   for (let i = 0; i < totalQues; i++) {
-//     rand = parseInt(Date.now() % totalQues);
-//     console.log("rand", rand);
-//     // rand = Math.random();
-//     // rand = rand * Number(max);
-//     // rand = Math.floor(rand);
-//     // rand = rand + Number(min);
-//     if (!doc.includes(rand)) {
-//       doc.push(rand);
-//     }
-//     if (doc.length == totalQues) break;
-//   }
-//   console.log(doc, "doc");
-//   //end:generating random index of questions
-//   let doc1;
-//   try {
-//     doc1 = await McqQuestionVsExam.findOne({ eId: eId1 }).select("mId");
-//   } catch (err) {
-//     return res.status(500).json("3.Something went wrong.");
-//   }
-//   let statQues = [];
-//   // console.log(doc1.mId,'doc1.mId');
-//   for (let i = 0; i < doc1.mId.length; i++) {
-//     let quesId = String(doc1.mId[i]);
-//     let stat;
-//     try {
-//       stat = await QuestionsMcq.findById(quesId).select("status");
-//       stat = stat.status;
-//     } catch (err) {
-//       return res.status(500).json("Something went wrong.");
-//     }
-//     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
-//   }
-
-//   if (totalQues > statQues.length)
-//     return res
-//       .status(404)
-//       .json("Total exam questions is less then exam's questions.");
-//   let doc2 = statQues;
-//   let resultQuestion = [];
-//   for (let i = 0; i < totalQues; i++) {
-//     let data = String(doc2[doc[i]]);
-//     resultQuestion.push(data);
-//   }
-//   // console.log(totalQues,'totalQues')
-//   console.log(resultQuestion, "resultQuestion");
-//   let questions = [];
-//   try {
-//     questions = await QuestionsMcq.find(
-//       { _id: { $in: resultQuestion } },
-//       "question type options"
-//     );
-//   } catch (err) {
-//     return res.status(500).json("Something went wrong.");
-//   }
-//   // console.log(questions);
-//   if (sId == null)
-//     return res
-//       .status(404)
-//       .json("student not found or not permissible for the exam");
-//   let answered = [];
-//   for (let i = 0; i < totalQues; i++) {
-//     answered[i] = "-1";
-//   }
-//   let studentExamVsQuestionsMcq = new FreeStudentExamVsQuestionsMcq({
-//     studentId: sId,
-//     examId: eId1,
-//     mcqQuestionId: resultQuestion,
-//     answeredOption: answered,
-//   });
-//   let saveStudentQuestion = null,
-//     saveStudentExam = null;
-//   let duration = Number(totalQuesData.duration);
-//   let examStartTime = moment(Date.now()).add(6, "hours");
-//   let examEndTime = moment(examStartTime).add(duration, "minutes");
-//   let studentMarksRank = new FreestudentMarksRank({
-//     studentId: sId,
-//     examId: eId1,
-//     examStartTime: examStartTime,
-//     runningStatus: true,
-//     examEndTime: examEndTime,
-//   });
-//   try {
-//     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(500).json("4.Something went wrong.");
-//   }
-//   try {
-//     saveStudentExam = await studentMarksRank.save();
-//   } catch (err) {
-//     return res.status(500).json("5.Something went wrong.");
-//   }
-//   questions.push({ studStartTime: examStartTime });
-//   questions.push({ studEndTime: examEndTime });
-//   questions.push({ examEndTime: examFinishTime });
-//   questions.push({ answeredOption: answered });
-//   if (saveStudentQuestion == null || saveStudentExam == null) {
-//     return res.status(404).json("Problem occur to assign question.");
-//   }
-//   return res.status(201).json(questions);
-// };
-const testAssignRoute = async (req, res, next) => {
+const assignQuestionFree = async (req, res, next) => {
+  //data get from examcheck function req.body
   const eId = req.query.eId;
   const studentId = req.user.studentId;
-
+  //start:check student already complete the exam or not
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
-  let size = null,
-    examQuestion = null;
+  let doc = [],
+    size,
+    min = 0,
+    max = 0,
+    rand;
   try {
     size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
+    size = size.mId.length;
+    //size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
-  examQuestion = size.mId;
-  size = size.mId.length;
-  let questData = null;
+  if (!size) return res.status(404).json("No question assigned in the exam.");
+  let totalQuesData;
   try {
-    size = await QuestionsMcq.aggregate()
-      .sample()
-      .find({ _id: { $in: examQuestion } })
-      .select("question type options");
+    totalQuesData = await Exam.findById(eId).select(
+      "totalQuestionMcq duration endTime"
+    );
   } catch (err) {
-    return res.status(500).json("1.something went wrong.");
+    return res.status(500).json("2.something went wrong");
   }
+  let examFinishTime = totalQuesData.endTime;
+  //start:generating random index of questions
+  let totalQues = Number(totalQuesData.totalQuestionMcq);
+  console.log(totalQues, "totalQues");
+  max = size - 1;
+  for (let i = 0; i < totalQues; i++) {
+    rand = parseInt(Date.now() % totalQues);
+    console.log("rand", rand);
+    // rand = Math.random();
+    // rand = rand * Number(max);
+    // rand = Math.floor(rand);
+    // rand = rand + Number(min);
+    if (!doc.includes(rand)) {
+      doc.push(rand);
+    }
+    if (doc.length == totalQues) break;
+  }
+  console.log(doc, "doc");
+  //end:generating random index of questions
+  let doc1;
+  try {
+    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 }).select("mId");
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  let statQues = [];
+  // console.log(doc1.mId,'doc1.mId');
+  for (let i = 0; i < doc1.mId.length; i++) {
+    let quesId = String(doc1.mId[i]);
+    let stat;
+    try {
+      stat = await QuestionsMcq.findById(quesId).select("status");
+      stat = stat.status;
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
+  }
+
+  if (totalQues > statQues.length)
+    return res
+      .status(404)
+      .json("Total exam questions is less then exam's questions.");
+  let doc2 = statQues;
+  let resultQuestion = [];
+  for (let i = 0; i < totalQues; i++) {
+    let data = String(doc2[doc[i]]);
+    resultQuestion.push(data);
+  }
+  // console.log(totalQues,'totalQues')
+  console.log(resultQuestion, "resultQuestion");
+  let questions = [];
+  try {
+    questions = await QuestionsMcq.find(
+      { _id: { $in: resultQuestion } },
+      "question type options"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  // console.log(questions);
+  if (sId == null)
+    return res
+      .status(404)
+      .json("student not found or not permissible for the exam");
+  let answered = [];
+  for (let i = 0; i < totalQues; i++) {
+    answered[i] = "-1";
+  }
+  let studentExamVsQuestionsMcq = new FreeStudentExamVsQuestionsMcq({
+    studentId: sId,
+    examId: eId1,
+    mcqQuestionId: resultQuestion,
+    answeredOption: answered,
+  });
+  let saveStudentQuestion = null,
+    saveStudentExam = null;
+  let duration = Number(totalQuesData.duration);
+  let examStartTime = moment(Date.now()).add(6, "hours");
+  let examEndTime = moment(examStartTime).add(duration, "minutes");
+  let studentMarksRank = new FreestudentMarksRank({
+    studentId: sId,
+    examId: eId1,
+    examStartTime: examStartTime,
+    runningStatus: true,
+    examEndTime: examEndTime,
+  });
+  try {
+    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("4.Something went wrong.");
+  }
+  try {
+    saveStudentExam = await studentMarksRank.save();
+  } catch (err) {
+    return res.status(500).json("5.Something went wrong.");
+  }
+  questions.push({ studStartTime: examStartTime });
+  questions.push({ studEndTime: examEndTime });
+  questions.push({ examEndTime: examFinishTime });
+  questions.push({ answeredOption: answered });
+  if (saveStudentQuestion == null || saveStudentExam == null) {
+    return res.status(404).json("Problem occur to assign question.");
+  }
+  return res.status(201).json(questions);
 };
+// const testAssignRoute = async (req, res, next) => {
+//   const eId = req.query.eId;
+//   const studentId = req.user.studentId;
+
+//   let eId1, sId;
+//   sId = new mongoose.Types.ObjectId(studentId);
+//   eId1 = new mongoose.Types.ObjectId(eId);
+//   let size = null,
+//     examQuestion = null;
+//   try {
+//     size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
+//   } catch (err) {
+//     return res.status(500).json("1.something went wrong.");
+//   }
+//   examQuestion = size.mId;
+//   size = size.mId.length;
+//   let questData = null;
+//   try {
+//     size = await QuestionsMcq.aggregate()
+//       .sample()
+//       .find({ _id: { $in: examQuestion } })
+//       .select("question type options");
+//   } catch (err) {
+//     return res.status(500).json("1.something went wrong.");
+//   }
+// };
 const updateAssignQuestionFree = async (req, res, next) => {
   let studentId = req.user.studentId;
   let examId = req.body.examId;
