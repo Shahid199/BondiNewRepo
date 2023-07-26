@@ -13,6 +13,7 @@ const FreeMcqRank = require("../model/FreeMcqRank");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const ExamRule = require("../model/ExamRule");
+const { readUInt16 } = require("pdfkit/js/data");
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
@@ -591,14 +592,16 @@ const assignQuestionFree = async (req, res, next) => {
   console.log(totalQues, "totalQues");
   max = size - 1;
   for (let i = 0; i < totalQues; i++) {
+    rand = parseInt(Date.now() % totalQues);
+    console.log("rand", rand);
     // rand = Math.random();
     // rand = rand * Number(max);
     // rand = Math.floor(rand);
     // rand = rand + Number(min);
-    // if (!doc.includes(rand)) {
-    doc.push(i);
-    // }
-    //if (doc.length == totalQues) break;
+    if (!doc.includes(rand)) {
+      doc.push(rand);
+    }
+    if (doc.length == totalQues) break;
   }
   console.log(doc, "doc");
   //end:generating random index of questions
@@ -689,6 +692,32 @@ const assignQuestionFree = async (req, res, next) => {
     return res.status(404).json("Problem occur to assign question.");
   }
   return res.status(201).json(questions);
+};
+const testAssignRoute = async (req, res, next) => {
+  const eId = req.query.eId;
+  const studentId = req.user.studentId;
+
+  let eId1, sId;
+  sId = new mongoose.Types.ObjectId(studentId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  let size = null,
+    examQuestion = null;
+  try {
+    size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
+  } catch (err) {
+    return res.status(500).json("1.something went wrong.");
+  }
+  examQuestion = size.mId;
+  size = size.mId.length;
+  let questData = null;
+  try {
+    size = await QuestionsMcq.aggregate()
+      .sample()
+      .find({ _id: { $in: examQuestion } })
+      .select("question type options");
+  } catch (err) {
+    return res.status(500).json("1.something went wrong.");
+  }
 };
 const updateAssignQuestionFree = async (req, res, next) => {
   let studentId = req.user.studentId;
