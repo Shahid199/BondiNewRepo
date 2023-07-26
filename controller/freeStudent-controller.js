@@ -13,7 +13,6 @@ const FreeMcqRank = require("../model/FreeMcqRank");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const ExamRule = require("../model/ExamRule");
-const { readUInt16 } = require("pdfkit/js/data");
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
