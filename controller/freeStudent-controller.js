@@ -1022,13 +1022,19 @@ const updateRankFree = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Invalid exam Id.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  let checkGenerate = null;
+  let checkGenerate = nul,
+    delData = null;
   try {
-    checkGenerate = await FreeMcqRank.find({ examId: examIdObj });
+    delData = await FreeMcqRank.deleteMany({ examId: examIdObj });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (checkGenerate) return res.status(404).json("Already Generated.");
+  // try {
+  //   checkGenerate = await FreeMcqRank.find({ examId: examIdObj });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
+  // if (checkGenerate) return res.status(404).json("Already Generated.");
   let ranks = null;
   try {
     ranks = await FreestudentMarksRank.find({ examId: examIdObj })
@@ -1157,13 +1163,14 @@ const getAllRankFree = async (req, res, next) => {
     let conData = "*******";
     data1["examName"] = resultRank[i].examId.name;
     data1["studentName"] = resultRank[i].freeStudentId.name;
-    data1["mobile No"] = conData.concat(
+    data1["mobileNo"] = conData.concat(
       resultRank[i].freeStudentId.mobileNo.slice(7)
     );
     data1["institution"] = resultRank[i].freeStudentId.institution;
     data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks;
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
+    data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
     allData.push(data1);
   }
   return res.status(200).json(allData);
