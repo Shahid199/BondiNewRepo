@@ -590,18 +590,23 @@ const assignQuestionFree = async (req, res, next) => {
   let totalQues = Number(totalQuesData.totalQuestionMcq);
   console.log(totalQues, "totalQues");
   max = size - 1;
-  for (let i = 0; i < totalQues; i++) {
-    rand = parseInt(Date.now() % totalQues);
-    console.log("rand", rand);
-    // rand = Math.random();
-    // rand = rand * Number(max);
-    // rand = Math.floor(rand);
-    // rand = rand + Number(min);
-    if (!doc.includes(rand)) {
-      doc.push(rand);
-    }
-    if (doc.length == totalQues) break;
-  }
+  rand = parseInt(Date.now() % totalQues);
+  if (rand == 0) rand = 1;
+  if (rand == totalQues - 1) rand = rand - 1;
+  for (let j = rand; j >= 0; j--) doc.push(j);
+  for (let j = rand + 1; j < totalQues; j++) doc.push(j);
+  // for (let i = 0; i < totalQues; i++) {
+  //   console.log("rand", rand);
+  //   Math.random;
+  //   // rand = Math.random();
+  //   // rand = rand * Number(max);
+  //   // rand = Math.floor(rand);
+  //   // rand = rand + Number(min);
+  //   if (!doc.includes(rand)) {
+  //     doc.push(rand);
+  //   } else doc.push(rand + 3);
+  //   if (doc.length == totalQues) break;
+  // }
   console.log(doc, "doc");
   //end:generating random index of questions
   let doc1;
