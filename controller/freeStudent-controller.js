@@ -1031,6 +1031,23 @@ const updateStudentExamInfoFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  //get student id dont submit:start
+  let studentIds = null;
+  try {
+    studentIds = await FreestudentMarksRank.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishedStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "studentId -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //get student id dont submit:end
   console.log(examUncheckStudent, "examUncheckStudent");
   if (examUncheckStudent.length == 0)
     return res.status(200).json("All student submit the exam.");
@@ -1048,6 +1065,67 @@ const updateStudentExamInfoFree = async (req, res, next) => {
   console.log(updateStatus, "updateStatus");
   if (updateStatus.modifiedCount == 0)
     return res.status(404).json("Not updated.");
+
+  //result calculation:start
+  for (let i = 0; i < studentIds.length; i++) {
+    let examData = null;
+    try {
+      examData = await FreeStudentExamVsQuestionsMcq.findOne({
+        $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
+      }).populate("mcqQuestionId examId");
+    } catch (err) {
+      return res.status(500).json("Problem when get exam data.");
+    }
+    console.log(examData);
+    let id = String(examData._id);
+    let correctMarks = examData.examId.marksPerMcq;
+    let negativeMarks = examData.examId.negativeMarks;
+    let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+    let examDataMcq = examData.mcqQuestionId;
+    let answered = examData.answeredOption;
+    let notAnswered = 0;
+    let totalCorrectAnswer = 0;
+    let totalWrongAnswer = 0;
+    let totalObtainedMarks = 0;
+    let totalCorrectMarks = 0;
+    let totalWrongMarks = 0;
+    for (let i = 0; i < examDataMcq.length; i++) {
+      if (answered[i] == "-1") {
+        notAnswered = notAnswered + 1;
+      } else if (answered[i] == examDataMcq[i].correctOption) {
+        totalCorrectAnswer = totalCorrectAnswer + 1;
+      } else totalWrongAnswer = totalWrongAnswer + 1;
+    }
+    totalCorrectMarks = totalCorrectAnswer * correctMarks;
+    totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+    totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+    const update1 = {
+      totalCorrectAnswer: totalCorrectAnswer,
+      totalWrongAnswer: totalWrongAnswer,
+      totalNotAnswered: notAnswered,
+      totalCorrectMarks: totalCorrectMarks,
+      totalWrongMarks: totalWrongMarks,
+      totalObtainedMarks: totalObtainedMarks,
+    };
+    let result = null,
+      upd = null;
+    try {
+      result = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(
+        id,
+        update1
+      );
+      upd = await FreestudentMarksRank.updateOne(
+        {
+          $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
+        },
+        { totalObtainedMarks: totalObtainedMarks }
+      );
+    } catch (err) {
+      return res.status(500).json("Problem when update total obtained marks.");
+    }
+  }
+  //result calculation:end
+
   return res.status(201).json("Updated successfully.");
 };
 const updateRankFree = async (req, res, next) => {
