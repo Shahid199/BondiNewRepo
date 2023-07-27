@@ -1119,7 +1119,7 @@ const updateStudentExamInfoFree = async (req, res, next) => {
     let examData = null;
     try {
       examData = await FreeStudentExamVsQuestionsMcq.findOne({
-        $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
+        $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
       }).populate("mcqQuestionId examId");
     } catch (err) {
       return res.status(500).json("Problem when get exam data.");
