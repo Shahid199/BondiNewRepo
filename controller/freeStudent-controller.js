@@ -1165,7 +1165,7 @@ const updateStudentExamInfoFree = async (req, res, next) => {
       console.log("result", result.modifiedCount);
       upd = await FreestudentMarksRank.updateOne(
         {
-          $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
+          $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
         },
         { totalObtainedMarks: totalObtainedMarks }
       );
