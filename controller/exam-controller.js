@@ -21,6 +21,7 @@ const TeacherVsExam = require("../model/TeacherVsExam");
 const Limit = 100;
 //create Exam
 const createExam = async (req, res, next) => {
+  console.log("start", req.body);
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
@@ -45,7 +46,7 @@ const createExam = async (req, res, next) => {
     hscStatus,
     negativeMarks,
   } = req.body;
-
+  console.log("end", req.body);
   //data upload from API
   // const examFromQuery = req.body;
   // const {
