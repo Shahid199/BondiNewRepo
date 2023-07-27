@@ -730,6 +730,21 @@ const updateAssignQuestionFree = async (req, res, next) => {
   let optionIndexNumber = Number(req.body.optionIndexNumber);
   studentId = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
+  //exam status Check:start
+  let studentCheck = null;
+  try {
+    studentCheck = await FreestudentMarksRank.findOne(
+      {
+        $and: [{ examId: examId }, { studentId: studentId }],
+      },
+      "finishedStatus -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentCheck.finishedStatus == true)
+    return res.status(409).json("Exam End.");
+  //exam status Check:end
   let docId,
     docId1,
     result,
@@ -772,6 +787,21 @@ const getRunningDataFree = async (req, res, next) => {
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
+  //exam status Check:start
+  let studentCheck = null;
+  try {
+    studentCheck = await FreestudentMarksRank.findOne(
+      {
+        $and: [{ examId: eId1 }, { studentId: sId1 }],
+      },
+      "finishedStatus -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentCheck.finishedStatus == true)
+    return res.status(409).json("Exam End.");
+  //exam status Check:end
   let getQuestionMcq, getExamData;
   try {
     getQuestionMcq = await FreeStudentExamVsQuestionsMcq.findOne({
@@ -832,6 +862,23 @@ const submitAnswerFree = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
+
+  //exam status Check:start
+  let studentCheck = null;
+  try {
+    studentCheck = await FreestudentMarksRank.findOne(
+      {
+        $and: [{ examId: eId1 }, { studentId: sId1 }],
+      },
+      "finishedStatus -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentCheck.finishedStatus == true)
+    return res.status(409).json("Exam End.");
+  //exam status Check:end
+
   const examEndTime = new Date();
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
@@ -1032,7 +1079,7 @@ const updateStudentExamInfoFree = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   //get student id dont submit:start
-  let studentIds = null;
+  let studentIds = [];
   try {
     studentIds = await FreestudentMarksRank.find(
       {
