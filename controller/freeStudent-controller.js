@@ -1114,6 +1114,7 @@ const updateStudentExamInfoFree = async (req, res, next) => {
     return res.status(404).json("Not updated.");
 
   //result calculation:start
+  console.log("studentIds", studentid);
   for (let i = 0; i < studentIds.length; i++) {
     let examData = null;
     try {
@@ -1161,12 +1162,14 @@ const updateStudentExamInfoFree = async (req, res, next) => {
         id,
         update1
       );
+      console.log("result",result.modifiedCount);
       upd = await FreestudentMarksRank.updateOne(
         {
           $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
         },
         { totalObtainedMarks: totalObtainedMarks }
       );
+      console.log("upd",upd.modifiedCount);
     } catch (err) {
       return res.status(500).json("Problem when update total obtained marks.");
     }
