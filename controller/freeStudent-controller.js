@@ -862,8 +862,8 @@ const submitAnswerFree = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
-    let eId2=new mongoose.Types.ObjectId(eId);
-    let sId2=new mongoose.Types.ObjectId(eId);
+  let eId2 = new mongoose.Types.ObjectId(eId);
+  let sId2 = new mongoose.Types.ObjectId(eId);
   //exam status Check:start
   let studentCheck = null;
   try {
@@ -876,6 +876,7 @@ const submitAnswerFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(studentCheck);
   if (studentCheck.finishedStatus == true)
     return res.status(409).json("Exam End.");
   //exam status Check:end
