@@ -877,8 +877,10 @@ const submitAnswerFree = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   console.log(studentCheck);
-  if (studentCheck.finishedStatus == true)
-    return res.status(409).json("Exam End.");
+  if (studentCheck != null) {
+    if (studentCheck.finishedStatus == true)
+      return res.status(409).json("Exam End.");
+  }
   //exam status Check:end
 
   const examEndTime = new Date();
