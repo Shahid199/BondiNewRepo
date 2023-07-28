@@ -862,13 +862,14 @@ const submitAnswerFree = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
-
+    let eId2=new mongoose.Types.ObjectId(eId);
+    let sId2=new mongoose.Types.ObjectId(eId);
   //exam status Check:start
   let studentCheck = null;
   try {
     studentCheck = await FreestudentMarksRank.findOne(
       {
-        $and: [{ examId: eId1 }, { studentId: sId1 }],
+        $and: [{ examId: eId2 }, { studentId: sId2 }],
       },
       "finishedStatus -_id"
     );
