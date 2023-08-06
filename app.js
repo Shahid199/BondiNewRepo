@@ -69,5 +69,8 @@ mongoose
   .then(() => {
     app.listen(5011);
     console.log("running on 5011");
+    // let currentTime = Date.now();
+    // let examStartTime = moment(currentTime).add(6, "hours");
+    // console.log((examStartTime - currentTime) / (1000 * 60));
   })
   .catch((err) => console.log(err));

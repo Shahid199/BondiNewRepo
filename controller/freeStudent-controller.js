@@ -541,7 +541,16 @@ const examCheckMiddlewareFree = async (req, res, next) => {
   let examIdObj, studentIdObj;
   studentIdObj = new mongoose.Types.ObjectId(studentId);
   examIdObj = new mongoose.Types.ObjectId(examId);
-  let status = null;
+  let status = null,
+    query = null;
+  let currentDate = moment(Date.now());
+  try {
+    query = await Exam.findById(examId, "endTime");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let examEndTimeNew = query.endTime;
+  if (examEndTimeNew <= currentDate) return res.status(200).json("ended");
   try {
     status = await FreestudentMarksRank.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -675,6 +684,7 @@ const assignQuestionFree = async (req, res, next) => {
     examId: eId1,
     examStartTime: examStartTime,
     runningStatus: true,
+    finishedStatus: false,
     examEndTime: examEndTime,
   });
   try {
@@ -965,13 +975,15 @@ const submitAnswerFree = async (req, res, next) => {
     upd1 = null,
     upd2 = null,
     getRank = null;
+
   try {
     result = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
     upd = await FreestudentMarksRank.updateOne(
       {
         $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
-      { totalObtainedMarks: totalObtainedMarks }
+      { totalObtainedMarks: totalObtainedMarks },
+      { examEndTime: examEndTime }
     );
   } catch (err) {
     return res.status(500).json("Problem when update total obtained marks.");
