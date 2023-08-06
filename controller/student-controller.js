@@ -1384,11 +1384,11 @@ const retakeExam = async (req, res, next) => {
   //start:generating random index of questions
   max = questData.length - 1;
   //max = max - min;
-  rand = parseInt(Date.now() % questData.length);
+  rand = parseInt(Date.now() % questDataFull.length);
   if (rand == 0) rand = 1;
-  if (rand == totalQues - 1) rand = rand - 1;
+  if (rand == questDataFull.length - 1) rand = rand - 1;
   for (let j = rand; j >= 0; j--) doc.push(j);
-  for (let j = rand + 1; j < totalQues; j++) doc.push(j);
+  for (let j = rand + 1; j < questDataFull.length; j++) doc.push(j);
   // for (let i = 0; ; i++) {
   //   rand = Math.random();
   //   rand = rand * Number(max);
