@@ -924,7 +924,7 @@ const submitAnswer = async (req, res, next) => {
     finishedStatus: true,
     runningStatus: false,
     examEndTime: submitTime,
-    duration: (timeStudent[0] - submitTime) / (1000 * 60),
+    duration: (moment(timeStudent[0]) - submitTime) / (1000 * 60),
   };
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
