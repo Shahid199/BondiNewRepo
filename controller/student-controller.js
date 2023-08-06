@@ -425,7 +425,7 @@ const examCheckMiddleware = async (req, res, next) => {
   let status = null;
   let query = null;
   let examEndTime = null;
-  let currentDate = moment(Date.now());
+  let currentDate = moment(Date.now()).add(6, "hours");
   try {
     query = await Exam.findById(examId, "endTime");
   } catch (err) {
