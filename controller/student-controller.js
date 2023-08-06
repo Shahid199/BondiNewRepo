@@ -1383,15 +1383,20 @@ const retakeExam = async (req, res, next) => {
   //return res.status(200).json(examData);
   //start:generating random index of questions
   max = questData.length - 1;
-  max = max - min;
-  for (let i = 0; ; i++) {
-    rand = Math.random();
-    rand = rand * Number(max);
-    rand = Math.floor(rand);
-    rand = rand + Number(min);
-    if (!doc.includes(rand)) doc.push(rand);
-    if (doc.length == examDataNew.eId.totalQuestionMcq) break;
-  }
+  //max = max - min;
+  rand = parseInt(Date.now() % questData.length);
+  if (rand == 0) rand = 1;
+  if (rand == totalQues - 1) rand = rand - 1;
+  for (let j = rand; j >= 0; j--) doc.push(j);
+  for (let j = rand + 1; j < totalQues; j++) doc.push(j);
+  // for (let i = 0; ; i++) {
+  //   rand = Math.random();
+  //   rand = rand * Number(max);
+  //   rand = Math.floor(rand);
+  //   rand = rand + Number(min);
+  //   if (!doc.includes(rand)) doc.push(rand);
+  //   if (doc.length == examDataNew.eId.totalQuestionMcq) break;
+  // }
   examData = questDataFull;
   console.log(examData);
   for (let i = 0; i < doc.length; i++) {
