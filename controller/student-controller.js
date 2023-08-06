@@ -438,8 +438,10 @@ const examCheckMiddleware = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   examEndTime = query.endTime;
-  if (examEndTime <= currentDate || currentDate > timerData.examEndTime)
-    return res.status(200).json("ended");
+  if (timerData != null)
+    if (currentDate > timerData.examEndTime)
+      return res.status(200).json("ended");
+  if (examEndTime <= currentDate) return res.status(200).json("ended");
 
   try {
     status = await StudentMarksRank.findOne({
