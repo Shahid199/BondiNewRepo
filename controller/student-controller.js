@@ -2325,7 +2325,7 @@ const updateRank = async (req, res, next) => {
   for (let i = 0; i < dataLength; i++) {
     let dataFree = {};
     dataFree["examId"] = ranks[i].examId;
-    dataFree["freeStudentId"] = ranks[i].studentId;
+    dataFree["studentId"] = ranks[i].studentId;
     dataFree["totalObtainedMarks"] = ranks[i].totalObtainedMarks;
     dataFree["rank"] = i + 1;
     dataIns.push(dataFree);
