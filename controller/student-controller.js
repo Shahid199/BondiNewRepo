@@ -1895,6 +1895,7 @@ const getHistoryByExamId = async (req, res, next) => {
   console.log(rank);
   for (let i = 0; i < rank.length; i++) {
     //rank data start
+    console.log(rank[i]);
     let mcqRank = null;
     try {
       mcqRank = await McqRank.findOne({
