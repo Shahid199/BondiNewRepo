@@ -2422,7 +2422,7 @@ const getAllRank = async (req, res, next) => {
   try {
     resultRank = await McqRank.find({ examId: examIdObj })
       .sort("rank")
-      .populate("examId freeStudentId");
+      .populate("examId studentId");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
@@ -2435,8 +2435,8 @@ const getAllRank = async (req, res, next) => {
     let data1 = {};
     let conData = "*******";
     data1["examName"] = resultRank[i].examId.name;
-    data1["studentName"] = resultRank[i].freeStudentId.name;
-    data1["mobileNoOrg"] = resultRank[i].freeStudentId.mobileNo;
+    data1["studentName"] = resultRank[i].studentId.name;
+    data1["mobileNoOrg"] = resultRank[i].studentId.mobileNo;
     data1["mobileNo"] = conData.concat(
       resultRank[i].studentId.mobileNo.slice(7)
     );
