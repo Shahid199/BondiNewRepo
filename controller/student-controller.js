@@ -576,7 +576,7 @@ const assignQuestion = async (req, res, next) => {
     examStartTime: examStartTime,
     runningStatus: true,
     examEndTime: examEndTime,
-    duration: (examStartTime - examEndTime) / (1000 * 60),
+    duration: (examEndTime - examStartTime) / (1000 * 60),
   });
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
@@ -911,7 +911,7 @@ const submitAnswer = async (req, res, next) => {
   timeStudent[0] = findId[0].examStartTime;
   timeStudent[1] = findId[0].examEndTime;
   let saveStudentExamEnd;
-  let submitTime = moment(new Date());
+  let submitTime = moment(new Date()).add(6, "hours");
   let update = {
     finishedStatus: true,
     runningStatus: false,
