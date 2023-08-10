@@ -190,7 +190,7 @@ router.get(
   "/getwrittenquestionbyexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    authorize(["superadmin", "moderator", "student", "teacher"]),
   ],
   getWrittenQuestionByexam
 );
