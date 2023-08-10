@@ -383,7 +383,6 @@ const getExamBySub = async (req, res, next) => {
   }
   return res.status(200).json(examData);
 };
-
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
@@ -453,7 +452,6 @@ const getExamBySubject = async (req, res, next) => {
     return res.status(200).json({ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
-
 const examByCourseSubject = async (req, res, next) => {
   const { courseId, subjectId } = req.query;
   if (!ObjectId.isValid(subjectId) || !ObjectId.isValid(courseId))
@@ -524,7 +522,6 @@ const examByCourseSubject = async (req, res, next) => {
   result.push({ examCount: examData.length });
   return res.status(200).json({ result, paginateData });
 };
-
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
@@ -613,7 +610,6 @@ const addQuestionMcq = async (req, res, next) => {
   }
   return res.status(201).json("Saved.");
 };
-
 const addQuestionMcqBulk = async (req, res, next) => {
   const { questionArray, examId } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
@@ -753,6 +749,14 @@ const examRuleGetAll = async (req, res, next) => {
 //add wriiten question function
 const addQuestionWritten = async (req, res, next) => {
   let examId = req.body.examId;
+  examId = new mongoose.Types.ObjectId(examId);
+  let existData = null;
+  try {
+    existData = await QuestionsWritten.findOne({ examId: examId });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!existData) return res.status(404).json("Already added question.");
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   const status = req.body.status;
@@ -801,7 +805,7 @@ const removeQuestionWritten = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
-  let currentTime = moment(Date.now());
+  let currentTime = moment(Date.now()).add(6, "hours");
   let examTime = null;
   try {
     examTime = await Exam.findOne({
@@ -820,120 +824,19 @@ const removeQuestionWritten = async (req, res, next) => {
   }
   return res.status(200).json("Successfully removed question from the exam.");
 };
-const submitStudentScript = async (req, res, next) => {
-  const files = req.files;
-  //file upload handle:start
-  const file = req.files;
-  //console.log(file);
-  let questionILinkPath = [];
-  if (!file.questionILink) return res.status(400).json("Files not uploaded.");
-  for (let i = 0; i < length(file.questionILink); i++) {
-    questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
-  }
-  //file upload handle:end
-  const examId = req.body.examId;
-  const studentId = req.user.studentId;
-  const questionId = req.body.questionId;
-  let questionNo = Number(req.body.questionNo);
-  questionNo = questionNo - 1;
-  if (
-    !ObjectId.isValid(studentId) ||
-    !ObjectId.isValid(examId) ||
-    !ObjectId.isValid(questionId) ||
-    !questionNo
-  ) {
-    return res
-      .status(404)
-      .json("Student Id or Exam Id or question Id is not valid.");
-  }
-  let studentIdObj = new mongoose.Types.ObjectId(studentId);
-  let getQuestionScript = null;
-  try {
-    getQuestionScript = await StudentExamVsQuestionsWritten.find({
-      $and: [
-        { studentId: studentIdObj },
-        { examId: examId },
-        { questionId: questionId },
-      ],
-    }).select("submittedScriptILink uploadStatus checkStatus -_id");
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  let uploadStatus = getQuestionScript.UploadStatus;
-  let checkStatus = getQuestionScript.checkStatus;
-  if (uploadStatus == true || checkStatus == true)
-    return res.status(404).json("Can not upload file.");
-  getQuestionScript = getQuestionScript.submittedScriptILink;
-  if (length(getQuestionScript[questionNo]) > 0) {
-    for (let i = 0; i < length(getQuestionScript[questionNo]); i++) {
-      fs.unlinkSync(getQuestionScript[questionNo][i]);
-    }
-  }
-  getQuestionScript[questionNo].push(questionILinkPath);
-  let questionUpload = new StudentExamVsQuestionsWritten({
-    studentId: studentIdObj,
-    examId: examId,
-    writtenQuestionId: questionId,
-    submittedScriptILink: getQuestionScript,
-    marksPerQuestion: marksPerQuestion,
-    totalMarks: totalMarks,
-  });
-  let doc;
-  try {
-    doc = await questionUpload.save();
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  return res.status(201).json("Submitted Successfully.");
-};
-const submitWritten = async (req, res, next) => {
-  const examId = req.body.examId;
-  const studentId = req.user.studentId;
-  const questionId = req.body.questionId;
-  if (
-    !ObjectId.isValid(studentId) ||
-    !ObjectId.isValid(examId) ||
-    !ObjectId.isValid(questionId)
-  ) {
-    return res
-      .status(404)
-      .json("Student Id or Exam Id or question Id is not valid.");
-  }
-  let studentIdObj = new mongoose.Types.ObjectId(studentId);
-  let uploadStatus = null;
-  try {
-    uploadStatus = await StudentExamVsQuestionsWritten.updateOne(
-      {
-        $and: [
-          { studentId: studentIdObj },
-          { examId: examId },
-          { questionId: questionId },
-        ],
-      },
-      { uploadStatus: true }
-    );
-  } catch (err) {
-    return res.status(500).json("Somethhing went wrong.");
-  }
-  return res.status(201).json("Submitted Sccessfully.");
-};
-const assignTeacher = async (req, res, next) => {
+const getWrittenQuestionByexam = async (req, res, next) => {
+  let writtenQuestion = null;
   let examId = req.body.examId;
-  let teacherId = req.body.teacherId;
-  if (!ObjectId.isValid(examId) || !ObjectId.isValid(teacherId))
-    return res.status(404).json("Exam Id or Teacher Id is not valid.");
-  let teacherVsExam = new TeacherVsExam({
-    examId: examId,
-    teacherId: teacherId,
-  });
-  let data = null;
+  examId = new mongoose.Types.ObjectId("examId");
   try {
-    data = teacherVsExam.save();
+    writtenQuestion = await QuestionsWritten.findOne({
+      examId: examId,
+    }).populate("examId");
   } catch (err) {
-    return res.status(500).json("Somethhing went wrong.");
+    return res.status(500).json("SOmething went wrong.");
   }
-  return res.status(201).json("Successfully assign teacher to exam.");
+  if (writtenQuestion == null) return res.status(404).json("No data found.");
+  return res.status(200).json(writtenQuestion);
 };
 const assignStudentToTeacher = async (req, res, next) => {
   let examId = req.body.examId;
@@ -941,12 +844,12 @@ const assignStudentToTeacher = async (req, res, next) => {
     return res.status(404).json("Exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   //remove assign students to the teacher
-  let remove = null;
-  try {
-    remove = await TeacherVsExam.deleteMany({ examId: examId });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
+  // let remove = null;
+  // try {
+  //   remove = await TeacherVsExam.deleteMany({ examId: examId });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
 
   let teacher = 0;
   try {
@@ -1022,6 +925,23 @@ const assignStudentToTeacher = async (req, res, next) => {
     .status(201)
     .json("Successfully assign all student to the teacher.");
 };
+const assignTeacher = async (req, res, next) => {
+  let examId = req.body.examId;
+  let teacherId = req.body.teacherId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(teacherId))
+    return res.status(404).json("Exam Id or Teacher Id is not valid.");
+  let teacherVsExam = new TeacherVsExam({
+    examId: examId,
+    teacherId: teacherId,
+  });
+  let data = null;
+  try {
+    data = teacherVsExam.save();
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  return res.status(201).json("Successfully assign teacher to exam.");
+};
 //view questions
 const questionByExamId = async (req, res, next) => {
   const examId = req.query.examId;
@@ -1094,7 +1014,6 @@ const freeExamStatus = async (req, res, next) => {
   let data = String(freeExamStatus[0]._id);
   return res.status(200).json({ data });
 };
-
 const freeCourseSub = async (req, res, next) => {
   const course = req.query.course;
   const sub = req.query.sub;
@@ -1133,9 +1052,8 @@ exports.addQuestionMcqBulk = addQuestionMcqBulk;
 exports.deactivateExam = deactivateExam;
 exports.freeExamStatus = freeExamStatus;
 exports.getExamType = getExamType;
-exports.submitStudentScript = submitStudentScript;
-exports.submitWritten = submitWritten;
 exports.assignTeacher = assignTeacher;
 exports.assignStudentToTeacher = assignStudentToTeacher;
 exports.removeQuestionWritten = removeQuestionWritten;
 exports.freeCourseSub = freeCourseSub;
+exports.getWrittenQuestionByexam = getWrittenQuestionByexam;

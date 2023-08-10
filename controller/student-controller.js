@@ -23,6 +23,7 @@ const isodate = require("isodate");
 const McqRank = require("../model/McqRank");
 const passport = require("passport");
 const FreeMcqRank = require("../model/FreeMcqRank");
+const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
 
 const Limit = 100;
 
@@ -2449,6 +2450,255 @@ const getAllRank = async (req, res, next) => {
   }
   return res.status(200).json(allData);
 };
+
+//written part
+const writtenExamCheckMiddleware = async (req, res, next) => {
+  const examId = req.query.examId;
+  const studentId = req.user.studentId;
+  //start:check student already complete the exam or not
+  let examIdObj, studentIdObj;
+  studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examIdObj = new mongoose.Types.ObjectId(examId);
+  let status = null;
+  let query = null;
+  let examEndTime = null;
+  let currentDate = moment(Date.now()).add(6, "hours");
+  console.log(currentDate, "current Date");
+  try {
+    query = await Exam.findById(examId, "endTime");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  examEndTime = query.endTime;
+  if (examEndTime < currentDate) return res.status(200).json("ended");
+
+  try {
+    status = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (status == null) return res.status(200).json("assign");
+  else {
+    if (
+      status.uploadStatus == true ||
+      query.endTime < moment(new Date()).add(6, "hours")
+    )
+      return res.status(200).json("ended");
+    else return res.status(200).json("running");
+  }
+};
+const assignWrittenQuestion = async (req, res, next) => {
+  let examId = req.body.examId;
+  let studentId = req.user.studentId;
+  examId = new mongoose.Types.ObjectId(examId);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  let examData = null;
+  let sav = null;
+  let data = new StudentExamVsQuestionsWritten({
+    examId: examId,
+    studentId: studentId,
+  });
+  try {
+    sav = data.save();
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  if (sav == null) return res.status(404).json("Not Assigned.");
+  let questionData = null;
+  let data1 = {};
+  try {
+    questionData = QuestionsWritten.find({
+      $and: [{ examId: examId }, { status: true }],
+    });
+    examData = await Exam.findOne({
+      $and: [{ _id: examId }, { examFreeOrNot: false }, { status: true }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  if (
+    questionData == null ||
+    examData.endTime < moment(new Date()).add(6, "hours")
+  )
+    return res.status(404).josn("no question found or time expired.");
+
+  data1["questionILink"] = questionData.questionILink;
+  data1["status"] = questionData.status;
+  data1["totalQuestions"] = questionData.totalQuestions;
+  data1["marksPerQuestions"] = questionData.marksPerQuestions;
+  data1["totalMarks"] = questionData.totalMarks;
+  data1["studExamStartTime"] = moment(new Date()).add(6, "hours");
+  data1["studExamEndTime"] = moment(data1.examStartTime).add(
+    examData.duration,
+    "minutes"
+  );
+  data1["examStartTime"] = examData.startTime;
+  data1["examEndTime"] = examData.endTime;
+  data1["duration"] = examData.duration;
+  data1["examId"] = examId;
+  data1["examName"] = examData.name;
+  data1["variation"] = examData.variation;
+  let objSav = new StudentMarksRank({
+    examId: examId,
+    studentId: studentId,
+    examStartTime: data1.examStartTime,
+    examEndTime: data1.examEndTime,
+    duration: data1.duration,
+  });
+
+  try {
+    sav = objSav.save();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  return res.status(200).json(data1);
+};
+const submitStudentScript = async (req, res, next) => {
+  const files = req.files;
+  //file upload handle:start
+  const file = req.files;
+  //console.log(file);
+  let questionILinkPath = [];
+  if (!file.questionILink) return res.status(400).json("Files not uploaded.");
+  for (let i = 0; i < length(file.questionILink); i++) {
+    questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
+  }
+  //file upload handle:end
+  const examId = req.body.examId;
+  const studentId = req.user.studentId;
+  let questionNo = Number(req.body.questionNo);
+  questionNo = questionNo - 1;
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !questionNo
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  let getQuestionScript = null;
+  try {
+    getQuestionScript = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getQuestionScript._id;
+  let uploadStatus = getQuestionScript.uploadStatus;
+  let checkStatus = getQuestionScript.checkStatus;
+  if (uploadStatus == true || checkStatus == true)
+    return res.status(404).json("Can not upload file.");
+  getQuestionScript = getQuestionScript.submittedScriptILink;
+  if (!getQuestionScript[questionNo]) {
+    for (let i = 0; i < getQuestionScript[questionNo].length; i++) {
+      fs.unlinkSync(getQuestionScript[questionNo][i]);
+    }
+  }
+  getQuestionScript[questionNo].push(questionILinkPath);
+  let upd = {
+    submittedScriptILink: getQuestionScript,
+  };
+  let doc;
+  try {
+    doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Submitted Successfully.");
+};
+const submitWritten = async (req, res, next) => {
+  const examId = req.body.examId;
+  const studentId = req.user.studentId;
+  const questionId = req.body.questionId;
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(questionId)
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  questionId = new mongoose.Types.ObjectId(questionId);
+  let startTime = null;
+  let endTime = moment(new Date()).add(6, "hours");
+  try {
+    startTime = await StudentMarksRank.findOne({
+      $and: [{ examId: examId }, { studentId: studentIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  startTime = startTime.examStartTime;
+  let upd = {
+    examEndTime: endTime,
+    duration: (endTime - startTime) / (1000 * 60),
+  };
+  let sav = null;
+  try {
+    sav = await StudentMarksRank.findOneAndUpdate(
+      {
+        $and: [{ examId: examId }, { studentId: studentIdObj }],
+      },
+      upd
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let uploadStatus = null;
+  try {
+    uploadStatus = await StudentExamVsQuestionsWritten.updateOne(
+      {
+        $and: [{ studentId: studentIdObj }, { examId: examId }],
+      },
+      { uploadStatus: true }
+    );
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  return res.status(201).json("Submitted Sccessfully.");
+};
+const updateStudentWrittenExamInfo = async (req, res, next) => {
+  let data = null;
+  let examId = req.body.examId;
+  examId = new mongoose.Types.ObjectId(examId);
+  try {
+    data = await StudentExamVsQuestionsWritten.find(
+      {
+        $and: [{ examId: examId }, { uploadStatus: false }],
+      }.select("_id")
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!data) return res.status(201).json("Already Submitted.");
+  for (let i = 0; i < data.length; i++) {
+    let sav = null;
+    try {
+      sav = await StudentExamVsQuestionsWritten.findByIdAndUpdate(data[i], {
+        uploadStatus: true,
+      });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+  }
+  return res.status(201).json("Updated.");
+};
+exports.updateStudentWrittenExamInfo = updateStudentWrittenExamInfo;
+exports.writtenExamCheckMiddleware = writtenExamCheckMiddleware;
+exports.assignWrittenQuestion = assignWrittenQuestion;
+exports.submitStudentScript = submitStudentScript;
+exports.submitWritten = submitWritten;
 exports.getAllRank = getAllRank;
 exports.updateRank = updateRank;
 exports.loginStudent = loginStudent;

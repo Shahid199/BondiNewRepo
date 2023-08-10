@@ -26,7 +26,7 @@ const {
   assignStudentToTeacher,
   removeQuestionWritten,
   freeCourseSub,
-  updateFreeExam,
+  getWrittenQuestionByexam,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -170,15 +170,6 @@ router.get(
   getExamType
 );
 router.post(
-  "/submitstudentscript",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
-    upload.fields([{ name: "questionILink", maxCount: 5 }]),
-  ],
-  submitStudentScript
-);
-router.post(
   "/assignteacher",
   [
     passport.authenticate("jwt", { session: false }),
@@ -213,5 +204,13 @@ router.get(
 );
 
 
+router.get(
+  "/getwrittenquestionbyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getWrittenQuestionByexam
+);
 
 module.exports = router;

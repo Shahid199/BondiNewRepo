@@ -36,6 +36,11 @@ const {
   getRankStudent,
   getAllRank,
   examTimeCheck,
+  assignWrittenQuestion,
+  submitStudentScript,
+  submitWritten,
+  writtenExamCheckMiddleware,
+  updateStudentWrittenExamInfo,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -294,6 +299,49 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   examTimeCheck
+);
+
+//written
+router.get(
+  "/writtenexamcheckmiddleware",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  writtenExamCheckMiddleware
+);
+router.get(
+  "/assignquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  assignWrittenQuestion
+);
+router.post(
+  "/submitstudentscript",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  submitStudentScript
+);
+router.post(
+  "/submitwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  submitWritten
+);
+router.post(
+  "/updatedstudentwritteninfo",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  updateStudentWrittenExamInfo
 );
 
 module.exports = router;

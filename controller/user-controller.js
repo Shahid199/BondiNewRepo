@@ -141,7 +141,6 @@ const updateOfficeUser = async (req, res, next) => {
   if (upd == null) return res.status(404).json("Update not done.");
   return res.status(201).json("Updated user Info");
 };
-
 const deactivateUser = async (req, res, next) => {
   const userId = req.body;
   console.log(userId);
@@ -255,3 +254,4 @@ exports.deactivateUser = deactivateUser;
 exports.updatePassword = updatePassword;
 exports.getUserById = getUserById;
 exports.getTeacher = getTeacher;
+
