@@ -343,9 +343,14 @@ const freeGetHistoryByExamId = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(rank[i].examStartTime).format("LLL");
-    data1["examEndTime"] = moment(rank[i].examEndTime).format("LLL");
-    data1["duration"] = rank[i].duration;
+    data1["examStartTime"] = moment(rank[i].examStartTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    data1["examEndTime"] = moment(rank[i].examEndTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    //data1["duration"] = rank[i].duration;
+    data1["duration"] = (data1.examEndTime - data1.examStartTime) / (1000 * 60);
     data.push(data1);
   }
   examDetails = null;
