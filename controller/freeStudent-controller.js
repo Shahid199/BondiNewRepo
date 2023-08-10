@@ -894,7 +894,7 @@ const submitAnswerFree = async (req, res, next) => {
   }
   //exam status Check:end
 
-  const examEndTime = new Date();
+  let examEndTime = moment(new Date()).add(6, "hours");
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -914,6 +914,7 @@ const submitAnswerFree = async (req, res, next) => {
   let update = {
     finishedStatus: true,
     runningStatus: false,
+    examEndTime: examEndTime,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(
