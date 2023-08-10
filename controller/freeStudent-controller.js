@@ -373,7 +373,7 @@ const freeGetHistoryByExamId = async (req, res, next) => {
 //free student exam system
 const getFreeExamId = async (req, res, next) => {
   let examId = [];
-  let currentTime = new Date(moment(Date.now()).add(6, "hours"));
+  let currentTime = moment(Date.now()).add(6, "hours");
   console.log(currentTime);
   try {
     examId = await Exam.find({
@@ -388,7 +388,7 @@ const getFreeExamId = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(moment(examId[0].startTime).format("LLL"));
+  //console.log(moment(examId[0].startTime).format("LLL"));
   console.log(examId);
   if (examId.length == 0)
     return res
