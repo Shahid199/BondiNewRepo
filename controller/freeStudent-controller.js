@@ -603,13 +603,39 @@ const assignQuestionFree = async (req, res, next) => {
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
   let totalQues = Number(totalQuesData.totalQuestionMcq);
+  //count question:start
+  let totalQuestionCount = null;
+  let eIdObj = new mongoose.Types.ObjectId(eId);
+  try {
+    totalQuestionCount = await McqQuestionVsExam.findOne({ eId: eIdObj });
+  } catch (err) {
+    return res.status(500).json("2.something went wrong");
+  }
+  totalQuestionCount = totalQuestionCount.mId.length;
   console.log(totalQues, "totalQues");
+  console.log(totalQuestionCount, "totalQuesCount");
+  //count question:end
   max = size - 1;
+  let countDown = 0;
   rand = parseInt(Date.now() % totalQues);
   if (rand == 0) rand = 1;
   if (rand == totalQues - 1) rand = rand - 1;
-  for (let j = rand; j >= 0; j--) doc.push(j);
-  for (let j = rand + 1; j < totalQues; j++) doc.push(j);
+  if (rand % 2 == 0) {
+    for (let j = rand; j >= 0; j--) doc.push(j);
+    for (let j = rand + 1; j < totalQuestionCount; j++) {
+      if (doc.length == totalQues) break;
+      doc.push(j);
+    }
+  } else {
+    for (let j = rand + 1; j < totalQuestionCount; j++) {
+      if (doc.length == totalQues) break;
+      doc.push(j);
+    }
+    for (let j = rand; j >= 0; j--) {
+      if (doc.length == totalQues) break;
+      doc.push(j);
+    }
+  }
   // for (let i = 0; i < totalQues; i++) {
   //   console.log("rand", rand);
   //   Math.random;
