@@ -761,7 +761,7 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(404).json("Exam Id is not valid.");
   const status = req.body.status;
   const totalQuestions = req.body.totalQuestions;
-  const marksPerQuestion = req.body.marksPerQuestion;
+  const marksPerQuestion = req.body.marksPerQuestion; //array
   let isNumber = marksPerQuestion.every((element) => {
     return typeof element === "number";
   });
