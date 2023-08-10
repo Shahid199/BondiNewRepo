@@ -380,8 +380,8 @@ const getFreeExamId = async (req, res, next) => {
       $and: [
         { status: true },
         { examFreeOrNot: true },
-        { startTime: { $lt: currentTime } },
-        { endTime: { $gt: currentTime } },
+        { startTime: { $lt: "2023-08-10T11:56:00.000Z" } },
+        { endTime: { $gt: "2023-08-10T11:56:00.000Z" } },
       ],
     });
   } catch (err) {
