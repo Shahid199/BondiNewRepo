@@ -21,7 +21,6 @@ const {
   deactivateExam,
   freeExamStatus,
   getExamType,
-  submitStudentScript,
   assignTeacher,
   assignStudentToTeacher,
   removeQuestionWritten,
