@@ -380,15 +380,15 @@ const getFreeExamId = async (req, res, next) => {
       $and: [
         { status: true },
         { examFreeOrNot: true },
-        { startTime: { $lt: currentTime } },
-        { endTime: { $gt: currentTime } },
+        //{ startTime: { $lt: currentTime } },
+        //{ endTime: { $gt: currentTime } },
       ],
     });
   } catch (err) {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  //console.log(moment(examId[0].startTime).format("LLL"));
+  console.log(moment(examId[0].startTime).format("LLL"));
   console.log(examId);
   if (examId.length == 0)
     return res
