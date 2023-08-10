@@ -59,16 +59,6 @@ router.post(
   ],
   addQuestionMcq
 );
-
-router.post(
-  "/addquestionwritten",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(),
-    upload.fields([{ name: "questionILink", maxCount: 1 }]),
-  ],
-  addQuestionWritten
-);
 router.get(
   "/getexambysubject",
   [
@@ -169,6 +159,43 @@ router.get(
   ],
   getExamType
 );
+router.get(
+  "/freecoursesub",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  freeCourseSub
+);
+
+//written routes
+router.post(
+  "/addquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.fields([{ name: "questionILink", maxCount: 1 }]),
+  ],
+  addQuestionWritten
+);
+
+router.post(
+  "/removequestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  removeQuestionWritten
+);
+router.get(
+  "/getwrittenquestionbyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getWrittenQuestionByexam
+);
+
 router.post(
   "/assignteacher",
   [
@@ -184,33 +211,6 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   assignStudentToTeacher
-);
-router.post(
-  "/removequestionwritten",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  removeQuestionWritten
-);
-
-router.get(
-  "/freecoursesub",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  freeCourseSub
-);
-
-
-router.get(
-  "/getwrittenquestionbyexam",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
-  ],
-  getWrittenQuestionByexam
 );
 
 module.exports = router;
