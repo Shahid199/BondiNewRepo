@@ -349,8 +349,8 @@ const freeGetHistoryByExamId = async (req, res, next) => {
     data1["examEndTime"] = moment(rank[i].examEndTime).format(
       "MMMM Do YYYY, h:mm:ss a"
     );
-    //data1["duration"] = rank[i].duration;
-    data1["duration"] = (data1.examEndTime - data1.examStartTime) / (1000 * 60);
+    data1["duration"] = rank[i].duration;
+    //data1["duration"] = (data1.examEndTime - data1.examStartTime) / (1000 * 60);
     data.push(data1);
   }
   examDetails = null;
