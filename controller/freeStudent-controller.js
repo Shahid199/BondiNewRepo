@@ -388,12 +388,13 @@ const getFreeExamId = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  // console.log(moment(examId[0].startTime).format("LLL"));
-  console.log(examId.length);
+  console.log(moment(examId[0].startTime).format("LLL"));
+  console.log(examId);
   if (examId.length == 0)
     return res
       .status(404)
       .json("No Free exam has been announced yet.Keep follow the site.");
+
   if (examId.length > 1) return res.status(404).json("Something went wrong.");
   return res.status(200).json(examId[0]);
 };
