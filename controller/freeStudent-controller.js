@@ -618,6 +618,7 @@ const assignQuestionFree = async (req, res, next) => {
   max = size - 1;
   let countDown = 0;
   rand = parseInt(Date.now() % totalQues);
+  console.log(rand, "rand");
   if (rand == 0) rand = 1;
   if (rand == totalQues - 1) rand = rand - 1;
   if (rand % 2 == 0) {
