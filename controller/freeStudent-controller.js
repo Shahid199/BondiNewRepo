@@ -1407,7 +1407,7 @@ const getAllRankFree = async (req, res, next) => {
     data1["examStartTime"] = moment(data2[i].examStartTime).format(
       "MMMM Do YYYY, h:mm:ss a"
     );
-    data1["examEndTime"] = data2[i].examEndTime.format(
+    data1["examEndTime"] = moment(data2[i].examEndTime).format(
       "MMMM Do YYYY, h:mm:ss a"
     );
     allData.push(data1);
