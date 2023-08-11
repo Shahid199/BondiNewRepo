@@ -13,6 +13,7 @@ const FreeMcqRank = require("../model/FreeMcqRank");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const ExamRule = require("../model/ExamRule");
+const { response } = require("express");
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
@@ -549,7 +550,7 @@ const examCheckMiddlewareFree = async (req, res, next) => {
   examIdObj = new mongoose.Types.ObjectId(examId);
   let status = null,
     query = null;
-  let currentDate = moment(Date.now());
+  let currentDate = moment(Date.now()).add(6, "hours");
   try {
     query = await Exam.findById(examId, "endTime");
   } catch (err) {
@@ -1407,6 +1408,20 @@ const getAllRankFree = async (req, res, next) => {
   return res.status(200).json(allData);
 };
 
+const updateNullData = async (req, res, next) => {
+  let examId = "64d61e0b6d50accd196c764d";
+  examId = new mongoose.Types.ObjectId(examId);
+  console.log(examId, "examId");
+  let students;
+  try {
+    students = await FreestudentMarksRank.find({
+      $and: [{ examId: examId }, { totalObtainedMarks: null }],
+    }).select("studentId -_id");
+  } catch (err) {
+    return res.status(200).json("Soomething went wrong.");
+  }
+  return res.status(200).json(students);
+};
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
 exports.freeLoginStudent = freeLoginStudent;

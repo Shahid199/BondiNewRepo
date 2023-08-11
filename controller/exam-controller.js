@@ -756,7 +756,7 @@ const addQuestionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (!existData) return res.status(404).json("Already added question.");
+  if (existData) return res.status(404).json("Already added question.");
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   const status = req.body.status;
