@@ -1414,7 +1414,7 @@ const updateNullData = async (req, res, next) => {
   console.log(examId, "examId");
   let students;
   try {
-    students = await FreestudentMarksRank.find({
+    students = await FreeMcqRank.find({
       $and: [{ examId: examId }],
     });
   } catch (err) {
