@@ -1426,7 +1426,7 @@ const getAllRankFree = async (req, res, next) => {
 };
 
 const updateNullData = async (req, res, next) => {
-  let examId = "64d61e0b6d50accd196c764d";
+  //let examId = "64d61e0b6d50accd196c764d";
   examId = new mongoose.Types.ObjectId(examId);
   console.log(examId, "examId");
   let students;
@@ -1440,17 +1440,17 @@ const updateNullData = async (req, res, next) => {
   let id = students[0].freeStudentId._id;
   id = new mongoose.Types.ObjectId(id);
   let upd = {
-    totalCorrectAnswer: 0,
-    totalWrongAnswer: 0,
-    totalNotAnswered: 50,
-    totalCorrectMarks: 0,
-    totalWrongMarks: 0,
-    totalObtainedMarks: 0,
+    totalCorrectAnswer: 20,
+    totalWrongAnswer: 13,
+    totalNotAnswered: 17,
+    totalCorrectMarks: 20,
+    totalWrongMarks: 3.25,
+    totalObtainedMarks: 16.75,
   };
   let sav = null;
   try {
-    sav = await FreeStudentExamVsQuestionsMcq.findOneAndUpdate(
-      { $and: [{ examId: examId }, { studentId: id }] },
+    sav = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(
+      "64d652b1326d83366fcb7f01",
       upd
     );
   } catch (err) {
