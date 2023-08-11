@@ -1416,7 +1416,7 @@ const updateNullData = async (req, res, next) => {
   try {
     students = await FreeMcqRank.find({
       $and: [{ examId: examId }],
-    });
+    }).populate("freeStudentId");
   } catch (err) {
     return res.status(200).json("Soomething went wrong.");
   }
