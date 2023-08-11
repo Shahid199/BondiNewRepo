@@ -1379,8 +1379,9 @@ const getAllRankFree = async (req, res, next) => {
   let freeStudentArr = [];
   for (let i = 0; i < resultRank.length; i++) {
     freeStudentArr[i] = resultRank[i].freeStudentId._id;
+    console.log(freeStudentArr[i]);
   }
-  console.log(freeStudentArr);
+  //console.log(freeStudentArr);
   try {
     data2 = await FreestudentMarksRank.find({
       studentId: { $in: freeStudentArr },
