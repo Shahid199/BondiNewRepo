@@ -1432,7 +1432,7 @@ const updateNullData = async (req, res, next) => {
   let students;
   try {
     students = await FreeMcqRank.find({
-      $and: [{ examId: examId }],
+      $and: [{ examId: examId }, { totalObtainedMarks: null }],
     }).populate("freeStudentId");
   } catch (err) {
     return res.status(200).json("Soomething went wrong.");
