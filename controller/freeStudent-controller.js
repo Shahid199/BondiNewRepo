@@ -1379,7 +1379,7 @@ const getAllRankFree = async (req, res, next) => {
   let freeStudentArr = [];
   for (let i = 0; i < resultRank.length; i++) {
     freeStudentArr[i] = resultRank[i].freeStudentId._id;
-    console.log(freeStudentArr[i]);
+    //console.log(freeStudentArr[i]);
   }
   //console.log(freeStudentArr);
   try {
@@ -1389,11 +1389,11 @@ const getAllRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Soomething went wrong.");
   }
-  for (let i = 0; i < resultRank.length; i++) {
-    //freeStudentArr[i] = resultRank[i].freeStudentId._id;
-    console.log(freeStudentArr[i], "freestudent");
-    console.log(data2[i].studentId, "data2");
-  }
+  // for (let i = 0; i < resultRank.length; i++) {
+  //   //freeStudentArr[i] = resultRank[i].freeStudentId._id;
+  //   console.log(freeStudentArr[i], "freestudent");
+  //   console.log(data2[i].studentId, "data2");
+  // }
   let allData = [];
   let totalStudent = null;
   for (let i = 0; i < resultRank.length; i++) {
@@ -1410,8 +1410,12 @@ const getAllRankFree = async (req, res, next) => {
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
-    data1["examStartTime"] = data2[i].examStartTime;
-    data1["examEndTime"] = data2[i].examEndTime;
+    data1["examStartTime"] = moment(data2[i].examStartTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    data1["examEndTime"] = moment(data2[i].examEndTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
     data1["id"] = resultRank[i].freeStudentId._id;
 
     allData.push(data1);
@@ -1433,7 +1437,8 @@ const updateNullData = async (req, res, next) => {
   } catch (err) {
     return res.status(200).json("Soomething went wrong.");
   }
-  return res.status(200).json(students);
+  let id = students.freeStudentId._id;
+  return res.status(200).json(id);
 };
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
