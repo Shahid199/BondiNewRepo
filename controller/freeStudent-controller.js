@@ -1410,8 +1410,8 @@ const getAllRankFree = async (req, res, next) => {
     allData.push(data1);
   }
 
-  return res.status(200).json(allData);
-  //return res.status(200).json(data2);
+  //return res.status(200).json(allData);
+  return res.status(200).json(data2);
 };
 
 const updateNullData = async (req, res, next) => {
