@@ -1383,7 +1383,7 @@ const getAllRankFree = async (req, res, next) => {
   console.log(freeStudentArr);
   try {
     data2 = await FreestudentMarksRank.find({
-      studentId: { $in: freeStudentArr },
+      studentId: { $in: { freeStudentArr } },
     }).sort({ totalObtainedMarks: -1 });
   } catch (err) {
     return res.status(500).json("Soomething went wrong.");
