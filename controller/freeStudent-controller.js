@@ -1376,10 +1376,14 @@ const getAllRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(freeStudentIds);
+  let freeStudentArr = [];
+  for (let i = 0; i < freeStudentIds.length; i++) {
+    freeStudentArr[i] = freeStudentIds[i].freeStudentId;
+  }
+  console.log(freeStudentArr);
   try {
     data2 = await FreestudentMarksRank.find({
-      studentId: { $in: freeStudentIds },
+      studentId: { $in: freeStudentArr },
     }).select("examStartTiime examEndTime -_id");
   } catch (err) {
     return res.status(500).json("Soomething went wrong.");
