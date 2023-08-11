@@ -1384,7 +1384,7 @@ const getAllRankFree = async (req, res, next) => {
   try {
     data2 = await FreestudentMarksRank.find({
       studentId: { $in: freeStudentArr },
-    }).select("examStartTime examEndTime -_id");
+    });
   } catch (err) {
     return res.status(500).json("Soomething went wrong.");
   }
@@ -1406,7 +1406,8 @@ const getAllRankFree = async (req, res, next) => {
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
     data1["examStartTime"] = data2[i].examStartTime;
     data1["examEndTime"] = data2[i].examEndTime;
-    data1["id"] = resultRank[i].freeStudentId;
+    data1["id"] = resultRank[i].freeStudentId._id;
+    data1["aId"] = data2[i].studentId;
     allData.push(data1);
   }
 
