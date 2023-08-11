@@ -1438,7 +1438,25 @@ const updateNullData = async (req, res, next) => {
     return res.status(200).json("Soomething went wrong.");
   }
   let id = students[0].freeStudentId._id;
-  return res.status(200).json(id);
+  id = new mongoose.Types.ObjectId(id);
+  let upd = {
+    totalCorrectAnswer: 0,
+    totalWrongAnswer: 0,
+    totalNotAnswered: 50,
+    totalCorrectMarks: 0,
+    totalWrongMarks: 0,
+    totalObtainedMarks: 0,
+  };
+  let sav = null;
+  try {
+    sav = await FreeStudentExamVsQuestionsMcq.findOneAndUpdate(
+      { studentId: id },
+      upd
+    );
+  } catch (err) {
+    return res.status(200).json("Soomething went wrong.");
+  }
+  return res.status(200).json(sav);
 };
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
