@@ -1415,7 +1415,7 @@ const updateNullData = async (req, res, next) => {
   let students;
   try {
     students = await FreestudentMarksRank.find({
-      $and: [{ examId: examId }, { totalObtainedMarks: null }],
+      $and: [{ examId: examId }],
     }).select("studentId -_id");
   } catch (err) {
     return res.status(200).json("Soomething went wrong.");
