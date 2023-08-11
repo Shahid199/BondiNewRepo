@@ -1437,8 +1437,8 @@ const updateNullData = async (req, res, next) => {
   } catch (err) {
     return res.status(200).json("Soomething went wrong.");
   }
-  // let id = students.freeStudentId;
-  return res.status(200).json(students);
+  let id = students[0].freeStudentId._id;
+  return res.status(200).json(id);
 };
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
