@@ -1384,25 +1384,25 @@ const getAllRankFree = async (req, res, next) => {
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
     let freeStudentId = resultRank[i].freeStudentId;
-    // let getData = null;
-    // try {
-    //   getData = await FreestudentMarksRank.findOne({
-    //     $and: [
-    //       {
-    //         studentId: freeStudentId,
-    //       },
-    //       { examId: examIdObj },
-    //     ],
-    //   });
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong.");
-    // }
-    // data1["examStartTime"] = moment(getData.examStartTime).format(
-    //   "MMMM Do YYYY, h:mm:ss a"
-    // );
-    // data1["examEndTime"] = moment(getData.examEndTime).format(
-    //   "MMMM Do YYYY, h:mm:ss a"
-    // );
+    let getData = null;
+    try {
+      getData = await FreestudentMarksRank.findOne({
+        $and: [
+          {
+            studentId: freeStudentId,
+          },
+          { examId: examIdObj },
+        ],
+      });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    data1["examStartTime"] = moment(getData.examStartTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    data1["examEndTime"] = moment(getData.examEndTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
     allData.push(data1);
   }
   return res.status(200).json(allData);
