@@ -1368,23 +1368,23 @@ const getAllRankFree = async (req, res, next) => {
   //console.log(resultRank);
   //eturn res.status(200).json(resultRank);
   let data2;
-  let freeStudentIds;
-  try {
-    freeStudentIds = await FreeMcqRank.find({ examId: examIdObj })
-      .sort("rank")
-      .select("freeStudentId -_id");
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
+  // let freeStudentIds;
+  // try {
+  //   freeStudentIds = await FreeMcqRank.find({ examId: examIdObj })
+  //     .sort("rank")
+  //     .select("freeStudentId -_id");
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
   let freeStudentArr = [];
-  for (let i = 0; i < freeStudentIds.length; i++) {
-    freeStudentArr[i] = freeStudentIds[i].freeStudentId;
+  for (let i = 0; i < resultRank.length; i++) {
+    freeStudentArr[i] = resultRank[i].freeStudentId._id;
   }
   console.log(freeStudentArr);
   try {
     data2 = await FreestudentMarksRank.find({
       studentId: { $in: freeStudentArr },
-    });
+    }).sort({ totalObtainedMarks: -1 });
   } catch (err) {
     return res.status(500).json("Soomething went wrong.");
   }
@@ -1404,15 +1404,8 @@ const getAllRankFree = async (req, res, next) => {
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
-
-    for (let j = 0; j < data2.length; j++) {
-      if (resultRank[i].freeStudentId._id == data2[j].studentId) {
-        data1["examStartTime"] = data2[j].examStartTime;
-        data1["examEndTime"] = data2[j].examEndTime;
-        data1["aId"] = data2[j].studentId;
-        break;
-      }
-    }
+    data1["examStartTime"] = data2[i].examStartTime;
+    data1["examEndTime"] = data2[i].examEndTime;
     data1["id"] = resultRank[i].freeStudentId._id;
 
     allData.push(data1);
