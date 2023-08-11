@@ -1369,6 +1369,7 @@ const getAllRankFree = async (req, res, next) => {
   //eturn res.status(200).json(resultRank);
   let allData = [];
   let totalStudent = null;
+  let freeStudentIds = [];
   for (let i = 0; i < resultRank.length; i++) {
     let data1 = {};
     let conData = "*******";
@@ -1383,27 +1384,20 @@ const getAllRankFree = async (req, res, next) => {
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
-    let freeStudentId = resultRank[i].freeStudentId;
-    let getData = null;
-    try {
-      getData = await FreestudentMarksRank.findOne({
-        $and: [
-          {
-            studentId: freeStudentId,
-          },
-          { examId: examIdObj },
-        ],
-      });
-    } catch (err) {
-      return res.status(500).json("Something went wrong.");
-    }
-    data1["examStartTime"] = moment(getData.examStartTime).format(
-      "MMMM Do YYYY, h:mm:ss a"
-    );
-    data1["examEndTime"] = moment(getData.examEndTime).format(
-      "MMMM Do YYYY, h:mm:ss a"
-    );
+    freeStudentIds[i] = resultRank[i].freeStudentId;
     allData.push(data1);
+  }
+  let data2;
+  try {
+    data2 = await FreestudentMarksRank.find({
+      studentId: { $in: freeStudentIds },
+    }).select("examStartTiime examEndTime -_id");
+  } catch (err) {
+    return res.status(500).json("Soomething went wrong.");
+  }
+  for (let i = 0; i < resultRank.length; i++) {
+    allData[i].examStartTime = data2[i].examStartTime;
+    allData[i].examEndTime = data2[i].examStartTime;
   }
   return res.status(200).json(allData);
 };
