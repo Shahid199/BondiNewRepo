@@ -1427,18 +1427,18 @@ const getAllRankFree = async (req, res, next) => {
 
 const updateNullData = async (req, res, next) => {
   //let examId = "64d61e0b6d50accd196c764d";
-  examId = new mongoose.Types.ObjectId(examId);
-  console.log(examId, "examId");
-  let students;
-  try {
-    students = await FreeMcqRank.find({
-      $and: [{ examId: examId }, { totalObtainedMarks: null }],
-    }).populate("freeStudentId");
-  } catch (err) {
-    return res.status(200).json("Soomething went wrong.");
-  }
-  let id = students[0].freeStudentId._id;
-  id = new mongoose.Types.ObjectId(id);
+  // examId = new mongoose.Types.ObjectId(examId);
+  // console.log(examId, "examId");
+  // let students;
+  // try {
+  //   students = await FreeMcqRank.find({
+  //     $and: [{ examId: examId }, { totalObtainedMarks: null }],
+  //   }).populate("freeStudentId");
+  // } catch (err) {
+  //   return res.status(200).json("Soomething went wrong.");
+  // }
+  // let id = students[0].freeStudentId._id;
+  // id = new mongoose.Types.ObjectId(id);
   let upd = {
     totalCorrectAnswer: 20,
     totalWrongAnswer: 13,
