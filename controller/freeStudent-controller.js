@@ -1450,7 +1450,7 @@ const updateNullData = async (req, res, next) => {
   let sav = null;
   try {
     sav = await FreeStudentExamVsQuestionsMcq.findOneAndUpdate(
-      { studentId: id },
+      { $and: [{ examId: examId }, { studentId: id }] },
       upd
     );
   } catch (err) {
