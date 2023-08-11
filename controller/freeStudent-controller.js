@@ -1399,7 +1399,8 @@ const getAllRankFree = async (req, res, next) => {
     allData[i].examStartTime = data2[i].examStartTime;
     allData[i].examEndTime = data2[i].examStartTime;
   }
-  return res.status(200).json(allData);
+  //return res.status(200).json(allData);
+  return res.status(200).json(data2);
 };
 
 const updateNullData = async (req, res, next) => {
