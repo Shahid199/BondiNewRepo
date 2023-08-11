@@ -1376,6 +1376,7 @@ const getAllRankFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Soomething went wrong.");
   }
+  console.log(freeStudentIds);
   let allData = [];
   let totalStudent = null;
   for (let i = 0; i < resultRank.length; i++) {
