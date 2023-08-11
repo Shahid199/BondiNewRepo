@@ -1406,6 +1406,7 @@ const getAllRankFree = async (req, res, next) => {
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
     data1["examStartTime"] = data2[i].examStartTime;
     data1["examEndTime"] = data2[i].examEndTime;
+    data1["id"] = resultRank[i].freeStudentId;
     allData.push(data1);
   }
 
