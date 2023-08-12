@@ -21,7 +21,6 @@ const TeacherVsExam = require("../model/TeacherVsExam");
 const Limit = 100;
 //create Exam
 const createExam = async (req, res, next) => {
-  console.log("start", req.body);
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
@@ -40,32 +39,14 @@ const createExam = async (req, res, next) => {
     endTime,
     totalQuestionMcq,
     marksPerMcq,
+    totalMarksMcq,
     status,
     duration,
     sscStatus,
     hscStatus,
     negativeMarks,
   } = req.body;
-  console.log("end", req.body);
-  //data upload from API
-  // const examFromQuery = req.body;
-  // const {
-  //   courseId,
-  //   subjectId,
-  //   name,
-  //   examType,
-  //   examVariation,
-  //   examFreeOrNot,
-  //   startTime,
-  //   endTime,
-  //   totalQuestionMcq,
-  //   marksPerMcq,
-  //   status,
-  //   duration,
-  //   sscStatus,
-  //   hscStatus,
-  //   negativeMarks,
-  // } = examFromQuery;
+  
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
     return res.status(404).json("course Id or subject Id is invalid.");
   let startTime1, endTime1, tqm, tmm;
@@ -92,7 +73,7 @@ const createExam = async (req, res, next) => {
     duration: Number(duration),
     totalQuestionMcq: tqm,
     marksPerMcq: tmm,
-    totalMarksMcq: tmm * tqm,
+    totalMarksMcq:Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
@@ -189,6 +170,7 @@ const updateExam = async (req, res, next) => {
     endTime,
     totalQuestionMcq,
     marksPerMcq,
+    totalMarksMcq,
     status,
     duration,
     sscStatus,
@@ -217,7 +199,7 @@ const updateExam = async (req, res, next) => {
     duration: Number(duration),
     totalQuestionMcq: Number(totalQuestionMcq),
     marksPerMcq: Number(marksPerMcq),
-    totalMarksMcq: Number(totalQuestionMcq) * Number(marksPerMcq),
+    totalMarksMcq:Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
