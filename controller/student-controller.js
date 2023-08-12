@@ -2537,7 +2537,8 @@ const assignWrittenQuestion = async (req, res, next) => {
   );
   data1["examStartTime"] = examData.startTime;
   data1["examEndTime"] = examData.endTime;
-  if(data1.exam)
+  if (data1.examEndTime < data1.studExamEndTime)
+    data1["studExamEndTime"] = data1.examEndTime;
   data1["duration"] = examData.duration;
   data1["examId"] = examId;
   data1["examName"] = examData.name;
@@ -2667,7 +2668,7 @@ const runningWritten = async (req, res, next) => {
   return res.status(200).json(data1);
 };
 const submitWritten = async (req, res, next) => {
-  const examId = req.body.examId;
+  const examId = req.query.examId;
   const studentId = req.user.studentId;
   const questionId = req.body.questionId;
   if (
