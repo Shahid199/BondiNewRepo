@@ -3,6 +3,7 @@ let options = {
   origin: [
     "http://localhost:3001",
     "http://localhost:3000",
+    "http://localhost:3002",
     "https://admin.bpexam.live",
     "https://bpexam.live",
     "https://free.bpexam.live",
@@ -10,6 +11,7 @@ let options = {
   "Access-Control-Allow-Origin": [
     "http://localhost:3001",
     "http://localhost:3000",
+    "http://localhost:3002",
     "https://admin.bpexam.live",
     "https://bpexam.live",
     "https://free.bpexam.live",

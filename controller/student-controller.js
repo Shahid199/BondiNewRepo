@@ -2605,8 +2605,9 @@ const submitStudentScript = async (req, res, next) => {
       fs.unlinkSync(getQuestionScript[questionNo][i]);
     }
   }
-  console.log(getQuestionScript);
-  getQuestionScript[questionNo].push(questionILinkPath);
+
+  getQuestionScript[questionNo] = questionILinkPath;
+  console.log(getQuestionScript[questionNo]);
   let upd = {
     submittedScriptILink: getQuestionScript,
   };
