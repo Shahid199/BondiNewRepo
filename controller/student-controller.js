@@ -2656,7 +2656,7 @@ const runningWritten = async (req, res, next) => {
   data1["duration"] = examData.duration;
   data1["examId"] = examId;
   data1["examName"] = examData.name;
-  data1["variation"] = examData.variation;
+  data1["variation"] = examData.examVariation;
 
   return res.status(200).json(data1);
 };
