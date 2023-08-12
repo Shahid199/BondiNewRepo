@@ -751,9 +751,7 @@ const addQuestionWritten = async (req, res, next) => {
   //   return res
   //     .status(404)
   //     .json("Marks per question is not valid or someting went wrong.");
-  const totalMarks = marksPerQuestion.reduce((accumulator, currentValue) => {
-    return accumulator + currentValue;
-  }, 0);
+  const totalMarks = req.body.totalMarks;
 
   console.log(req.body.marksPerQuestion);
   //file upload handle
