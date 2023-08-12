@@ -2600,7 +2600,7 @@ const submitStudentScript = async (req, res, next) => {
   if (uploadStatus == true || checkStatus == true)
     return res.status(404).json("Can not upload file.");
   getQuestionScript = getQuestionScript.submittedScriptILink;
-  if (!getQuestionScript[questionNo]) {
+  if (getQuestionScript[questionNo]) {
     for (let i = 0; i < getQuestionScript[questionNo].length; i++) {
       fs.unlinkSync(getQuestionScript[questionNo][i]);
     }
