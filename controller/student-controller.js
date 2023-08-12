@@ -2568,8 +2568,8 @@ const submitStudentScript = async (req, res, next) => {
     questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
   }
   //file upload handle:end
-  const examId = req.body.examId;
-  const studentId = req.user.studentId;
+  let examId = req.body.examId;
+  let studentId = req.user.studentId;
   let questionNo = Number(req.body.questionNo);
   console.log(questionNo);
   console.log(examId);
