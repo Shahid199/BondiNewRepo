@@ -2647,7 +2647,7 @@ const runningWritten = async (req, res, next) => {
   data1["questionILink"] = questionData.questionILink;
   data1["status"] = questionData.status;
   data1["totalQuestions"] = questionData.totalQuestions;
-  data1["marksPerQuestions"] = questionData.marksPerQuestions;
+  data1["marksPerQuestions"] = questionData.marksPerQuestion;
   data1["totalMarks"] = questionData.totalMarks;
   data1["studExamStartTime"] = timeData.examStartTime;
   data1["studExamEndTime"] = timeData.examEndTime;
