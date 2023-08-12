@@ -2633,8 +2633,7 @@ const runningWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
-  console.log(questionData);
-  console.log(examData);
+  
   let timeData = null;
   try {
     timeData = await StudentMarksRank.findOne({
@@ -2657,6 +2656,7 @@ const runningWritten = async (req, res, next) => {
   data1["examId"] = examId;
   data1["examName"] = examData.name;
   data1["variation"] = examData.examVariation;
+  data1["examType"] = examData.examType;
 
   return res.status(200).json(data1);
 };
