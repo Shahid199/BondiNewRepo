@@ -736,7 +736,7 @@ const addQuestionWritten = async (req, res, next) => {
   try {
     existData = await QuestionsWritten.findOne({ examId: examId });
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   if (existData) return res.status(404).json("Already added question.");
   if (!ObjectId.isValid(examId))
@@ -753,7 +753,11 @@ const addQuestionWritten = async (req, res, next) => {
   //     .json("Marks per question is not valid or someting went wrong.");
   const totalMarks = req.body.totalMarks;
 
-  console.log(req.body.marksPerQuestion);
+  console.log(examId);
+  console.log(status);
+  console.log(totalQuestions);
+  console.log(marksPerQuestion);
+  console.log(totalMarks);
   //file upload handle
   const file = req.files;
   //console.log(file);
@@ -766,7 +770,7 @@ const addQuestionWritten = async (req, res, next) => {
   //written question save to db table
   let question = new QuestionsWritten({
     questionILink: questionILinkPath,
-    status: status,
+    status: JSON.parse(status),
     totalQuestions: Number(totalQuestions),
     marksPerQuestion: marksPerQuestion,
     totalMarks: totalMarks,
@@ -777,7 +781,7 @@ const addQuestionWritten = async (req, res, next) => {
     doc = await question.save();
   } catch (err) {
     //console.log(err);
-    return res.status(500).json("Something went wrong!");
+    return res.status(500).json("2.Something went wrong!");
   }
 
   return res.status(404).json("Question save correctly.");
