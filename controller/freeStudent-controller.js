@@ -1425,39 +1425,39 @@ const getAllRankFree = async (req, res, next) => {
   //return res.status(200).json(data2);
 };
 
-const updateNullData = async (req, res, next) => {
-  //let examId = "64d61e0b6d50accd196c764d";
-  // examId = new mongoose.Types.ObjectId(examId);
-  // console.log(examId, "examId");
-  // let students;
-  // try {
-  //   students = await FreeMcqRank.find({
-  //     $and: [{ examId: examId }, { totalObtainedMarks: null }],
-  //   }).populate("freeStudentId");
-  // } catch (err) {
-  //   return res.status(200).json("Soomething went wrong.");
-  // }
-  // let id = students[0].freeStudentId._id;
-  // id = new mongoose.Types.ObjectId(id);
-  let upd = {
-    totalCorrectAnswer: 20,
-    totalWrongAnswer: 13,
-    totalNotAnswered: 17,
-    totalCorrectMarks: 20,
-    totalWrongMarks: 3.25,
-    totalObtainedMarks: 16.75,
-  };
-  let sav = null;
-  try {
-    sav = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(
-      "64d652b1326d83366fcb7f01",
-      upd
-    );
-  } catch (err) {
-    return res.status(200).json("Soomething went wrong.");
-  }
-  return res.status(200).json(sav);
-};
+// const updateNullData = async (req, res, next) => {
+//   //let examId = "64d61e0b6d50accd196c764d";
+//   // examId = new mongoose.Types.ObjectId(examId);
+//   // console.log(examId, "examId");
+//   // let students;
+//   // try {
+//   //   students = await FreeMcqRank.find({
+//   //     $and: [{ examId: examId }, { totalObtainedMarks: null }],
+//   //   }).populate("freeStudentId");
+//   // } catch (err) {
+//   //   return res.status(200).json("Soomething went wrong.");
+//   // }
+//   // let id = students[0].freeStudentId._id;
+//   // id = new mongoose.Types.ObjectId(id);
+//   let upd = {
+//     totalCorrectAnswer: 20,
+//     totalWrongAnswer: 13,
+//     totalNotAnswered: 17,
+//     totalCorrectMarks: 20,
+//     totalWrongMarks: 3.25,
+//     totalObtainedMarks: 16.75,
+//   };
+//   let sav = null;
+//   try {
+//     sav = await FreeStudentExamVsQuestionsMcq.findByIdAndUpdate(
+//       "64d652b1326d83366fcb7f01",
+//       upd
+//     );
+//   } catch (err) {
+//     return res.status(200).json("Soomething went wrong.");
+//   }
+//   return res.status(200).json(sav);
+// };
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
 exports.freeLoginStudent = freeLoginStudent;
