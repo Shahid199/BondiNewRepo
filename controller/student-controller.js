@@ -2571,7 +2571,9 @@ const submitStudentScript = async (req, res, next) => {
   const examId = req.body.examId;
   const studentId = req.user.studentId;
   let questionNo = Number(req.body.questionNo);
-  questionNo = questionNo - 1;
+  console.log(questionNo);
+  console.log(examId);
+  console.log(studentId);
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
@@ -2581,6 +2583,7 @@ const submitStudentScript = async (req, res, next) => {
       .status(404)
       .json("Student Id or Exam Id or question Id is not valid.");
   }
+  questionNo = questionNo - 1;
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   let getQuestionScript = null;
@@ -2633,7 +2636,7 @@ const runningWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
-  
+
   let timeData = null;
   try {
     timeData = await StudentMarksRank.findOne({
