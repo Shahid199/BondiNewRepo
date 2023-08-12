@@ -2564,7 +2564,7 @@ const submitStudentScript = async (req, res, next) => {
   //console.log(file);
   let questionILinkPath = [];
   if (!file.questionILink) return res.status(400).json("Files not uploaded.");
-  for (let i = 0; i < length(file.questionILink); i++) {
+  for (let i = 0; i < file.questionILink.length; i++) {
     questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
   }
   //file upload handle:end
