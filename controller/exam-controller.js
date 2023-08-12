@@ -801,7 +801,7 @@ const removeQuestionWritten = async (req, res, next) => {
 };
 const getWrittenQuestionByexam = async (req, res, next) => {
   let writtenQuestion = null;
-  let examId = req.body.examId;
+  let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId("examId");
   try {
     writtenQuestion = await QuestionsWritten.findOne({
