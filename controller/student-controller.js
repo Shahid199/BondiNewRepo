@@ -2531,12 +2531,13 @@ const assignWrittenQuestion = async (req, res, next) => {
   data1["marksPerQuestions"] = questionData.marksPerQuestions;
   data1["totalMarks"] = questionData.totalMarks;
   data1["studExamStartTime"] = moment(new Date()).add(6, "hours");
-  data1["studExamEndTime"] = moment(data1.examStartTime).add(
+  data1["studExamEndTime"] = moment(data1.studExamStartTime).add(
     examData.duration,
     "minutes"
   );
   data1["examStartTime"] = examData.startTime;
   data1["examEndTime"] = examData.endTime;
+  if(data1.exam)
   data1["duration"] = examData.duration;
   data1["examId"] = examId;
   data1["examName"] = examData.name;
