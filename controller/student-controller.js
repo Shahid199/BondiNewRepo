@@ -2624,7 +2624,7 @@ const runningWritten = async (req, res, next) => {
   studentId = new mongoose.Types.ObjectId(studentId);
   let data1 = {};
   try {
-    questionData = QuestionsWritten.find({
+    questionData = QuestionsWritten.findOne({
       $and: [{ examId: examId }, { status: true }],
     });
     examData = await Exam.findOne({
