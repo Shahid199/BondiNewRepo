@@ -784,7 +784,7 @@ const removeQuestionWritten = async (req, res, next) => {
   let examTime = null;
   try {
     examTime = await Exam.findOne({
-      $and: [{ examId: examId }, { startTime: { $gt: currentTime } }],
+      $and: [{ examId: examId }, { startTime: { $lt: currentTime } }],
     }).select("-_id");
   } catch (err) {
     return res.status(500).json("SOmething went wrong.");
