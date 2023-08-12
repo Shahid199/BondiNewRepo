@@ -780,7 +780,7 @@ const removeQuestionWritten = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
-  let currentTime = new Date(moment(Date.now()).add(6, "hours")).toISOString();
+  let currentTime = new Date(moment(new Date()).add(6, "hours")).toISOString();
   let examTime = null;
   console.log(currentTime);
   try {
