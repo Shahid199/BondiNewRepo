@@ -780,22 +780,22 @@ const removeQuestionWritten = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
-  let currentTime = new Date(moment(new Date()).add(6, "hours")).toISOString();
-  let examTime = null;
-  console.log(currentTime);
-  try {
-    examTime = await Exam.findOne({
-      $and: [{ examId: examId }, { startTime: { $gt: currentTime } }],
-    });
-  } catch (err) {
-    return res.status(500).json("SOmething went wrong.");
-  }
-  console.log(examTime);
-  if (!examTime)
-    return res.status(404).json("Cannot remove question.Exam Already started.");
+  // let currentTime = new Date(moment(new Date()).add(6, "hours")).toISOString();
+  // let examTime = null;
+  // console.log(currentTime);
+  // try {
+  //   examTime = await Exam.findOne({
+  //     $and: [{ examId: examId }, { startTime: { $gt: currentTime } }],
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("SOmething went wrong.");
+  // }
+  // console.log(examTime);
+  // if (!examTime)
+  //   return res.status(404).json("Cannot remove question.Exam Already started.");
   let remove = null;
   try {
-    remove = await QuestionsWritten.findByIdAndRemove(examId);
+    remove = await QuestionsWritten.findOneAndRemove({ examId: examId });
   } catch (err) {
     return res.status(500).json("SOmething went wrong.");
   }
