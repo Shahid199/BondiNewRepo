@@ -21,12 +21,11 @@ const {
   deactivateExam,
   freeExamStatus,
   getExamType,
-  submitStudentScript,
   assignTeacher,
   assignStudentToTeacher,
   removeQuestionWritten,
   freeCourseSub,
-  updateFreeExam,
+  getWrittenQuestionByexam,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -58,16 +57,6 @@ router.post(
     ]),
   ],
   addQuestionMcq
-);
-
-router.post(
-  "/addquestionwritten",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(),
-    upload.fields([{ name: "questionILink", maxCount: 1 }]),
-  ],
-  addQuestionWritten
 );
 router.get(
   "/getexambysubject",
@@ -169,15 +158,43 @@ router.get(
   ],
   getExamType
 );
-router.post(
-  "/submitstudentscript",
+router.get(
+  "/freecoursesub",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
-    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+    authorize(["superadmin", "moderator"]),
   ],
-  submitStudentScript
+  freeCourseSub
 );
+
+//written routes
+router.post(
+  "/addquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.fields([{ name: "questionILink", maxCount: 1 }]),
+  ],
+  addQuestionWritten
+);
+
+router.post(
+  "/removequestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  removeQuestionWritten
+);
+router.get(
+  "/getwrittenquestionbyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student", "teacher"]),
+  ],
+  getWrittenQuestionByexam
+);
+
 router.post(
   "/assignteacher",
   [
@@ -194,24 +211,5 @@ router.post(
   ],
   assignStudentToTeacher
 );
-router.post(
-  "/removequestionwritten",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  removeQuestionWritten
-);
-
-router.get(
-  "/freecoursesub",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  freeCourseSub
-);
-
-
 
 module.exports = router;

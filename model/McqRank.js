@@ -29,4 +29,4 @@ const McqRanksSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("McqRanks", McqRanksSchema);
+module.exports = mongoose.model("McqRank", McqRanksSchema);

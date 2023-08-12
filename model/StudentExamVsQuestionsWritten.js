@@ -16,11 +16,6 @@ const studentExamVsQuestionsWrittenSchema = new Schema(
       required: true,
       ref: exams,
     },
-    writtenQuestionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: questionsWritten,
-    },
     //when students submit image answer script
     submittedScriptILink: [
       [

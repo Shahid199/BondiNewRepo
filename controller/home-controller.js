@@ -16,7 +16,7 @@ const getHomePage = async (req, res, next) => {
     subjectDataweekly;
   let courseId = new mongoose.Types.ObjectId(req.user.courseId);
   let studentId = new mongoose.Types.ObjectId(req.user.studentId);
-  let currentTime = moment(Date.now());
+  let currentTime = moment(Date.now()).add(6, "hours");
   //Top
   if (section == "top") {
     //let currentTime = new Date();
