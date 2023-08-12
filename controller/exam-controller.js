@@ -734,7 +734,9 @@ const addQuestionWritten = async (req, res, next) => {
   examId = new mongoose.Types.ObjectId(examId);
   let existData = null;
   try {
-    existData = await QuestionsWritten.findOne({ examId: examId });
+    existData = await QuestionsWritten.findOne({
+      $and: [{ examId: examId }, { status: true }],
+    });
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
@@ -743,21 +745,8 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(404).json("Exam Id is not valid.");
   const status = req.body.status;
   const totalQuestions = req.body.totalQuestions;
-  const marksPerQuestion = req.body.marksPerQuestion; //array
-  // let isNumber = marksPerQuestion.every((element) => {
-  //   return typeof element === "number";
-  // });
-  // if (isNumber == false || length(marksPerQuestion) != Number(totalQuestions))
-  //   return res
-  //     .status(404)
-  //     .json("Marks per question is not valid or someting went wrong.");
+  const marksPerQuestion = parseInt(req.body.marksPerQuestion); //array
   const totalMarks = req.body.totalMarks;
-
-  console.log(examId);
-  console.log(status);
-  console.log(totalQuestions);
-  console.log(marksPerQuestion);
-  console.log(totalMarks);
   //file upload handle
   const file = req.files;
   //console.log(file);
@@ -780,11 +769,11 @@ const addQuestionWritten = async (req, res, next) => {
   try {
     doc = await question.save();
   } catch (err) {
-    //console.log(err);
+    console.log(err);
     return res.status(500).json("2.Something went wrong!");
   }
 
-  return res.status(404).json("Question save correctly.");
+  return res.status(200).json("Question save correctly.");
 };
 const removeQuestionWritten = async (req, res, next) => {
   let examId = req.body.examId;

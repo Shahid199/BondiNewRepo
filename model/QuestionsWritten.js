@@ -7,7 +7,6 @@ const questionWrittenSchema = new Schema(
     questionILink: {
       type: String,
       required: true,
-      unique: true,
     },
     status: {
       type: Boolean,
@@ -37,4 +36,4 @@ const questionWrittenSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("QuestionWritten", questionWrittenSchema);
+module.exports = mongoose.model("QuestionsWritten", questionWrittenSchema);
