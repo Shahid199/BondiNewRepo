@@ -745,7 +745,12 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(404).json("Exam Id is not valid.");
   const status = req.body.status;
   const totalQuestions = req.body.totalQuestions;
-  const marksPerQuestion = parseInt(req.body.marksPerQuestion); //array
+  let marksPerQuestion = req.body.marksPerQuestion; //array
+  // for (let i = 0; i < marksPerQuestion.length; i++) {
+  //   marksPerQuestion[i] = parseInt(marksPerQuestion[i]);
+  // }
+  marksPerQuestion = marksPerQuestion.split(",");
+  console.log(marksPerQuestion);
   const totalMarks = req.body.totalMarks;
   //file upload handle
   const file = req.files;
