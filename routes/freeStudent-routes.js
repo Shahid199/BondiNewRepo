@@ -178,14 +178,7 @@ router.get(
   getAllRankFree
 );
 
-router.get(
-  "/getfreeexamnew",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
-  ],
-  getFreeExamNew
-);
+router.get("/getfreeexamnew", getFreeExamNew);
 
 // router.get(
 //   "/updatenulldata",
