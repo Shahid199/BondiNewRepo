@@ -2510,7 +2510,7 @@ const assignWrittenQuestion = async (req, res, next) => {
   let questionData = null;
   let data1 = {};
   try {
-    questionData = QuestionsWritten.find({
+    questionData = await QuestionsWritten.find({
       $and: [{ examId: examId }, { status: true }],
     });
     examData = await Exam.findOne({
