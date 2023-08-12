@@ -2490,7 +2490,7 @@ const writtenExamCheckMiddleware = async (req, res, next) => {
   }
 };
 const assignWrittenQuestion = async (req, res, next) => {
-  let examId = req.body.examId;
+  let examId = req.query.examId;
   let studentId = req.user.studentId;
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
@@ -2630,7 +2630,7 @@ const runningWritten = async (req, res, next) => {
       $and: [{ _id: examId }, { examFreeOrNot: false }, { status: true }],
     });
   } catch (err) {
-    return res.status(500).json("something went wrong.");
+    return res.status(500).json("1.something went wrong.");
   }
   let timeData = null;
   try {
@@ -2638,7 +2638,7 @@ const runningWritten = async (req, res, next) => {
       $and: [{ examId: examId }, { studentId: studentId }],
     });
   } catch (err) {
-    return res.status(500).json("something went wrong.");
+    return res.status(500).json("2.something went wrong.");
   }
 
   data1["questionILink"] = questionData.questionILink;
