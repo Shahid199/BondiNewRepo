@@ -41,6 +41,7 @@ const {
   submitWritten,
   writtenExamCheckMiddleware,
   updateStudentWrittenExamInfo,
+  runningWritten,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -318,6 +319,15 @@ router.get(
   ],
   assignWrittenQuestion
 );
+router.get(
+  "/runningwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  runningWritten
+);
+
 router.post(
   "/submitstudentscript",
   [

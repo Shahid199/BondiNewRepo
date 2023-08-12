@@ -2543,8 +2543,8 @@ const assignWrittenQuestion = async (req, res, next) => {
   let objSav = new StudentMarksRank({
     examId: examId,
     studentId: studentId,
-    examStartTime: data1.examStartTime,
-    examEndTime: data1.examEndTime,
+    examStartTime: data1.studExamStartTime,
+    examEndTime: data1.studExamEndTime,
     duration: data1.duration,
   });
 
@@ -2613,6 +2613,49 @@ const submitStudentScript = async (req, res, next) => {
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json("Submitted Successfully.");
+};
+const runningWritten = async (req, res, next) => {
+  let questionData = null;
+  let examData = null;
+  let examId = req.query.examId;
+  let studentId = req.user.studentId;
+  examId = new mongoose.Types.ObjectId(examId);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  let data1 = {};
+  try {
+    questionData = QuestionsWritten.find({
+      $and: [{ examId: examId }, { status: true }],
+    });
+    examData = await Exam.findOne({
+      $and: [{ _id: examId }, { examFreeOrNot: false }, { status: true }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  let timeData = null;
+  try {
+    timeData = await StudentMarksRank.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+
+  data1["questionILink"] = questionData.questionILink;
+  data1["status"] = questionData.status;
+  data1["totalQuestions"] = questionData.totalQuestions;
+  data1["marksPerQuestions"] = questionData.marksPerQuestions;
+  data1["totalMarks"] = questionData.totalMarks;
+  data1["studExamStartTime"] = timeData.examStartTime;
+  data1["studExamEndTime"] = timeData.examEndTime;
+  data1["examStartTime"] = examData.startTime;
+  data1["examEndTime"] = examData.endTime;
+  data1["duration"] = examData.duration;
+  data1["examId"] = examId;
+  data1["examName"] = examData.name;
+  data1["variation"] = examData.variation;
+
+  return res.status(200).json(data1);
 };
 const submitWritten = async (req, res, next) => {
   const examId = req.body.examId;
@@ -2732,3 +2775,4 @@ exports.getStudentNameSearch = getStudentNameSearch;
 exports.getStudentMobileSearch = getStudentMobileSearch;
 exports.getRankStudent = getRankStudent;
 exports.examTimeCheck = examTimeCheck;
+exports.runningWritten = runningWritten;
