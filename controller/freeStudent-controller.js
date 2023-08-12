@@ -1480,4 +1480,3 @@ exports.getExamById = getExamById;
 exports.getFreeExamAll = getFreeExamAll;
 exports.freeGetHistoryByExamId = freeGetHistoryByExamId;
 exports.getAllRankFree = getAllRankFree;
-exports.updateNullData = updateNullData;

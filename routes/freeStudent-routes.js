@@ -177,14 +177,14 @@ router.get(
   getAllRankFree
 );
 
-router.get(
-  "/updatenulldata",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
-  updateNullData
-);
+// router.get(
+//   "/updatenulldata",
+//   [
+//     passport.authenticate("jwt", { session: false }),
+//     authorize(["superadmin", "moderator"]),
+//   ],
+//   updateNullData
+// );
 
 //end:free student exam route
 

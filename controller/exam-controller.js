@@ -46,7 +46,7 @@ const createExam = async (req, res, next) => {
     hscStatus,
     negativeMarks,
   } = req.body;
-  
+
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
     return res.status(404).json("course Id or subject Id is invalid.");
   let startTime1, endTime1, tqm, tmm;
@@ -73,7 +73,7 @@ const createExam = async (req, res, next) => {
     duration: Number(duration),
     totalQuestionMcq: tqm,
     marksPerMcq: tmm,
-    totalMarksMcq:Number(totalMarksMcq),
+    totalMarksMcq: Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
@@ -199,7 +199,7 @@ const updateExam = async (req, res, next) => {
     duration: Number(duration),
     totalQuestionMcq: Number(totalQuestionMcq),
     marksPerMcq: Number(marksPerMcq),
-    totalMarksMcq:Number(totalMarksMcq),
+    totalMarksMcq: Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
@@ -744,19 +744,21 @@ const addQuestionWritten = async (req, res, next) => {
   const status = req.body.status;
   const totalQuestions = req.body.totalQuestions;
   const marksPerQuestion = req.body.marksPerQuestion; //array
-  let isNumber = marksPerQuestion.every((element) => {
-    return typeof element === "number";
-  });
-  if (isNumber == false || length(marksPerQuestion) != Number(totalQuestions))
-    return res
-      .status(404)
-      .json("Marks per question is not valid or someting went wrong.");
+  // let isNumber = marksPerQuestion.every((element) => {
+  //   return typeof element === "number";
+  // });
+  // if (isNumber == false || length(marksPerQuestion) != Number(totalQuestions))
+  //   return res
+  //     .status(404)
+  //     .json("Marks per question is not valid or someting went wrong.");
   const totalMarks = marksPerQuestion.reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0);
+
+  console.log(req.body.marksPerQuestion);
   //file upload handle
   const file = req.files;
-  console.log(file);
+  //console.log(file);
   let questionILinkPath = null;
   // console.log(file.questionILink[0].filename);
   // return res.status(201).json("Ok");
