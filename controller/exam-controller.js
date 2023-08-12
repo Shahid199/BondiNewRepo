@@ -766,7 +766,7 @@ const addQuestionWritten = async (req, res, next) => {
   //written question save to db table
   let question = new QuestionsWritten({
     questionILink: questionILinkPath,
-    status: JSON.parse(status),
+    status: status,
     totalQuestions: Number(totalQuestions),
     marksPerQuestion: marksPerQuestion,
     totalMarks: totalMarks,
