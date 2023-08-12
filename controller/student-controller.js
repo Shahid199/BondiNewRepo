@@ -24,6 +24,7 @@ const McqRank = require("../model/McqRank");
 const passport = require("passport");
 const FreeMcqRank = require("../model/FreeMcqRank");
 const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
+const QuestionsWritten = require("../model/QuestionsWritten");
 
 const Limit = 100;
 
