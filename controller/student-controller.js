@@ -2744,7 +2744,7 @@ const updateStudentWrittenExamInfo = async (req, res, next) => {
 };
 const getWrittenStudentAllByExam = async (req, res, next) => {
   let examId = req.query.examId;
-  if (!isValid.ObjectId(examId))
+  if (!ObjectId.isValid(examId))
     return res.status(404).json("exam ID is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null,
@@ -2759,8 +2759,8 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
   for (let i = 0; i < data.length; i++) {
     let dataObj = {};
     dataObj["examName"] = data[i].examId.name;
-    dataObj["examVariation"] = examVariation(data[i].examId.examVariation);
-    dataObj["examType"] = examType(data[i].examId.examType);
+    dataObj["examVariation"] = examVariation[data[i].examId.examVariation];
+    dataObj["examType"] = examType[data[i].examId.examType];
     dataObj["studentName"] = data[i].studentId.name;
     dataObj["studentId"] = data[i].studentId._id;
     data1.push(dataObj);
@@ -2771,7 +2771,7 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
 const getWrittenStudentSingleByExam = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
-  if (!isValid.ObjectId(examId) || !isValid.ObjectId(studentId))
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
     return res.status(404).json("exam ID or student ID is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
@@ -2782,19 +2782,20 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
       $and: [
         { examId: examId },
         { studentId: studentId },
-        { uploadStatus: true },
+        // { uploadStatustrue },
       ],
     }).populate("studentId examId");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(data);
   let dataObj = {};
   dataObj["examName"] = data.examId.name;
-  dataObj["examVariation"] = examVariation(data.examId.examVariation);
-  dataObj["examType"] = examType(data.examId.examType);
+  dataObj["examVariation"] = examVariation[data.examId.examVariation];
+  dataObj["examType"] = examType[data.examId.examType];
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
-  dataObj["answerScript"] = data.studentId.submittedScriptILink;
+  dataObj["answerScript"] = data.submittedScriptILink;
   return res.status(200).json(dataObj);
 };
 exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
