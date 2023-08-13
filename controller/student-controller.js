@@ -25,6 +25,7 @@ const passport = require("passport");
 const FreeMcqRank = require("../model/FreeMcqRank");
 const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
 const QuestionsWritten = require("../model/QuestionsWritten");
+const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestionsMcq");
 
 const Limit = 100;
 
@@ -2668,21 +2669,15 @@ const runningWritten = async (req, res, next) => {
   return res.status(200).json(data1);
 };
 const submitWritten = async (req, res, next) => {
-  const examId = req.query.examId;
-  const studentId = req.user.studentId;
-  const questionId = req.body.questionId;
-  if (
-    !ObjectId.isValid(studentId) ||
-    !ObjectId.isValid(examId) ||
-    !ObjectId.isValid(questionId)
-  ) {
+  let examId = req.query.examId;
+  let studentId = req.user.studentId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
     return res
       .status(404)
       .json("Student Id or Exam Id or question Id is not valid.");
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
-  questionId = new mongoose.Types.ObjectId(questionId);
   let startTime = null;
   let endTime = moment(new Date()).add(6, "hours");
   try {
@@ -2747,6 +2742,63 @@ const updateStudentWrittenExamInfo = async (req, res, next) => {
   }
   return res.status(201).json("Updated.");
 };
+const getWrittenStudentAllByExam = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!isValid.ObjectId(examId))
+    return res.status(404).json("exam ID is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let data = null,
+    data1 = [];
+  try {
+    data = await StudentExamVsQuestionsWritten.find({
+      $and: [{ examId: examId }],
+    }).populate("studentId examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  for (let i = 0; i < data.length; i++) {
+    let dataObj = {};
+    dataObj["examName"] = data[i].examId.name;
+    dataObj["examVariation"] = examVariation(data[i].examId.examVariation);
+    dataObj["examType"] = examType(data[i].examId.examType);
+    dataObj["studentName"] = data[i].studentId.name;
+    dataObj["studentId"] = data[i].studentId._id;
+    data1.push(dataObj);
+  }
+  return res.status(200).json(data1);
+};
+
+const getWrittenStudentSingleByExam = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.query.studentId;
+  if (!isValid.ObjectId(examId) || !isValid.ObjectId(studentId))
+    return res.status(404).json("exam ID or student ID is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  let data = null,
+    data1 = [];
+  try {
+    data = await StudentExamVsQuestionsWritten.findOne({
+      $and: [
+        { examId: examId },
+        { studentId: studentId },
+        { uploadStatus: true },
+      ],
+    }).populate("studentId examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let dataObj = {};
+  dataObj["examName"] = data.examId.name;
+  dataObj["examVariation"] = examVariation(data.examId.examVariation);
+  dataObj["examType"] = examType(data.examId.examType);
+  dataObj["studentName"] = data.studentId.name;
+  dataObj["studentId"] = data.studentId._id;
+  dataObj["answerScript"] = data.studentId.submittedScriptILink;
+  return res.status(200).json(dataObj);
+};
+exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
+exports.getWrittenStudentAllByExam = getWrittenStudentAllByExam;
 exports.updateStudentWrittenExamInfo = updateStudentWrittenExamInfo;
 exports.writtenExamCheckMiddleware = writtenExamCheckMiddleware;
 exports.assignWrittenQuestion = assignWrittenQuestion;

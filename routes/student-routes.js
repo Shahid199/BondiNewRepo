@@ -42,6 +42,8 @@ const {
   writtenExamCheckMiddleware,
   updateStudentWrittenExamInfo,
   runningWritten,
+  getWrittenStudentSingleByExam,
+  getWrittenStudentAllByExam,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -352,6 +354,22 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   updateStudentWrittenExamInfo
+);
+router.get(
+  "/getwrittenstudentallbyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getWrittenStudentAllByExam
+);
+router.get(
+  "/getwrittenstudentsinglebyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getWrittenStudentSingleByExam
 );
 
 module.exports = router;
