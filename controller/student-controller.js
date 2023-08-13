@@ -2756,6 +2756,12 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  let data2 = null;
+  try {
+    data2 = await QuestionsWritten.findOne({ $and: [{ examId: examId }] });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   for (let i = 0; i < data.length; i++) {
     let dataObj = {};
     dataObj["examName"] = data[i].examId.name;
@@ -2763,6 +2769,9 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
     dataObj["examType"] = examType[data[i].examId.examType];
     dataObj["studentName"] = data[i].studentId.name;
     dataObj["studentId"] = data[i].studentId._id;
+    dataObj["totalQuestions"] = data2.totalQuestions;
+    dataObj["totalMarks"] = data2.totalMarks;
+    dataObj["marksPerQuestion"] = data2.marksPerQuestion;
     data1.push(dataObj);
   }
   return res.status(200).json(data1);
@@ -2788,7 +2797,12 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(data);
+  let data2 = null;
+  try {
+    data2 = await QuestionsWritten.findOne({ $and: [{ examId: examId }] });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   let dataObj = {};
   dataObj["examName"] = data.examId.name;
   dataObj["examVariation"] = examVariation[data.examId.examVariation];
@@ -2796,6 +2810,9 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
   dataObj["answerScript"] = data.submittedScriptILink;
+  dataObj["totalQuestions"] = data2.totalQuestions;
+  dataObj["totalMarks"] = data2.totalMarks;
+  dataObj["marksPerQuestion"] = data2.marksPerQuestion;
   return res.status(200).json(dataObj);
 };
 exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
