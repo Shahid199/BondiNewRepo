@@ -62,8 +62,8 @@ const createExam = async (req, res, next) => {
   courseIdObj = new mongoose.Types.ObjectId(courseId);
   subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   saveExam = new Exam({
-    courseId: courseId,
-    subjectId: subjectId,
+    courseId: courseIdObj,
+    subjectId: subjectIdObj,
     name: name,
     examType: Number(examType),
     examVariation: Number(examVariation),
