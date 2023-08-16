@@ -22,7 +22,7 @@ const getUserByRole = async (req, res, next) => {
   }
   if (count == 0) return res.status(404).json("No data found");
   let paginaeData = pagination(count, page);
-  console.log(role);
+  //console.log(role);
   let user;
   try {
     user = await User.find({ role: role, status: true })
@@ -71,7 +71,7 @@ const getUserById = async (req, res, next) => {
 //get user role
 const getUserRole = async (req, res, next) => {
   const userName = req.query.userName;
-  console.log(userName);
+  //console.log(userName);
   let userInfo;
   try {
     userRole = await User.find({ userName: userName }).select("role");
@@ -96,7 +96,7 @@ const createOfficeUser = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ userName: userName });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (existingUser) {
@@ -117,7 +117,7 @@ const createOfficeUser = async (req, res, next) => {
   try {
     const doc = await user.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: "New User created successfully." });
@@ -143,7 +143,7 @@ const updateOfficeUser = async (req, res, next) => {
 };
 const deactivateUser = async (req, res, next) => {
   const userId = req.body;
-  console.log(userId);
+  //console.log(userId);
   if (!ObjectId.isValid(userId._id))
     return res.status(404).json("Invalid user Id.");
   let upd = null;
@@ -200,7 +200,7 @@ const loginSuperAdmin = async (req, res) => {
 
       await user.loginUser(user, password, (err, token) => {
         if (err) {
-          console.log(err);
+          //console.log(err);
           return res.status(500).json("Something went wrong!");
         }
         if (!token) {
@@ -218,7 +218,7 @@ const loginSuperAdmin = async (req, res) => {
           .json({ name, userName, _id, mobileNo, role, address, token });
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       return res.status(500).json("Something went wrong!");
     }
   } else {
@@ -239,7 +239,7 @@ exports.createSuperAdmin = async (req, res) => {
   try {
     const doc = await user.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
   }
   return res.status(201).json("OK");
 };

@@ -52,7 +52,7 @@ const createExam = async (req, res, next) => {
   let startTime1, endTime1, tqm, tmm;
   tqm = totalQuestionMcq;
   tmm = marksPerMcq;
-  if (totalQuestionMcq == null || marksPerMcq == null) {
+  if ((totalQuestionMcq == null || marksPerMcq == null)) {
     tqm = Number(0);
     tmm = Number(0);
   }
@@ -84,7 +84,7 @@ const createExam = async (req, res, next) => {
   try {
     doc = await saveExam.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(doc);
@@ -121,7 +121,7 @@ const getAllExam = async (req, res, next) => {
         .skip(paginateData.skippedIndex)
         .limit(paginateData.perPage);
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json("Something went wrong!");
     }
   } else {
@@ -368,7 +368,7 @@ const getExamBySub = async (req, res, next) => {
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
-  console.log(subjectId);
+  //console.log(subjectId);
   //let studentId = req.user.studentId;
   if (!ObjectId.isValid(subjectId) || !variation)
     return res.status(404).json("subject Id is not valid.");
@@ -548,7 +548,7 @@ const addQuestionMcq = async (req, res, next) => {
   try {
     doc = await questions.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json(err);
   }
   //end of insert question
@@ -601,7 +601,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
     else continue;
   }
-  console.log(finalIds);
+  //console.log(finalIds);
   if (finalIds.length == 0)
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
@@ -626,7 +626,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
     }
     return res.status(201).json("Success.");
   }
-  console.log(mIdArray);
+  //console.log(mIdArray);
   mIdArray = mIdArray.mId;
   let finalIdsString = [];
   finalIdsString = finalIds.map((e) => String(e));
@@ -636,7 +636,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
-  console.log(withoutDuplicate);
+  //console.log(withoutDuplicate);
   try {
     sav = await McqQuestionVsExam.updateOne(
       { eId: examId },
@@ -657,7 +657,7 @@ const examRuleSet = async (req, res, next) => {
     return res.status(404).jsoon("Exam rule file not uploaded.");
   }
   ruleILinkPath = "uploads/".concat(file.filename);
-  console.log(ruleILinkPath);
+  //console.log(ruleILinkPath);
   const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id is not valid.");
@@ -750,7 +750,7 @@ const addQuestionWritten = async (req, res, next) => {
   //   marksPerQuestion[i] = parseInt(marksPerQuestion[i]);
   // }
   marksPerQuestion = marksPerQuestion.split(",");
-  console.log(marksPerQuestion);
+  //console.log(marksPerQuestion);
   const totalMarks = req.body.totalMarks;
   //file upload handle
   const file = req.files;
@@ -774,7 +774,7 @@ const addQuestionWritten = async (req, res, next) => {
   try {
     doc = await question.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("2.Something went wrong!");
   }
 

@@ -17,7 +17,7 @@ const createSubject = async (req, res) => {
   try {
     existingSubject = await Subject.findOne({ name: name }).select("courseId");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (existingSubject) {
@@ -36,7 +36,7 @@ const createSubject = async (req, res) => {
   try {
     const doc = await subject.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: "Subject Successfully created." });

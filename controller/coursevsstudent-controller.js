@@ -60,7 +60,7 @@ const addStudentToCourse1 = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("err");
     }
-    console.log(existData);
+    //console.log(existData);
     if (existData != null) {
       existStudent.push(regNo);
       continue;
@@ -99,7 +99,7 @@ const addStudentToCourse = async (req, res, next) => {
   // console.log(data1);
   const linesExceptFirst = data1.split(",");
   const linesArr = linesExceptFirst;
-  console.log(linesArr);
+  //console.log(linesArr);
   // return res.status(200).json("ok");
   //end file work
   let students = [];
@@ -130,7 +130,7 @@ const addStudentToCourse = async (req, res, next) => {
   // for(let i =0;i<linesArr;i++){
 
   // }
-  console.log(linesArr);
+  //console.log(linesArr);
   for (let i = 0; i < linesArr.length; i++) {
     let regNo;
     //console.log(i);
@@ -139,12 +139,12 @@ const addStudentToCourse = async (req, res, next) => {
     regNo = regNo.trim();
     if (i == 0) regNo = regNo.substring(1);
     if (i == linesArr.length - 1) regNo = regNo.substring(0, regNo.length - 1);
-    console.log(regNo);
+    //console.log(regNo);
     if (regNo == "undefined") {
       continue;
     }
     if (sIds.includes(regNo)) {
-      console.log("k");
+      //console.log("k");
       continue;
     }
     const users = {};
@@ -189,7 +189,7 @@ const getStudentByCourse = async (req, res, next) => {
       .skip(paginateData.skippedIndex)
       .limit(paginateData.perPage);
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (data != null) return res.status(200).json({ data, paginateData });
@@ -206,7 +206,7 @@ const getCourseByStudent = async (req, res, next) => {
       "courseId"
     );
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
 
@@ -220,7 +220,7 @@ const getCourseByReg = async (req, res, next) => {
   try {
     studentId = await Student.findOne({ regNo: regNo }).select("_id");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (studentId) {

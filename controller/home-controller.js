@@ -20,8 +20,8 @@ const getHomePage = async (req, res, next) => {
   //Top
   if (section == "top") {
     //let currentTime = new Date();
-    console.log(currentTime);
-    console.log(courseId);
+    //console.log(currentTime);
+    //console.log(courseId);
     try {
       coming = await Exam.find(
         {
@@ -69,7 +69,7 @@ const getHomePage = async (req, res, next) => {
       //console.log(err);
       return res.status(500).json("Something went wrong!");
     }
-    console.log(courseId);
+    //console.log(courseId);
     if (courseId == null || studentId == null)
       return res.status(404).json({ message: "course or student not found." });
     try {
