@@ -2759,17 +2759,18 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let paginateData = pagination(count, page);
+  //console.log(paginateData);
   try {
     data = await StudentExamVsQuestionsWritten.find({
       $and: [{ examId: examId }],
     })
       .populate("studentId examId")
-      .skippedIndex(paginateData.skippedIndex)
+      .skip(paginateData.skippedIndex)
       .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-
+  //console.log(data);
   let data2 = null;
   try {
     data2 = await QuestionsWritten.findOne({ $and: [{ examId: examId }] });
