@@ -462,7 +462,7 @@ const getFreeExamAll = async (req, res, next) => {
 
 const getFreeExamNew = async (req, res, next) => {
   let exams;
-  let id = new mongoose.Types.ObjectId("64d61e0b6d50accd196c764d");
+  let id = new mongoose.Types.ObjectId("64dcd8c6c227ba908b10b041");
   let currentTime = Date.now();
   try {
     exams = await Exam.find({
