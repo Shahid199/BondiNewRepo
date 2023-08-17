@@ -2789,7 +2789,7 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
     dataObj["marksPerQuestion"] = data2.marksPerQuestion;
     data1.push(dataObj);
   }
-  return res.status(200).json(data1);
+  return res.status(200).json({ data1, paginateData });
 };
 
 const getWrittenStudentSingleByExam = async (req, res, next) => {
