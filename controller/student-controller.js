@@ -2744,18 +2744,32 @@ const updateStudentWrittenExamInfo = async (req, res, next) => {
 };
 const getWrittenStudentAllByExam = async (req, res, next) => {
   let examId = req.query.examId;
+  let page = req.query.page || 1;
+  let count = 0;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam ID is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null,
     data1 = [];
   try {
-    data = await StudentExamVsQuestionsWritten.find({
+    count = await StudentExamVsQuestionsWritten.find({
       $and: [{ examId: examId }],
-    }).populate("studentId examId");
+    }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  let paginateData = pagination(count, page);
+  try {
+    data = await StudentExamVsQuestionsWritten.find({
+      $and: [{ examId: examId }],
+    })
+      .populate("studentId examId")
+      .skippedIndex(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
   let data2 = null;
   try {
     data2 = await QuestionsWritten.findOne({ $and: [{ examId: examId }] });
