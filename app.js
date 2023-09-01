@@ -14,6 +14,7 @@ const cors = require("./utilities/cors");
 require("./utilities/passport");
 require("./utilities/passport_student");
 require("./utilities/passport_student_free");
+var bodyParser = require("body-parser");
 // config cookie-parser
 app.use(cookies());
 //global middleware which will look for tokens in browser cookie
@@ -49,7 +50,7 @@ const teacherRouter = require("./routes/teacher-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
-
+var jsonParser = bodyParser.json();
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);
 app.use("/api/student", studentRouter);
@@ -59,7 +60,7 @@ app.use("/api/exam", examRouter);
 app.use("/api/home", homeRouter);
 app.use("/api/freestudent", freeStudentRouter);
 app.use("/api/special", specialRouter);
-app.use("/api/teacher", teacherRouter);
+app.use("/api/teacher", jsonParser, teacherRouter);
 mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
