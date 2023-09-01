@@ -171,7 +171,7 @@ const checkScriptSingle = async (req, res, next) => {
     // let type = decodedImg.type;
     //let extension = mime.getExtension(type);
     // //let extension = type;
-    let fileName = "/image.png";
+    let fileName = "/" + String(questionNo) + "-" + String(i) + ".png";
     try {
       fs.writeFileSync(dir + fileName, matches, { encoding: "base64" });
       return res.send({ status: "success" });
