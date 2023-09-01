@@ -46,10 +46,10 @@ router.get(
 );
 router.get(
   "/getwrittenscriptsingle",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "teacher"]),
-  ],
+  // [
+  //   passport.authenticate("jwt", { session: false }),
+  //   authorize(["superadmin", "moderator", "teacher"]),
+  // ],
   getWrittenScriptSingle
 );
 
