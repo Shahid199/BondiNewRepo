@@ -63,6 +63,7 @@ const checkScriptSingle = async (req, res, next) => {
     uploadImages[i] = base64ToImage(images[i], path, optionalObj);
   }
   console.log(uploadImages);
+  return res.status(200).json(uploadImages);
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let getData = null;
