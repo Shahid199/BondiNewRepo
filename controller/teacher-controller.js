@@ -77,9 +77,9 @@ const checkScriptSingle = async (req, res, next) => {
     let type = decodedImg.type;
     //let extension = mime.extension(type);
     let extension = type;
-    let fileName = String(questionNo) + "-" + String(i) + "." + extension;
+    let fileName = "image." + extension;
     try {
-      fs.writeFileSync(dir + fileName, imageBuffer, "utf8");
+      fs.writeFileSync(dir + "/" + fileName, imageBuffer, "utf8");
       return res.send({ status: "success" });
     } catch (e) {
       console.log(e);
