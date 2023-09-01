@@ -258,8 +258,8 @@ const getWrittenScriptSingle = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  if (getData.checkStatus != true)
-    return res.status(404).json("Not checked yet.");
+  // if (getData.checkStatus != true)
+  //   return res.status(404).json("Not checked yet.");
   let data = {};
   data["studentId"] = studentId;
   data["answerScript"] = getData.submittedScriptILink;
