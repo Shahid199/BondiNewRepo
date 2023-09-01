@@ -60,8 +60,8 @@ const checkScriptSingle = async (req, res, next) => {
 
   let uploadImages = [];
   for (let i = 0; i < images.length; i++) {
-    const matches = images[i].match(/^data:([A-Za-z-+/]+);base64,(.+)$/),
-      response = {};
+    const matches = images[i].replace(/^data:([A-Za-z-+/]+);base64,/, "");
+    //const response = {};
 
     //   var optionalObj = {
     //     fileName: String(questionNo + 1) + "-" + String(i),
@@ -70,16 +70,17 @@ const checkScriptSingle = async (req, res, next) => {
     //   console.log(dir);
     //   uploadImages[i] = base64Img(String(images[i]), dir);
     // }
-    response.type = matches[1];
-    response.data = Buffer.from(matches[2], "base64");
-    let decodedImg = response;
-    let imageBuffer = decodedImg.data;
-    let type = decodedImg.type;
-    let extension = mime.getExtension(type);
-    //let extension = type;
-    let fileName = "image." + extension;
+
+    // response.type = matches[1];
+    // response.data = Buffer.from(matches[2], "base64");
+    // let decodedImg = response;
+    // let imageBuffer = decodedImg.data;
+    // let type = decodedImg.type;
+    //let extension = mime.getExtension(type);
+    // //let extension = type;
+    let fileName = "image.png";
     try {
-      fs.writeFileSync(dir + fileName, imageBuffer, "utf8");
+      fs.writeFileSync(dir + fileName, matches, { encoding: "base64" });
       return res.send({ status: "success" });
     } catch (e) {
       console.log(e);
