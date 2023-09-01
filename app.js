@@ -4,7 +4,7 @@ const cookies = require("cookie-parser");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const path = require("path");
-
+var bodyParser = require("body-parser");
 const app = express();
 const session = require("express-session");
 
@@ -14,7 +14,6 @@ const cors = require("./utilities/cors");
 require("./utilities/passport");
 require("./utilities/passport_student");
 require("./utilities/passport_student_free");
-var bodyParser = require("body-parser");
 // config cookie-parser
 app.use(cookies());
 //global middleware which will look for tokens in browser cookie
@@ -36,9 +35,10 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "/public")));
 
-app.use(bodyParser.json({ type: "application/*+json" }));
-app.use(bodyParser.raw({ type: "application/vnd.custom-type" }));
-app.use(bodyParser.text({ type: "text/html" }));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 // add routes from below
 const courseRouter = require("./routes/course-routes");
