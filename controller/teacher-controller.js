@@ -75,7 +75,8 @@ const checkScriptSingle = async (req, res, next) => {
     let decodedImg = response;
     let imageBuffer = decodedImg.data;
     let type = decodedImg.type;
-    let extension = mime.extension(type);
+    //let extension = mime.extension(type);
+    let extension = type;
     let fileName = String(questionNo) + "-" + String(i) + "." + extension;
     try {
       fs.writeFileSync(dir + fileName, imageBuffer, "utf8");
