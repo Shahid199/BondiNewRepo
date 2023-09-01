@@ -32,7 +32,7 @@ const checkScriptSingle = async (req, res, next) => {
   let obtainedMarks = number(req.body.obtainedMarks);
   let studentId = req.body.studentId;
   let examId = req.body.examId;
-  let images = req.body.uploadImages;
+  //let images = req.body.uploadImages;
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
