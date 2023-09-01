@@ -24,7 +24,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "teacher"]),
-    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+    //upload.fields([{ name: "questionILink", maxCount: 5 }]),
   ],
   checkScriptSingle
 );
