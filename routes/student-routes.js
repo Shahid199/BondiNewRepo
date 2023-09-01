@@ -44,6 +44,7 @@ const {
   runningWritten,
   getWrittenStudentSingleByExam,
   getWrittenStudentAllByExam,
+  getWrittenScript,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -370,6 +371,15 @@ router.get(
     authorize(["superadmin", "moderator"]),
   ],
   getWrittenStudentSingleByExam
+);
+
+router.get(
+  "/getwrittenscript",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getWrittenScript
 );
 
 module.exports = router;

@@ -45,6 +45,7 @@ const examRouter = require("./routes/exam-routes");
 const homeRouter = require("./routes/home-routes");
 const freeStudentRouter = require("./routes/freeStudent-routes");
 const specialRouter = require("./routes/special-routes");
+const teacherRouter = require("./routes/teacher-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
@@ -58,7 +59,7 @@ app.use("/api/exam", examRouter);
 app.use("/api/home", homeRouter);
 app.use("/api/freestudent", freeStudentRouter);
 app.use("/api/special", specialRouter);
-
+app.use("/api/teacher", teacherRouter);
 mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"

@@ -2791,7 +2791,6 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
-
 const getWrittenStudentSingleByExam = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
@@ -2829,6 +2828,44 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["totalMarks"] = data2.totalMarks;
   dataObj["marksPerQuestion"] = data2.marksPerQuestion;
   return res.status(200).json(dataObj);
+};
+const getWrittenScript = async (req, res, next) => {
+  let studentId = req.user.studentId;
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let getData = null;
+  try {
+    getData = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (getData.checkStatus != true)
+    return res.status(404).json("Not checked yet.");
+  let data = {};
+  data["studentId"] = studentId;
+  data["answerScript"] = getData.submittedScriptILink;
+  data["checkScript"] = getData.ansewerScriptILink;
+  data["obtainedMarks"] = getData.obtainedMarks;
+  data["totalObtainedMarks"] = getData.totalObtainedMarks;
+  data["examId"] = examId;
+  let getQuestion = null;
+  try {
+    getQuestion = await QuestionsWritten.findOne({
+      examId: examIdObj,
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  data["question"] = getQuestion.questionILink;
+  return res.status(200).json(data);
 };
 exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
 exports.getWrittenStudentAllByExam = getWrittenStudentAllByExam;
@@ -2871,3 +2908,4 @@ exports.getStudentMobileSearch = getStudentMobileSearch;
 exports.getRankStudent = getRankStudent;
 exports.examTimeCheck = examTimeCheck;
 exports.runningWritten = runningWritten;
+exports.getWrittenScript = getWrittenScript;

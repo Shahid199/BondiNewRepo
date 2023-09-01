@@ -1,4 +1,15 @@
-const { getStudentData } = require("../controller/teacher-controller");
+const express = require("express");
+const { upload } = require("../utilities/multer");
+const passport = require("passport");
+const authorize = require("../utilities/authorizationMiddleware");
+const router = express.Router();
+const {
+  getStudentData,
+  checkScriptSingle,
+  checkStatusUpdate,
+  getCheckStatus,
+  getWrittenScriptSingle,
+} = require("../controller/teacher-controller");
 
 router.get(
   "/getstudentdata",
@@ -8,3 +19,38 @@ router.get(
   ],
   getStudentData
 );
+router.post(
+  "/checkscriptsingle",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  checkScriptSingle
+);
+router.post(
+  "/checkstatusupdate",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  checkStatusUpdate
+);
+router.get(
+  "/getcheckstatus",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getCheckStatus
+);
+router.get(
+  "/getwrittenscriptsingle",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getWrittenScriptSingle
+);
+
+module.exports = router;
