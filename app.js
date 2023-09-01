@@ -36,6 +36,10 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "/public")));
 
+app.use(bodyParser.json({ type: "application/*+json" }));
+app.use(bodyParser.raw({ type: "application/vnd.custom-type" }));
+app.use(bodyParser.text({ type: "text/html" }));
+
 // add routes from below
 const courseRouter = require("./routes/course-routes");
 const userRouter = require("./routes/user-routes");
@@ -50,7 +54,7 @@ const teacherRouter = require("./routes/teacher-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
-var jsonParser = bodyParser.json();
+
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);
 app.use("/api/student", studentRouter);
@@ -60,7 +64,7 @@ app.use("/api/exam", examRouter);
 app.use("/api/home", homeRouter);
 app.use("/api/freestudent", freeStudentRouter);
 app.use("/api/special", specialRouter);
-app.use("/api/teacher", jsonParser, teacherRouter);
+app.use("/api/teacher", teacherRouter);
 mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
