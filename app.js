@@ -35,6 +35,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "/public")));
 
+app.use(bodyParser.json({ limit: "35mb" }));
+
 app.use(
   bodyParser.urlencoded({
     extended: true,
@@ -42,9 +44,6 @@ app.use(
     limit: "500mb",
   })
 );
-
-// parse application/json
-app.use(bodyParser.json());
 
 // add routes from below
 const courseRouter = require("./routes/course-routes");
