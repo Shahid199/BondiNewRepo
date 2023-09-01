@@ -60,7 +60,10 @@ const checkScriptSingle = async (req, res, next) => {
 
   let uploadImages = [];
   for (let i = 0; i < images.length; i++) {
-    const matches = images[i].replace(/^data:([A-Za-z-+/]+);base64,/, "");
+    const matches = String(images[i]).replace(
+      /^data:([A-Za-z-+/]+);base64,/,
+      ""
+    );
     //const response = {};
 
     //   var optionalObj = {
