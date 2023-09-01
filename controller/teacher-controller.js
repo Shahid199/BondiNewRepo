@@ -54,15 +54,14 @@ const checkScriptSingle = async (req, res, next) => {
       /^data:([A-Za-z-+/]+);base64,/,
       ""
     );
-    let fileName =
-      "uploads/" + String(questionNo + 1) + "-" + String(i + 1) + ".png";
+    let fileName = String(questionNo + 1) + "-" + String(i + 1) + ".png";
     try {
       fs.writeFileSync(dir + fileName, matches, { encoding: "base64" });
     } catch (e) {
-      console.log("nothing");
+      console.log(e);
       return res.status(500).json(e);
     }
-    uploadImages[i] = fileName;
+    uploadImages[i] = "uploads/" + fileName;
   }
 
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
