@@ -30,11 +30,6 @@ app.use(passport.initialize());
 
 cors(app);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.use(express.static(path.join(__dirname, "/public")));
-
 app.use(bodyParser.json({ limit: "35mb" }));
 
 app.use(
@@ -44,6 +39,13 @@ app.use(
     limit: "500mb",
   })
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, "/public")));
+
+
 
 // add routes from below
 const courseRouter = require("./routes/course-routes");
