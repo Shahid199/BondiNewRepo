@@ -28,8 +28,8 @@ const getStudentData = async (req, res, next) => {
 };
 
 const checkScriptSingle = async (req, res, next) => {
-  let questionNo = number(req.body.questionNo);
-  let obtainedMarks = number(req.body.obtainedMarks);
+  let questionNo = Number(req.body.questionNo);
+  let obtainedMarks = Number(req.body.obtainedMarks);
   let studentId = req.body.studentId;
   let examId = req.body.examId;
   let images = req.body.uploadImages;
