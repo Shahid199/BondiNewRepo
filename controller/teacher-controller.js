@@ -63,7 +63,7 @@ const checkScriptSingle = async (req, res, next) => {
       type: "png",
     };
     console.log(dir);
-    uploadImages[i] = base64ToImage(images[i], dir, optionalObj);
+    uploadImages[i] = base64ToImage(String(images[i]), dir, optionalObj);
   }
   console.log(uploadImages);
   return res.status(200).json(uploadImages);
