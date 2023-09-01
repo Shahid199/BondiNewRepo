@@ -3,7 +3,7 @@ const TeacherVsExam = require("../model/TeacherVsExam");
 const { ObjectId } = require("mongodb");
 const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
 const QuestionsWritten = require("../model/QuestionsWritten");
-const base64toImage = require("base64-to-image");
+var base64Img = require("base64-img");
 const path = require("path");
 
 const dir = path.resolve(path.join(__dirname, "../uploads"));
@@ -63,7 +63,7 @@ const checkScriptSingle = async (req, res, next) => {
       type: "png",
     };
     console.log(dir);
-    uploadImages[i] = base64toImage(String(images[i]), dir, optionalObj);
+    uploadImages[i] = base64Img(String(images[i]), dir);
   }
   console.log(uploadImages);
   return res.status(200).json(uploadImages);
