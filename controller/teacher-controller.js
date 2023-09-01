@@ -3,6 +3,7 @@ const TeacherVsExam = require("../model/TeacherVsExam");
 const { ObjectId } = require("mongodb");
 const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
 const QuestionsWritten = require("../model/QuestionsWritten");
+var base64ToImage = require("base64-to-image");
 
 const getStudentData = async (req, res, next) => {
   let teacherId = req.user._id;
@@ -31,6 +32,7 @@ const checkScriptSingle = async (req, res, next) => {
   let obtainedMarks = number(req.body.obtainedMarks);
   let studentId = req.body.studentId;
   let examId = req.body.examId;
+  let images = req.body.uploadImages;
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
@@ -42,14 +44,25 @@ const checkScriptSingle = async (req, res, next) => {
       .json("Student Id or Exam Id or question Id is not valid.");
   }
   questionNo = questionNo - 1;
-  //file upload handle:start
-  const file = req.files;
-  //console.log(file);
-  let questionILinkPath = [];
-  if (!file.questionILink) return res.status(400).json("Files not uploaded.");
-  for (let i = 0; i < file.questionILink.length; i++) {
-    questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
+  // //file upload handle:start
+  // const file = req.files;
+  // //console.log(file);
+  // let questionILinkPath = [];
+  // if (!file.questionILink) return res.status(400).json("Files not uploaded.");
+  // for (let i = 0; i < file.questionILink.length; i++) {
+  //   questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
+  // }
+
+  let uploadImages = [];
+  for (let i = 0; i < images.length; i++) {
+    var path = "../uploads";
+    var optionalObj = {
+      fileName: String(questionNo) + "-" + String(i),
+      type: "jpg",
+    };
+    uploadImages[i] = base64ToImage(images[i], path, optionalObj);
   }
+  console.log(uploadImages);
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let getData = null;
