@@ -8,7 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const mime = require("mime");
 
-const dir = path.resolve(path.join(__dirname, "../uploads"));
+const dir = path.resolve(path.join(__dirname, "../uploads/"));
 const getStudentData = async (req, res, next) => {
   let teacherId = req.user._id;
   teacherId = new mongoose.Types.ObjectId(teacherId);
@@ -75,11 +75,11 @@ const checkScriptSingle = async (req, res, next) => {
     let decodedImg = response;
     let imageBuffer = decodedImg.data;
     let type = decodedImg.type;
-    //let extension = mime.extension(type);
-    let extension = type;
+    let extension = mime.getExtension(type);
+    //let extension = type;
     let fileName = "image." + extension;
     try {
-      fs.writeFileSync(dir + "/" + fileName, imageBuffer, "utf8");
+      fs.writeFileSync(dir + fileName, imageBuffer, "utf8");
       return res.send({ status: "success" });
     } catch (e) {
       console.log(e);
