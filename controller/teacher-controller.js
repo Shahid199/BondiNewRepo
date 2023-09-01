@@ -4,7 +4,9 @@ const { ObjectId } = require("mongodb");
 const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
 const QuestionsWritten = require("../model/QuestionsWritten");
 var base64ToImage = require("base64-to-image");
+const path = require("path");
 
+const dir = path.resolve(path.join(__dirname, "../uploads"));
 const getStudentData = async (req, res, next) => {
   let teacherId = req.user._id;
   teacherId = new mongoose.Types.ObjectId(teacherId);
@@ -56,12 +58,11 @@ const checkScriptSingle = async (req, res, next) => {
 
   let uploadImages = [];
   for (let i = 0; i < images.length; i++) {
-    var path = "../uploads";
     var optionalObj = {
       fileName: String(questionNo + 1) + "-" + String(i),
       type: "jpg",
     };
-    uploadImages[i] = base64ToImage(images[i], path, optionalObj);
+    uploadImages[i] = base64ToImage(images[i], dir, optionalObj);
   }
   console.log(uploadImages);
   return res.status(200).json(uploadImages);
