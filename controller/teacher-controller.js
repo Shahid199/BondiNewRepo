@@ -5,6 +5,8 @@ const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWr
 const QuestionsWritten = require("../model/QuestionsWritten");
 var base64Img = require("base64-img");
 const path = require("path");
+const fs = require("fs");
+const mime = require("mime");
 
 const dir = path.resolve(path.join(__dirname, "../uploads"));
 const getStudentData = async (req, res, next) => {
@@ -58,43 +60,63 @@ const checkScriptSingle = async (req, res, next) => {
 
   let uploadImages = [];
   for (let i = 0; i < images.length; i++) {
-    var optionalObj = {
-      fileName: String(questionNo + 1) + "-" + String(i),
-      type: "png",
-    };
-    console.log(dir);
-    uploadImages[i] = base64Img(String(images[i]), dir);
-  }
-  console.log(uploadImages);
-  return res.status(200).json(uploadImages);
-  let studentIdObj = new mongoose.Types.ObjectId(studentId);
-  let examIdObj = new mongoose.Types.ObjectId(examId);
-  let getData = null;
-  try {
-    getData = await StudentExamVsQuestionsWritten.findOne({
-      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  let insertId = getData._id;
-  let checkScript = [];
-  let obtainedMarksArr = [];
-  checkScript[questionNo] = questionILinkPath;
-  obtainedMarksArr[questionNo] = obtainedMarks;
+    const matches = images[i].base64image.match(
+        /^data:([A-Za-z-+/]+);base64,(.+)$/
+      ),
+      response = {};
 
-  let upd = {
-    ansewerScriptILink: checkScript,
-    obtainedMarks: obtainedMarksArr,
-  };
-  let doc;
-  try {
-    doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("Something went wrong!");
+    //   var optionalObj = {
+    //     fileName: String(questionNo + 1) + "-" + String(i),
+    //     type: "png",
+    //   };
+    //   console.log(dir);
+    //   uploadImages[i] = base64Img(String(images[i]), dir);
+    // }
+    response.type = matches[1];
+    response.data = Buffer.from(matches[2], "base64");
+    let decodedImg = response;
+    let imageBuffer = decodedImg.data;
+    let type = decodedImg.type;
+    let extension = mime.extension(type);
+    let fileName = String(questionNo) + "-" + String(i) + "." + extension;
+    try {
+      fs.writeFileSync(dir + fileName, imageBuffer, "utf8");
+      return res.send({ status: "success" });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json(e);
+    }
   }
-  return res.status(201).json("Updated Successfully.");
+  // console.log(uploadImages);
+  // return res.status(200).json(file);
+  // let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  // let examIdObj = new mongoose.Types.ObjectId(examId);
+  // let getData = null;
+  // try {
+  //   getData = await StudentExamVsQuestionsWritten.findOne({
+  //     $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
+  // let insertId = getData._id;
+  // let checkScript = [];
+  // let obtainedMarksArr = [];
+  // checkScript[questionNo] = questionILinkPath;
+  // obtainedMarksArr[questionNo] = obtainedMarks;
+
+  // let upd = {
+  //   ansewerScriptILink: checkScript,
+  //   obtainedMarks: obtainedMarksArr,
+  // };
+  // let doc;
+  // try {
+  //   doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
+  // } catch (err) {
+  //   //console.log(err);
+  //   return res.status(500).json("Something went wrong!");
+  // }
+  // return res.status(201).json("Updated Successfully.");
 };
 const checkStatusUpdate = async (req, res, next) => {
   let studentId = req.body.studentId;
