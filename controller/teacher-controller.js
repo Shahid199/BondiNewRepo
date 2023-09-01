@@ -86,7 +86,7 @@ const checkScriptSingle = async (req, res, next) => {
       fs.writeFileSync(dir + fileName, matches, { encoding: "base64" });
       return res.send({ status: "success" });
     } catch (e) {
-      console.log(e);
+      console.log("nothing");
       return res.status(500).json(e);
     }
   }
