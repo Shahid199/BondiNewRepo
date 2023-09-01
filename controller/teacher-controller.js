@@ -60,7 +60,7 @@ const checkScriptSingle = async (req, res, next) => {
   for (let i = 0; i < images.length; i++) {
     var optionalObj = {
       fileName: String(questionNo + 1) + "-" + String(i),
-      type: "jpg",
+      type: "png",
     };
     uploadImages[i] = base64ToImage(images[i], dir, optionalObj);
   }
