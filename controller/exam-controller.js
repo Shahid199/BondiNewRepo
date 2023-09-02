@@ -377,7 +377,7 @@ const getMcqBySub = async (req, res, next) => {
         { subjectId: subjectIdObj },
         //{ examFreeOrNot: false },
         { status: true },
-        { examVariation: 0 },
+        { examVariation: 1 },
       ],
     });
   } catch (err) {
