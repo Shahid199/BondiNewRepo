@@ -375,7 +375,7 @@ const getMcqBySub = async (req, res, next) => {
     examData1 = await Exam.find({
       $and: [
         { subjectId: subjectIdObj },
-        //{ examFreeOrNot: false },
+        { examFreeOrNot: false },
         { status: true },
         { examVariation: 1 },
       ],
@@ -439,7 +439,7 @@ const getWrittenBySub = async (req, res, next) => {
         { subjectId: subjectIdObj },
         { examFreeOrNot: false },
         { status: true },
-        { examVariation: 1 },
+        { examVariation: 2 },
       ],
     });
   } catch (err) {
