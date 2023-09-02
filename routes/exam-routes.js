@@ -26,6 +26,8 @@ const {
   removeQuestionWritten,
   freeCourseSub,
   getWrittenQuestionByexam,
+  getMcqBySub,
+  getWrittenBySub,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -77,6 +79,22 @@ router.get(
   getExamBySub
 );
 
+router.get(
+  "/getmcqbysub",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getMcqBySub
+);
+router.get(
+  "/getwrittenbysub",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getWrittenBySub
+);
 router.post(
   "/examruleset",
   [
