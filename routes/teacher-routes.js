@@ -9,6 +9,7 @@ const {
   checkStatusUpdate,
   getCheckStatus,
   getWrittenScriptSingle,
+  marksCalculation,
 } = require("../controller/teacher-controller");
 
 router.get(
@@ -51,6 +52,14 @@ router.get(
   //   authorize(["superadmin", "moderator", "teacher"]),
   // ],
   getWrittenScriptSingle
+);
+router.get(
+  "/markscalculation",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  marksCalculation
 );
 
 module.exports = router;

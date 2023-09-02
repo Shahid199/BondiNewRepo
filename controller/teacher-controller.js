@@ -125,7 +125,42 @@ const checkStatusUpdate = async (req, res, next) => {
   }
   return res.status(201).json("Status Change Successfully.");
 };
-
+const marksCalculation = async (req, res, next) => {
+  let studentId = req.body.studentId;
+  let examId = req.body.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let getData = null;
+  try {
+    getData = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  const totalMarks = 0;
+  const marks = getData.marksPerQuestion;
+  marks.forEach((value) => {
+    totalMarks += value;
+  });
+  let insertId = getData._id;
+  let upd = {
+    totalObtainedMarks: totalMarks,
+  };
+  let doc;
+  try {
+    doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Status Change Successfully.");
+};
 const getCheckStatus = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
