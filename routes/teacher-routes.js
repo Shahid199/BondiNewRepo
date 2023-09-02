@@ -10,6 +10,9 @@ const {
   getCheckStatus,
   getWrittenScriptSingle,
   marksCalculation,
+  updateRank,
+  getRank,
+  getAllRank,
 } = require("../controller/teacher-controller");
 
 router.get(
@@ -61,5 +64,29 @@ router.get(
   ],
   marksCalculation
 );
+router.post(
+  "/updaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  updateRank
+);
+router.get(
+  "/getrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getRank
+);
 
+router.get(
+  "/getallrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getAllRank
+);
 module.exports = router;
