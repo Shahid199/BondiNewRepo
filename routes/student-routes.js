@@ -45,6 +45,7 @@ const {
   getWrittenStudentSingleByExam,
   getWrittenStudentAllByExam,
   getWrittenScript,
+  getHistoryByWrittenId,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -132,7 +133,22 @@ router.post(
   ],
   submitAnswer
 );
-router.get("/gethistorybyexamid", getHistoryByExamId);
+router.get(
+  "/gethistorybyexamid",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getHistoryByExamId
+);
+router.get(
+  "/gethistorybywrittenid",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getHistoryByWrittenId
+);
 router.get(
   "/getrunningdata",
   [
