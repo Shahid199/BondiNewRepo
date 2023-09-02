@@ -2922,6 +2922,7 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["totalQuestions"] = data2.totalQuestions;
   dataObj["totalMarks"] = data2.totalMarks;
   dataObj["marksPerQuestion"] = data2.marksPerQuestion;
+  dataObj["checkStatus"] = data.checkStatus;
   return res.status(200).json(dataObj);
 };
 const getWrittenScript = async (req, res, next) => {
