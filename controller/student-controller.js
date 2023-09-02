@@ -2879,6 +2879,7 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
     dataObj["examType"] = examType[data[i].examId.examType];
     dataObj["studentName"] = data[i].studentId.name;
     dataObj["studentId"] = data[i].studentId._id;
+    dataObj["checkStatus"] = data[i].checkStatus;
     dataObj["totalQuestions"] = data2.totalQuestions;
     dataObj["totalMarks"] = data2.totalMarks;
     dataObj["marksPerQuestion"] = data2.marksPerQuestion;
@@ -2922,7 +2923,8 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["totalQuestions"] = data2.totalQuestions;
   dataObj["totalMarks"] = data2.totalMarks;
   dataObj["marksPerQuestion"] = data2.marksPerQuestion;
-  dataObj["checkStatus"] = data.checkStatus;
+  //dataObj["checkStatus"] = data.checkStatus;
+  //console.log(data.checkStatus);
   return res.status(200).json(dataObj);
 };
 const getWrittenScript = async (req, res, next) => {
