@@ -144,6 +144,7 @@ const marksCalculation = async (req, res, next) => {
   }
   const totalMarks = 0;
   const marks = getData.marksPerQuestion;
+  console.log(marks);
   marks.forEach((value) => {
     totalMarks += value;
   });
