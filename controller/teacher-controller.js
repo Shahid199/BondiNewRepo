@@ -148,15 +148,15 @@ const marksCalculation = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  const totalMarks = 0;
+  let totalMarks = 0;
   let marks = getData.obtainedMarks;
-  console.log(getData);
-  console.log(marks);
-  return res.json(marks);
-  console.log(marks);
+  // console.log(getData);
+  // console.log(marks);
+  // console.log(marks);
   marks.forEach((value) => {
-    totalMarks += value;
+    totalMarks = totalMarks + value;
   });
+  // console.log(totalMarks);
   let insertId = getData._id;
   let upd = {
     totalObtainedMarks: totalMarks,
@@ -168,6 +168,15 @@ const marksCalculation = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
+  // try {
+  //   getData = await StudentExamVsQuestionsWritten.findOne({
+  //     $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+  //   });
+  // } catch (err) {
+  //   //console.log(err);
+  //   return res.status(500).json("Something went wrong!");
+  // }
+  // console.log(getData);
   return res.status(201).json("Status Change Successfully.");
 };
 const getCheckStatus = async (req, res, next) => {
