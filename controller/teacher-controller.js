@@ -77,6 +77,7 @@ const checkScriptSingle = async (req, res, next) => {
   let checkScript = [];
   let obtainedMarksArr = [];
   checkScript[questionNo] = uploadImages;
+  obtainedMarksArr = getData.obtainedMarks;
   obtainedMarksArr[questionNo] = obtainedMarks;
 
   let upd = {
@@ -127,6 +128,7 @@ const checkStatusUpdate = async (req, res, next) => {
 const marksCalculation = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
+  console.log(req.body);
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
     return res
       .status(404)
@@ -134,16 +136,23 @@ const marksCalculation = async (req, res, next) => {
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  let getData = null;
+  console.log(studentIdObj);
+  let getData;
   try {
     getData = await StudentExamVsQuestionsWritten.findOne({
-      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
     });
+    // getData = await StudentExamVsQuestionsWritten.findById(
+    //   "64f5a1dd50c6b7e0c5f3549c"
+    // );
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
   const totalMarks = 0;
-  const marks = getData.marksPerQuestion;
+  let marks = getData.obtainedMarks;
+  console.log(getData);
+  console.log(marks);
+  return res.json(marks);
   console.log(marks);
   marks.forEach((value) => {
     totalMarks += value;
