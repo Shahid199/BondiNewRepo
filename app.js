@@ -45,8 +45,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "/public")));
 
-
-
 // add routes from below
 const courseRouter = require("./routes/course-routes");
 const userRouter = require("./routes/user-routes");

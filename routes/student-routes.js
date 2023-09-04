@@ -47,6 +47,11 @@ const {
   getWrittenScript,
   getHistoryByWrittenId,
   getCheckWrittenStudentAllByExam,
+  historyDataWritten,
+  missedExamWritten,
+  getWrittenQuestion,
+  viewSollutionWritten,
+  examDetailWritten,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -408,5 +413,46 @@ router.get(
   getWrittenScript
 );
 
+router.get(
+  "/historydatawritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  historyDataWritten
+);
+
+router.get(
+  "/missedexamwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  missedExamWritten
+);
+router.get(
+  "/getwrittenquestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  getWrittenQuestion
+);
+router.get(
+  "/viewSollutionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  viewSollutionWritten
+);
+router.get(
+  "/examdetailwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  examDetailWritten
+);
 module.exports = router;
 //new node
