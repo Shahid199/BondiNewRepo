@@ -2857,7 +2857,7 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
   //console.log(paginateData);
   try {
     data = await StudentExamVsQuestionsWritten.find({
-      $and: [{ examId: examId }],
+      $and: [{ examId: examId }, { checkStatus: false }],
     })
       .populate("studentId examId")
       .skip(paginateData.skippedIndex)
@@ -2907,7 +2907,7 @@ const getCheckWrittenStudentAllByExam = async (req, res, next) => {
   //console.log(paginateData);
   try {
     data = await StudentExamVsQuestionsWritten.find({
-      $and: [{ examId: examId }],
+      $and: [{ examId: examId }, { checkStatus: true }],
     })
       .populate("studentId examId")
       .skip(paginateData.skippedIndex)
