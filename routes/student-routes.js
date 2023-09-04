@@ -46,6 +46,7 @@ const {
   getWrittenStudentAllByExam,
   getWrittenScript,
   getHistoryByWrittenId,
+  getCheckWrittenStudentAllByExam,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -380,6 +381,15 @@ router.get(
   ],
   getWrittenStudentAllByExam
 );
+router.get(
+  "/getcheckwrittenstudentallbyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getCheckWrittenStudentAllByExam
+);
+
 router.get(
   "/getwrittenstudentsinglebyexam",
   [
