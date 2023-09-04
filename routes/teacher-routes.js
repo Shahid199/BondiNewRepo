@@ -56,7 +56,7 @@ router.get(
   // ],
   getWrittenScriptSingle
 );
-router.get(
+router.post(
   "/markscalculation",
   [
     passport.authenticate("jwt", { session: false }),

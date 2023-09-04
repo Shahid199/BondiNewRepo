@@ -31,7 +31,6 @@ const getStudentData = async (req, res, next) => {
   return res.status(200).json(data);
 };
 const checkScriptSingle = async (req, res, next) => {
-  console.log(req.body);
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
   let studentId = req.body.studentId;
