@@ -53,6 +53,7 @@ const checkScriptSingle = async (req, res, next) => {
       /^data:([A-Za-z-+/]+);base64,/,
       ""
     );
+
     let fileName = String(questionNo + 1) + "-" + String(i + 1) + ".png";
     try {
       fs.writeFileSync(dir + fileName, matches, { encoding: "base64" });
