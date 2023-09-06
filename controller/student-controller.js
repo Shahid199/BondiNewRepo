@@ -3313,6 +3313,7 @@ const examDetailWritten = async (req, res, next) => {
   data["examTotalMarks"] = writtenData.writtenQuestionId.totalMarks;
   data["examTotalQuestions"] = writtenData.writtenQuestionId.totalQuestions;
   data["examMarksPerQuestion"] = writtenData.writtenQuestionId.marksPerQuestion;
+  data["rank"] = "-1";
   return res.status(200).json(data);
 };
 
