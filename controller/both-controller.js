@@ -211,6 +211,7 @@ const getBothExamBySubject = async (req, res, next) => {
     inst["totalDuration"] = exams1[0].totalDuration;
     inst["endTime"] = exams1[0].endTime;
     inst["totalMarks"] = exams1[0].totalMarks;
+    inst["_id"] = exams1[0]._id;
     exams.push(inst);
   }
   let examPage = new Object();
