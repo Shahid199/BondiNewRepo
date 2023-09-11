@@ -789,7 +789,7 @@ const assignQuestionFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("5.Something went wrong.");
   }
-  if (examEndTime >= examFinishTime) examEndTime = examFinishTime;
+  //if (examEndTime >= examFinishTime) examEndTime = examFinishTime;
   questions.push({ studStartTime: examStartTime });
   questions.push({ studEndTime: examEndTime });
   questions.push({ examEndTime: examFinishTime });
