@@ -94,7 +94,6 @@ const createBothExam = async (req, res, next) => {
   }
   return res.status(201).json(doc);
 };
-
 const updateBothExam = async (req, res, next) => {
   const {
     examId,
@@ -156,5 +155,78 @@ const updateBothExam = async (req, res, next) => {
   if (updStatus == null) return res.status(404).json("Prolem at update.");
   else return res.status(201).json("Updated.");
 };
+const deactivateBothExam = async (req, res, next) => {
+  const examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid exam Id.");
+  //const examIdObj = new mongoose.Types.ObjectId(examId);
+  let queryResult = null;
+  try {
+    queryResult = await BothExam.findByIdAndUpdate(examId, { status: false });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (queryResult) return res.status(201).json("Deactivated.");
+  else return res.status(404).json("Something went wrong.");
+};
+const getBothExamBySubject = async (req, res, next) => {
+  let subjectId = req.query.subjectId;
+  if (!ObjectId.isValid(subjectId))
+    return res.status(404).json("subject Id is not valid.");
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  let courseId = null;
+  let page = Number(req.query.page) || 1;
+  let count = 0;
+  try {
+    count = await BothExam.find({
+      $and: [
+        { status: true },
+        { subjectId: subjectId },
+        { endTime: { $gt: new Date() } },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  if (count == 0) return res.status(404).json("No data found.");
+  let paginateData = pagination(count, page);
+  let exams1 = null;
+  exams1 = await Exam.find(
+    {
+      $and: [
+        { status: true },
+        { subjectId: subjectId },
+        { endTime: { $gt: new Date() } },
+      ],
+    },
+    "name examVariation startTime endTime examType"
+  )
+    .populate("courseId subjectId")
+    .skip(paginateData.skippedIndex)
+    .limit(paginateData.limit);
+  let exams = [];
+  for (let i = 0; i < exams1.length; i++) {
+    let inst = {};
+    inst["name"] = exams1[i].name;
+    inst["examVariation"] = examType[Number(exams1[i].examType)];
+    inst["examType"] = examVariation[Number(exams1[i].examVariation)];
+    inst["startTime"] = moment(exams1[i].startTime).format("LLL");
+    inst["subjectName"] = exams1[0].subjectId.name;
+    exams.push(inst);
+  }
+  let examPage = new Object();
+  examPage["exam"] = exams;
+  examPage["course"] = exams1[0].courseId.name;
+  examPage["subject"] = exams1[0].subjectId.name;
+  if (
+    exams.length > 0 &&
+    examPage["course"] != null &&
+    examPage["subject"] != null
+  )
+    return res.status(200).json({ examPage, paginateData });
+  else return res.status(404).json({ message: "No exam Found." });
+};
 exports.createBothExam = createBothExam;
 exports.updateBothExam = updateBothExam;
+exports.deactivateBothExam = deactivateBothExam;
+exports.getBothExamBySubject = getBothExamBySubject;

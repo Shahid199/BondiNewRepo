@@ -5,6 +5,8 @@ const { upload } = require("../utilities/multer");
 const {
   createBothExam,
   updateBothExam,
+  deactivateBothExam,
+  getBothExamBySubject,
 } = require("../controller/both-controller");
 const router = express.Router();
 router.post(
@@ -25,5 +27,20 @@ router.post(
   ],
   updateBothExam
 );
+router.put(
+  "/deactivatebothexam",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  deactivateBothExam
+);
+
+router.get(
+    "/getbothexambysubject",
+    [
+      passport.authenticate("jwt", { session: false }),
+      authorize(["student", "superadmin", "moderator"]),
+    ],
+    //authorize(["student"]),
+    getBothExamBySubject
+  );
 
 module.exports = router;
