@@ -78,7 +78,7 @@ const createBothExam = async (req, res, next) => {
     totalMarks: Number(totalMarks),
     totalQuestionMcq: tqm,
     marksPerMcq: tmm,
-    totalMarksMcq: Number(totalMarksMcq),
+    totalMarksMcq: tqm * tmm,
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
