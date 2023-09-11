@@ -80,8 +80,9 @@ mongoose
   .then(() => {
     app.listen(5011);
     console.log("running on 5011");
-    // let currentTime = Date.now();
-    // let examStartTime = moment(currentTime).add(6, "hours");
-    // console.log((examStartTime - currentTime) / (1000 * 60));
+    // let examStartTime = moment(new Date());
+    // let examEndTime = moment(examStartTime).add(30, "minutes");
+    // console.log(examStartTime);
+    // console.log(examEndTime);
   })
   .catch((err) => console.log(err));

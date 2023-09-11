@@ -768,7 +768,7 @@ const assignQuestionFree = async (req, res, next) => {
   let saveStudentQuestion = null,
     saveStudentExam = null;
   let duration = Number(totalQuesData.duration);
-  let examStartTime = moment(Date.now()).add(6, "hours");
+  let examStartTime = moment(new Date());
   let examEndTime = moment(examStartTime).add(duration, "minutes");
   let studentMarksRank = new FreestudentMarksRank({
     studentId: sId,
@@ -789,6 +789,7 @@ const assignQuestionFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("5.Something went wrong.");
   }
+  if (examEndTime >= examFinishTime) examEndTime = examFinishTime;
   questions.push({ studStartTime: examStartTime });
   questions.push({ studEndTime: examEndTime });
   questions.push({ examEndTime: examFinishTime });
