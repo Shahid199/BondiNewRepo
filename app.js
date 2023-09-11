@@ -56,6 +56,7 @@ const homeRouter = require("./routes/home-routes");
 const freeStudentRouter = require("./routes/freeStudent-routes");
 const specialRouter = require("./routes/special-routes");
 const teacherRouter = require("./routes/teacher-routes");
+const bothRouter = require("./routes/both-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));

@@ -1,6 +1,7 @@
 const express = require("express");
 const authorize = require("../utilities/authorizationMiddleware");
 const passport = require("passport");
+const { upload } = require("../utilities/multer");
 const {
   createBothExam,
   updateBothExam,
