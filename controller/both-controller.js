@@ -191,16 +191,13 @@ const getBothExamBySubject = async (req, res, next) => {
   if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
   let exams1 = null;
-  exams1 = await BothExam.find(
-    {
-      $and: [
-        { status: true },
-        { subjectId: subjectId },
-        { endTime: { $gt: new Date() } },
-      ],
-    },
-    "name examType startTime endTime examType"
-  )
+  exams1 = await BothExam.find({
+    $and: [
+      { status: true },
+      { subjectId: subjectId },
+      { endTime: { $gt: new Date() } },
+    ],
+  })
     .populate("courseId subjectId")
     .skip(paginateData.skippedIndex)
     .limit(paginateData.limit);
