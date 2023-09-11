@@ -222,7 +222,7 @@ const getBothExamBySubject = async (req, res, next) => {
     examPage["course"] != null &&
     examPage["subject"] != null
   )
-    return res.status(200).json({ examPage, paginateData });
+    return res.status(200).json({ exams1, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
 exports.createBothExam = createBothExam;
