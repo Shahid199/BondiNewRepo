@@ -191,7 +191,7 @@ const getBothExamBySubject = async (req, res, next) => {
   if (count == 0) return res.status(404).json("No data found.");
   let paginateData = pagination(count, page);
   let exams1 = null;
-  exams1 = await Exam.find(
+  exams1 = await BothExam.find(
     {
       $and: [
         { status: true },
@@ -209,7 +209,6 @@ const getBothExamBySubject = async (req, res, next) => {
     let inst = {};
     inst["name"] = exams1[i].name;
     inst["examVariation"] = examType[Number(exams1[i].examType)];
-    inst["examType"] = examVariation[Number(exams1[i].examVariation)];
     inst["startTime"] = moment(exams1[i].startTime).format("LLL");
     inst["subjectName"] = exams1[0].subjectId.name;
     exams.push(inst);
