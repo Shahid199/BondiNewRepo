@@ -211,6 +211,9 @@ const getBothExamBySubject = async (req, res, next) => {
     inst["examVariation"] = examType[Number(exams1[i].examType)];
     inst["startTime"] = moment(exams1[i].startTime).format("LLL");
     inst["subjectName"] = exams1[0].subjectId.name;
+    inst["totalDuration"] = exams1[0].totalDuration;
+    inst["endTime"] = exams1[0].endTime;
+    inst["totalMarks"] = exams1[0].totalMarks;
     exams.push(inst);
   }
   let examPage = new Object();
@@ -222,7 +225,7 @@ const getBothExamBySubject = async (req, res, next) => {
     examPage["course"] != null &&
     examPage["subject"] != null
   )
-    return res.status(200).json({ exams1, paginateData });
+    return res.status(200).json({ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
 exports.createBothExam = createBothExam;
