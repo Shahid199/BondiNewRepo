@@ -987,7 +987,7 @@ const submitAnswerFree = async (req, res, next) => {
   }
   //exam status Check:end
 
-  let examEndTime = moment(new Date()).add(6, "hours");
+  let examEndTime = moment(new Date());
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
