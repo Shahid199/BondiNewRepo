@@ -607,13 +607,15 @@ const examCheckMiddlewareFree = async (req, res, next) => {
   examIdObj = new mongoose.Types.ObjectId(examId);
   let status = null,
     query = null;
-  let currentDate = moment(Date.now()).add(6, "hours");
+  let currentDate = moment(new Date());
   try {
     query = await Exam.findById(examId, "endTime");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
   let examEndTimeNew = query.endTime;
+  console.log(query.endTime);
+  console.log(currentDate);
   if (examEndTimeNew <= currentDate) return res.status(200).json("ended");
   try {
     status = await FreestudentMarksRank.findOne({
