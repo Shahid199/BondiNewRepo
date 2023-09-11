@@ -770,7 +770,7 @@ const assignQuestionFree = async (req, res, next) => {
   let saveStudentQuestion = null,
     saveStudentExam = null;
   let duration = Number(totalQuesData.duration);
-  let examStartTime = moment(new Date());
+  let examStartTime = moment(new Date()).add(6, "hours");
   let examEndTime = moment(examStartTime).add(duration, "minutes");
   console.log(examStartTime);
   console.log(examEndTime);
