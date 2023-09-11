@@ -7,6 +7,7 @@ const {
   updateBothExam,
   deactivateBothExam,
   getBothExamBySubject,
+  getBothExamById,
 } = require("../controller/both-controller");
 const router = express.Router();
 router.post(
@@ -41,6 +42,14 @@ router.get(
     ],
     //authorize(["student"]),
     getBothExamBySubject
+  );
+  router.get(
+    "/getbothexambyid",
+    [
+      passport.authenticate("jwt", { session: false }),
+      authorize(["superadmin", "moderator", "student"]),
+    ],
+    getBothExamById
   );
 
 module.exports = router;

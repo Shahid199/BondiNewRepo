@@ -225,7 +225,22 @@ const getBothExamBySubject = async (req, res, next) => {
     return res.status(200).json({ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
+const getBothExamById = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId is invalid.");
+  let examData = null;
+  try {
+    examData = await BothExam.findOne({
+      $and: [{ _id: examId }, { status: true }],
+    }).populate("courseId subjectId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(200).json(examData);
+};
 exports.createBothExam = createBothExam;
 exports.updateBothExam = updateBothExam;
 exports.deactivateBothExam = deactivateBothExam;
 exports.getBothExamBySubject = getBothExamBySubject;
+exports.getBothExamById = getBothExamById;
