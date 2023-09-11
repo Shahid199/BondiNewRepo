@@ -140,7 +140,7 @@ const updateBothExam = async (req, res, next) => {
     totalMarks: Number(totalMarks),
     totalQuestionMcq: Number(totalQuestionMcq),
     marksPerMcq: Number(marksPerMcq),
-    totalMarksMcq: Number(totalMarksMcq),
+    totalMarksMcq: Number(totalQuestionMcq) * Number(marksPerMcq),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
