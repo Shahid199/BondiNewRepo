@@ -772,6 +772,8 @@ const assignQuestionFree = async (req, res, next) => {
   let duration = Number(totalQuesData.duration);
   let examStartTime = moment(new Date());
   let examEndTime = moment(examStartTime).add(duration, "minutes");
+  console.log(examStartTime);
+  console.log(examEndTime);
   let studentMarksRank = new FreestudentMarksRank({
     studentId: sId,
     examId: eId1,
