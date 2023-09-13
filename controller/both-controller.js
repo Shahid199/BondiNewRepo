@@ -203,10 +203,14 @@ const getBothExamBySubject = async (req, res, next) => {
     let inst = {};
     inst["name"] = exams1[i].name;
     inst["examVariation"] = examType[Number(exams1[i].examType)];
-    inst["startTime"] = exams1[i].startTime;
+    inst["startTime"] = moment(exams1[i].startTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
     inst["subjectName"] = exams1[i].subjectId.name;
     inst["totalDuration"] = exams1[i].totalDuration;
-    inst["endTime"] = exams1[i].endTime;
+    inst["endTime"] = moment(exams1[i].endTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
     inst["totalMarks"] = exams1[i].totalMarks;
     inst["_id"] = exams1[i]._id;
     exams.push(inst);
