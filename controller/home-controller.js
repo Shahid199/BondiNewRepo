@@ -1,3 +1,4 @@
+const BothExam = require("../model/BothExam");
 const Course = require("../model/Course");
 const Exam = require("../model/Exam");
 const Student = require("../model/Student");
@@ -19,9 +20,9 @@ const getHomePage = async (req, res, next) => {
   let currentTime = moment(Date.now()).add(6, "hours");
   //Top
   if (section == "top") {
-    //let currentTime = new Date();
-    //console.log(currentTime);
-    //console.log(courseId);
+    let currentTime = new Date();
+    console.log(currentTime);
+    console.log(courseId);
     try {
       coming = await Exam.find(
         {
@@ -38,9 +39,44 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
+    // let bothExam = [];
+    // try {
+    //   bothExam = await BothExam.find(
+    //     {
+    //       $and: [
+    //         { status: true },
+    //         { courseId: courseId },
+    //         { startTime: { $gt: currentTime } },
+    //       ],
+    //     },
+    //     "_id name startTime endTime iLink"
+    //   )
+    //     .sort("startTime")
+    //     .limit(2);
+    // } catch (err) {
+    //   return res.status(500).json("Something went wrong!");
+    // }
+
     //console.log(coming);
+    // try {
+    //   running = await Exam.find(
+    //     {
+    //       $and: [
+    //         { status: true },
+    //         { startTime: { $lte: currentTime } },
+    //         { endTime: { $gt: currentTime } },
+    //       ],
+    //     },
+    //     "_id name startTime endTime iLink examVariation examType"
+    //   )
+    //     .sort("startTime")
+    //     .limit(2);
+    // } catch (err) {
+    //   return res.status(500).json("Something went wrong!");
+    // }
+
     try {
-      running = await Exam.find(
+      running = await BothExam.find(
         {
           $and: [
             { status: true },
@@ -48,7 +84,7 @@ const getHomePage = async (req, res, next) => {
             { endTime: { $gt: currentTime } },
           ],
         },
-        "_id name startTime endTime iLink examVariation examType"
+        "_id name startTime endTime iLink examType"
       )
         .sort("startTime")
         .limit(2);
