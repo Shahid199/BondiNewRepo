@@ -200,7 +200,19 @@ const getBothExamBySubject = async (req, res, next) => {
   console.log(exams1);
   let exams = [];
   for (let i = 0; i < exams1.length; i++) {
+    let dataRule = "0";
+    try {
+      dataRule = await BothExamRule.findOne({ examId: exams1[i]._id }).select(
+        "ruleILink -_id"
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
     let inst = {};
+    if (dataRule == null) inst["RuleImage"] = "0";
+    else {
+      inst["RuleImage"] = dataRule.ruleILink;
+    }
     inst["name"] = exams1[i].name;
     inst["examVariation"] = examType[Number(exams1[i].examType)];
     inst["startTime"] = moment(exams1[i].startTime).format(
@@ -219,6 +231,7 @@ const getBothExamBySubject = async (req, res, next) => {
   examPage["exam"] = exams;
   examPage["course"] = exams1[0].courseId.name;
   examPage["subject"] = exams1[0].subjectId.name;
+
   if (exams.length > 0) return res.status(200).json({ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
