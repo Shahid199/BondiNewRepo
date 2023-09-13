@@ -70,8 +70,8 @@ const createBothExam = async (req, res, next) => {
     subjectId: subjectIdObj,
     name: name,
     examType: Number(examType),
-    startTime: moment(startTime1),
-    endTime: moment(endTime1),
+    startTime: startTime,
+    endTime: endTime,
     totalDuration: Number(totalDuration),
     mcqDuration: Number(mcqDuration),
     writtenDuration: Number(writtenDuration),
@@ -127,17 +127,17 @@ const updateBothExam = async (req, res, next) => {
       .status(404)
       .json("exam Id or course Id or subject Id is not valid.");
   }
-  let startTime1 = new Date(startTime);
-  let endTime1 = new Date(endTime);
-  console.log(moment(startTime1));
-  console.log(moment(endTime1));
+  let startTime1 = startTime;
+  let endTime1 = endTime;
+  console.log(startTime1);
+  console.log(endTime1);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let saveExamUpd = {
     courseId: new mongoose.Types.ObjectId(courseId),
     subjectId: new mongoose.Types.ObjectId(subjectId),
     name: name,
-    startTime: moment(startTime1),
-    endTime: moment(endTime1),
+    startTime: startTime1,
+    endTime: endTime1,
     totalDuration: totalDuration,
     examType: examType,
     mcqDuration: mcqDuration,
@@ -245,6 +245,7 @@ const getBothExamById = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(examData);
   return res.status(200).json(examData);
 };
 //exam rule page

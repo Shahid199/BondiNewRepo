@@ -71,7 +71,7 @@ app.use("/api/home", homeRouter);
 app.use("/api/freestudent", freeStudentRouter);
 app.use("/api/special", specialRouter);
 app.use("/api/teacher", teacherRouter);
-app.use("/api/both",bothRouter);
+app.use("/api/both", bothRouter);
 mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
@@ -82,9 +82,9 @@ mongoose
   .then(() => {
     app.listen(5011);
     console.log("running on 5011");
-     //let examStartTime = moment(Date.now());
+    let examStartTime = moment(new Date());
     // let examEndTime = moment(examStartTime).add(30, "minutes");
-   // console.log(examStartTime);
-    // console.log(examEndTime);
+    console.log(examStartTime);
+    console.log(moment(new Date()));
   })
   .catch((err) => console.log(err));
