@@ -25,7 +25,7 @@ router.post(
   ],
   createBothExam
 );
-router.post(
+router.put(
   "/updatebothexam",
   [
     passport.authenticate("jwt", { session: false }),
