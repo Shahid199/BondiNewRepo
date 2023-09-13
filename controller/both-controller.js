@@ -186,11 +186,7 @@ const getBothExamBySubject = async (req, res, next) => {
   let count = 0;
   try {
     count = await BothExam.find({
-      $and: [
-        { status: true },
-        { subjectId: subjectId },
-        { endTime: { $gt: new Date() } },
-      ],
+      $and: [{ status: true }, { subjectId: subjectId }],
     }).count();
   } catch (err) {
     return res.status(500).json("something went wrong.");
@@ -199,11 +195,7 @@ const getBothExamBySubject = async (req, res, next) => {
   let paginateData = pagination(count, page);
   let exams1 = null;
   exams1 = await BothExam.find({
-    $and: [
-      { status: true },
-      { subjectId: subjectId },
-      { endTime: { $gt: new Date() } },
-    ],
+    $and: [{ status: true }, { subjectId: subjectId }],
   })
     .populate("courseId subjectId")
     .skip(paginateData.skippedIndex)
@@ -230,7 +222,7 @@ const getBothExamBySubject = async (req, res, next) => {
     examPage["course"] != null &&
     examPage["subject"] != null
   )
-    return res.status(200).json({ examPage, paginateData });
+    return res.status(200).json(exams1); //{ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
 const getBothExamById = async (req, res, next) => {

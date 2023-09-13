@@ -14,6 +14,7 @@ const {
   bothAddQuestionMcqBulk,
   bothAddQuestionMcq,
   bothGetMcqQuestionByExamId,
+  bothAddQuestionWritten,
 } = require("../controller/both-controller");
 const router = express.Router();
 router.post(
@@ -105,5 +106,14 @@ router.get(
     authorize(["superadmin", "moderator"]),
   ],
   bothGetMcqQuestionByExamId
+);
+router.post(
+  "/bothaddquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.fields([{ name: "questionILink", maxCount: 1 }]),
+  ],
+  bothAddQuestionWritten
 );
 module.exports = router;
