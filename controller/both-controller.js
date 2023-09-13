@@ -196,33 +196,26 @@ const getBothExamBySubject = async (req, res, next) => {
   let exams1 = null;
   exams1 = await BothExam.find({
     $and: [{ status: true }, { subjectId: subjectId }],
-  })
-    .populate("courseId subjectId")
-    .skip(paginateData.skippedIndex)
-    .limit(paginateData.limit);
+  });
+  console.log(exams1);
   let exams = [];
   for (let i = 0; i < exams1.length; i++) {
     let inst = {};
     inst["name"] = exams1[i].name;
     inst["examVariation"] = examType[Number(exams1[i].examType)];
     inst["startTime"] = moment(exams1[i].startTime).format("LLL");
-    inst["subjectName"] = exams1[0].subjectId.name;
-    inst["totalDuration"] = exams1[0].totalDuration;
-    inst["endTime"] = exams1[0].endTime;
-    inst["totalMarks"] = exams1[0].totalMarks;
-    inst["_id"] = exams1[0]._id;
+    inst["subjectName"] = exams1[i].subjectId.name;
+    inst["totalDuration"] = exams1[i].totalDuration;
+    inst["endTime"] = exams1[i].endTime;
+    inst["totalMarks"] = exams1[i].totalMarks;
+    inst["_id"] = exams1[i]._id;
     exams.push(inst);
   }
   let examPage = new Object();
   examPage["exam"] = exams;
   examPage["course"] = exams1[0].courseId.name;
   examPage["subject"] = exams1[0].subjectId.name;
-  if (
-    exams.length > 0 &&
-    examPage["course"] != null &&
-    examPage["subject"] != null
-  )
-    return res.status(200).json(exams1); //{ examPage, paginateData });
+  if (exams.length > 0) return res.status(200).json({ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
 const getBothExamById = async (req, res, next) => {
