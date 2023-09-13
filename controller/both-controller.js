@@ -70,8 +70,8 @@ const createBothExam = async (req, res, next) => {
     subjectId: subjectIdObj,
     name: name,
     examType: Number(examType),
-    startTime: startTime1,
-    endTime: endTime1,
+    startTime: moment(startTime1),
+    endTime: moment(endTime1),
     totalDuration: Number(totalDuration),
     mcqDuration: Number(mcqDuration),
     writtenDuration: Number(writtenDuration),
@@ -232,6 +232,59 @@ const getBothExamById = async (req, res, next) => {
   }
   console.log(examData);
   return res.status(200).json(examData);
+};
+const bothQuestionByExamId = async (req, res, next) => {
+  const examId = req.query.examId;
+  const type = req.query.type;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  if (type == 1) {
+    let queryResult = null;
+
+    try {
+      queryResult = await BothMcqQuestionVsExam.findOne({
+        eId: examIdObj,
+      }).populate({
+        path: "mId",
+        match: { status: { $eq: true } },
+      });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    if (queryResult == null) return res.status(404).json("No Question added.");
+    let resultAll = [];
+    for (let i = 0; i < queryResult.mId.length; i++) {
+      let result = {};
+      result["type"] = queryResult.mId[i].type;
+      result["question"] = queryResult.mId[i].question;
+      result["options"] = queryResult.mId[i].options;
+      result["correctOption"] = queryResult.mId[i].correctOption;
+      result["explanation"] = queryResult.mId[i].explanationILink;
+      result["questionId"] = queryResult.mId[i]._id;
+      result["status"] = queryResult.mId[i].status;
+      resultAll.push(result);
+    }
+    return res.status(200).json(resultAll);
+  } else {
+    let queryResult = null;
+
+    try {
+      queryResult = await BothQuestionsWritten.findOne({
+        $and: [{ examId: examIdObj }, { status: true }],
+      });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    if (queryResult == null) return res.status(404).json("No Question added.");
+    let resultAll = {};
+    resultAll["questionILink"] = queryResult.questionILink;
+    resultAll["status"] = queryResult.status;
+    resultAll["totalQuestions"] = queryResult.totalQuestions;
+    resultAll["marksPerQuestion"] = queryResult.marksPerQuestion;
+    resultAll["totalMarks"] = queryResult.totalMarks;
+    return res.status(200).json(resultAll);
+  }
 };
 //exam rule page
 const bothExamRuleSet = async (req, res, next) => {
@@ -553,6 +606,7 @@ const bothGetWrittenQuestionByexam = async (req, res, next) => {
   if (writtenQuestion == null) return res.status(404).json("No data found.");
   return res.status(200).json(writtenQuestion);
 };
+exports.bothQuestionByExamId = bothQuestionByExamId;
 exports.createBothExam = createBothExam;
 exports.updateBothExam = updateBothExam;
 exports.deactivateBothExam = deactivateBothExam;
