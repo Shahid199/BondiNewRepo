@@ -80,11 +80,11 @@ mongoose
     process.env.MONGO_CONNECTION_STRING
   )
   .then(() => {
-    app.listen(5011);
+    app.listen(5013);
     console.log("running on 5011");
-    // let examStartTime = moment(new Date());
+     //let examStartTime = moment(Date.now());
     // let examEndTime = moment(examStartTime).add(30, "minutes");
-    // console.log(examStartTime);
+   // console.log(examStartTime);
     // console.log(examEndTime);
   })
   .catch((err) => console.log(err));

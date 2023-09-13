@@ -1,0 +1,39 @@
+const mongoose = require("mongoose");
+const exam = require("./BothExam");
+const Schema = mongoose.Schema;
+
+const bothQuestionWrittenSchema = new Schema(
+  {
+    questionILink: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    totalQuestions: {
+      type: Number,
+      required: true,
+    },
+    marksPerQuestion: [
+      {
+        type: Number,
+        required: true,
+      },
+    ],
+    totalMarks: {
+      type: Number,
+      required: true,
+    },
+    examId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: exam,
+    },
+  },
+  { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
+);
+
+module.exports = mongoose.model("BothQuestionsWritten", bothQuestionWrittenSchema);

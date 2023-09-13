@@ -52,6 +52,17 @@ const {
   getWrittenQuestion,
   viewSollutionWritten,
   examDetailWritten,
+  bothExamCheckMiddleware,
+  bothAssignQuestion,
+  bothAssignQuestionMcq,
+  bothGetRunningDataMcq,
+  bothUpdateAssignQuestionMcq,
+  BothSubmitAnswerMcq,
+  bothAssignWrittenQuestionWritten,
+  bothRunningWritten,
+  bothSubmitStudentScript,
+  bothSubmitWritten,
+  bothUpdateStudentExamInfo,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -454,5 +465,92 @@ router.get(
   ],
   examDetailWritten
 );
+
+//both
+router.get(
+  "/bothexamcheckmiddleware",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  bothExamCheckMiddleware
+);
+router.get(
+  "/bothstartexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  bothAssignQuestionMcq
+);
+router.get(
+  "/bothgetrunningdatamcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  bothGetRunningDataMcq
+);
+router.post(
+  "/bothupdateanswermcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  bothUpdateAssignQuestionMcq
+);
+
+router.post(
+  "/bothsubmitanswermcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  BothSubmitAnswerMcq
+);
+
+router.get(
+  "/bothassignquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  bothAssignWrittenQuestionWritten
+);
+router.get(
+  "/bothrunningwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  bothRunningWritten
+);
+
+router.post(
+  "/bothsubmitstudentscript",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  bothSubmitStudentScript
+);
+router.post(
+  "/bothsubmitwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  bothSubmitWritten
+);
+router.put(
+  "/bothupdatestudentexaminfo",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothUpdateStudentExamInfo
+);
+
 module.exports = router;
 //new node
