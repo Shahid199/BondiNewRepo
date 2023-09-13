@@ -529,36 +529,20 @@ const bothAddQuestionMcqBulk = async (req, res, next) => {
   return res.status(201).json("Inserted question to the exam.");
 };
 const bothGetMcqQuestionByExamId = async (req, res, next) => {
-  const examId = req.query.examId;
+  const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
-    return res.status(404).json("exam Id is not valid.");
-  const examIdObj = new mongoose.Types.ObjectId(examId);
-  let queryResult = null;
-
+    return res.status(404).json("Exam Id is not valid.");
+  let questions = null;
   try {
-    queryResult = await BothMcqQuestionVsExam.findOne({ eId: examId }).populate(
-      {
-        path: "mId",
-        match: { status: { $eq: true } },
-      }
+    questions = await BothMcqQuestionVsExam.findOne(
+      { eId: examId },
+      "mId -_id"
     );
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("Something went wrong.");
   }
-  if (queryResult == null) return res.status(404).json("No Question added.");
-  let resultAll = [];
-  for (let i = 0; i < queryResult.mId.length; i++) {
-    let result = {};
-    // if (queryResult.mId[i] == null) continue;
-    result["type"] = queryResult.mId[i].type;
-    result["question"] = queryResult.mId[i].question;
-    result["options"] = queryResult.mId[i].options;
-    result["correctOption"] = queryResult.mId[i].correctOption;
-    result["explanation"] = queryResult.mId[i].explanationILink;
-    result["questionId"] = queryResult.mId[i]._id;
-    result["status"] = queryResult.mId[i].status;
-    resultAll.push(result);
-  }
+  if (questions.length == 0) return res.status(404).json("No question found.");
+  return res.status.json(questions);
 };
 //add written Question
 const bothAddQuestionWritten = async (req, res, next) => {
