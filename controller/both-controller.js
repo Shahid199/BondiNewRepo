@@ -200,9 +200,9 @@ const getBothExamBySubject = async (req, res, next) => {
   console.log(exams1);
   let exams = [];
   for (let i = 0; i < exams1.length; i++) {
-    let dataRule = "0";
+    let dataRule = null;
     try {
-      dataRule = await BothExamRule.findOne({ examId: exams1[i]._id }).select(
+      dataRule = await BothExamRule.findOne({ bothExamId: exams1[i]._id }).select(
         "ruleILink -_id"
       );
     } catch (err) {
