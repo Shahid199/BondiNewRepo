@@ -3249,7 +3249,7 @@ const viewSollutionWritten = async (req, res, next) => {
   try {
     data = await StudentExamVsQuestionsWritten.findOne({
       // $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-      studentId: studentIdObj,
+      //studentId: studentIdObj,
     });
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
