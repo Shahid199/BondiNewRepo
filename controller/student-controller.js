@@ -3030,7 +3030,12 @@ const historyDataWritten = async (req, res, next) => {
   let count = 0;
   try {
     count = await StudentExamVsQuestionsWritten.find({
-      studentId: studentIdObj,
+      $and: [
+        {
+          studentId: studentIdObj,
+        },
+        { checkStatus: true },
+      ],
     }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
