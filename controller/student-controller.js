@@ -3263,6 +3263,7 @@ const viewSollutionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  console.log(dataWritten);
   let data1 = {};
   data1["question"] = dataWritten.writtenQuestionId.questionILink;
   data1["sollutionScript"] = data.ansewerScriptILink;
