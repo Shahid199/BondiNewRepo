@@ -2604,7 +2604,7 @@ const assignWrittenQuestion = async (req, res, next) => {
   let data = new StudentExamVsQuestionsWritten({
     examId: examId,
     studentId: studentId,
-    ansewerScriptILink: dataArr,
+    //ansewerScriptILink: dataArr,
   });
   try {
     sav = data.save();
