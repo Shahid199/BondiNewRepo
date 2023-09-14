@@ -75,7 +75,7 @@ const checkScriptSingle = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let insertId = getData._id;
-  let checkScript = [];
+  let checkScript = getData.ansewerScriptILink;
   let obtainedMarksArr = [];
   checkScript[questionNo] = uploadImages;
   obtainedMarksArr = getData.obtainedMarks;
