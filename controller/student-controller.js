@@ -2598,13 +2598,22 @@ const assignWrittenQuestion = async (req, res, next) => {
   let examData = null;
   let sav = null;
   let dataArr = [];
-  for (let i = 0; i < marksPerQuestion.length; i++) {
+  let questionsNo = null;
+  try {
+    questionsNo = await QuestionsWritten.findOne(
+      { examId: examId },
+      "totalQuestions -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  for (let i = 0; i < questionsNo; i++) {
     dataArr[i] = [];
   }
   let data = new StudentExamVsQuestionsWritten({
     examId: examId,
     studentId: studentId,
-    //ansewerScriptILink: dataArr,
+    ansewerScriptILink: dataArr,
   });
   try {
     sav = data.save();
