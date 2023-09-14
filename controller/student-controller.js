@@ -3253,6 +3253,7 @@ const viewSollutionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  console.log(data);
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let dataWritten = null;
