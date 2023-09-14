@@ -63,7 +63,7 @@ const checkScriptSingle = async (req, res, next) => {
     }
     uploadImages[i] = "uploads/" + fileName;
   }
-
+  console.log(uploadImages);
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let getData = null;
