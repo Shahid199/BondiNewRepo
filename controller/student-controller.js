@@ -3248,7 +3248,7 @@ const viewSollutionWritten = async (req, res, next) => {
   let data = null;
   try {
     data = await StudentExamVsQuestionsWritten.find({
-       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
       //studentId: studentIdObj,
     });
   } catch (err) {
