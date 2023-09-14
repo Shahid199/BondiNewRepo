@@ -80,7 +80,7 @@ const checkScriptSingle = async (req, res, next) => {
   checkScript[questionNo] = uploadImages;
   obtainedMarksArr = getData.obtainedMarks;
   obtainedMarksArr[questionNo] = obtainedMarks;
-
+  console.log(checkScript);
   let upd = {
     ansewerScriptILink: checkScript,
     obtainedMarks: obtainedMarksArr,
