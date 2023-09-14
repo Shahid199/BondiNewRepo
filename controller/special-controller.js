@@ -2,7 +2,7 @@ const { ObjectId } = require("mongodb");
 const { default: mongoose, Mongoose } = require("mongoose");
 const SpecialExam = require("../model/SpecialExam");
 const pagination = require("../utilities/pagination");
-
+const moment = require("moment");
 const createSpecialExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
@@ -13,15 +13,22 @@ const createSpecialExam = async (req, res, next) => {
   const {
     courseId,
     name,
+    examType,
     startTime,
     endTime,
-    marksPerMcq,
+    mcqDuration,
+    writtenDuration,
+    totalMarksMcq,
+    totalMarksWritten,
+    totalMarks,
     status,
-    duration,
-    negativeMarks,
+    totalDuration,
+    totalSubject,
+    examSubject,
   } = req.body;
-  if (!ObjectId.isValid(courseId) || subjectId.length == 0)
-    return res.status(404).json("course Id or subject Id is invalid.");
+  console.log(courseId);
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("course Id is invalid.");
   let startTime1, endTime1;
   startTime1 = new Date(startTime);
   endTime1 = new Date(endTime);
@@ -30,13 +37,19 @@ const createSpecialExam = async (req, res, next) => {
   saveExam = new SpecialExam({
     courseId: courseIdObj,
     name: name,
-    startTime: new Date(moment(startTime1).add(6, "hours")),
-    endTime: new Date(moment(endTime1).add(6, "hours")),
-    duration: Number(duration),
-    marksPerMcq: Number(marksPerMcq),
-    negativeMarks: Number(negativeMarks),
+    examType: examType,
+    startTime: moment(startTime1),
+    endTime: moment(endTime1),
+    mcqDuration: mcqDuration,
+    writtenDuration: writtenDuration,
+    totalDuration: totalDuration,
+    totalMarksMcq: totalMarksMcq,
+    totalMarksWritten: totalMarksWritten,
+    totalMarks: totalMarks,
     status: JSON.parse(status),
     iLink: iLinkPath,
+    totalSubject: totalSubject,
+    examSubject: examSubject,
   });
   let doc;
   try {
@@ -45,6 +58,7 @@ const createSpecialExam = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
+
   return res.status(201).json(doc);
 };
 const updateSpecialExam = async (req, res, next) => {
@@ -52,30 +66,49 @@ const updateSpecialExam = async (req, res, next) => {
     examId,
     courseId,
     name,
+    examType,
     startTime,
     endTime,
-    marksPerMcq,
+    mcqDuration,
+    writtenDuration,
+    totalMarksMcq,
+    totalMarksWritten,
+    totalMarks,
     status,
-    duration,
-    negativeMarks,
+    totalDuration,
+    totalSubject,
+    examSubject,
   } = req.body;
+  console.log(req.body);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(courseId)) {
     return res.status(404).json("exam Id or course Id is not valid.");
   }
-  let saveExamUpd = {
-    courseId: new mongoose.Types.ObjectId(courseId),
+  let startTime1, endTime1;
+  startTime1 = new Date(startTime);
+  endTime1 = new Date(endTime);
+  let courseIdObj;
+  courseIdObj = new mongoose.Types.ObjectId(courseId);
+  let saveExam = {
+    courseId: courseIdObj,
     name: name,
-    startTime: new Date(moment(new Date(startTime)).add(6, "hours")),
-    endTime: new Date(moment(new Date(endTime)).add(6, "hours")),
-    duration: Number(duration),
-    marksPerMcq: Number(marksPerMcq),
-    negativeMarks: Number(negativeMarks),
+    examType: examType,
+    startTime: moment(startTime),
+    endTime: moment(endTime),
+    mcqDuration: mcqDuration,
+    writtenDuration: writtenDuration,
+    totalDuration: totalDuration,
+    totalMarksMcq: totalMarksMcq,
+    totalMarksWritten: totalMarksWritten,
+    totalMarks: totalMarks,
     status: JSON.parse(status),
+    totalSubject: totalSubject,
+    examSubject: examSubject,
   };
   let updStatus = null;
   try {
-    updStatus = await SpecialExam.findByIdAndUpdate(examId, saveExamUpd);
+    updStatus = await SpecialExam.findByIdAndUpdate(examId, saveExam);
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   if (updStatus == null) return res.status(404).json("Problem at update.");

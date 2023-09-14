@@ -13,10 +13,14 @@ const router = express.Router();
 
 router.post(
   "/createspecialexam",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
   createSpecialExam
 );
-router.put(
+router.post(
   "/updatespecialexam",
   [passport.authenticate("jwt", { session: false }), authorize()],
   updateSpecialExam

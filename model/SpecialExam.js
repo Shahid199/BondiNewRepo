@@ -11,6 +11,10 @@ const SpecialExamSchema = new Schema(
       unique: true,
       max: 200,
     },
+    examType: {
+      type: Number,
+      required: true,
+    },
     startTime: {
       type: Date,
       required: true,
@@ -19,17 +23,41 @@ const SpecialExamSchema = new Schema(
       type: Date,
       required: true,
     },
-    duration: {
+    totalSubject: {
       type: Number,
       required: true,
+      default: 0,
     },
-    marksPerMcq: {
+    examSubject: {
       type: Number,
-      required: false,
+      required: true,
+      default: 0,
+    },
+    mcqDuration: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    writtenDuration: {
+      type: Number,
+      required: true,
+      Deafault: 0,
     },
     totalMarksMcq: {
       type: Number,
-      required: false,
+      required: true,
+    },
+    totalMarksWritten: {
+      type: Number,
+      required: true,
+    },
+    totalMarks: {
+      type: Number,
+      required: true,
+    },
+    totalDuration: {
+      type: Number,
+      required: true,
     },
     status: {
       type: Boolean,
@@ -40,11 +68,6 @@ const SpecialExamSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: courses,
       required: true,
-    },
-    negativeMarks: {
-      type: Number,
-      required: true,
-      default: 0,
     },
     iLink: {
       type: String,

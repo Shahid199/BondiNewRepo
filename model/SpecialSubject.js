@@ -1,23 +1,15 @@
 const mongoose = require("mongoose");
 const specialExams = require("./SpecialExam");
 const QuestionsMcq = require("./QuestionsMcq");
+const subjects = require("./Subject");
 const Schema = mongoose.Schema;
 
 const specialSubjectSchema = new Schema(
   {
-    name: {
-      type: String,
+    subjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: subjects,
       required: true,
-    },
-    descr: {
-      type: String,
-      required: false,
-      max: 10000,
-    },
-    iLink: {
-      type: String,
-      required: true,
-      unique: true,
     },
     examId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -31,6 +23,45 @@ const specialSubjectSchema = new Schema(
         ref: QuestionsMcq,
       },
     ],
+    marksPerMcq: {
+      type: Number,
+      required: false,
+    },
+    subjectTotalMarksMcq: {
+      type: Number,
+      required: false,
+    },
+    negativeMarks: {
+      type: Number,
+      required: false,
+    },
+    writtenQuestionILink: {
+      type: String,
+      required: false,
+    },
+    writtenTotalQuestions: {
+      type: Number,
+      required: false,
+    },
+    writtenMarksPerQuestion: [
+      {
+        type: Number,
+        required: false,
+      },
+    ],
+    subjectWrittenTotalMarks: {
+      type: Number,
+      required: false,
+    },
+    TotalMarks: {
+      type: Number,
+      required: true,
+    },
+    priority: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     status: {
       type: Boolean,
       required: true,
