@@ -2597,9 +2597,14 @@ const assignWrittenQuestion = async (req, res, next) => {
   studentId = new mongoose.Types.ObjectId(studentId);
   let examData = null;
   let sav = null;
+  let dataArr = [];
+  for (let i = 0; i < marksPerQuestion.length; i++) {
+    dataArr[i] = [];
+  }
   let data = new StudentExamVsQuestionsWritten({
     examId: examId,
     studentId: studentId,
+    ansewerScriptILink: dataArr,
   });
   try {
     sav = data.save();

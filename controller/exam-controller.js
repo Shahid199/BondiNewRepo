@@ -902,7 +902,6 @@ const addQuestionWritten = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("2.Something went wrong!");
   }
-
   return res.status(200).json("Question save correctly.");
 };
 const removeQuestionWritten = async (req, res, next) => {
