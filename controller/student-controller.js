@@ -3064,11 +3064,7 @@ const historyDataWritten = async (req, res, next) => {
     try {
       rank = await StudentMarksRank.findOne(
         {
-          $and: [
-            { studentId: studentIdObj },
-            { examId: examIdObj },
-            { finishedStatus: true },
-          ],
+          $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
         },
         "examStartTime examEndtime"
       );
