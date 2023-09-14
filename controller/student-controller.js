@@ -3257,21 +3257,22 @@ const viewSollutionWritten = async (req, res, next) => {
     return res.status(404).json("No exam found under this student.");
   let dataWritten = null;
   try {
-    dataWritten = await WrittenQuestionVsExam.findOne({
+    dataWritten = await QuestionsWritten.findOne({
       examId: examIdObj,
-    }).populate("examId writtenQuestionId");
+    }).populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+
   console.log(dataWritten);
   let data1 = {};
-  data1["question"] = dataWritten.writtenQuestionId.questionILink;
+  data1["question"] = dataWritten.questionILink;
   data1["sollutionScript"] = data.ansewerScriptILink;
   data1["obtainedMarks"] = data.obtainedMarks;
   data1["totalObtainedMarks"] = data.totalObtainedMarks;
-  data1["marksPerQuestion"] = dataWritten.writtenQuestionId.marksPerQuestion;
-  data1["totalQuestion"] = dataWritten.writtenQuestionId.totalQuestions;
-  data1["totalMarks"] = dataWritten.writtenQuestionId.totalMarks;
+  data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
+  data1["totalQuestion"] = dataWritten.totalQuestions;
+  data1["totalMarks"] = dataWritten.totalMarks;
 
   return res.status(200).json(data1);
 };
