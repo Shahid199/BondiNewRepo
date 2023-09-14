@@ -2608,7 +2608,7 @@ const assignWrittenQuestion = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   for (let i = 0; i < questionsNo; i++) {
-    dataArr[i] = [];
+    dataArr[i] = null;
   }
   let data = new StudentExamVsQuestionsWritten({
     examId: examId,
@@ -2886,7 +2886,7 @@ const getWrittenStudentAllByExam = async (req, res, next) => {
   //console.log(data);
   let data2 = null;
   try {
-    data2 = await QuestionsWritten.findOne({ $and: [{ examId: examId }] });
+    data2 = await QuestionsWritten.findOne({ examId: examId });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
