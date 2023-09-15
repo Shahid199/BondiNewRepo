@@ -78,7 +78,7 @@ const checkScriptSingle = async (req, res, next) => {
   let insertId = getData._id;
   let checkScript = getData.ansewerScriptILink;
   let obtainedMarksArr = [];
-  checkScript[questionNo] = 1;
+  checkScript[questionNo] = uploadImages;
   obtainedMarksArr = getData.obtainedMarks;
   obtainedMarksArr[questionNo] = obtainedMarks;
   console.log(checkScript);
