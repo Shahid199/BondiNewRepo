@@ -3120,7 +3120,7 @@ const historyDataWritten = async (req, res, next) => {
     data1["variation"] = examType[Number(data[i].examId.examType)];
     data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
-    data1["totalMarksMcq"]=data[i].examId.totalMarks;
+    data1["totalMarksMcq"] = data[i].examId.totalMarks;
     data1["obtainPerQuestion"] = data[i].obtainedMarks;
     data1["meritPosition"] = resultRank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
