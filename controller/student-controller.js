@@ -3114,13 +3114,21 @@ const historyDataWritten = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("3.Something went wrong.");
     }
+    let questionsWrittens = null;
+    try {
+      questionsWrittens = await QuestionsWritten.findOne({
+        examId: examIdObj,
+      });
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
     subjectName = subjectName.name;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["variation"] = examType[Number(data[i].examId.examType)];
     data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
-    data1["totalMarksMcq"] = data[i].examId.totalMarks;
+    data1["totalMarksMcq"] = questionsWrittens.totalMarks;
     data1["obtainPerQuestion"] = data[i].obtainedMarks;
     data1["meritPosition"] = resultRank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
