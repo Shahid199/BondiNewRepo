@@ -80,11 +80,13 @@ mongoose
     process.env.MONGO_CONNECTION_STRING
   )
   .then(() => {
-    app.listen(5011);
-    console.log("running on 5011");
-    let examStartTime = moment(new Date());
-    // let examEndTime = moment(examStartTime).add(30, "minutes");
-    console.log(examStartTime);
-    console.log(moment(new Date()));
+    app.listen(5015);
+    // console.log("running on 5011");
+    // let examStartTime = moment(new Date());
+    // // let examEndTime = moment(examStartTime).add(30, "minutes");
+    // console.log(examStartTime);
+    // console.log(moment(new Date()));
+    const dir = path.resolve(path.join(__dirname, "uploads"));
+    console.log(dir);
   })
   .catch((err) => console.log(err));

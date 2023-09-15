@@ -8,7 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const mime = require("mime");
 
-const dir = path.resolve(path.join(__dirname, "../uploads"));
+const dir = path.resolve(path.join(__dirname, "uploads"));
 const getStudentData = async (req, res, next) => {
   let teacherId = req.user._id;
   teacherId = new mongoose.Types.ObjectId(teacherId);
