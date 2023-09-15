@@ -3288,7 +3288,7 @@ const viewSollutionWritten = async (req, res, next) => {
   data1["totalObtainedMarks"] = data.totalObtainedMarks;
   data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
   data1["totalQuestion"] = dataWritten.totalQuestions;
-  data1["totalMarks"] = dataWritten.totalMarks;
+  data1["totalMarksMcq"] = dataWritten.totalMarks;
 
   return res.status(200).json(data1);
 };
