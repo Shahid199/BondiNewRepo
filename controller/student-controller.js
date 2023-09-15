@@ -3120,6 +3120,7 @@ const historyDataWritten = async (req, res, next) => {
     data1["variation"] = examType[Number(data[i].examId.examType)];
     data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
+    data1["totalMarksMcq"]=data[i].examId.totalMarks;
     data1["obtainPerQuestion"] = data[i].obtainedMarks;
     data1["meritPosition"] = resultRank;
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
@@ -3288,7 +3289,7 @@ const viewSollutionWritten = async (req, res, next) => {
   data1["totalObtainedMarks"] = data.totalObtainedMarks;
   data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
   data1["totalQuestion"] = dataWritten.totalQuestions;
-  data1["totalMarksMcq"] = dataWritten.totalMarks;
+  data1["totalMarks"] = dataWritten.totalMarks;
 
   return res.status(200).json(data1);
 };
