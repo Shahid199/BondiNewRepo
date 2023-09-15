@@ -55,6 +55,15 @@ const checkScriptSingle = async (req, res, next) => {
       ""
     );
 
+    let fileNameDis =
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".png";
     let fileName =
       dir +
       "/" +
@@ -72,7 +81,7 @@ const checkScriptSingle = async (req, res, next) => {
       console.log(e);
       return res.status(500).json(e);
     }
-    uploadImages[i] = fileName;
+    uploadImages[i] = "uploads/answers/" + fileNameDis;
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
