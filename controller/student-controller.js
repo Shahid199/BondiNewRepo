@@ -3923,6 +3923,15 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   let studentId = req.user.studentId;
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
+  let updId = null;
+  try {
+    updId = await BothStudentExamVsQuestions.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  updId = updId._id;
   let questionData = null;
   let data1 = {};
   try {
@@ -3956,14 +3965,14 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1["examId"] = examId;
   data1["examName"] = examData.name;
   data1["examType"] = examData.examType;
-  let objSav = new BothStudentExamVsQuestions({
+  let objSav = {
     examStartTimeWritten: data1.studExamStartTime,
     examEndTimeWritten: data1.studExamEndTime,
     writtenDuration: data1.duration,
-  });
+  };
 
   try {
-    sav = objSav.save();
+    sav = BothStudentExamVsQuestions.findByIdAndUpdate(updId, objSav);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
@@ -3997,7 +4006,7 @@ const bothRunningWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.something went wrong.");
   }
- // console.log(timeData);
+  // console.log(timeData);
   data1["questionILink"] = questionData.questionILink;
   data1["status"] = questionData.status;
   data1["totalQuestions"] = questionData.totalQuestions;
