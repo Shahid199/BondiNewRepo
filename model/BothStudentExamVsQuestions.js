@@ -19,7 +19,7 @@ const BothStudentExamVsQuestionsMcqSchema = new Schema(
     },
     examStartTimeMcq: {
       type: Date,
-      required: true,
+      required: false,
       default: null,
     },
     examEndTimeMcq: {
@@ -29,7 +29,7 @@ const BothStudentExamVsQuestionsMcqSchema = new Schema(
     },
     examStartTimeWritten: {
       type: Date,
-      required: true,
+      required: false,
       default: null,
     },
     examEndTimeWritten: {
@@ -55,7 +55,7 @@ const BothStudentExamVsQuestionsMcqSchema = new Schema(
     mcqQuestionId: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: questionsMcq,
       },
     ],
