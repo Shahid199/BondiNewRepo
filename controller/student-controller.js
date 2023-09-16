@@ -4111,7 +4111,7 @@ const bothSubmitWritten = async (req, res, next) => {
     examEndTimeWritten: endTime,
     writtenDuration: (moment(endTime) - moment(startTime)) / (1000 * 60),
   };
-  console.log(writtenDuration);
+  console.log(upd.writtenDuration);
   let sav = null;
   try {
     sav = await BothStudentExamVsQuestions.findOneAndUpdate(
