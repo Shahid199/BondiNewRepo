@@ -3967,7 +3967,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-
+console.log(sav);
   return res.status(200).json(data1);
 };
 const bothRunningWritten = async (req, res, next) => {
