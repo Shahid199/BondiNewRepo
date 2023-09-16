@@ -3861,6 +3861,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   totalCorrectMarks = totalCorrectAnswer * correctMarks;
   totalWrongMarks = totalWrongAnswer * negativeMarksValue;
   totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+  console.log(totalWrongMarks);
   const update1 = {
     totalCorrectAnswer: totalCorrectAnswer,
     totalWrongAnswer: totalWrongAnswer,
