@@ -3481,7 +3481,8 @@ const bothExamCheckMiddleware = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   examEndTime = query.endTime;
-  if (query.uploadStatus == true) return res.status(200).json("Both ended");
+  if (moment(examEndTime) < currentDate)
+    return res.status(200).json("Both ended");
 
   try {
     status = await BothStudentExamVsQuestions.findOne({
@@ -3490,6 +3491,7 @@ const bothExamCheckMiddleware = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.Something went wrong.");
   }
+  console.log(status);
   if (status == null) return res.status(200).json("Mcq assign");
   else {
     if (status.finishedStatus == true && status.uploadStatus == true)
@@ -3915,40 +3917,40 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
-// const bothViewSollutionMcq = async (req, res, next) => {
-//   //console.log(req.query);
-//   const studentId = req.user.studentId;
-//   const examId = req.query.examId;
-//   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
-//     return res.status(404).json("student Id or examId is not valid.");
-//   let studentIdObj = new mongoose.Types.ObjectId(studentId);
-//   let examIdObj = new mongoose.Types.ObjectId(examId);
-//   //console.log(studentIdObj, examIdObj);
-//   let data = null;
-//   try {
-//     data = await BothStudentExamVsQuestions.find({
-//       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-//     }).populate("mcqQuestionId");
-//   } catch (err) {
-//     return res.status(500).json("1.Something went wrong.");
-//   }
-//   if (data == null)
-//     return res.status(404).json("No exam found under this student.");
-//   let resultData = [];
-//   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
-//     let data1 = {};
-//     data1["id"] = data[0].mcqQuestionId[i]._id;
-//     data1["question"] = data[0].mcqQuestionId[i].question;
-//     data1["options"] = data[0].mcqQuestionId[i].options;
-//     data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
-//     data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
-//     data1["type"] = data[0].mcqQuestionId[i].type;
-//     data1["answeredOption"] = data[0].answeredOption[i];
-//     data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
-//     resultData.push(data1);
-//   }
-//   return res.status(200).json(resultData);
-// };
+const bothViewSollutionMcq = async (req, res, next) => {
+  //console.log(req.query);
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["id"] = data[0].mcqQuestionId[i]._id;
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
+    resultData.push(data1);
+  }
+  return res.status(200).json(resultData);
+};
 //written
 const bothAssignQuestionWritten = async (req, res, next) => {
   let examId = req.query.examId;
