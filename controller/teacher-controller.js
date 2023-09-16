@@ -38,6 +38,7 @@ const checkScriptSingle = async (req, res, next) => {
   let images = req.body.uploadImages;
   console.log(req.body.obtainedMarks);
   console.log(obtainedMarks);
+  console.log(req.body.uploadImages);
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
