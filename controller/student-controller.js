@@ -3659,9 +3659,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (
-    studentCheck.finishedStatus == true)
-  )
+  if (studentCheck.finishedStatus == true)
     return res.status(409).json("Exam End.");
   //exam status Check:end
   let getQuestionMcq, getExamData;
