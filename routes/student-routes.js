@@ -63,6 +63,7 @@ const {
   bothSubmitStudentScript,
   bothSubmitWritten,
   bothUpdateStudentExamInfo,
+  bothAssignQuestionWritten,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -515,7 +516,7 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "student"]),
   ],
-  bothAssignWrittenQuestionWritten
+  bothAssignQuestionWritten
 );
 router.get(
   "/bothrunningwritten",

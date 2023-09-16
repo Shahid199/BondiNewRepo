@@ -3900,7 +3900,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   return res.status(200).json(data1);
 };
 //written
-const bothAssignWrittenQuestionWritten = async (req, res, next) => {
+const bothAssignQuestionWritten = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
   examId = new mongoose.Types.ObjectId(examId);
@@ -4108,7 +4108,7 @@ const bothSubmitWritten = async (req, res, next) => {
 exports.bothUpdateStudentExamInfo = bothUpdateStudentExamInfo;
 exports.bothSubmitStudentScript = bothSubmitStudentScript;
 exports.bothSubmitWritten = bothSubmitWritten;
-exports.bothAssignWrittenQuestionWritten = bothAssignWrittenQuestionWritten;
+exports.bothAssignQuestionWritten = bothAssignQuestionWritten;
 exports.bothRunningWritten = bothRunningWritten;
 exports.BothSubmitAnswerMcq = BothSubmitAnswerMcq;
 exports.bothUpdateAssignQuestionMcq = bothUpdateAssignQuestionMcq;
