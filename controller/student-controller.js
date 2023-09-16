@@ -3931,7 +3931,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  console.log("updID",updId);
+  console.log("updID", updId);
   updId = updId._id;
   console.log(updId);
   if (updId.examStartTimeWritten != null) return res.status(200).json(false);
@@ -3982,7 +3982,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   };
 
   try {
-    sav = BothStudentExamVsQuestions.findByIdAndUpdate(updId, objSav);
+    sav = await BothStudentExamVsQuestions.findByIdAndUpdate(updId, objSav);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
