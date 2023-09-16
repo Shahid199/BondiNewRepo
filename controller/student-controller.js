@@ -4111,6 +4111,7 @@ const bothSubmitWritten = async (req, res, next) => {
     examEndTimeWritten: endTime,
     writtenDuration: (moment(endTime) - moment(startTime)) / (1000 * 60),
   };
+  console.log(writtenDuration);
   let sav = null;
   try {
     sav = await BothStudentExamVsQuestions.findOneAndUpdate(
@@ -4120,6 +4121,7 @@ const bothSubmitWritten = async (req, res, next) => {
       upd
     );
   } catch (err) {
+    console.log(err);
     return res.status(500).json("2.Something went wrong.");
   }
   let uploadStatus = null;
