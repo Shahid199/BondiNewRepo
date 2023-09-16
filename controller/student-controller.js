@@ -3660,8 +3660,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (
-    studentCheck.finishedStatus == true ||
-    moment(studentCheck.examEndTimeMcq) <= moment(new Date())
+    studentCheck.finishedStatus == true)
   )
     return res.status(409).json("Exam End.");
   //exam status Check:end
