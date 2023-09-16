@@ -41,8 +41,8 @@ const checkScriptSingle = async (req, res, next) => {
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
-    questionNo != null ||
-    obtainedMarks != null
+    questionNo < 0 ||
+    obtainedMarks < 0
   ) {
     return res
       .status(404)
