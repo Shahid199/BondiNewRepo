@@ -30,6 +30,7 @@ const WrittenQuestionVsExam = require("../model/WrittenQuestionVsExam");
 const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
+const BothExam = require("../model/BothExam");
 
 const Limit = 100;
 
