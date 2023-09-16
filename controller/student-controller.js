@@ -4107,9 +4107,11 @@ const bothSubmitWritten = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   startTime = startTime.examStartTimeWritten;
+  console.log(startTime);
+  console.log(endTime);
   let upd = {
     examEndTimeWritten: endTime,
-    writtenDuration: (moment(endTime) - moment(startTime)) / (1000 * 60),
+    writtenDuration: Number(moment(endTime) - moment(startTime)) / (1000 * 60),
   };
   console.log(upd.writtenDuration);
   let sav = null;
