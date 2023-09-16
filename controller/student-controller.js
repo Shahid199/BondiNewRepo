@@ -3932,6 +3932,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   updId = updId._id;
+  if (updId.examStartTimeWritten != null) return res.status(200).json(false);
   let questionData = null;
   let data1 = {};
   try {
