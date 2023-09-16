@@ -3326,27 +3326,28 @@ const examDetailWritten = async (req, res, next) => {
   }
   let writtenData = null;
   try {
-    writtenData = await WrittenQuestionVsExam.findOne({
+    writtenData = await QuestionsWritten.findOne({
       examId: examIdObj,
-    }).populate("writtenQuestionId examId");
+    }).populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
   console.log(writtenData);
   let data1 = {};
   let nullIndexes = [];
-  for (let i = 0; i < writtenData.writtenQuestionId.totalQuestions; i++) {
+  for (let i = 0; i < writtenData.totalQuestions; i++) {
     if (data.obtainedMarks[i] == null) nullIndexes.push(i);
   }
   data1["examName"] = examData.name;
   data["subjectName"] = examData.subjectId.name;
   data["type"] = examType[examData.type];
   data["totalObtainedMarks"] = data.totalObtainedMarks;
-  data["notSubmitted"] = data.nullIndexes;
+  data["notSubmitted"] = nullIndexes.length;
+  data["notSubmittedIndex"] = nullIndexes;
   data["obtainedMarks"] = data.obtainedMarks;
-  data["examTotalMarks"] = writtenData.writtenQuestionId.totalMarks;
-  data["examTotalQuestions"] = writtenData.writtenQuestionId.totalQuestions;
-  data["examMarksPerQuestion"] = writtenData.writtenQuestionId.marksPerQuestion;
+  data["examTotalMarks"] = writtenData.totalMarks;
+  data["examTotalQuestions"] = writtenData.totalQuestions;
+  data["examMarksPerQuestion"] = writtenData.marksPerQuestion;
   data["rank"] = "-1";
   return res.status(200).json(data);
 };
