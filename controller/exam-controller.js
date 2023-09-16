@@ -513,7 +513,7 @@ const getExamBySubject = async (req, res, next) => {
       $and: [
         { status: true },
         { subjectId: subjectId },
-        { examVariation: variation },
+        { examType: variation },
         { endTime: { $gt: new Date() } },
       ],
     }).count();
@@ -528,7 +528,7 @@ const getExamBySubject = async (req, res, next) => {
       $and: [
         { status: true },
         { subjectId: subjectId },
-        { examVariation: variation },
+        { examType: variation },
         { endTime: { $gt: new Date() } },
       ],
     },
