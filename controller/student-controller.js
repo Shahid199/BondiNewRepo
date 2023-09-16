@@ -3931,14 +3931,14 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  console.log(updId);
+  console.log("updID",updId);
   updId = updId._id;
   console.log(updId);
   if (updId.examStartTimeWritten != null) return res.status(200).json(false);
   let questionData = null;
   let data1 = {};
   try {
-    questionData = await BothQuestionsWritten.find({
+    questionData = await BothQuestionsWritten.findOne({
       $and: [{ examId: examId }, { status: true }],
     });
     examData = await BothExam.findOne({
@@ -3954,7 +3954,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1["questionILink"] = questionData.questionILink;
   data1["status"] = questionData.status;
   data1["totalQuestions"] = questionData.totalQuestions;
-  data1["marksPerQuestions"] = questionData.marksPerQuestions;
+  data1["marksPerQuestions"] = questionData.marksPerQuestion;
   data1["totalMarks"] = questionData.totalMarks;
   data1["studExamStartTime"] = moment(new Date());
   data1["studExamEndTime"] = moment(data1.studExamStartTime).add(
@@ -3969,10 +3969,16 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1["examId"] = examId;
   data1["examName"] = examData.name;
   data1["examType"] = examData.examType;
+  let timeStart = data1.studExamStartTime;
+  let timeEnd = data1.studExamEndTime;
+  let durationTest = data1.duration;
+  console.log(timeStart);
+  console.log(timeEnd);
+  console.log(durationTest);
   let objSav = {
-    examStartTimeWritten: data1.studExamStartTime,
-    examEndTimeWritten: data1.studExamEndTime,
-    writtenDuration: data1.duration,
+    examStartTimeWritten: timeStart,
+    examEndTimeWritten: timeEnd,
+    writtenDuration: durationTest,
   };
 
   try {
