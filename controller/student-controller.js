@@ -3603,6 +3603,16 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   let examEndTime = moment(examStartTime).add(duration, "minutes");
   if (examEndTime > examEndTimeActual.endTime)
     examEndTime = examEndTimeActual.endTime;
+  let writtenQuestion = null;
+  try {
+    writtenQuestion = await BothQuestionsWritten.findOne(
+      { examId: eId1 },
+      "_id"
+    );
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("5.Something went wrong.");
+  }
   let studentExamVsQuestionsMcq = new BothStudentExamVsQuestions({
     studentId: sId,
     examId: eId1,
@@ -3615,6 +3625,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     examStartTimeMcq: examStartTime,
     examEndTimeMcq: examEndTime,
     mcqDuration: duration,
+    writtenQuestionId: writtenQuestion,
   });
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
