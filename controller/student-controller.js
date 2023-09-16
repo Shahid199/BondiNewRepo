@@ -4152,7 +4152,7 @@ const bothSubmitWritten = async (req, res, next) => {
   let upd = {
     examEndTimeWritten: endTime,
     writtenDuration: Number(moment(endTime) - moment(startTime)) / (1000 * 60),
-    uploadStatus: false,
+    uploadStatus: true,
   };
   console.log(upd.writtenDuration);
   let sav = null;
