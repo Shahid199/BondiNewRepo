@@ -21,7 +21,7 @@ const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const isodate = require("isodate");
 const McqRank = require("../model/McqRank");
-const BothMcqRank = require("../model/BothMcqRank");
+//const BothMcqRank = require("../model/BothMcqRank");
 const passport = require("passport");
 const FreeMcqRank = require("../model/FreeMcqRank");
 const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWritten");
@@ -32,6 +32,7 @@ const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions"
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const BothExam = require("../model/BothExam");
+const BothRank = require("../model/BothRank");
 
 const Limit = 100;
 
@@ -3546,7 +3547,7 @@ const bothHistoryDataWritten = async (req, res, next) => {
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     let resultRank = null;
     try {
-      resultRank = await BothMcqRank.findOne({
+      resultRank = await BothRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
       }).select("rank -_id");
     } catch (err) {
