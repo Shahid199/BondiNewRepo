@@ -3617,7 +3617,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     mcqDuration: duration,
   });
   try {
-    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
+    saveStudentQuestion = await BothStudentExamVsQuestions.save();
   } catch (err) {
     //console.log(err);
     return res.status(500).json("4.Something went wrong.");
