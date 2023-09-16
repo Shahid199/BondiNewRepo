@@ -3841,7 +3841,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   }
   let id = String(examData._id);
   let correctMarks = examData.examId.marksPerMcq;
-  let negativeMarks = examData.examId.negativeMarks;
+  let negativeMarks = examData.examId.negativeMarksMcq;
   let negativeMarksValue = (correctMarks * negativeMarks) / 100;
   let examDataMcq = examData.mcqQuestionId;
   let answered = examData.answeredOption;
