@@ -3332,6 +3332,7 @@ const examDetailWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  console.log(writtenData);
   let data1 = {};
   let nullIndexes = [];
   for (let i = 0; i < writtenData.writtenQuestionId.totalQuestions; i++) {
