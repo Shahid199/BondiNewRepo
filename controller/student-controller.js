@@ -3879,6 +3879,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   try {
     result = await BothStudentExamVsQuestions.findByIdAndUpdate(id, update1);
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Problem when update total obtained marks.");
   }
   try {
