@@ -3955,10 +3955,10 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1["duration"] = examData.writtenDuration;
   data1["examId"] = examId;
   data1["examName"] = examData.name;
-  data1["variation"] = examData.examType;
+  data1["examType"] = examData.examType;
   let objSav = new BothStudentExamVsQuestions({
-    examStartTimeWritten: data1["studExamEndTime"],
-    examEndTimeWritten: data1["studExamEndTime"],
+    examStartTimeWritten: data1.studExamStartTime,
+    examEndTimeWritten: data1.studExamEndTime,
     writtenDuration: data1.duration,
   });
 
@@ -3997,7 +3997,7 @@ const bothRunningWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.something went wrong.");
   }
-  //console.log(timeData);
+  console.log(timeData);
   data1["questionILink"] = questionData.questionILink;
   data1["status"] = questionData.status;
   data1["totalQuestions"] = questionData.totalQuestions;
