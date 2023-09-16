@@ -3599,7 +3599,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     return res.status(500).json("4.Something went wrong.");
   }
   let duration = Number(totalQuesData.mcqDuration);
-  let examStartTime = moment(Date.now());
+  let examStartTime = moment(new Date());
   let examEndTime = moment(examStartTime).add(duration, "minutes");
   if (examEndTime > examEndTimeActual.endTime)
     examEndTime = examEndTimeActual.endTime;
@@ -3617,9 +3617,9 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     mcqDuration: duration,
   });
   try {
-    saveStudentQuestion = await BothStudentExamVsQuestions.save();
+    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
-    //console.log(err);
+    console.log(err);
     return res.status(500).json("4.Something went wrong.");
   }
   questions.push({ studStartTime: examStartTime });
