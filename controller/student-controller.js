@@ -4104,7 +4104,7 @@ const bothSubmitWritten = async (req, res, next) => {
       $and: [{ examId: examId }, { studentId: studentIdObj }],
     });
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   startTime = startTime.examStartTimeWritten;
   let upd = {
@@ -4120,7 +4120,7 @@ const bothSubmitWritten = async (req, res, next) => {
       upd
     );
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("2.Something went wrong.");
   }
   let uploadStatus = null;
   try {
@@ -4131,7 +4131,7 @@ const bothSubmitWritten = async (req, res, next) => {
       { uploadStatus: true }
     );
   } catch (err) {
-    return res.status(500).json("Somethhing went wrong.");
+    return res.status(500).json("3.Somethhing went wrong.");
   }
   return res.status(201).json("Submitted Sccessfully.");
 };
