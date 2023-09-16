@@ -3478,7 +3478,7 @@ const bothExamCheckMiddleware = async (req, res, next) => {
   try {
     query = await BothExam.findById(examId, "endTime");
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   examEndTime = query.endTime;
   if (moment(examEndTime) < currentDate)
@@ -3489,7 +3489,7 @@ const bothExamCheckMiddleware = async (req, res, next) => {
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     });
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("2.Something went wrong.");
   }
   if (status == null) return res.status(200).json("Mcq assign");
   else {
