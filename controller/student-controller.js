@@ -4152,6 +4152,7 @@ const bothSubmitWritten = async (req, res, next) => {
   let upd = {
     examEndTimeWritten: endTime,
     writtenDuration: Number(moment(endTime) - moment(startTime)) / (1000 * 60),
+    uploadStatus: false,
   };
   console.log(upd.writtenDuration);
   let sav = null;
@@ -4165,17 +4166,6 @@ const bothSubmitWritten = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     return res.status(500).json("2.Something went wrong.");
-  }
-  let uploadStatus = null;
-  try {
-    uploadStatus = await StudentExamVsQuestionsWritten.updateOne(
-      {
-        $and: [{ studentId: studentIdObj }, { examId: examId }],
-      },
-      { uploadStatus: true }
-    );
-  } catch (err) {
-    return res.status(500).json("3.Somethhing went wrong.");
   }
   return res.status(201).json("Submitted Sccessfully.");
 };
