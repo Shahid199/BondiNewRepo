@@ -3944,6 +3944,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
     examData = await BothExam.findOne({
       $and: [{ _id: examId }, { status: true }],
     });
+    console.log("examData:", examData);
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
