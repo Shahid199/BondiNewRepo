@@ -3866,7 +3866,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
     totalWrongAnswer: totalWrongAnswer,
     totalNotAnswered: notAnswered,
     totalCorrectMarks: totalCorrectMarks,
-    totalWrongMarks: totalWrongMarks,
+    totalWrongMarks: Number(totalWrongMarks),
     totalObtainedMarksMcq: totalObtainedMarks,
     rank: -1,
   };
@@ -3879,7 +3879,6 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   try {
     result = await BothStudentExamVsQuestions.findByIdAndUpdate(id, update1);
   } catch (err) {
-    console.log(err);
     return res.status(500).json("Problem when update total obtained marks.");
   }
   try {
