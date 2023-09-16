@@ -84,7 +84,7 @@ const getHomePage = async (req, res, next) => {
             { endTime: { $gt: currentTime } },
           ],
         },
-        "_id name startTime endTime iLink examType"
+        "_id name startTime endTime iLink examVariation examType"
       )
         .sort("startTime")
         .limit(2);

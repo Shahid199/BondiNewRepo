@@ -16,6 +16,11 @@ const bothExamSchema = new Schema(
       type: Number,
       required: true,
     },
+    examVariation: {
+      type: Number,
+      required: true,
+      default: 3,
+    },
     startTime: {
       type: Date,
       required: true,
