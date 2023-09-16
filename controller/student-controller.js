@@ -3957,8 +3957,8 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1["examName"] = examData.name;
   data1["variation"] = examData.examType;
   let objSav = new BothStudentExamVsQuestions({
-    examStartTimeWritten: data1.studExamStartTime,
-    examEndTimeWritten: data1.studExamEndTime,
+    examStartTimeWritten: data1["studExamEndTime"],
+    examEndTimeWritten: data1["studExamEndTime"],
     writtenDuration: data1.duration,
   });
 
