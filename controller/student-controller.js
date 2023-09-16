@@ -3339,17 +3339,17 @@ const examDetailWritten = async (req, res, next) => {
     if (data.obtainedMarks[i] == null) nullIndexes.push(i);
   }
   data1["examName"] = examData.name;
-  data["subjectName"] = examData.subjectId.name;
-  data["type"] = examType[examData.type];
-  data["totalObtainedMarks"] = data.totalObtainedMarks;
-  data["notSubmitted"] = nullIndexes.length;
-  data["notSubmittedIndex"] = nullIndexes;
-  data["obtainedMarks"] = data.obtainedMarks;
-  data["examTotalMarks"] = writtenData.totalMarks;
-  data["examTotalQuestions"] = writtenData.totalQuestions;
-  data["examMarksPerQuestion"] = writtenData.marksPerQuestion;
-  data["rank"] = "-1";
-  return res.status(200).json(data);
+  data1["subjectName"] = examData.subjectId.name;
+  data1["type"] = examType[examData.type];
+  data1["totalObtainedMarks"] = data.totalObtainedMarks;
+  data1["notSubmitted"] = nullIndexes.length;
+  data1["notSubmittedIndex"] = nullIndexes;
+  data1["obtainedMarks"] = data.obtainedMarks;
+  data1["examTotalMarks"] = writtenData.totalMarks;
+  data1["examTotalQuestions"] = writtenData.totalQuestions;
+  data1["examMarksPerQuestion"] = writtenData.marksPerQuestion;
+  data1["rank"] = "-1";
+  return res.status(200).json(data1);
 };
 //both exam
 const bothUpdateStudentExamInfo = async (req, res, next) => {
@@ -4212,6 +4212,7 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothViewSollutionMcq = bothViewSollutionMcq;
 exports.bothViewSollutionWritten = bothViewSollutionWritten;
 exports.bothUpdateStudentExamInfo = bothUpdateStudentExamInfo;
 exports.bothSubmitStudentScript = bothSubmitStudentScript;
