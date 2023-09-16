@@ -3865,6 +3865,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   console.log(totalCorrectAnswer);
   console.log(totalWrongAnswer);
   console.log(correctMarks);
+  console.log(negativeMarks);
   console.log(totalCorrectMarks);
   console.log(totalWrongMarks);
 
