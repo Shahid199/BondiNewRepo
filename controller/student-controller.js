@@ -4373,7 +4373,6 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
-exports.bothUpdateRank = bothUpdateRank;
 exports.bothExamDetail = bothExamDetail;
 exports.bothHistoryData = bothHistoryData;
 exports.bothViewSollutionMcq = bothViewSollutionMcq;
