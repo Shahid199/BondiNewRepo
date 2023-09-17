@@ -3505,7 +3505,7 @@ const bothExamCheckMiddleware = async (req, res, next) => {
     return res.status(200).json("Mcq running");
   }
 };
-const bothHistoryDataWritten = async (req, res, next) => {
+const bothHistoryData = async (req, res, next) => {
   const studentId = req.user.studentId;
   if (!ObjectId.isValid(studentId))
     return res.status(404).json("Student ID not valid.");
@@ -3566,17 +3566,104 @@ const bothHistoryDataWritten = async (req, res, next) => {
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["variation"] = examType[Number(data[i].examId.examType)];
-    data1["type"] = examVariation[Number(data[i].examId.examVariation)];
+    //data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
-    data1["totalMarksMcq"] = questionsWrittens.totalMarks;
-    data1["obtainPerQuestion"] = data[i].obtainedMarks;
+    data1["totalMarksMcq"] = data[i].totalObtainedMarksMcq;
+    data1["totalMarksWritten"] = data[i].totalObtainedMarksWritten;
+    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
     data1["meritPosition"] = resultRank;
-    data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
-    data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
+    data1["examStartTimeMcq"] = moment(data[i].examStartTimeMcq).format("LLL");
+    data1["examEndTimeMcq"] = moment(data[i].examEndTimeMcq).format("LLL");
+    data1["examStartTimeWritten"] = moment(data[i].examStartTimeWritten).format(
+      "LLL"
+    );
+    data1["examEndTimeWritten"] = moment(data[i].examEndTimeWritten).format(
+      "LLL"
+    );
+    data1["mcqDuration"] = data[i].mcqDuration;
+    data1["writtenDuration"] = data[i].writtenDuration;
+    data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
     data1["subjectName"] = subjectName;
     resultData.push(data1);
   }
   return res.status(200).json({ resultData, paginateData });
+};
+const bothExamDetail = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let resultRank = null;
+  try {
+    resultRank = await BothRank.findOne({
+      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+    }).select("rank -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (resultRank == null) resultRank = "-1";
+  else resultRank = resultRank.rank;
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  let examData = null;
+  try {
+    examData = await BothExam.findById(examId).populate("courseId subjectId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  let writtenData = null;
+  try {
+    writtenData = await BothQuestionsWritten.findOne({
+      examId: examIdObj,
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  console.log(writtenData);
+  let data1 = {};
+  let nullIndexes = [];
+  for (let i = 0; i < writtenData.totalQuestions; i++) {
+    if (data.obtainedMarks[i] == null) nullIndexes.push(i);
+  }
+  //exam
+  data1["examName"] = examData.name;
+  data1["totalMarksMcq"] = examData.totalMarksMcq;
+  data1["totalQuestionMcq"] = examData.totalQuestionMcq;
+  data1["totalMarksWritten"] = examData.totalMarksWritten;
+  data1["totalQuestionWritten"] = examData.totalQuestionWritten;
+  data1["totalMarks"] = examData.totalMarks;
+  data1["mcqDuration"] = examData.mcqDuration;
+  data1["writtenDuration"] = examData.writtenDuration;
+  data1["totalDuration"] = examData.totalDuration;
+  data1["subjectName"] = examData.subjectId.name;
+  data1["type"] = examType[examData.type];
+  //exam
+  //MCQ
+  data1["totalCorrectMarks"] = data.totalCorrectMarks;
+  data1["totalCorrectAnswer"] = data.totalCorrectAnswer;
+  data1["totalWrongMarks"] = data.totalWrongMarks;
+  data1["totalWrongAnswer"] = data.totalWrongAnswer;
+  data1["totalNotAnswered"] = data.totalNotAnswered;
+  data1["totalObtainMarksMcq"] = data.totalObtainedMarksMcq;
+  //MCQ
+  //written
+  data1["notSubmitted"] = nullIndexes.length;
+  data1["notSubmittedIndex"] = nullIndexes;
+  data1["obtainedMarks"] = data.obtainedMarks;
+  data1["obtainedMarksWritten"] = data.totalObtainedMarksWritten;
+  //written
+  data1["totalObtainedMarks"] = data.totalObtainedMarks;
+  data1["rank"] = resultRank;
+  return res.status(200).json(data1);
 };
 //mcq
 const bothAssignQuestionMcq = async (req, res, next) => {
@@ -4287,6 +4374,8 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothExamDetail = bothExamDetail;
+exports.bothHistoryData = bothHistoryData;
 exports.bothViewSollutionMcq = bothViewSollutionMcq;
 exports.bothViewSollutionWritten = bothViewSollutionWritten;
 exports.bothUpdateStudentExamInfo = bothUpdateStudentExamInfo;

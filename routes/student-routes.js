@@ -66,6 +66,8 @@ const {
   bothAssignQuestionWritten,
   bothViewSollutionWritten,
   bothViewSollutionMcq,
+  bothHistoryData,
+  bothExamDetail,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -569,6 +571,23 @@ router.get(
     authorize(["student", "superadmin", "moderator"]),
   ],
   bothViewSollutionMcq
+);
+router.get(
+  "/bothhistorydata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  bothHistoryData
+);
+
+router.get(
+  "/bothexamdetail",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  bothExamDetail
 );
 module.exports = router;
 //new node

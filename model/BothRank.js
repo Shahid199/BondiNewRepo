@@ -3,7 +3,7 @@ const exams = require("./BothExam");
 const students = require("./Student");
 const Schema = mongoose.Schema;
 
-const BothMcqRanksSchema = new Schema(
+const BothRankSchema = new Schema(
   {
     examId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -29,4 +29,4 @@ const BothMcqRanksSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("BothMcqRank", BothMcqRanksSchema);
+module.exports = mongoose.model("BothRank", BothRankSchema);
