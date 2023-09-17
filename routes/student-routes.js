@@ -68,6 +68,7 @@ const {
   bothViewSollutionMcq,
   bothHistoryData,
   bothExamDetail,
+  bothUpdateRank,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -589,5 +590,6 @@ router.get(
   ],
   bothExamDetail
 );
+
 module.exports = router;
 //new node

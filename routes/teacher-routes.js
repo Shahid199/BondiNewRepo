@@ -13,6 +13,11 @@ const {
   updateRank,
   getRank,
   getAllRank,
+  bothMarksCalculation,
+  bothUpdateRank,
+  bothCheckScriptSingle,
+  bothGetCheckStatus,
+  bothGetAllRank,
 } = require("../controller/teacher-controller");
 
 router.get(
@@ -88,5 +93,47 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getAllRank
+);
+
+router.post(
+  "/bothmarkscalculation",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  bothMarksCalculation
+);
+router.post(
+  "/bothupdaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothUpdateRank
+);
+router.post(
+  "/bothcheckscriptsingle",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+    //upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  bothCheckScriptSingle
+);
+router.get(
+  "/bothgetallrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  bothGetAllRank
+);
+router.get(
+  "/bothgetcheckstatus",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  bothGetCheckStatus
 );
 module.exports = router;

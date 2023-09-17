@@ -3367,7 +3367,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
   }
   let nullArr = [];
   getEndTime = moment(getEndTime.endTime);
-  let currentTime = moment(Date.now());
+  let currentTime = moment(new Date());
   if (currentTime < getEndTime) {
     return res.status(200).json(nullArr);
   }
@@ -3416,7 +3416,6 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
   }
   if (updateStatus.modifiedCount == 0)
     return res.status(404).json("Not updated.");
-
   for (let i = 0; i < studentIds.length; i++) {
     let examData = null;
     try {
@@ -4374,6 +4373,7 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothUpdateRank = bothUpdateRank;
 exports.bothExamDetail = bothExamDetail;
 exports.bothHistoryData = bothHistoryData;
 exports.bothViewSollutionMcq = bothViewSollutionMcq;
