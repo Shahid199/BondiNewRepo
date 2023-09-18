@@ -1982,7 +1982,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
     rank;
   try {
     rank = await StudentMarksRank.find({
-      $and: [{ examId: examIdObj }, { finishedStatus: true }],
+      $and: [{ examId: examIdObj }],
     })
       .populate("studentId")
       .skip(paginateData.skippedIndex)
