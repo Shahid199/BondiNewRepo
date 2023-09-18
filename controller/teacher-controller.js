@@ -278,7 +278,7 @@ const updateRank = async (req, res, next) => {
   try {
     delData = await McqRank.deleteMany({ examId: examIdObj });
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   let ranks = null;
   try {
@@ -288,7 +288,7 @@ const updateRank = async (req, res, next) => {
         totalObtainedMarks: -1,
       });
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("2.Something went wrong.");
   }
   //console.log("ranks:", ranks);
   let dataLength = ranks.length;
@@ -306,7 +306,7 @@ const updateRank = async (req, res, next) => {
   try {
     sav = await McqRank.insertMany(dataIns, { ordered: false });
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("3.Something went wrong.");
   }
   return res.status(201).json("Success!");
 };

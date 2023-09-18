@@ -2835,6 +2835,7 @@ const submitWritten = async (req, res, next) => {
 const updateStudentWrittenExamInfo = async (req, res, next) => {
   let data = null;
   let examId = req.body.examId;
+  console.log(req.body);
   examId = new mongoose.Types.ObjectId(examId);
   try {
     data = await StudentExamVsQuestionsWritten.find({
