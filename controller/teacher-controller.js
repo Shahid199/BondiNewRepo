@@ -278,6 +278,7 @@ const updateRank = async (req, res, next) => {
   try {
     delData = await McqRank.find({ examId: examIdObj });
   } catch (err) {
+    console.log(err);
     return res.status(500).json("1.Something went wrong.");
   }
   if (delData.length > 0) {
