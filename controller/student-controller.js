@@ -2837,19 +2837,18 @@ const updateStudentWrittenExamInfo = async (req, res, next) => {
   let examId = req.body.examId;
   examId = new mongoose.Types.ObjectId(examId);
   try {
-    data = await StudentExamVsQuestionsWritten.find(
-      {
-        $and: [{ examId: examId }, { uploadStatus: false }],
-      }.select("_id")
-    );
+    data = await StudentExamVsQuestionsWritten.find({
+      $and: [{ examId: examId }, { uploadStatus: false }],
+    });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(data);
   if (!data) return res.status(201).json("Already Submitted.");
   for (let i = 0; i < data.length; i++) {
     let sav = null;
     try {
-      sav = await StudentExamVsQuestionsWritten.findByIdAndUpdate(data[i], {
+      sav = await StudentExamVsQuestionsWritten.findByIdAndUpdate(data[i]._id, {
         uploadStatus: true,
       });
     } catch (err) {
