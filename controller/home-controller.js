@@ -58,39 +58,39 @@ const getHomePage = async (req, res, next) => {
     // }
 
     //console.log(coming);
-    // try {
-    //   running = await Exam.find(
-    //     {
-    //       $and: [
-    //         { status: true },
-    //         { startTime: { $lte: currentTime } },
-    //         { endTime: { $gt: currentTime } },
-    //       ],
-    //     },
-    //     "_id name startTime endTime iLink examVariation examType"
-    //   )
-    //     .sort("startTime")
-    //     .limit(2);
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong!");
-    // }
+    try {
+      running = await Exam.find(
+        {
+          $and: [
+            { status: true },
+            { startTime: { $lte: currentTime } },
+            { endTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink examVariation examType"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
 
-      try {
-        running = await BothExam.find(
-          {
-            $and: [
-              { status: true },
-              { startTime: { $lte: currentTime } },
-              { endTime: { $gt: currentTime } },
-            ],
-          },
-          "_id name startTime endTime iLink examVariation examType"
-        )
-          .sort("startTime")
-          .limit(2);
-      } catch (err) {
-        return res.status(500).json("Something went wrong!");
-      }
+      // try {
+      //   running = await BothExam.find(
+      //     {
+      //       $and: [
+      //         { status: true },
+      //         { startTime: { $lte: currentTime } },
+      //         { endTime: { $gt: currentTime } },
+      //       ],
+      //     },
+      //     "_id name startTime endTime iLink examVariation examType"
+      //   )
+      //     .sort("startTime")
+      //     .limit(2);
+      // } catch (err) {
+      //   return res.status(500).json("Something went wrong!");
+      // }
     //   //console.log(running);
       homeDataTop["runningExam"] = running;
       homeDataTop["comingExam"] = coming;
