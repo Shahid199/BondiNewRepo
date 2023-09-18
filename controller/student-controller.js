@@ -1969,7 +1969,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
   let count = 0;
   try {
     count = await StudentMarksRank.find({
-      $and: [{ examId: examIdObj }, { finishedStatus: true }],
+      $and: [{ examId: examIdObj }],
     }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
