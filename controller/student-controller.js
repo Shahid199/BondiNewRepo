@@ -3792,6 +3792,56 @@ const bothGetWrittenStudentAllByExam = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+const bothGetCheckWrittenStudentAllByExam = async (req, res, next) => {
+  let examId = req.query.examId;
+  let page = req.query.page || 1;
+  let count = 0;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam ID is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let data = null,
+    data1 = [];
+  try {
+    count = await BothStudentExamVsQuestions.find({
+      $and: [{ examId: examId }, { checkStatus: true }],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let paginateData = pagination(count, page);
+  //console.log(paginateData);
+  try {
+    data = await BothStudentExamVsQuestions.find({
+      $and: [{ examId: examId }, { checkStatus: true }],
+    })
+      .populate("studentId examId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //console.log(data);
+  let data2 = null;
+  try {
+    data2 = await BothQuestionsWritten.findOne({ $and: [{ examId: examId }] });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  for (let i = 0; i < data.length; i++) {
+    let dataObj = {};
+    dataObj["examName"] = data[i].examId.name;
+    dataObj["examVariation"] = examVariation[data[i].examId.examVariation];
+    dataObj["examType"] = examType[data[i].examId.examType];
+    dataObj["studentName"] = data[i].studentId.name;
+    dataObj["studentId"] = data[i].studentId._id;
+    dataObj["checkStatus"] = data[i].checkStatus;
+    dataObj["totalQuestions"] = data2.totalQuestions;
+    dataObj["totalMarks"] = data2.totalMarks;
+    dataObj["marksPerQuestion"] = data2.marksPerQuestion;
+    data1.push(dataObj);
+  }
+  return res.status(200).json({ data1, paginateData });
+};
 //mcq
 const bothAssignQuestionMcq = async (req, res, next) => {
   //data get from examcheck function req.body
@@ -4500,6 +4550,8 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothGetCheckWrittenStudentAllByExam =
+  bothGetCheckWrittenStudentAllByExam;
 exports.bothGetWrittenStudentAllByExam = bothGetWrittenStudentAllByExam;
 exports.bothGetWrittenStudentSingleByExam = bothGetWrittenStudentSingleByExam;
 exports.bothGetWrittenScript = bothGetWrittenScript;
