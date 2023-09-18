@@ -2035,7 +2035,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
   }
   let qWritten = null;
   try {
-    qWritten = await QuestionsWritten.findById(String(examIdObj));
+    qWritten = await QuestionsWritten.findOne({examId:examIdObj});
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
