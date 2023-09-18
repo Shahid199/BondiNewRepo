@@ -2972,7 +2972,7 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
       $and: [
         { examId: examId },
         { studentId: studentId },
-        // { uploadStatustrue },
+        { uploadStatus: true },
       ],
     }).populate("studentId examId");
   } catch (err) {
@@ -3663,6 +3663,84 @@ const bothExamDetail = async (req, res, next) => {
   data1["totalObtainedMarks"] = data.totalObtainedMarks;
   data1["rank"] = resultRank;
   return res.status(200).json(data1);
+};
+const bothGetWrittenStudentSingleByExam = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.query.studentId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
+    return res.status(404).json("exam ID or student ID is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  let data = null,
+    data1 = [];
+  try {
+    data = await BothStudentExamVsQuestions.findOne({
+      $and: [
+        { examId: examId },
+        { studentId: studentId },
+        { uploadStatus: true },
+      ],
+    }).populate("studentId examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let data2 = null;
+  try {
+    data2 = await BothQuestionsWritten.findOne({ $and: [{ examId: examId }] });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let dataObj = {};
+  dataObj["examName"] = data.examId.name;
+  dataObj["examVariation"] = examVariation[data.examId.examVariation];
+  dataObj["examType"] = examType[data.examId.examType];
+  dataObj["studentName"] = data.studentId.name;
+  dataObj["studentId"] = data.studentId._id;
+  dataObj["answerScript"] = data.submittedScriptILink;
+  dataObj["totalQuestions"] = data2.totalQuestions;
+  dataObj["totalMarks"] = data2.totalMarks;
+  dataObj["marksPerQuestion"] = data2.marksPerQuestion;
+  //dataObj["checkStatus"] = data.checkStatus;
+  //console.log(data.checkStatus);
+  return res.status(200).json(dataObj);
+};
+const bothGetWrittenScript = async (req, res, next) => {
+  let studentId = req.user.studentId;
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let getData = null;
+  try {
+    getData = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (getData.checkStatus != true)
+    return res.status(404).json("Not checked yet.");
+  let data = {};
+  data["studentId"] = studentId;
+  data["answerScript"] = getData.submittedScriptILink;
+  data["checkScript"] = getData.ansewerScriptILink;
+  data["obtainedMarks"] = getData.obtainedMarks;
+  data["totalObtainedMarks"] = getData.totalObtainedMarks;
+  data["examId"] = examId;
+  let getQuestion = null;
+  try {
+    getQuestion = await BothQuestionsWritten.findOne({
+      examId: examIdObj,
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  data["question"] = getQuestion.questionILink;
+  return res.status(200).json(data);
 };
 //mcq
 const bothAssignQuestionMcq = async (req, res, next) => {
@@ -4373,6 +4451,8 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothGetWrittenStudentSingleByExam = bothGetWrittenStudentSingleByExam;
+exports.bothGetWrittenScript = bothGetWrittenScript;
 exports.bothExamDetail = bothExamDetail;
 exports.bothHistoryData = bothHistoryData;
 exports.bothViewSollutionMcq = bothViewSollutionMcq;

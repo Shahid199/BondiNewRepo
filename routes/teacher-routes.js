@@ -18,6 +18,7 @@ const {
   bothCheckScriptSingle,
   bothGetCheckStatus,
   bothGetAllRank,
+  bothGetWrittenScriptSingle,
 } = require("../controller/teacher-controller");
 
 router.get(
@@ -55,10 +56,10 @@ router.get(
 );
 router.get(
   "/getwrittenscriptsingle",
-  // [
-  //   passport.authenticate("jwt", { session: false }),
-  //   authorize(["superadmin", "moderator", "teacher"]),
-  // ],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
   getWrittenScriptSingle
 );
 router.post(
@@ -135,5 +136,13 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   bothGetCheckStatus
+);
+router.get(
+  "/bothgetwrittenscriptsingle",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  bothGetWrittenScriptSingle
 );
 module.exports = router;

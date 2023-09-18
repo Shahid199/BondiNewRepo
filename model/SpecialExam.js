@@ -11,6 +11,42 @@ const SpecialExamSchema = new Schema(
       unique: true,
       max: 200,
     },
+    totalSubject: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    examSubject: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    optionalSubject: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: subjects,
+        required: true,
+      },
+    ],
+    subjecInfo: [
+      {
+        subjectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: subjects,
+          required: true,
+        },
+        noOfQuestionsMcq: {
+          type: Number,
+          required: false,
+          default: 0,
+        },
+        noOfQuestionsWritten: {
+          type: Number,
+          required: false,
+          default: 0,
+        },
+      },
+    ],
     examType: {
       type: Number,
       required: true,
@@ -23,33 +59,39 @@ const SpecialExamSchema = new Schema(
       type: Date,
       required: true,
     },
-    totalSubject: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    examSubject: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
     mcqDuration: {
       type: Number,
-      required: true,
+      required: false,
       default: 0,
     },
     writtenDuration: {
       type: Number,
-      required: true,
+      required: false,
       Deafault: 0,
+    },
+    totalQuestionsMcq: {
+      type: Number,
+      required: false,
+    },
+    marksPerMcq: {
+      type: Number,
+      required: false,
+    },
+    megativeMarksMcq: {
+      type: Number,
+      required: false,
     },
     totalMarksMcq: {
       type: Number,
-      required: true,
+      required: false,
+    },
+    totalQuestionsWritten: {
+      type: Number,
+      required: false,
     },
     totalMarksWritten: {
       type: Number,
-      required: true,
+      required: flase,
     },
     totalMarks: {
       type: Number,
@@ -60,6 +102,16 @@ const SpecialExamSchema = new Schema(
       required: true,
     },
     status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    sscStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    hscStatus: {
       type: Boolean,
       required: true,
       default: false,

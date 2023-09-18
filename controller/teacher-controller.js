@@ -9,6 +9,7 @@ const fs = require("fs");
 const mime = require("mime");
 const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
 const BothRank = require("../model/BothRank");
+const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
@@ -641,6 +642,52 @@ const bothGetAllRank = async (req, res, next) => {
   }
   return res.status(200).json(allData);
 };
+const bothGetWrittenScriptSingle = async (req, res, next) => {
+  let studentId = req.query.studentId;
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let getData = null;
+  try {
+    getData = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  // if (getData.checkStatus != true)
+  //   return res.status(404).json("Not checked yet.");
+  let data = {};
+  data["studentId"] = studentId;
+  data["answerScript"] = getData.submittedScriptILink;
+  data["checkScript"] = getData.ansewerScriptILink;
+  data["obtainedMarks"] = getData.obtainedMarks;
+  data["totalObtainedMarks"] = getData.totalObtainedMarks;
+  data["examId"] = examId;
+  data["checkStatus"] = getData.checkStatus;
+  data["uploadStatus"] = getData.uploadStatus;
+  let getQuestion = null;
+  try {
+    getQuestion = await BothQuestionsWritten.findOne({
+      examId: examIdObj,
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  data["question"] = getQuestion.questionILink;
+  data["totalQuestions"] = getQuestion.totalQuestions;
+  data["marksPerQuestion"] = getQuestion.marksPerQuestion;
+  data["totalMarks"] = getQuestion.totalMarks;
+  console.log(getQuestion);
+  return res.status(200).json(data);
+};
+exports.bothGetWrittenScriptSingle = bothGetWrittenScriptSingle;
 exports.bothGetAllRank = bothGetAllRank;
 exports.bothUpdateRank = bothUpdateRank;
 exports.bothGetCheckStatus = bothGetCheckStatus;
