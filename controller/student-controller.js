@@ -2039,6 +2039,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(qWritten);
   let examInfo = {
     id: String(examDetails._id),
     name: examDetails.name,
