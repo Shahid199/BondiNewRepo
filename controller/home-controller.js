@@ -92,9 +92,9 @@ const getHomePage = async (req, res, next) => {
     //     return res.status(500).json("Something went wrong!");
     //   }
     //   //console.log(running);
-    //   homeDataTop["runningExam"] = running;
-    //   homeDataTop["comingExam"] = coming;
-    //   return res.status(200).json(homeDataTop);
+      homeDataTop["runningExam"] = running;
+      homeDataTop["comingExam"] = coming;
+    return res.status(200).json(homeDataTop);
   }
   //bottom
   else {
