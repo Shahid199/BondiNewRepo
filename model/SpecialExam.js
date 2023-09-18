@@ -91,7 +91,7 @@ const SpecialExamSchema = new Schema(
     },
     totalMarksWritten: {
       type: Number,
-      required: flase,
+      required: false,
     },
     totalMarks: {
       type: Number,
