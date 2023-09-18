@@ -1991,10 +1991,13 @@ const getHistoryByWrittenId = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  //console.log(rank);
+  let qWritten = null;
+  try {
+    qWritten = await QuestionsWritten.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   for (let i = 0; i < rank.length; i++) {
-    //rank data start
-    //console.log(rank[i]);
     let mcqRank = null;
     try {
       mcqRank = await McqRank.findOne({
@@ -2005,16 +2008,6 @@ const getHistoryByWrittenId = async (req, res, next) => {
     }
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
-    // let totalObtain = null;
-    // try {
-    //   totalObtain = await StudentExamVsQuestionsWritten.findOne({
-    //     $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
-    //   });
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong.");
-    // }
-    //rank data end
-
     let data1 = {},
       examStud = null;
     data1["studentId"] = rank[i].studentId._id;
@@ -2022,12 +2015,6 @@ const getHistoryByWrittenId = async (req, res, next) => {
       examStud = await StudentExamVsQuestionsWritten.findOne({
         $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
       }).populate("studentId");
-    } catch (err) {
-      return res.status(500).json("Something went wrong.");
-    }
-    let qWritten = null;
-    try {
-      qWritten = await QuestionsWritten.findOne({ examId: examIdObj });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
@@ -2048,7 +2035,6 @@ const getHistoryByWrittenId = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(qWritten);
   let examInfo = {
     id: String(examDetails._id),
     name: examDetails.name,
