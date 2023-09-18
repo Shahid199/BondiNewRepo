@@ -3846,7 +3846,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
       stat = await QuestionsMcq.findById(quesId).select("status");
       stat = stat.status;
     } catch (err) {
-      return res.status(500).json("Something went wrong.");
+      return res.status(500).json("4.Something went wrong.");
     }
     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
   }
@@ -3870,7 +3870,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
       "question type options"
     );
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("5.Something went wrong.");
   }
   // console.log(questions);
   if (sId == null)
@@ -3887,7 +3887,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     examEndTimeActual = await BothExam.findById(eId1);
   } catch (err) {
     //console.log(err);
-    return res.status(500).json("4.Something went wrong.");
+    return res.status(500).json("6.Something went wrong.");
   }
   let duration = Number(totalQuesData.mcqDuration);
   let examStartTime = moment(new Date());
@@ -3902,7 +3902,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     );
   } catch (err) {
     //console.log(err);
-    return res.status(500).json("5.Something went wrong.");
+    return res.status(500).json("7.Something went wrong.");
   }
   let studentExamVsQuestionsMcq = new BothStudentExamVsQuestions({
     studentId: sId,
@@ -3922,7 +3922,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
     console.log(err);
-    return res.status(500).json("4.Something went wrong.");
+    return res.status(500).json("8.Something went wrong.");
   }
   questions.push({ studStartTime: examStartTime });
   questions.push({ studEndTime: examEndTime });
