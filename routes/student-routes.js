@@ -71,6 +71,7 @@ const {
   bothUpdateRank,
   bothGetWrittenStudentSingleByExam,
   bothGetWrittenScript,
+  bothGetWrittenStudentAllByExam,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -608,6 +609,15 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   bothGetWrittenScript
+);
+
+router.get(
+  "/bothgetwrittenstudentallbyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothGetWrittenStudentAllByExam
 );
 module.exports = router;
 //new node
