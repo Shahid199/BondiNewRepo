@@ -3870,7 +3870,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
       "question type options"
     );
   } catch (err) {
-    return res.status(500).json("5.Something went wrong.");
+    return res.status(500).json(err);
   }
   // console.log(questions);
   if (sId == null)
@@ -4257,7 +4257,6 @@ const bothAssignQuestionWritten = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   console.log("updID", updId);
-  updId = updId._id;
   console.log(updId);
   if (updId.examStartTimeWritten != null) return res.status(200).json(false);
   let questionData = null;
