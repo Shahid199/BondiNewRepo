@@ -2005,6 +2005,14 @@ const getHistoryByWrittenId = async (req, res, next) => {
     }
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
+    // let totalObtain = null;
+    // try {
+    //   totalObtain = await StudentExamVsQuestionsWritten.findOne({
+    //     $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
+    //   });
+    // } catch (err) {
+    //   return res.status(500).json("Something went wrong.");
+    // }
     //rank data end
 
     let data1 = {},
@@ -2018,7 +2026,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
     data1["examStud"] = examStud;
-    data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
+    data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
     data1["examStartTime"] = moment(rank[i].examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank[i].examEndTime).format("LLL");
@@ -2035,7 +2043,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
   }
   let qWritten = null;
   try {
-    qWritten = await QuestionsWritten.findOne({examId:examIdObj});
+    qWritten = await QuestionsWritten.findOne({ examId: examIdObj });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
