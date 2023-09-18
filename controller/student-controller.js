@@ -3353,6 +3353,7 @@ const examDetailWritten = async (req, res, next) => {
   data1["rank"] = "-1";
   return res.status(200).json(data1);
 };
+
 //both exam
 const bothUpdateStudentExamInfo = async (req, res, next) => {
   const examId = req.query.examId;

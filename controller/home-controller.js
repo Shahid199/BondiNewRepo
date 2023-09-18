@@ -58,25 +58,8 @@ const getHomePage = async (req, res, next) => {
     // }
 
     //console.log(coming);
-    // try {
-    //   running = await Exam.find(
-    //     {
-    //       $and: [
-    //         { status: true },
-    //         { startTime: { $lte: currentTime } },
-    //         { endTime: { $gt: currentTime } },
-    //       ],
-    //     },
-    //     "_id name startTime endTime iLink examVariation examType"
-    //   )
-    //     .sort("startTime")
-    //     .limit(2);
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong!");
-    // }
-
     try {
-      running = await BothExam.find(
+      running = await Exam.find(
         {
           $and: [
             { status: true },
@@ -91,10 +74,27 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
-    //console.log(running);
-    homeDataTop["runningExam"] = running;
-    homeDataTop["comingExam"] = coming;
-    return res.status(200).json(homeDataTop);
+
+    //   try {
+    //     running = await BothExam.find(
+    //       {
+    //         $and: [
+    //           { status: true },
+    //           { startTime: { $lte: currentTime } },
+    //           { endTime: { $gt: currentTime } },
+    //         ],
+    //       },
+    //       "_id name startTime endTime iLink examVariation examType"
+    //     )
+    //       .sort("startTime")
+    //       .limit(2);
+    //   } catch (err) {
+    //     return res.status(500).json("Something went wrong!");
+    //   }
+    //   //console.log(running);
+    //   homeDataTop["runningExam"] = running;
+    //   homeDataTop["comingExam"] = coming;
+    //   return res.status(200).json(homeDataTop);
   }
   //bottom
   else {
