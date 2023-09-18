@@ -306,7 +306,7 @@ const getExamBySub1 = async (req, res, next) => {
 };
 const getExamBySub = async (req, res, next) => {
   const subjectId = req.query.subjectId;
-  const examType = Number(req.query.examType);
+  const examType = req.query.examType;
   if (!ObjectId.isValid(subjectId))
     return res.status(404).json("subject Id is not valid.");
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
