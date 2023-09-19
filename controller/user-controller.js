@@ -27,7 +27,6 @@ const getUserByRole = async (req, res, next) => {
   let user;
   try {
     user = await User.find({ role: role, status: true })
-      .select("name userName mobileNo address")
       .skip(paginaeData.skippedIndex)
       .limit(paginaeData.perPage);
   } catch (err) {
