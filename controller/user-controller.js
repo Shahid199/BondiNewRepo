@@ -58,9 +58,7 @@ const getUserById = async (req, res, next) => {
   let page = req.query.page;
   let user;
   try {
-    user = await User.find({ _id: id, status: true }).select(
-      "name userName mobileNo address"
-    );
+    user = await User.find({ _id: id, status: true });
   } catch (err) {
     return new Error(err);
   }
