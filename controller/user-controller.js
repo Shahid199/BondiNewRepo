@@ -83,8 +83,8 @@ const teacherListByCourse = async (req, res, next) => {
   if (user == null)
     return res.status(404).json("No teacher found in this course.");
   let data = [];
-  let obj = {};
   for (let i = 0; i < user.length; i++) {
+    let obj = {};
     obj["label"] = user[i].name;
     obj["value"] = user[i]._id;
     data.push(obj);
