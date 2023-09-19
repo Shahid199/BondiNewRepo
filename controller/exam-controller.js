@@ -1004,6 +1004,19 @@ const assignStudentToTeacher = async (req, res, next) => {
       end = end + range;
     }
   }
+  let doc1 = null;
+  try {
+    doc1 = await TeacherVsExam.findOne({ examId: examId });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (doc1.length > 0) {
+    try {
+      doc1 = await TeacherVsExam.deleteMany({ examId: examId });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+  }
   let doc = null;
   try {
     doc = await TeacherVsExam.insertMany(teacherStudentArr, { ordered: false });
@@ -1025,6 +1038,15 @@ const assignTeacher = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   for (let i = 0; i < teacherId.length; i++) {
     let teacher = new mongoose.Types.ObjectId(teacherId.length);
+    let assignedTeacher = null;
+    try {
+      assignedTeacher = teacherVsExam.findOne({
+        $and: [{ examId: examIdObj }, { teacherId: teacher }],
+      });
+    } catch (err) {
+      return res.status(500).json("Somethhing went wrong.");
+    }
+    if (!assignedTeacher) continue;
     let teacherVsExam = new TeacherVsExam({
       examId: examIdObj,
       teacherId: teacher,
