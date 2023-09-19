@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const courses = require("./Course");
+const subjects = require("./Subject");
 
 const userScheama = new Schema(
   {
@@ -32,6 +34,18 @@ const userScheama = new Schema(
     role: {
       type: Number,
       required: true,
+    },
+    courseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      default: null,
+      ref: courses,
+    },
+    subjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      default: null,
+      ref: subjects,
     },
     status: {
       type: Boolean,

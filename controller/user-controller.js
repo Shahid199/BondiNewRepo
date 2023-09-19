@@ -2,6 +2,7 @@ const { ObjectId } = require("mongodb");
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
 const pagination = require("../utilities/pagination");
+const { default: mongoose } = require("mongoose");
 //const session = require("express-session");
 const Limit = 10;
 
@@ -85,42 +86,96 @@ const getUserRole = async (req, res, next) => {
 };
 //New work:User Start
 const createOfficeUser = async (req, res, next) => {
-  const { name, userName, mobileNo, password, address, role } = req.body;
-
-  if (name == "") return res.status(400).json({ message: "name is required" });
-  else if (userName == "")
-    return res.status(400).json({ message: "username is required" });
-  else if (mobileNo == "")
-    return res.status(400).json({ message: "mobileNo is required" });
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ userName: userName });
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("Something went wrong!");
+  const {
+    name,
+    userName,
+    mobileNo,
+    password,
+    address,
+    role,
+    courseId,
+    subjectId,
+  } = req.body;
+  if (Number(role) == 3) {
+    if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId)) {
+      return res.status(404).json("course Id or subject Id is not valid.");
+    }
+    let courseIdObj = new mongoose.Types.ObjectId(courseId);
+    let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+    if (name == "")
+      return res.status(400).json({ message: "name is required" });
+    else if (userName == "")
+      return res.status(400).json({ message: "username is required" });
+    else if (mobileNo == "")
+      return res.status(400).json({ message: "mobileNo is required" });
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ userName: userName });
+    } catch (err) {
+      //console.log(err);
+      return res.status(500).json("Something went wrong!");
+    }
+    if (existingUser) {
+      return res.status(400).json({ message: "user already exist" });
+    }
+    if (!password)
+      return res.status(400).json({ message: "password is required" });
+    const hashedPassword = bcrypt.hashSync(password);
+    const user = new User({
+      name: name,
+      userName: userName,
+      mobileNo: mobileNo,
+      address: address,
+      password: hashedPassword,
+      status: true,
+      role: role,
+      courseId: courseIdObj,
+      subjectId: subjectIdObj,
+    });
+    try {
+      const doc = await user.save();
+    } catch (err) {
+      //console.log(err);
+      return res.status(500).json("Something went wrong!");
+    }
+    return res.status(201).json({ message: "New User created successfully." });
+  } else {
+    if (name == "")
+      return res.status(400).json({ message: "name is required" });
+    else if (userName == "")
+      return res.status(400).json({ message: "username is required" });
+    else if (mobileNo == "")
+      return res.status(400).json({ message: "mobileNo is required" });
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ userName: userName });
+    } catch (err) {
+      //console.log(err);
+      return res.status(500).json("Something went wrong!");
+    }
+    if (existingUser) {
+      return res.status(400).json({ message: "user already exist" });
+    }
+    if (!password)
+      return res.status(400).json({ message: "password is required" });
+    const hashedPassword = bcrypt.hashSync(password);
+    const user = new User({
+      name: name,
+      userName: userName,
+      mobileNo: mobileNo,
+      address: address,
+      password: hashedPassword,
+      status: true,
+      role: role,
+    });
+    try {
+      const doc = await user.save();
+    } catch (err) {
+      //console.log(err);
+      return res.status(500).json("Something went wrong!");
+    }
+    return res.status(201).json({ message: "New User created successfully." });
   }
-  if (existingUser) {
-    return res.status(400).json({ message: "user already exist" });
-  }
-  if (!password)
-    return res.status(400).json({ message: "password is required" });
-  const hashedPassword = bcrypt.hashSync(password);
-  const user = new User({
-    name: name,
-    userName: userName,
-    mobileNo: mobileNo,
-    address: address,
-    password: hashedPassword,
-    status: true,
-    role: role,
-  });
-  try {
-    const doc = await user.save();
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  return res.status(201).json({ message: "New User created successfully." });
 };
 const updateOfficeUser = async (req, res, next) => {
   const { userId, name, userName, mobileNo, address } = req.body;
@@ -254,4 +309,3 @@ exports.deactivateUser = deactivateUser;
 exports.updatePassword = updatePassword;
 exports.getUserById = getUserById;
 exports.getTeacher = getTeacher;
-
