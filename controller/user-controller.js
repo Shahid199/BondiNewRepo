@@ -27,6 +27,7 @@ const getUserByRole = async (req, res, next) => {
   let user;
   try {
     user = await User.find({ role: role, status: true }, "-password")
+      .populate("courseId subjectId")
       .skip(paginaeData.skippedIndex)
       .limit(paginaeData.perPage);
   } catch (err) {
