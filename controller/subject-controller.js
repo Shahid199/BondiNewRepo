@@ -57,7 +57,7 @@ const getSubjectByCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
-  if (count == 0) return res.status(404).json("No data found.");
+  if (count == 0) return res.status(404).json([]);
   let paginateData = pagination(count, page);
   try {
     data = await Subject.find({
