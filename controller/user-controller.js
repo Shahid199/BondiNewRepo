@@ -67,6 +67,30 @@ const getUserById = async (req, res, next) => {
   }
   return res.status(200).json(user);
 };
+const teacherListByCourse = async (req, res, next) => {
+  let courseId = req.query.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status.json("course Id is not valid.");
+  courseId = new mongoose.Types.ObjectId(courseId);
+  let user = null;
+  try {
+    user = await User.find({
+      $and: [{ role: 3 }, { status: true }, { courseId: courseId }],
+    });
+  } catch (err) {
+    return res.status(404).json("Something went wrong.");
+  }
+  if (user == null)
+    return res.status(404).json("No teacher found in this course.");
+  let data = [];
+  let obj = {};
+  for (let i = 0; i < user.length; i++) {
+    obj["label"] = user[i].name;
+    obj["value"] = user[i]._id;
+    data.push(obj);
+  }
+  return res.status(200).json(data);
+};
 //get user role
 const getUserRole = async (req, res, next) => {
   const userName = req.query.userName;
@@ -307,3 +331,4 @@ exports.deactivateUser = deactivateUser;
 exports.updatePassword = updatePassword;
 exports.getUserById = getUserById;
 exports.getTeacher = getTeacher;
+exports.teacherListByCourse = teacherListByCourse;
