@@ -26,7 +26,7 @@ const getUserByRole = async (req, res, next) => {
   //console.log(role);
   let user;
   try {
-    user = await User.find({ role: role, status: true })
+    user = await User.find({ role: role, status: true }, "-password")
       .skip(paginaeData.skippedIndex)
       .limit(paginaeData.perPage);
   } catch (err) {
