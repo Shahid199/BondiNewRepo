@@ -60,7 +60,7 @@ const getSubjectByCourse = async (req, res, next) => {
   let paginateData = pagination(count, page);
   if (count == 0) {
     data["data"] = [];
-    return res.status(404).json({ data, paginateData });
+    return res.status(200).json({ data, paginateData });
   }
   try {
     data = await Subject.find({
