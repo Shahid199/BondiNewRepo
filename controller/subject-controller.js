@@ -57,11 +57,11 @@ const getSubjectByCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong!");
   }
+  let paginateData = pagination(count, page);
   if (count == 0) {
     data["data"] = [];
-    return res.status(404).json(data);
+    return res.status(404).json({ data, paginateData });
   }
-  let paginateData = pagination(count, page);
   try {
     data = await Subject.find({
       $and: [{ courseId: courseIdOb }, { status: true }],
