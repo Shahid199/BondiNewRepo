@@ -46,7 +46,7 @@ router.get(
   "/getbothexambysubject",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator"]),
+    authorize(["student", "superadmin", "moderator","teacher"]),
   ],
   //authorize(["student"]),
   getBothExamBySubject
