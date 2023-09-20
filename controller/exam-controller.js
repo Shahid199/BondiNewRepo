@@ -1017,7 +1017,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   }
   let studLen = students.length;
   students = students.studentId;
-
+  console.log(students);
   let range = studLen / teacher.length;
   let start = 0;
   let end = range;
@@ -1027,7 +1027,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     teacherStudent["examId"] = examId;
     teacherStudent["teacherId"] = teacher[i]._id;
     let std = [];
-    for (let j = start; j < end - 1; j++) {
+    for (let j = start; j < end; j++) {
       std.push(students[j]);
     }
     teacherStudent["studentId"] = std;
