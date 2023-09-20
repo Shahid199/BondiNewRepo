@@ -22,22 +22,48 @@ const getStudentData = async (req, res, next) => {
   console.log(teacherId);
   console.log(examId);
   let students = [];
+  let questionData = null;
+  try {
+    questionData = await QuestionsWritten.findOne({ examId: examId });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   try {
     students = await TeacherVsExam.findOne({
       $and: [{ teacherId: teacherId }, { examId: examId }],
-    }).populate("studentId");
+    }).populate("studentId examId");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
   console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
+  let studentData = students.studentId;
+  let checkStatus = null;
+  try {
+    checkStatus = await StudentExamVsQuestionsWritten.find(
+      {
+        $and: [{ studentId: { $in: { studentData } } }, { examId: examId }],
+      },
+      "checkStatus -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < students.studentId.length; i++) {
-    let stud = {};
-    stud["id"] = students.studentId[i]._id;
-    stud["name"] = students.studentId[i].name;
-    data.push(stud);
+    let dataObj = {};
+    dataObj["examName"] = students.examId.name;
+    dataObj["examVariation"] = examVariation[students.examId.examVariation];
+    dataObj["examType"] = examType[students.examId.examType];
+    dataObj["studentName"] = students.studentId[i].name;
+    dataObj["studentId"] = students.studentId[i]._id;
+    dataObj["checkStatus"] = students.studentId[i].checkStatus;
+    dataObj["totalQuestions"] = questionData.totalQuestions;
+    dataObj["totalMarks"] = questionData.totalMarks;
+    dataObj["marksPerQuestion"] = questionData.marksPerQuestion;
+    data.push(dataObj);
   }
   return res.status(200).json(data);
 };
