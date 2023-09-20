@@ -1016,10 +1016,15 @@ const assignStudentToTeacher = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   console.log(students);
-  let studLen = students.length;
-  students = students.studentId;
+  let studData = [];
+  for (let i = 0; i < students.length; i++) {
+    studData[i] = students[i].studentId;
+  }
+  console.log(studData);
+  students = studData;
+  clg(students);
 
-  let range = studLen / teacher.length;
+  let range = students.length / teacher.length;
   let start = 0;
   let end = range;
   let teacherStudentArr = [];
