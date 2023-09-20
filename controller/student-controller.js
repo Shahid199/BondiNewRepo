@@ -3362,12 +3362,6 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  let nullArr = [];
-  getEndTime = moment(getEndTime.endTime);
-  let currentTime = moment(new Date());
-  if (currentTime < getEndTime) {
-    return res.status(200).json(nullArr);
-  }
   let examUncheckStudent = null;
   try {
     examUncheckStudent = await BothStudentExamVsQuestions.find(
