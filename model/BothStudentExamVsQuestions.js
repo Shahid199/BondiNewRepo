@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const exams = require("./BothExam");
 const questionsMcq = require("./QuestionsMcq");
-const questionsWritten = require("./QuestionsWritten");
+const questionsWritten = require("./BothQuestionsWritten");
 const students = require("./Student");
 const Schema = mongoose.Schema;
 

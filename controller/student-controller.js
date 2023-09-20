@@ -3681,6 +3681,7 @@ const bothGetWrittenStudentSingleByExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("data", data);
   let data2 = null;
   try {
     data2 = await BothQuestionsWritten.findOne({ $and: [{ examId: examId }] });
