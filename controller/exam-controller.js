@@ -1039,6 +1039,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     for (let j = start; j < end; j++) {
       std.push(students[j]);
     }
+    console.log(std);
     teacherStudent["studentId"] = std;
     teacherStudentArr.push(teacherStudent);
     if (i < teacher.length - 1 && count % teacher.length != 0) {
@@ -1049,22 +1050,9 @@ const assignStudentToTeacher = async (req, res, next) => {
       end = end + range;
     }
   }
-  let doc1 = null;
-  try {
-    doc1 = await TeacherVsExam.findOne({ examId: examId });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  if (doc1.length > 0) {
-    try {
-      doc1 = await TeacherVsExam.deleteMany({ examId: examId });
-    } catch (err) {
-      return res.status(500).json("Something went wrong.");
-    }
-  }
   let doc = null;
   try {
-    doc = await TeacherVsExam.insertMany(teacherStudentArr, { ordered: false });
+    doc = await TeacherVsExam.updateMany({ examId: examId }, teacherStudentArr);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
