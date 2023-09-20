@@ -1034,6 +1034,16 @@ const assignStudentToTeacher = async (req, res, next) => {
   console.log(end);
   let teacherStudentArr = [];
   for (let i = 0; i < teacherId.length; i++) {
+    if (i == 0) {
+      start = 0;
+      end = range;
+    } else if (parseInt(teacherId.length - i) == 1) {
+      start = end;
+      end = end + range + parseInt(students.length % teacherId.length);
+    } else {
+      start = end;
+      end = end + range;
+    }
     let teacherStudent = {};
     teacherStudent["examId"] = examId;
     teacherStudent["teacherId"] = new mongoose.Types.ObjectId(teacherId[i]);
@@ -1044,15 +1054,8 @@ const assignStudentToTeacher = async (req, res, next) => {
     console.log(std);
     teacherStudent["studentId"] = std;
     teacherStudentArr.push(teacherStudent);
-    if (parseInt(teacherId.length - i) == 1) {
-      start = end;
-      end = end + range + parseInt(students.length % teacherId.length);
-    } else {
-      start = end;
-      end = end + range;
-    }
-    console.log("s",start);
-    console.log("e",end);
+    console.log("s", start);
+    console.log("e", end);
   }
   let doc = null;
   try {
