@@ -553,7 +553,7 @@ router.post(
   ],
   bothSubmitWritten
 );
-router.put(
+router.post(
   "/bothupdatestudentexaminfo",
   [
     passport.authenticate("jwt", { session: false }),
