@@ -20,6 +20,8 @@ const {
   bothGetAllRank,
   bothGetWrittenScriptSingle,
   getRecheckStudentData,
+  bothGetStudentData,
+  bothGetRecheckStudentData,
 } = require("../controller/teacher-controller");
 
 router.get(
@@ -153,5 +155,21 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   bothGetWrittenScriptSingle
+);
+router.get(
+  "/bothgetstudentdata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  bothGetStudentData
+);
+router.get(
+  "/bothgetrecheckstudentdata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  bothGetRecheckStudentData
 );
 module.exports = router;
