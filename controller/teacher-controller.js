@@ -896,7 +896,7 @@ const bothGetCheckStatus = async (req, res, next) => {
   return res.status(200).json(status);
 };
 const bothUpdateRank = async (req, res, next) => {
-  let examId = req.query.examId;
+  let examId = req.body.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Invalid exam Id.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
