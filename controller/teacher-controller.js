@@ -26,6 +26,7 @@ const getStudentData = async (req, res, next) => {
   try {
     questionData = await QuestionsWritten.findOne({ examId: examId });
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   try {
@@ -33,6 +34,7 @@ const getStudentData = async (req, res, next) => {
       $and: [{ teacherId: teacherId }, { examId: examId }],
     }).populate("studentId examId");
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   console.log(students);
@@ -48,6 +50,7 @@ const getStudentData = async (req, res, next) => {
       "checkStatus -_id"
     );
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   console.log("check status", checkStatus);
