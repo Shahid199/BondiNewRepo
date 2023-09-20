@@ -31,7 +31,10 @@ router.get(
 );
 router.get(
   "/getallcourseadmin",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
   getAllCourseAdmin
 );
 router.put(
@@ -60,6 +63,5 @@ router.get(
   [passport.authenticate("jwt", { session: false }), authorize()],
   getAllCourseSearch
 );
-
 
 module.exports = router;
