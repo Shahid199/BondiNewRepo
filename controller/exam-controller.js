@@ -1044,11 +1044,12 @@ const assignStudentToTeacher = async (req, res, next) => {
     console.log(std);
     teacherStudent["studentId"] = std;
     teacherStudentArr.push(teacherStudent);
-    start = end;
-    end = end + range;
     if (parseInt(teacherId.length - i) == 1) {
       start = end;
       end = end + range + parseInt(students.length % teacherId.length);
+    } else {
+      start = end;
+      end = end + range;
     }
   }
   let doc = null;
