@@ -1051,6 +1051,8 @@ const assignStudentToTeacher = async (req, res, next) => {
       start = end;
       end = end + range;
     }
+    console.log("s",start);
+    console.log("e",end);
   }
   let doc = null;
   try {
