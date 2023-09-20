@@ -42,6 +42,11 @@ const getStudentData = async (req, res, next) => {
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   console.log(studentData);
+  let studId = [];
+  for (let i = 0; i < studentData.length; i++) {
+    studId.push(studentData._id);
+  }
+  console.log(studId);
   // let checkStatus = null;
   // try {
   //   checkStatus = await StudentExamVsQuestionsWritten.find(
