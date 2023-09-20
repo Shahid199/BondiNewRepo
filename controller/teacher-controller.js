@@ -61,14 +61,15 @@ const getStudentData = async (req, res, next) => {
   }
   console.log("check status", checkStatus);
   let data = [];
-  for (let i = 0; i < students.studentId.length; i++) {
+  for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
-    dataObj["examName"] = students.examId.name;
-    dataObj["examVariation"] = examVariation[students.examId.examVariation];
-    dataObj["examType"] = examType[students.examId.examType];
-    dataObj["studentName"] = students.studentId[i].name;
-    dataObj["studentId"] = students.studentId[i]._id;
-    dataObj["checkStatus"] = students.studentId[i].checkStatus;
+    dataObj["examName"] = checkStatus[i].examId.name;
+    dataObj["examVariation"] =
+      examVariation[checkStatus[i].examId.examVariation];
+    dataObj["examType"] = examType[checkStatus[i].examId.examType];
+    dataObj["studentName"] = checkStatus[i].studentId.name;
+    dataObj["studentId"] = checkStatus[i].studentId._id;
+    dataObj["checkStatus"] = checkStatus[i].checkStatus;
     dataObj["totalQuestions"] = questionData.totalQuestions;
     dataObj["totalMarks"] = questionData.totalMarks;
     dataObj["marksPerQuestion"] = questionData.marksPerQuestion;
