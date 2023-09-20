@@ -42,19 +42,19 @@ const getStudentData = async (req, res, next) => {
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   console.log(studentData);
-  let checkStatus = null;
-  try {
-    checkStatus = await StudentExamVsQuestionsWritten.find(
-      {
-        $and: [{ studentId: { $in: { studentData } } }, { examId: examId }],
-      },
-      "checkStatus -_id"
-    );
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong.");
-  }
-  console.log("check status", checkStatus);
+  // let checkStatus = null;
+  // try {
+  //   checkStatus = await StudentExamVsQuestionsWritten.find(
+  //     {
+  //       $and: [{ studentId: { $in: { studentData } } }, { examId: examId }],
+  //     },
+  //     "checkStatus -_id"
+  //   );
+  // } catch (err) {
+  //   console.log(err);
+  //   return res.status(500).json("Something went wrong.");
+  // }
+  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < students.studentId.length; i++) {
     let dataObj = {};
