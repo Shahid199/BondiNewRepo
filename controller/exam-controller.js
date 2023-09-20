@@ -974,8 +974,9 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
+  console.log("teache", teacherId.length);
   for (let i = 0; i < teacherId.length; i++) {
-    let teacher = new mongoose.Types.ObjectId(teacherId.length);
+    let teacher = new mongoose.Types.ObjectId(teacherId[i]);
     let teacherVsExam = new TeacherVsExam({
       examId: examIdObj,
       teacherId: teacher,
