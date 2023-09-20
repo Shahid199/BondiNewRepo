@@ -1022,7 +1022,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   }
   console.log(studData);
   students = studData;
-  clg(students);
+  console.log(students);
 
   let range = students.length / teacher.length;
   let start = 0;
