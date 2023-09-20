@@ -20,7 +20,7 @@ const getStudentData = async (req, res, next) => {
   teacherId = new mongoose.Types.ObjectId(teacherId);
   let students = [];
   try {
-    students = await TeacherVsExam.findOne({
+    students = await TeacherVsExam.find({
       $and: [{ teacherId: teacherId }, { examId: examId }],
     }).populate("studentId");
   } catch (err) {
@@ -28,10 +28,10 @@ const getStudentData = async (req, res, next) => {
   }
   if (students.length == 0) return res.status(404).json("No student assigned.");
   let data = [];
-  for (let i = 0; i < students.studentId.length; i++) {
+  for (let i = 0; i < students.length; i++) {
     let stud = {};
-    stud["id"] = students.studentId._id;
-    stud["name"] = students.studentId.name;
+    stud["id"] = students[i].studentId._id;
+    stud["name"] = students[i].studentId.name;
     data.push(stud);
   }
   return res.status(200).json(data);
