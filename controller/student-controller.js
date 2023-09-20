@@ -3398,69 +3398,84 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (examUncheckStudent.length == 0)
-    return res.status(200).json("All student submit the exam.");
-  let updateStatus = null;
+  if (examUncheckStudent.length > 0) {
+    //return res.status(200).json("All student submit the exam.");
+    let updateStatus = null;
+    try {
+      updateStatus = await BothStudentExamVsQuestions.updateMany(
+        {
+          _id: { $in: examUncheckStudent },
+        },
+        { $set: { runningStatus: false, finishedStatus: true } }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    for (let i = 0; i < studentIds.length; i++) {
+      let examData = null;
+      try {
+        examData = await BothStudentExamVsQuestions.findOne({
+          $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
+        }).populate("mcqQuestionId examId");
+      } catch (err) {
+        return res.status(500).json("Problem when get exam data.");
+      }
+      let id = String(examData._id);
+      let correctMarks = examData.examId.marksPerMcq;
+      let negativeMarks = examData.examId.negativeMarks;
+      let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+      let examDataMcq = examData.mcqQuestionId;
+      let answered = examData.answeredOption;
+      let notAnswered = 0;
+      let totalCorrectAnswer = 0;
+      let totalWrongAnswer = 0;
+      let totalObtainedMarks = 0;
+      let totalCorrectMarks = 0;
+      let totalWrongMarks = 0;
+      for (let i = 0; i < examDataMcq.length; i++) {
+        if (answered[i] == "-1") {
+          notAnswered = notAnswered + 1;
+        } else if (answered[i] == examDataMcq[i].correctOption) {
+          totalCorrectAnswer = totalCorrectAnswer + 1;
+        } else totalWrongAnswer = totalWrongAnswer + 1;
+      }
+      totalCorrectMarks = totalCorrectAnswer * correctMarks;
+      totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+      totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+      const update1 = {
+        totalCorrectAnswer: totalCorrectAnswer,
+        totalWrongAnswer: totalWrongAnswer,
+        totalNotAnswered: notAnswered,
+        totalCorrectMarks: totalCorrectMarks,
+        totalWrongMarks: totalWrongMarks,
+        totalObtainedMarksMcq: totalObtainedMarks,
+        uploadStatus: true,
+      };
+      let result = null,
+        upd = null;
+      try {
+        result = await BothStudentExamVsQuestions.findByIdAndUpdate(
+          id,
+          update1
+        );
+      } catch (err) {
+        return res
+          .status(500)
+          .json("Problem when update total obtained marks.");
+      }
+    }
+  }
+  //written
+  let writtenUpd = null;
   try {
-    updateStatus = await BothStudentExamVsQuestions.updateMany(
+    writtenUpd = await BothStudentExamVsQuestions.updateMany(
       {
-        _id: { $in: examUncheckStudent },
+        $and: [{ examId: examIdObj }, { uploadStatus: false }],
       },
-      { $set: { runningStatus: false, finishedStatus: true } }
+      { $set: { uploadStatus: true } }
     );
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  if (updateStatus.modifiedCount == 0)
-    return res.status(404).json("Not updated.");
-  for (let i = 0; i < studentIds.length; i++) {
-    let examData = null;
-    try {
-      examData = await BothStudentExamVsQuestions.findOne({
-        $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
-      }).populate("mcqQuestionId examId");
-    } catch (err) {
-      return res.status(500).json("Problem when get exam data.");
-    }
-    let id = String(examData._id);
-    let correctMarks = examData.examId.marksPerMcq;
-    let negativeMarks = examData.examId.negativeMarks;
-    let negativeMarksValue = (correctMarks * negativeMarks) / 100;
-    let examDataMcq = examData.mcqQuestionId;
-    let answered = examData.answeredOption;
-    let notAnswered = 0;
-    let totalCorrectAnswer = 0;
-    let totalWrongAnswer = 0;
-    let totalObtainedMarks = 0;
-    let totalCorrectMarks = 0;
-    let totalWrongMarks = 0;
-    for (let i = 0; i < examDataMcq.length; i++) {
-      if (answered[i] == "-1") {
-        notAnswered = notAnswered + 1;
-      } else if (answered[i] == examDataMcq[i].correctOption) {
-        totalCorrectAnswer = totalCorrectAnswer + 1;
-      } else totalWrongAnswer = totalWrongAnswer + 1;
-    }
-    totalCorrectMarks = totalCorrectAnswer * correctMarks;
-    totalWrongMarks = totalWrongAnswer * negativeMarksValue;
-    totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
-    const update1 = {
-      totalCorrectAnswer: totalCorrectAnswer,
-      totalWrongAnswer: totalWrongAnswer,
-      totalNotAnswered: notAnswered,
-      totalCorrectMarks: totalCorrectMarks,
-      totalWrongMarks: totalWrongMarks,
-      totalObtainedMarksMcq: totalObtainedMarks,
-      uploadStatus: true,
-    };
-    let result = null,
-      upd = null;
-    try {
-      result = await BothStudentExamVsQuestions.findByIdAndUpdate(id, update1);
-    } catch (err) {
-      return res.status(500).json("Problem when update total obtained marks.");
-    }
-    console.log("result", result);
+    return res.status(500).json("55.Something went wrong.");
   }
   return res.status(201).json("Updated successfully.");
 };
