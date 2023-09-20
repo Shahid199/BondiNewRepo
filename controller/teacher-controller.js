@@ -91,7 +91,7 @@ const getStudentData = async (req, res, next) => {
   for (let i = start; i < end; i++) {
     data1.push(data[i]);
   }
-  return res.status(200).json(data1);
+  return res.status(200).json({ data1, paginateData });
 };
 const checkScriptSingle = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
