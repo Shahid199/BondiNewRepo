@@ -420,7 +420,7 @@ router.get(
   "/getwrittenstudentsinglebyexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    authorize(["superadmin", "moderator", "teacher"]),
   ],
   getWrittenStudentSingleByExam
 );
