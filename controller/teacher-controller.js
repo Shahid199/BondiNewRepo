@@ -79,13 +79,16 @@ const getStudentData = async (req, res, next) => {
     dataObj["marksPerQuestion"] = questionData.marksPerQuestion;
     data.push(dataObj);
   }
-  let data1 = data;
-  var result = data1.filter(function (d) {
-    return !studId.some(function (student) {
-      return d.studentId === student;
-    });
-  });
-  return res.status(200).json(result);
+  let count = data.length;
+  let paginateData = pagination(count, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  let data1 = [];
+  for (let i = start; i < end; i++) {
+    data1.push(data[i]);
+  }
+  return res.status(200).json(data1);
 };
 const checkScriptSingle = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
