@@ -958,7 +958,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let assignedTeacher = null;
   try {
-    assignedTeacher = TeacherVsExam.find({
+    assignedTeacher = await TeacherVsExam.find({
       $and: [{ examId: examIdObj }],
     });
   } catch (err) {
@@ -969,7 +969,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   if (assignedTeacher.length > 0) {
     let del = null;
     try {
-      del = TeacherVsExam.deleteMany({ examId: examIdObj });
+      del = await TeacherVsExam.deleteMany({ examId: examIdObj });
     } catch (err) {
       return res.status(500).json("Somethhing went wrong.");
     }
@@ -982,7 +982,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     });
     let data = null;
     try {
-      data = teacherVsExam.save();
+      data = await teacherVsExam.save();
     } catch (err) {
       return res.status(500).json("Somethhing went wrong.");
     }
