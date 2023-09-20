@@ -55,7 +55,11 @@ const getStudentData = async (req, res, next) => {
   try {
     checkStatus = await StudentExamVsQuestionsWritten.find(
       {
-        $and: [{ studentId: { $in: studId } }, { examId: examId }],
+        $and: [
+          { studentId: { $in: studId } },
+          { examId: examId },
+          { checkStatus: false },
+        ],
       },
       "studentId checkStatus -_id"
     ).populate("studentId examId");
