@@ -4650,6 +4650,7 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothGetHistory = bothGetHistory;
 exports.bothGetCheckWrittenStudentAllByExam =
   bothGetCheckWrittenStudentAllByExam;
 exports.bothGetWrittenStudentAllByExam = bothGetWrittenStudentAllByExam;
