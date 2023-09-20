@@ -599,7 +599,7 @@ router.get(
   "/bothgetwrittenstudentsinglebyexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    authorize(["superadmin", "moderator","teacher"]),
   ],
   bothGetWrittenStudentSingleByExam
 );
