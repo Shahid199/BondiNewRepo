@@ -14,7 +14,7 @@ const McqRank = require("../model/McqRank");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
-  let teacherId = req.user._id;
+  let teacherId = req.user.id;
   console.log(req.user);
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
