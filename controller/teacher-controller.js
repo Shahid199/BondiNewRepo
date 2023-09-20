@@ -44,7 +44,7 @@ const getStudentData = async (req, res, next) => {
   console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
-    studId.push(studentData._id);
+    studId[i] = studentData[i]._id;
   }
   console.log(studId);
   // let checkStatus = null;
