@@ -1054,7 +1054,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   try {
     doc = await TeacherVsExam.updateMany({ examId: examId }, teacherStudentArr);
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   return res
     .status(201)
