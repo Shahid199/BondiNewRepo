@@ -15,12 +15,14 @@ const McqRank = require("../model/McqRank");
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
   let teacherId = req.user._id;
+  let examId = req.query.examId;
+  examId = new mongoose.Types.ObjectId(examId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
   let students = [];
   try {
-    students = await TeacherVsExam.findOne({ teacherId: teacherId }).populate(
-      "studentId"
-    );
+    students = await TeacherVsExam.findOne({
+      $and: [{ teacherId: teacherId }, { examId: examId }],
+    }).populate("studentId");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
