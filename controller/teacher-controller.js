@@ -92,8 +92,10 @@ const getStudentData = async (req, res, next) => {
   console.log(start);
   console.log(end);
   let data1 = [];
-  for (let i = start; i < end; i++) {
-    data1.push(data[i]);
+  if (count > 0) {
+    for (let i = start; i < end; i++) {
+      data1.push(data[i]);
+    }
   }
   return res.status(200).json({ data1, paginateData });
 };
@@ -173,8 +175,10 @@ const getRecheckStudentData = async (req, res, next) => {
   console.log(start);
   console.log(end);
   let data1 = [];
-  for (let i = start; i < end; i++) {
-    data1.push(data[i]);
+  if (count > 0) {
+    for (let i = start; i < end; i++) {
+      data1.push(data[i]);
+    }
   }
   return res.status(200).json({ data1, paginateData });
 };
