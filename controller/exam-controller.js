@@ -1030,6 +1030,8 @@ const assignStudentToTeacher = async (req, res, next) => {
   let range = students.length / teacherId.length;
   let start = 0;
   let end = range;
+  console.log(start);
+  console.log(end);
   let teacherStudentArr = [];
   for (let i = 0; i < teacherId.length; i++) {
     let teacherStudent = {};
