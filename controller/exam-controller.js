@@ -1027,7 +1027,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   students = studData;
   console.log(students);
 
-  let range = students.length / teacherId.length;
+  let range = parseInt(students.length / teacherId.length);
   let start = 0;
   let end = range;
   console.log(start);
