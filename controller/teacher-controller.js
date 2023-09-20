@@ -94,6 +94,7 @@ const getStudentData = async (req, res, next) => {
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
+      if (i == data.length) break;
       data1.push(data[i]);
     }
   }
@@ -177,6 +178,7 @@ const getRecheckStudentData = async (req, res, next) => {
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
+      if (i == data.length) break;
       data1.push(data[i]);
     }
   }
