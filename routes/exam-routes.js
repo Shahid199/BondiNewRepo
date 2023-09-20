@@ -28,6 +28,7 @@ const {
   getWrittenQuestionByexam,
   getMcqBySub,
   getWrittenBySub,
+  bothAssignStudentToTeacher,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -228,6 +229,14 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   assignStudentToTeacher
+);
+router.post(
+  "/bothassignstudenttoteacher",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothAssignStudentToTeacher
 );
 
 module.exports = router;
