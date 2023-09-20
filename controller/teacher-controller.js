@@ -13,9 +13,11 @@ const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const McqRank = require("../model/McqRank");
 const examVariation = require("../utilities/exam-variation");
 const examType = require("../utilities/exam-type");
+const pagination = require("../utilities/pagination");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
+  let page = req.query.page || 1;
   let teacherId = req.user.id;
   console.log(req.user);
   let examId = req.query.examId;
@@ -34,7 +36,7 @@ const getStudentData = async (req, res, next) => {
   try {
     students = await TeacherVsExam.findOne({
       $and: [{ teacherId: teacherId }, { examId: examId }],
-    }).populate("studentId examId");
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
@@ -77,7 +79,13 @@ const getStudentData = async (req, res, next) => {
     dataObj["marksPerQuestion"] = questionData.marksPerQuestion;
     data.push(dataObj);
   }
-  return res.status(200).json(data);
+  let data1 = data;
+  var result = data1.filter(function (d) {
+    return !studId.some(function (student) {
+      return d.studentId === student;
+    });
+  });
+  return res.status(200).json(result);
 };
 const checkScriptSingle = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
