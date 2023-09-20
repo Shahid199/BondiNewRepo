@@ -411,7 +411,7 @@ router.get(
   "/getcheckwrittenstudentallbyexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "teacher"]),
+    authorize(["superadmin", "moderator"]),
   ],
   getCheckWrittenStudentAllByExam
 );
