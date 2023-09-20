@@ -975,30 +975,30 @@ const assignStudentToTeacher = async (req, res, next) => {
     }
   }
   console.log("teache", teacherId.length);
-  for (let i = 0; i < teacherId.length; i++) {
-    let teacher = new mongoose.Types.ObjectId(teacherId[i]);
-    let teacherVsExam = new TeacherVsExam({
-      examId: examIdObj,
-      teacherId: teacher,
-    });
-    let data = null;
-    try {
-      data = await teacherVsExam.save();
-    } catch (err) {
-      return res.status(500).json("Somethhing went wrong.");
-    }
-  }
-  //new code
-  let teacher = [];
-  try {
-    teacher = await TeacherVsExam.find({
-      examId: examId,
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  if (teacher.length == 0)
-    return res.status(404).json("No teacher assigned in this exam.");
+  // for (let i = 0; i < teacherId.length; i++) {
+  //   let teacher = new mongoose.Types.ObjectId(teacherId[i]);
+  //   let teacherVsExam = new TeacherVsExam({
+  //     examId: examIdObj,
+  //     teacherId: teacher,
+  //   });
+  //   let data = null;
+  //   try {
+  //     data = await teacherVsExam.save();
+  //   } catch (err) {
+  //     return res.status(500).json("Somethhing went wrong.");
+  //   }
+  // }
+  // //new code
+  // let teacher = [];
+  // try {
+  //   teacher = await TeacherVsExam.find({
+  //     examId: examId,
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
+  // if (teacher.length == 0)
+  //   return res.status(404).json("No teacher assigned in this exam.");
   let count = 0;
   try {
     count = await StudentExamVsQuestionsWritten.find({
@@ -1027,14 +1027,14 @@ const assignStudentToTeacher = async (req, res, next) => {
   students = studData;
   console.log(students);
 
-  let range = students.length / teacher.length;
+  let range = students.length / teacherId.length;
   let start = 0;
   let end = range;
   let teacherStudentArr = [];
-  for (let i = 0; i < teacher.length; i++) {
+  for (let i = 0; i < teacherId.length; i++) {
     let teacherStudent = {};
     teacherStudent["examId"] = examId;
-    teacherStudent["teacherId"] = teacher[i]._id;
+    teacherStudent["teacherId"] = new mongoose.Types.ObjectId(teacherId[i]);
     let std = [];
     for (let j = start; j < end; j++) {
       std.push(students[j]);
@@ -1042,9 +1042,9 @@ const assignStudentToTeacher = async (req, res, next) => {
     console.log(std);
     teacherStudent["studentId"] = std;
     teacherStudentArr.push(teacherStudent);
-    if (i < teacher.length - 1 && count % teacher.length != 0) {
+    if (i < teacherId.length - 1 && count % teacherId.length != 0) {
       start = end;
-      end = end + range + (count % teacher.length);
+      end = end + range + (count % teacherId.length);
     } else {
       start = end;
       end = end + range;
@@ -1052,7 +1052,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   }
   let doc = null;
   try {
-    doc = await TeacherVsExam.updateMany({ examId: examId }, teacherStudentArr);
+    doc = await TeacherVsExam.insertMany(teacherStudentArr, { ordered: false });
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
