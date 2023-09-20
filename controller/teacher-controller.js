@@ -84,6 +84,9 @@ const getStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
   let data1 = [];
   for (let i = start; i < end; i++) {
     data1.push(data[i]);
