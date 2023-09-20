@@ -53,8 +53,8 @@ const getStudentData = async (req, res, next) => {
       {
         $and: [{ studentId: { $in: { studId } } }, { examId: examId }],
       },
-      "checkStatus -_id"
-    );
+      "studentId checkStatus -_id"
+    ).populate("studentId examId");
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
