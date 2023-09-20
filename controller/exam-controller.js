@@ -1015,9 +1015,10 @@ const assignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log(students);
   let studLen = students.length;
   students = students.studentId;
-  console.log(students);
+
   let range = studLen / teacher.length;
   let start = 0;
   let end = range;
