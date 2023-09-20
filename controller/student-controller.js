@@ -3352,7 +3352,7 @@ const examDetailWritten = async (req, res, next) => {
 
 //both exam
 const bothUpdateStudentExamInfo = async (req, res, next) => {
-  const examId = req.query.examId;
+  const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Exam Id is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
