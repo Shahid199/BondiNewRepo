@@ -964,6 +964,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Somethhing went wrong.");
   }
+  console.log(assignedTeacher.length);
   if (assignedTeacher.length > 0) {
     let del = null;
     try {
