@@ -947,15 +947,50 @@ const getWrittenQuestionByexam = async (req, res, next) => {
   return res.status(200).json(writtenQuestion);
 };
 const assignStudentToTeacher = async (req, res, next) => {
+  //new code
   let examId = req.body.examId;
-  if (!ObjectId.isValid(examId))
-    return res.status(404).json("Exam Id is not valid.");
-  examId = new mongoose.Types.ObjectId(examId);
+  let teacherId = req.body.teacherId;
+  console.log(req.body);
+  console.log(examId);
+  console.log(examId);
+  if (!ObjectId.isValid(examId) || teacherId.length == 0)
+    return res.status(404).json("Exam Id or Teacher Id is not valid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let assignedTeacher = null;
+  try {
+    assignedTeacher = TeacherVsExam.find({
+      $and: [{ examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  if (assignedTeacher.length > 0) {
+    let del = null;
+    try {
+      del = TeacherVsExam.deleteMany({ examId: examIdObj });
+    } catch (err) {
+      return res.status(500).json("Somethhing went wrong.");
+    }
+  }
+  for (let i = 0; i < teacherId.length; i++) {
+    let teacher = new mongoose.Types.ObjectId(teacherId.length);
+    let teacherVsExam = new TeacherVsExam({
+      examId: examIdObj,
+      teacherId: teacher,
+    });
+    let data = null;
+    try {
+      data = teacherVsExam.save();
+    } catch (err) {
+      return res.status(500).json("Somethhing went wrong.");
+    }
+  }
+  //new code
   let teacher = [];
   try {
     teacher = await TeacherVsExam.find({
       examId: examId,
-    }).count();
+    });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
