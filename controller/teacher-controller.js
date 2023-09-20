@@ -11,6 +11,8 @@ const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions"
 const BothRank = require("../model/BothRank");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const McqRank = require("../model/McqRank");
+const examVariation = require("../utilities/exam-variation");
+const examType = require("../utilities/exam-type");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
