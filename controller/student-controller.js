@@ -3453,6 +3453,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
           update1
         );
       } catch (err) {
+        console.log(err);
         return res
           .status(500)
           .json("Problem when update total obtained marks.");
