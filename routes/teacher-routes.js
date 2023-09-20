@@ -19,6 +19,7 @@ const {
   bothGetCheckStatus,
   bothGetAllRank,
   bothGetWrittenScriptSingle,
+  getRecheckStudentData,
 } = require("../controller/teacher-controller");
 
 router.get(
@@ -28,6 +29,14 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getStudentData
+);
+router.get(
+  "/getrecheckstudentdata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getRecheckStudentData
 );
 router.post(
   "/checkscriptsingle",

@@ -97,6 +97,87 @@ const getStudentData = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+const getRecheckStudentData = async (req, res, next) => {
+  let page = req.query.page || 1;
+  let teacherId = req.user.id;
+  console.log(req.user);
+  let examId = req.query.examId;
+  examId = new mongoose.Types.ObjectId(examId);
+  teacherId = new mongoose.Types.ObjectId(teacherId);
+  console.log(teacherId);
+  console.log(examId);
+  let students = [];
+  let questionData = null;
+  try {
+    questionData = await QuestionsWritten.findOne({ examId: examId });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  try {
+    students = await TeacherVsExam.findOne({
+      $and: [{ teacherId: teacherId }, { examId: examId }],
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(students);
+  if (students.studentId.length == 0)
+    return res.status(404).json("No student assigned.");
+  let studentData = students.studentId;
+  console.log(studentData);
+  let studId = [];
+  for (let i = 0; i < studentData.length; i++) {
+    studId[i] = studentData[i]._id;
+  }
+  console.log(studId);
+  let checkStatus = null;
+  try {
+    checkStatus = await StudentExamVsQuestionsWritten.find(
+      {
+        $and: [
+          { studentId: { $in: studId } },
+          { examId: examId },
+          { checkStatus: true },
+        ],
+      },
+      "studentId checkStatus -_id"
+    ).populate("studentId examId");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log("check status", checkStatus);
+  let data = [];
+  for (let i = 0; i < checkStatus.length; i++) {
+    let dataObj = {};
+    dataObj["examName"] = checkStatus[i].examId.name;
+    dataObj["examVariation"] =
+      examVariation[checkStatus[i].examId.examVariation];
+    dataObj["examType"] = examType[checkStatus[i].examId.examType];
+    dataObj["studentName"] = checkStatus[i].studentId.name;
+    dataObj["studentId"] = checkStatus[i].studentId._id;
+    dataObj["checkStatus"] = checkStatus[i].checkStatus;
+    dataObj["totalQuestions"] = questionData.totalQuestions;
+    dataObj["totalMarks"] = questionData.totalMarks;
+    dataObj["marksPerQuestion"] = questionData.marksPerQuestion;
+    data.push(dataObj);
+  }
+  let count = data.length;
+  let paginateData = pagination(count, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
+  let data1 = [];
+  for (let i = start; i < end; i++) {
+    data1.push(data[i]);
+  }
+  return res.status(200).json({ data1, paginateData });
+};
 const checkScriptSingle = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
@@ -760,6 +841,7 @@ const bothGetWrittenScriptSingle = async (req, res, next) => {
   console.log(getQuestion);
   return res.status(200).json(data);
 };
+exports.getRecheckStudentData = getRecheckStudentData;
 exports.bothGetWrittenScriptSingle = bothGetWrittenScriptSingle;
 exports.bothGetAllRank = bothGetAllRank;
 exports.bothUpdateRank = bothUpdateRank;
