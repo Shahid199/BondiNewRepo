@@ -118,7 +118,7 @@ const createSpecialExam = async (req, res, next) => {
     allSubject, //all subject ID in array
     optionalSubject, //array of subject Id
     subjectInfo, //array of subjectinfo
-  } = req.body;
+  } = JSON.parse(req.body);
   console.log(req.body);
   if (!ObjectId.isValid(courseId)) {
     return res.status(404).json("Course Id is not valid.");
