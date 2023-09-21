@@ -3,6 +3,89 @@ const { default: mongoose, Mongoose } = require("mongoose");
 const SpecialExam = require("../model/SpecialExam");
 const pagination = require("../utilities/pagination");
 const moment = require("moment");
+const updateSpecialExam = async (req, res, next) => {
+  const {
+    examId,
+    courseId,
+    name,
+    examType,
+    startTime,
+    endTime,
+    mcqDuration,
+    marksPerMcq,
+    negativeVarks,
+    totalQuestionMcq,
+    totalQuestionWritten,
+    writtenDuration,
+    totalMarksWritten,
+    totalDuration,
+    totalMarksMcq,
+    totalMarks,
+    status,
+    sscStatus,
+    hscStatus,
+    noOfTotalSubject,
+    noOfExamSubject,
+    noOfOptionalSubject,
+    optionalSubject, //array of subject Id
+    subjectInfo, //array of subjectinfo
+  } = req.body;
+  console.log(req.body);
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(courseId)) {
+    return res.status(404).json("exam Id or course Id is not valid.");
+  }
+  let optionalSubjects = [];
+  for (let i = 0; i < optionalSubject.length; i++) {
+    optionalSubjects[i] = new mongoose.Types.ObjectId(optionalSubject[i]);
+  }
+  let subjectsInfos = [];
+  for (let i = 0; i < subjectInfo.length; i++) {
+    let dataOb = {};
+    dataOb["subjectId"] = new mongoose.Types.ObjectId(subjectInfo[i].subjectId);
+    dataOb["noOfQuestionsMcq"] = subjectInfo[i].numberOfMcqQuestions;
+    dataOb["noOfQuestionsWritten"] = subjectInfo[i].numberOfWrittenQuestions;
+    subjectsInfos.push(dataOb);
+  }
+  let startTime1, endTime1;
+  startTime1 = new Date(startTime);
+  endTime1 = new Date(endTime);
+  let courseIdObj;
+  courseIdObj = new mongoose.Types.ObjectId(courseId);
+  let saveExam = new {
+    courseId: courseIdObj,
+    name: name,
+    examType: examType,
+    startTime: moment(startTime),
+    endTime: moment(endTime),
+    mcqDuration: mcqDuration,
+    marksPerMcq: marksPerMcq,
+    negativeMarks: negativeVarks,
+    totalQuestionsMcq: totalQuestionMcq,
+    totalQuestionsWritten: totalQuestionWritten,
+    writtenDuration: writtenDuration,
+    totalDuration: totalDuration,
+    totalMarksMcq: totalMarksMcq,
+    totalMarksWritten: totalMarksWritten,
+    totalMarks: totalMarks,
+    noOfTotalSubject: noOfTotalSubject,
+    noOfExamSubject: noOfExamSubject,
+    noOfOptionalSubject: noOfOptionalSubject,
+    subjectInfo: subjectsInfos,
+    optionalSubject: optionalSubject,
+    sscStatus: JSON.parse(sscStatus),
+    hscStatus: JSON.parse(hscStatus),
+    status: JSON.parse(status),
+  }();
+  let updStatus = null;
+  try {
+    updStatus = await SpecialExam.findByIdAndUpdate(examId, saveExam);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!updStatus) return res.status(404).json("Not Updated.");
+  return res.status(201).json("Updated special exam.");
+};
 const createSpecialExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
@@ -17,102 +100,78 @@ const createSpecialExam = async (req, res, next) => {
     startTime,
     endTime,
     mcqDuration,
+    marksPerMcq,
+    negativeVarks,
+    totalQuestionMcq,
+    totalQuestionWritten,
     writtenDuration,
-    totalMarksMcq,
     totalMarksWritten,
+    totalDuration,
+    totalMarksMcq,
     totalMarks,
     status,
-    totalDuration,
-    totalSubject,
-    examSubject,
-  } = req.body;
-  console.log(courseId);
-  if (!ObjectId.isValid(courseId))
-    return res.status(404).json("course Id is invalid.");
-  let startTime1, endTime1;
-  startTime1 = new Date(startTime);
-  endTime1 = new Date(endTime);
-  let courseIdObj, saveExam;
-  courseIdObj = new mongoose.Types.ObjectId(courseId);
-  saveExam = new SpecialExam({
-    courseId: courseIdObj,
-    name: name,
-    examType: examType,
-    startTime: moment(startTime1),
-    endTime: moment(endTime1),
-    mcqDuration: mcqDuration,
-    writtenDuration: writtenDuration,
-    totalDuration: totalDuration,
-    totalMarksMcq: totalMarksMcq,
-    totalMarksWritten: totalMarksWritten,
-    totalMarks: totalMarks,
-    status: JSON.parse(status),
-    iLink: iLinkPath,
-    totalSubject: totalSubject,
-    examSubject: examSubject,
-  });
-  let doc;
-  try {
-    doc = await saveExam.save();
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-
-  return res.status(201).json(doc);
-};
-const updateSpecialExam = async (req, res, next) => {
-  const {
-    examId,
-    courseId,
-    name,
-    examType,
-    startTime,
-    endTime,
-    mcqDuration,
-    writtenDuration,
-    totalMarksMcq,
-    totalMarksWritten,
-    totalMarks,
-    status,
-    totalDuration,
-    totalSubject,
-    examSubject,
+    sscStatus,
+    hscStatus,
+    noOfTotalSubject,
+    noOfExamSubject,
+    noOfOptionalSubject,
+    optionalSubject, //array of subject Id
+    subjectInfo, //array of subjectinfo
   } = req.body;
   console.log(req.body);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(courseId)) {
     return res.status(404).json("exam Id or course Id is not valid.");
+  }
+  let optionalSubjects = [];
+  for (let i = 0; i < optionalSubject.length; i++) {
+    optionalSubjects[i] = new mongoose.Types.ObjectId(optionalSubject[i]);
+  }
+  let subjectsInfos = [];
+  for (let i = 0; i < subjectInfo.length; i++) {
+    let dataOb = {};
+    dataOb["subjectId"] = new mongoose.Types.ObjectId(subjectInfo[i].subjectId);
+    dataOb["noOfQuestionsMcq"] = subjectInfo[i].numberOfMcqQuestions;
+    dataOb["noOfQuestionsWritten"] = subjectInfo[i].numberOfWrittenQuestions;
+    subjectsInfos.push(dataOb);
   }
   let startTime1, endTime1;
   startTime1 = new Date(startTime);
   endTime1 = new Date(endTime);
   let courseIdObj;
   courseIdObj = new mongoose.Types.ObjectId(courseId);
-  let saveExam = {
+  let saveExam = new SpecialExam({
     courseId: courseIdObj,
     name: name,
     examType: examType,
     startTime: moment(startTime),
     endTime: moment(endTime),
     mcqDuration: mcqDuration,
+    marksPerMcq: marksPerMcq,
+    negativeMarks: negativeVarks,
+    totalQuestionsMcq: totalQuestionMcq,
+    totalQuestionsWritten: totalQuestionWritten,
     writtenDuration: writtenDuration,
     totalDuration: totalDuration,
     totalMarksMcq: totalMarksMcq,
     totalMarksWritten: totalMarksWritten,
     totalMarks: totalMarks,
+    noOfTotalSubject: noOfTotalSubject,
+    noOfExamSubject: noOfExamSubject,
+    noOfOptionalSubject: noOfOptionalSubject,
+    subjectInfo: subjectsInfos,
+    optionalSubject: optionalSubject,
+    sscStatus: JSON.parse(sscStatus),
+    hscStatus: JSON.parse(hscStatus),
     status: JSON.parse(status),
-    totalSubject: totalSubject,
-    examSubject: examSubject,
-  };
+  });
   let updStatus = null;
   try {
-    updStatus = await SpecialExam.findByIdAndUpdate(examId, saveExam);
+    updStatus = await saveExam.save();
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  if (updStatus == null) return res.status(404).json("Problem at update.");
-  else return res.status(201).json("Updated special exam.");
+  return res.status(201).json("Created special exam successfully.");
 };
 const showSpecialExamById = async (req, res, next) => {
   let examId = req.body.examId;

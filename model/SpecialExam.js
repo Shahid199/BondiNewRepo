@@ -11,15 +11,21 @@ const SpecialExamSchema = new Schema(
       unique: true,
       max: 200,
     },
-    totalSubject: {
+    examType: {
       type: Number,
       required: true,
-      default: 0,
     },
-    examSubject: {
+    noOfTotalSubject: {
       type: Number,
       required: true,
-      default: 0,
+    },
+    noOfExamSubject: {
+      type: Number,
+      required: true,
+    },
+    noOfOptionalSubject: {
+      type: Number,
+      required: true,
     },
     optionalSubject: [
       {
@@ -47,10 +53,6 @@ const SpecialExamSchema = new Schema(
         },
       },
     ],
-    examType: {
-      type: Number,
-      required: true,
-    },
     startTime: {
       type: Date,
       required: true,
@@ -62,12 +64,10 @@ const SpecialExamSchema = new Schema(
     mcqDuration: {
       type: Number,
       required: false,
-      default: 0,
     },
     writtenDuration: {
       type: Number,
       required: false,
-      Deafault: 0,
     },
     totalQuestionsMcq: {
       type: Number,
