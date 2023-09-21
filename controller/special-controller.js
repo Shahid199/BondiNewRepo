@@ -3,6 +3,8 @@ const { default: mongoose, Mongoose } = require("mongoose");
 const SpecialExam = require("../model/SpecialExam");
 const pagination = require("../utilities/pagination");
 const moment = require("moment");
+const QuestionsMcq = require("../model/QuestionsMcq");
+const SpecialExamRule = require("../model/SpecialExamRule");
 const updateSpecialExam = async (req, res, next) => {
   const {
     examId,
@@ -222,6 +224,21 @@ const showSpecialExamByCourse = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (data == null) return res.status(404).json("No data found.");
+
+  for (let i = 0; i < data.length; i++) {
+    let dataRule = "0";
+    try {
+      dataRule = await SpecialExamRule.findOne({
+        examId: data[i]._id,
+      }).select("ruleILink -_id");
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (dataRule == null) data[i]["RuleImage"] = "0";
+    else {
+      data[i]["RuleImage"] = dataRule.ruleILink;
+    }
+  }
   return res.status(200).json(data);
 };
 
@@ -259,6 +276,85 @@ const deactivateSpecialExam = async (req, res, next) => {
   if (upd == null) return res.status(404).json("No data found.");
   return res.status(201).json("Deactivated.");
 };
+//rule api
+const examRuleSet = async (req, res, next) => {
+  const file = req.file;
+  let ruleILinkPath = null;
+  if (!file) {
+    return res.status(404).jsoon("Exam rule file not uploaded.");
+  }
+  ruleILinkPath = "uploads/".concat(file.filename);
+  //console.log(ruleILinkPath);
+  const examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let existingElem = null;
+  try {
+    existingElem = await SpecialExamRule.findOne({ examId: examIdObj });
+  } catch (err) {
+    return re.status(500).json(err);
+  }
+
+  if (existingElem == null) {
+    let examRule = new SpecialExamRule({
+      examId: examIdObj,
+      ruleILink: ruleILinkPath,
+    });
+    let data = null;
+    try {
+      data = await examRule.save();
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    return res.status(201).json({ inserted: data });
+  } else {
+    let data = null;
+    try {
+      data = await SpecialExamRule.updateOne(
+        { examId: examIdObj },
+        { rulILink: ruleILinkPath }
+      );
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    return res.status(201).json({ updated: data });
+  }
+};
+const examRuleGet = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(422).json("exam Id is not valid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await SpecialExamRule.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  // if (data) return res.status(200).json(data.ruleILink);
+  // else return res.status(404).json("No data found.");
+  return res.status(200).json(data);
+};
+const examRuleGetAll = async (req, res, next) => {
+  let page = req.query.page;
+  let skippedItem;
+  if (page == null) {
+    page = Number(1);
+    skippedItem = (page - 1) * Limit;
+  } else {
+    page = Number(page);
+    skippedItem = (page - 1) * Limit;
+  }
+  let data = [];
+  try {
+    data = await SpecialExamRule.find({}).skip(skippedItem).limit(Limit);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (data) return res.status(200).json(data);
+  else return res.status(404).json("No data found.");
+};
 
 //mcq question
 const addQuestionMcq = async (req, res, next) => {
@@ -267,11 +363,18 @@ const addQuestionMcq = async (req, res, next) => {
   let examIdObj;
   //let type = req.query.type;
   let question;
-  const { questionText, optionCount, correctOption, status, examId, type } =
-    req.body;
+  const {
+    questionText,
+    optionCount,
+    correctOption,
+    status,
+    examId,
+    type,
+    subjectId,
+  } = req.body;
   let options = JSON.parse(req.body.options);
-  if (!ObjectId.isValid(examId))
-    return res.status(404).json("examId Id is not valid.");
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("examId Id or subject Id is not valid.");
   const file = req.files;
   //question insert for text question(type=true)
   if (JSON.parse(type) == true) {
@@ -291,12 +394,13 @@ const addQuestionMcq = async (req, res, next) => {
     options = [];
   }
   examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   //insert question
   let questions = new QuestionsMcq({
     question: question,
     optionCount: Number(optionCount),
     options: options,
-    correctOption: Number(correctOption), //index value
+    correctOption: Number(correctOption),
     explanationILink: explanationILinkPath,
     status: JSON.parse(status),
     type: JSON.parse(type),
@@ -308,39 +412,42 @@ const addQuestionMcq = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json(err);
   }
-  //end of insert question
-  //insert question to reference mcqquestionexam table
   let questionId = doc._id;
   if (!questionId) return res.status(400).send("question not inserted");
-  let mcqQData,
+  let mcqData,
     doc1,
-    mId,
     mcqQuestion = [];
   try {
-    mcqQData = await SpecialExam.findById(examIdObj).select("questionMcq -_id");
+    mcqData = await SpecialExam.findById(examIdObj).select("questionMcq -_id");
   } catch (err) {
     return res.status(500).json(err);
   }
-  if (mcqQData == null) {
+  mcqData = mcqData.questionMcq;
+  if (mcqData == null) {
     mcqQuestion.push(questionId);
-    let questionExam = new McqQuestionVsExam({
-      eId: examId,
-      mId: mIdNew,
-    });
+    let qObj = {};
+    qObj["subjectId"] = subjectIdObj;
+    qObj["mcqId"] = mcqQuestion;
+    let questionExam = {
+      questionMcq: qObj,
+    };
     try {
-      doc1 = await questionExam.save();
+      doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, questionExam);
     } catch (err) {
       return res.status(500).json(err);
     }
   } else {
-    mId = mcqQData.mId;
-    mIdNew = mId;
-    mIdNew.push(questionId);
+    let mcqQues = mcqData.questionMcq;
+    for (let i = 0; i < mcqQues.length; i++) {
+      if (subjectIdObj == mcqQues[i].subjectId) {
+        mcqQues[i].questionMcq.push(questionId);
+        break;
+      }
+    }
     try {
-      doc1 = await McqQuestionVsExam.updateOne(
-        { eId: examIdObj },
-        { $set: { mId: mIdNew } }
-      );
+      doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, {
+        $set: { mcqQuestion: mcqQues },
+      });
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -348,6 +455,9 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(201).json("Saved.");
 };
 
+exports.examRuleSet = examRuleSet;
+exports.examRuleGet = examRuleGet;
+exports.examRuleGetAll = examRuleGetAll;
 exports.addQuestionMcq = addQuestionMcq;
 exports.showSpecialExamByCourse = showSpecialExamByCourse;
 exports.createSpecialExam = createSpecialExam;

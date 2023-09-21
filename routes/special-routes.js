@@ -10,6 +10,9 @@ const {
   deactivateSpecialExam,
   showSpecialExamByCourse,
   addQuestionMcq,
+  examRuleGet,
+  examRuleSet,
+  examRuleGetAll,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -55,6 +58,30 @@ router.put(
   "/deactivatespecialexam",
   [passport.authenticate("jwt", { session: false }), authorize()],
   deactivateSpecialExam
+);
+//rule
+router.post(
+  "/examruleset",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("ruleILink"),
+  ],
+  examRuleSet
+);
+router.get(
+  "/examruleget",
+  [passport.authenticate("jwt", { session: false })],
+  authorize(["superadmin", "moderator", "student", "freeStudent"]),
+  examRuleGet
+);
+router.get(
+  "/examrulegetall",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  examRuleGetAll
 );
 
 module.exports = router;
