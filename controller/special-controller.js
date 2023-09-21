@@ -118,25 +118,33 @@ const createSpecialExam = async (req, res, next) => {
     allSubject, //all subject ID in array
     optionalSubject, //array of subject Id
     subjectInfo, //array of subjectinfo
-  } = JSON.parse(req.body);
+  } = req.body;
   console.log(req.body);
   if (!ObjectId.isValid(courseId)) {
     return res.status(404).json("Course Id is not valid.");
   }
   let allSubjects = [];
-  for (let i = 0; i < allSubject.length; i++) {
-    allSubjects[i] = new mongoose.Types.ObjectId(allSubject[i]);
+  let subjectId = JSON.parse(allSubject);
+  console.log("subjectId", subjectId);
+  for (let i = 0; i < subjectId.length; i++) {
+    allSubjects[i] = new mongoose.Types.ObjectId(subjectId[i]);
   }
   let optionalSubjects = [];
-  for (let i = 0; i < optionalSubject.length; i++) {
-    optionalSubjects[i] = new mongoose.Types.ObjectId(optionalSubject[i]);
+  let optionalId = JSON.parse(optionalSubject);
+  console.log("optionalId", optionalId);
+  for (let i = 0; i < optionalId.length; i++) {
+    optionalSubjects[i] = new mongoose.Types.ObjectId(optionalId[i]);
   }
   let subjectsInfos = [];
-  for (let i = 0; i < subjectInfo.length; i++) {
+  let subjectInfoId = JSON.parse(subjectInfo);
+  console.log("subjectInfoId", subjectInfoId);
+  for (let i = 0; i < subjectInfoId.length; i++) {
     let dataOb = {};
-    dataOb["subjectId"] = new mongoose.Types.ObjectId(subjectInfo[i].subjectId);
-    dataOb["noOfQuestionsMcq"] = subjectInfo[i].numberOfMcqQuestions;
-    dataOb["noOfQuestionsWritten"] = subjectInfo[i].numberOfWrittenQuestions;
+    dataOb["subjectId"] = new mongoose.Types.ObjectId(
+      subjectInfoId[i].subjectId
+    );
+    dataOb["noOfQuestionsMcq"] = subjectInfoId[i].numberOfMcqQuestions;
+    dataOb["noOfQuestionsWritten"] = subjectInfoId[i].numberOfWrittenQuestions;
     subjectsInfos.push(dataOb);
   }
   let startTime1, endTime1;
