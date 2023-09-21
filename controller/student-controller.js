@@ -2139,7 +2139,7 @@ const bothGetHistory = async (req, res, next) => {
     totalQuestion: qWritten.totalQuestions,
     variation: examType[Number(examDetails.examType)],
     type: examVariation[Number(examDetails.examVariation)],
-    totalMarks: Number(qWritten.totalMarks + examDetail.totalMarksMcq),
+    totalMarks: qWritten.totalMarks + examDetail.totalMarksMcq,
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
