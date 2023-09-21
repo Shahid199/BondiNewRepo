@@ -9,6 +9,7 @@ const {
   showSpecialExamById,
   deactivateSpecialExam,
   showSpecialExamByCourse,
+  addQuestionMcq,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -26,6 +27,12 @@ router.post(
   [passport.authenticate("jwt", { session: false }), authorize()],
   updateSpecialExam
 );
+router.post(
+  "/addquestionmcq",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  addQuestionMcq
+);
+
 router.get(
   "/showspecialexamall",
   [passport.authenticate("jwt", { session: false }), authorize()],

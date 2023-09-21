@@ -192,6 +192,7 @@ const createSpecialExam = async (req, res, next) => {
   console.log(updStatus);
   return res.status(201).json("Created special exam successfully.");
 };
+
 const showSpecialExamById = async (req, res, next) => {
   let examId = req.body.examId;
   if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
@@ -208,7 +209,7 @@ const showSpecialExamById = async (req, res, next) => {
   return res.status(200).json(data);
 };
 const showSpecialExamByCourse = async (req, res, next) => {
-  let courseId = req.body.courseId;
+  let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
     return res.staus(404).json("Invalid Course Id.");
   courseId = new mongoose.Types.ObjectId(courseId);
@@ -259,6 +260,95 @@ const deactivateSpecialExam = async (req, res, next) => {
   return res.status(201).json("Deactivated.");
 };
 
+//mcq question
+const addQuestionMcq = async (req, res, next) => {
+  let iLinkPath = null;
+  let explanationILinkPath = null;
+  let examIdObj;
+  //let type = req.query.type;
+  let question;
+  const { questionText, optionCount, correctOption, status, examId, type } =
+    req.body;
+  let options = JSON.parse(req.body.options);
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId Id is not valid.");
+  const file = req.files;
+  //question insert for text question(type=true)
+  if (JSON.parse(type) == true) {
+    if (!file.explanationILink) {
+      return res.status(404).json("Expalnation File not uploaded.");
+    }
+    question = questionText;
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
+  } else {
+    if (!file.iLink) {
+      return res.status(404).json("Question File not uploaded.");
+    }
+
+    iLinkPath = "uploads/".concat(file.iLink[0].filename);
+    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
+    question = iLinkPath;
+    options = [];
+  }
+  examIdObj = new mongoose.Types.ObjectId(examId);
+  //insert question
+  let questions = new QuestionsMcq({
+    question: question,
+    optionCount: Number(optionCount),
+    options: options,
+    correctOption: Number(correctOption), //index value
+    explanationILink: explanationILinkPath,
+    status: JSON.parse(status),
+    type: JSON.parse(type),
+  });
+  let doc;
+  try {
+    doc = await questions.save();
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json(err);
+  }
+  //end of insert question
+  //insert question to reference mcqquestionexam table
+  let questionId = doc._id;
+  if (!questionId) return res.status(400).send("question not inserted");
+  let mcqQData,
+    doc1,
+    mId,
+    mcqQuestion = [];
+  try {
+    mcqQData = await SpecialExam.findById(examIdObj).select("questionMcq -_id");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (mcqQData == null) {
+    mcqQuestion.push(questionId);
+    let questionExam = new McqQuestionVsExam({
+      eId: examId,
+      mId: mIdNew,
+    });
+    try {
+      doc1 = await questionExam.save();
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  } else {
+    mId = mcqQData.mId;
+    mIdNew = mId;
+    mIdNew.push(questionId);
+    try {
+      doc1 = await McqQuestionVsExam.updateOne(
+        { eId: examIdObj },
+        { $set: { mId: mIdNew } }
+      );
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  }
+  return res.status(201).json("Saved.");
+};
+
+exports.addQuestionMcq = addQuestionMcq;
 exports.showSpecialExamByCourse = showSpecialExamByCourse;
 exports.createSpecialExam = createSpecialExam;
 exports.updateSpecialExam = updateSpecialExam;
