@@ -234,9 +234,9 @@ const showSpecialExamByCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    if (dataRule == null) data[i]["RuleImage"] = "0";
+    if (dataRule == null) data[i].ruleImage = "0";
     else {
-      data[i]["RuleImage"] = dataRule.ruleILink;
+      data[i].ruleImage = dataRule.ruleILink;
     }
   }
   return res.status(200).json(data);
