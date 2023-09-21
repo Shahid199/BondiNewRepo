@@ -149,7 +149,7 @@ const createSpecialExam = async (req, res, next) => {
     dataOb["noOfQuestionsWritten"] = subjectInfoId[i].numberOfWrittenQuestions;
     subjectsInfos.push(dataOb);
   }
-  console.log(subjectInfo);
+  console.log(subjectInfos);
   let startTime1, endTime1;
   startTime1 = new Date(startTime);
   endTime1 = new Date(endTime);
