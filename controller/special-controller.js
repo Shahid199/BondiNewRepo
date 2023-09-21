@@ -120,8 +120,8 @@ const createSpecialExam = async (req, res, next) => {
     subjectInfo, //array of subjectinfo
   } = req.body;
   console.log(req.body);
-  if (!ObjectId.isValid(examId) || !ObjectId.isValid(courseId)) {
-    return res.status(404).json("exam Id or course Id is not valid.");
+  if (!ObjectId.isValid(courseId)) {
+    return res.status(404).json("Course Id is not valid.");
   }
   let allSubjects = [];
   for (let i = 0; i < allSubject.length; i++) {
