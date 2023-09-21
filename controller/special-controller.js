@@ -189,6 +189,7 @@ const createSpecialExam = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+  console.log(updStatus);
   return res.status(201).json("Created special exam successfully.");
 };
 const showSpecialExamById = async (req, res, next) => {
