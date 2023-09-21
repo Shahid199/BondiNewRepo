@@ -239,6 +239,7 @@ const showSpecialExamByCourse = async (req, res, next) => {
     else {
       data1["RuleImage"] = dataRule.ruleILink;
     }
+    data1["_id"] = data[i]._id;
     data1["name"] = data[i].name;
     data1["examVariation"] = data[i].examVariation;
     data1["noOfTotalSubject"] = data[i].noOfTotalSubject;
@@ -508,9 +509,10 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(500).json(err);
   }
   if (!mIdArray) return res.status(404).json("No exam found.");
+  mIdArray = mIdArray.questionMcq;
   let bulkData = [];
   for (let i = 0; i < mIdArray.length; i++) {
-    if (subjectIdObj == mIdArray[i].questionMcq.subjectId) {
+    if (subjectIdObj == mIdArray[i].subjectId) {
       bulkData = mIdArray[i].questionMcq.mcqId;
       break;
     }
@@ -524,9 +526,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
-  for (let i = 0; i < mIdArray.length; i++) {
-    if (subjectIdObj == mIdArray[i].questionMcq.subjectId) {
-      mIdArray[i].questionMcq.mcqId = withoutDuplicate;
+  for (let i = 0; i < mIdArray.questionMcq.length; i++) {
+    if (subjectIdObj == mIdArray.questionMcq[i].subjectId) {
+      mIdArray.questionMcq[i].mcqId = withoutDuplicate;
       break;
     }
   }
@@ -539,6 +541,62 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(500).json(err);
   }
   return res.status(201).json("Inserted question to the exam.");
+};
+
+//written question
+const addQuestionWritten = async (req, res, next) => {
+  let examId = req.body.examId;
+  let subjectId = req.body.subjectId;
+  examId = new mongoose.Types.ObjectId(examId);
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  let existData = null;
+  try {
+    existData = await SpecialExam.findById(examId, "questionWritten");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  existData = existData.questionWritten;
+  for (let i = 0; i < existData.length; i++) {
+    //if(existData[i].subjectId)
+  }
+  if (existData) return res.status(404).json("Already added question.");
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  const status = req.body.status;
+  const totalQuestions = req.body.totalQuestions;
+  let marksPerQuestion = req.body.marksPerQuestion; //array
+  // for (let i = 0; i < marksPerQuestion.length; i++) {
+  //   marksPerQuestion[i] = parseInt(marksPerQuestion[i]);
+  // }
+  marksPerQuestion = marksPerQuestion.split(",");
+  //console.log(marksPerQuestion);
+  const totalMarks = req.body.totalMarks;
+  //file upload handle
+  const file = req.files;
+  //console.log(file);
+  let questionILinkPath = null;
+  // console.log(file.questionILink[0].filename);
+  // return res.status(201).json("Ok");
+  if (!file.questionILink[0].filename)
+    return res.status(400).json("File not uploaded.");
+  questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
+  //written question save to db table
+  let question = new QuestionsWritten({
+    questionILink: questionILinkPath,
+    status: status,
+    totalQuestions: totalQuestions,
+    marksPerQuestion: marksPerQuestion,
+    totalMarks: totalMarks,
+    examId: examId,
+  });
+  let doc;
+  try {
+    doc = await question.save();
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("2.Something went wrong!");
+  }
+  return res.status(200).json("Question save correctly.");
 };
 
 exports.addQuestionMcqBulk = addQuestionMcqBulk;
