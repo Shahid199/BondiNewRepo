@@ -179,6 +179,7 @@ const createSpecialExam = async (req, res, next) => {
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
     status: JSON.parse(status),
+    iLink: iLinkPath,
   });
   let updStatus = null;
   try {
