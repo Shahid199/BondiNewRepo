@@ -2088,6 +2088,7 @@ const bothGetHistory = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  let examDetail = null;
   for (let i = 0; i < rank.length; i++) {
     let mcqRank = null;
     try {
@@ -2097,7 +2098,7 @@ const bothGetHistory = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    let examDetail = mcqRank.examId;
+    examDetail = mcqRank.examId;
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
     let data1 = {},
