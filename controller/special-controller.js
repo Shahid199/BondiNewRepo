@@ -136,6 +136,8 @@ const createSpecialExam = async (req, res, next) => {
     optionalSubjects[i] = new mongoose.Types.ObjectId(optionalId[i]);
   }
   let subjectsInfos = [];
+  console.log(subjectInfo);
+  console.log(JSON.parse(subjectInfo));
   let subjectInfoId = JSON.parse(subjectInfo);
   console.log("subjectInfoId", subjectInfoId);
   for (let i = 0; i < subjectInfoId.length; i++) {
