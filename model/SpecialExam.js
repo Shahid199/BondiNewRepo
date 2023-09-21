@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const subjects = require("./Subject");
 const courses = require("./Course");
+const questions = require("./QuestionsMcq");
 const Schema = mongoose.Schema;
 
 const SpecialExamSchema = new Schema(
@@ -51,6 +52,37 @@ const SpecialExamSchema = new Schema(
           required: false,
           default: 0,
         },
+      },
+    ],
+    questionMcq: [
+      {
+        subjectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: subjects,
+          required: false,
+        },
+        mcqId: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: questions,
+            required: true,
+          },
+        ],
+      },
+    ],
+    questionWritten: [
+      {
+        subjectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: subjects,
+          required: false,
+        },
+        writtenILink: [
+          {
+            type: String,
+            required: false,
+          },
+        ],
       },
     ],
     startTime: {
