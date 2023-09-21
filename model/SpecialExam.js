@@ -42,7 +42,7 @@ const SpecialExamSchema = new Schema(
         required: true,
       },
     ],
-    subjecInfo: [
+    subjectInfo: [
       {
         subjectId: {
           type: mongoose.Schema.Types.ObjectId,
