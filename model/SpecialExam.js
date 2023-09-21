@@ -12,7 +12,7 @@ const SpecialExamSchema = new Schema(
       unique: true,
       max: 200,
     },
-    examType: {
+    examVariation: {
       type: Number,
       required: true,
     },
@@ -28,6 +28,13 @@ const SpecialExamSchema = new Schema(
       type: Number,
       required: true,
     },
+    allSubject: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: subjects,
+        required: true,
+      },
+    ],
     optionalSubject: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -77,12 +84,10 @@ const SpecialExamSchema = new Schema(
           ref: subjects,
           required: false,
         },
-        writtenILink: [
-          {
-            type: String,
-            required: false,
-          },
-        ],
+        writtenILink: {
+          type: String,
+          required: false,
+        },
       },
     ],
     startTime: {

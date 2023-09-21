@@ -8,6 +8,7 @@ const {
   showSpecialExamAll,
   showSpecialExamById,
   deactivateSpecialExam,
+  showSpecialExamByCourse,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -29,6 +30,12 @@ router.get(
   "/showspecialexamall",
   [passport.authenticate("jwt", { session: false }), authorize()],
   showSpecialExamAll
+);
+
+router.get(
+  "/showspecialexambycourse",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  showSpecialExamByCourse
 );
 
 router.get(

@@ -96,7 +96,7 @@ const createSpecialExam = async (req, res, next) => {
   const {
     courseId,
     name,
-    examType,
+    examVariation,
     startTime,
     endTime,
     mcqDuration,
@@ -115,12 +115,17 @@ const createSpecialExam = async (req, res, next) => {
     noOfTotalSubject,
     noOfExamSubject,
     noOfOptionalSubject,
+    allSubject, //all subject ID in array
     optionalSubject, //array of subject Id
     subjectInfo, //array of subjectinfo
   } = req.body;
   console.log(req.body);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(courseId)) {
     return res.status(404).json("exam Id or course Id is not valid.");
+  }
+  let allSubjects = [];
+  for (let i = 0; i < allSubject.length; i++) {
+    allSubjects[i] = new mongoose.Types.ObjectId(allSubject[i]);
   }
   let optionalSubjects = [];
   for (let i = 0; i < optionalSubject.length; i++) {
@@ -142,7 +147,7 @@ const createSpecialExam = async (req, res, next) => {
   let saveExam = new SpecialExam({
     courseId: courseIdObj,
     name: name,
-    examType: examType,
+    examVariation: examVariation,
     startTime: moment(startTime),
     endTime: moment(endTime),
     mcqDuration: mcqDuration,
@@ -160,6 +165,7 @@ const createSpecialExam = async (req, res, next) => {
     noOfOptionalSubject: noOfOptionalSubject,
     subjectInfo: subjectsInfos,
     optionalSubject: optionalSubject,
+    allSubject: allSubjects,
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
     status: JSON.parse(status),
@@ -176,6 +182,7 @@ const createSpecialExam = async (req, res, next) => {
 const showSpecialExamById = async (req, res, next) => {
   let examId = req.body.examId;
   if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
+  examId = new mongoose.Types.ObjectId(examId);
   let data = null;
   try {
     data = await SpecialExam.findOne({
@@ -187,6 +194,23 @@ const showSpecialExamById = async (req, res, next) => {
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json(data);
 };
+const showSpecialExamByCourse = async (req, res, next) => {
+  let courseId = req.body.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.staus(404).json("Invalid Course Id.");
+  courseId = new mongoose.Types.ObjectId(courseId);
+  let data = null;
+  try {
+    data = await SpecialExam.findOne({
+      $and: [{ courseId: courseId }, { status: true }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data == null) return res.status(404).json("No data found.");
+  return res.status(200).json(data);
+};
+
 const showSpecialExamAll = async (req, res, next) => {
   let data = null;
   let page = Number(req.query.page) || 1;
@@ -222,6 +246,7 @@ const deactivateSpecialExam = async (req, res, next) => {
   return res.status(201).json("Deactivated.");
 };
 
+exports.showSpecialExamByCourse = showSpecialExamByCourse;
 exports.createSpecialExam = createSpecialExam;
 exports.updateSpecialExam = updateSpecialExam;
 exports.showSpecialExamById = showSpecialExamById;
