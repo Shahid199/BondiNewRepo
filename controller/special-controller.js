@@ -235,9 +235,9 @@ const showSpecialExamByCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    if (dataRule == null) data1["ruleImage"] = "0";
+    if (dataRule == null) data1["RuleImage"] = "0";
     else {
-      data1["ruleImage"] = dataRule.ruleILink;
+      data1["RuleImage"] = dataRule.ruleILink;
     }
     data1["name"] = data[i].name;
     data1["examVariation"] = data[i].examVariation;
@@ -486,7 +486,62 @@ const addQuestionMcq = async (req, res, next) => {
   }
   return res.status(201).json("Saved.");
 };
+const addQuestionMcqBulk = async (req, res, next) => {
+  const { questionArray, examId, subjectId } = req.body;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("exam Id or subject Id is invalid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let finalIds = [];
+  for (let i = 0; i < questionArray.length; i++) {
+    if (ObjectId.isValid(questionArray[i]))
+      finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
+    else continue;
+  }
+  //console.log(finalIds);
+  if (finalIds.length == 0)
+    return res.status(404).json("question IDs is not valid.");
+  let mIdArray = null;
+  try {
+    mIdArray = await SpecialExam.findById(examIdObj, "questionMcq");
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (!mIdArray) return res.status(404).json("No exam found.");
+  let bulkData = [];
+  for (let i = 0; i < mIdArray.length; i++) {
+    if (subjectIdObj == mIdArray[i].questionMcq.subjectId) {
+      bulkData = mIdArray[i].questionMcq.mcqId;
+      break;
+    }
+  }
+  //console.log(mIdArray);
+  let finalIdsString = [];
+  finalIdsString = finalIds.map((e) => String(e));
+  bulkData = bulkData.map((e) => String(e));
+  bulkData = bulkData.concat(finalIdsString);
+  let withoutDuplicate = Array.from(new Set(bulkData));
+  withoutDuplicate = withoutDuplicate.map(
+    (e) => new mongoose.Types.ObjectId(e)
+  );
+  for (let i = 0; i < mIdArray.length; i++) {
+    if (subjectIdObj == mIdArray[i].questionMcq.subjectId) {
+      mIdArray[i].questionMcq.mcqId = withoutDuplicate;
+      break;
+    }
+  }
+  //console.log(withoutDuplicate);
+  try {
+    sav = await SpecialExam.findByIdAndUpdate(examIdObj, {
+      questionMcq: mIdArray,
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(201).json("Inserted question to the exam.");
+};
 
+exports.addQuestionMcqBulk = addQuestionMcqBulk;
 exports.examRuleSet = examRuleSet;
 exports.examRuleGet = examRuleGet;
 exports.examRuleGetAll = examRuleGetAll;

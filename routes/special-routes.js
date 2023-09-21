@@ -13,6 +13,7 @@ const {
   examRuleGet,
   examRuleSet,
   examRuleGetAll,
+  addQuestionMcqBulk,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -82,6 +83,11 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   examRuleGetAll
+);
+router.put(
+  "/addquestionmcqbulk",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  addQuestionMcqBulk
 );
 
 module.exports = router;
