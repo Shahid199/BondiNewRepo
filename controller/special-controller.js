@@ -196,7 +196,7 @@ const createSpecialExam = async (req, res, next) => {
 };
 
 const showSpecialExamById = async (req, res, next) => {
-  let examId = req.body.examId;
+  let examId = req.query.examId;
   if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null;
@@ -526,9 +526,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
-  for (let i = 0; i < mIdArray.questionMcq.length; i++) {
-    if (subjectIdObj == mIdArray.questionMcq[i].subjectId) {
-      mIdArray.questionMcq[i].mcqId = withoutDuplicate;
+  for (let i = 0; i < mIdArray.length; i++) {
+    if (subjectIdObj == mIdArray[i].subjectId) {
+      mIdArray[i].mcqId = withoutDuplicate;
       break;
     }
   }
@@ -547,48 +547,25 @@ const addQuestionMcqBulk = async (req, res, next) => {
 const addQuestionWritten = async (req, res, next) => {
   let examId = req.body.examId;
   let subjectId = req.body.subjectId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("Exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   subjectId = new mongoose.Types.ObjectId(subjectId);
-  let existData = null;
-  try {
-    existData = await SpecialExam.findById(examId, "questionWritten");
-  } catch (err) {
-    return res.status(500).json("1.Something went wrong.");
-  }
-  existData = existData.questionWritten;
-  for (let i = 0; i < existData.length; i++) {
-    //if(existData[i].subjectId)
-  }
-  if (existData) return res.status(404).json("Already added question.");
-  if (!ObjectId.isValid(examId))
-    return res.status(404).json("Exam Id is not valid.");
-  const status = req.body.status;
-  const totalQuestions = req.body.totalQuestions;
-  let marksPerQuestion = req.body.marksPerQuestion; //array
-  // for (let i = 0; i < marksPerQuestion.length; i++) {
-  //   marksPerQuestion[i] = parseInt(marksPerQuestion[i]);
-  // }
-  marksPerQuestion = marksPerQuestion.split(",");
-  //console.log(marksPerQuestion);
-  const totalMarks = req.body.totalMarks;
   //file upload handle
   const file = req.files;
-  //console.log(file);
   let questionILinkPath = null;
-  // console.log(file.questionILink[0].filename);
-  // return res.status(201).json("Ok");
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
   questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
   //written question save to db table
-  let question = new QuestionsWritten({
-    questionILink: questionILinkPath,
-    status: status,
-    totalQuestions: totalQuestions,
-    marksPerQuestion: marksPerQuestion,
-    totalMarks: totalMarks,
-    examId: examId,
-  });
+  let question = { questionILink: questionILinkPath };
+  let writtenData = null;
+  try {
+    writtenData = await SpecialExam.findById(examId, "questionWritten -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  writtenData = writtenData.questionWritten;
   let doc;
   try {
     doc = await question.save();
