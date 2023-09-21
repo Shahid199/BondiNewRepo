@@ -224,8 +224,9 @@ const showSpecialExamByCourse = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (data == null) return res.status(404).json("No data found.");
-
+  let dataObj = [];
   for (let i = 0; i < data.length; i++) {
+    let data1 = {};
     let dataRule = "0";
     try {
       dataRule = await SpecialExamRule.findOne({
@@ -234,11 +235,42 @@ const showSpecialExamByCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    if (dataRule == null) data[i].ruleImage = "0";
+    if (dataRule == null) data1["ruleImage"] = "0";
     else {
-      data[i].ruleImage = dataRule.ruleILink;
+      data1["ruleImage"] = dataRule.ruleILink;
     }
+    data1["name"] = data[i].name;
+    data1["examVariation"] = data[i].examVariation;
+    data1["noOfTotalSubject"] = data[i].noOfTotalSubject;
+    data1["noOfExamSubject"] = data[i].noOfExamSubject;
+    data1["noOfOptionalSubject"] = data[i].noOfOptionalSubject;
+    data1["allSubject"] = data[i].allSubject;
+    data1["optionalSubject"] = data[i].optionalSubject;
+    data1["subjectInfo"] = data[i].subjectInfo;
+    data1["startTime"] = data[i].startTime;
+    data1["endTime"] = data[i].endTime;
+    data1["mcqDuration"] = data[i].mcqDuration;
+    data1["writtenDuration"] = data[i].writtenDuration;
+    data1["totalQuestionsMcq"] = data[i].totalQuestionsMcq;
+    data1["marksPerMcq"] = data[i].marksPerMcq;
+    data1["totalMarksMcq"] = data[i].totalMarksMcq;
+    data1["totalQuestionsWritten"] = data[i].totalQuestionsWritten;
+    data1["totalMarksWritten"] = data[i].totalMarksWritten;
+    data1["totalMarks"] = data[i].totalMarks;
+    data1["totalDuration"] = data[i].totalDuration;
+    data1["status"] = data[i].status;
+    data1["sscStatus"] = data[i].sscStatus;
+    data1["hscStatus"] = data[i].hscStatus;
+    data1["courseId"] = data[i].courseId;
+    data1["iLink"] = data[i].iLink;
+    data1["questionMcq"] = data[i].questionMcq;
+    data1["questionWritten"] = data[i].questionWritten;
+    data1["createdAt"] = data[i].createdAt;
+    data1["updatedAt"] = data[i].updatedAt;
+    data1["__v"] = data[i].__v;
+    dataObj.push(data1);
   }
+  data = dataObj;
   return res.status(200).json(data);
 };
 
