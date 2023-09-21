@@ -2097,6 +2097,7 @@ const bothGetHistory = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
+    let examDetail = mcqRank.examId;
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
     let data1 = {},
@@ -2115,7 +2116,8 @@ const bothGetHistory = async (req, res, next) => {
     data1["examStartTime"] = moment(rank[i].examStartTimeMcq).format("LLL");
     data1["examEndTime"] = moment(rank[i].examEndTimeWritten).format("LLL");
     data1["duration"] = rank[i].totalDuration;
-    data1["totalMarks"] = qWritten.totalMarks;
+    data1["totalObtainedMarksMcq"] = examStud.totalObtainedMarksMcq;
+    data1["totalObtainedMarksWritten"] = examStud.totalObtainedMarksWritten;
     data.push(data1);
   }
   examDetails = null;
@@ -2136,7 +2138,7 @@ const bothGetHistory = async (req, res, next) => {
     totalQuestion: qWritten.totalQuestions,
     variation: examType[Number(examDetails.examType)],
     type: examVariation[Number(examDetails.examVariation)],
-    totalMarks: qWritten.totalMarks,
+    totalMarks: Number(qWritten.totalMarks + examDetail.totalMarksMcq),
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
