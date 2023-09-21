@@ -215,7 +215,7 @@ const showSpecialExamByCourse = async (req, res, next) => {
   courseId = new mongoose.Types.ObjectId(courseId);
   let data = null;
   try {
-    data = await SpecialExam.findOne({
+    data = await SpecialExam.find({
       $and: [{ courseId: courseId }, { status: true }],
     });
   } catch (err) {
