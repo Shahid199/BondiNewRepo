@@ -611,7 +611,12 @@ const questionByExamSub = async (req, res, next) => {
 const addQuestionWritten = async (req, res, next) => {
   let examId = req.body.examId;
   let subjectId = req.body.subjectId;
-  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+  let marksPerQuestion = req.body.marksPerQuestion;
+  if (
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(subjectId) ||
+    marksPerQuestion.length > 0
+  )
     return res.status(404).json("Exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   subjectId = new mongoose.Types.ObjectId(subjectId);
@@ -622,7 +627,6 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(400).json("File not uploaded.");
   questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
   //written question save to db table
-  let question = { questionILink: questionILinkPath };
   let writtenData = null;
   try {
     writtenData = await SpecialExam.findById(examId, "questionWritten -_id");
@@ -630,16 +634,28 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   writtenData = writtenData.questionWritten;
-  let doc;
+  for (let i = 0; i < writtenData.length; i++) {
+    if (String(subjectId) == String(writtenData[i].subjectId)) {
+      writtenData[i].marksPerQuestion = marksPerQuestion;
+      writtenData[i].writtenILink = questionILinkPath;
+      break;
+    }
+  }
+  let doc1 = null;
   try {
-    doc = await question.save();
+    doc1 = await SpecialExam.findOneAndUpdate(
+      { _id: examId },
+      {
+        questionWritten: writtenData,
+      }
+    );
   } catch (err) {
-    //console.log(err);
-    return res.status(500).json("2.Something went wrong!");
+    return res.status(500).json(err);
   }
   return res.status(200).json("Question save correctly.");
 };
 
+exports.addQuestionWritten = addQuestionWritten;
 exports.questionByExamSub = questionByExamSub;
 exports.addQuestionMcqBulk = addQuestionMcqBulk;
 exports.examRuleSet = examRuleSet;

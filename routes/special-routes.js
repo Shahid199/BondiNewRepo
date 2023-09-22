@@ -15,6 +15,7 @@ const {
   examRuleGetAll,
   addQuestionMcqBulk,
   questionByExamSub,
+  addQuestionWritten,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -101,6 +102,16 @@ router.get(
   "/questionbyexamsub",
   [passport.authenticate("jwt", { session: false }), authorize()],
   questionByExamSub
+);
+
+router.post(
+  "/addquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.fields([{ name: "iLink", maxCount: 1 }]),
+  ],
+  addQuestionWritten
 );
 
 module.exports = router;
