@@ -500,6 +500,8 @@ const addQuestionMcq = async (req, res, next) => {
 };
 const addQuestionMcqBulk = async (req, res, next) => {
   const { questionArray, examId, subjectId } = req.body;
+  console.log(examId);
+  console.log(subjectId);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
     return res.status(404).json("exam Id or subject Id is invalid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
