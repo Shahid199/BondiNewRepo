@@ -484,11 +484,11 @@ const addQuestionMcq = async (req, res, next) => {
     let mcqQues = mcqData;
     for (let i = 0; i < mcqQues.length; i++) {
       if (subjectIdObj == mcqQues[i].subjectId) {
-        mcqQues[i].questionMcq.push(questionId);
+        console.log(mcqQues[i].subjectId);
+        mcqQues[i].mcqId.push(questionId);
         break;
       }
     }
-    console.log(mcqQues);
     try {
       doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, {
         mcqQuestion: mcqQues,
