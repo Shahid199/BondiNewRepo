@@ -480,9 +480,12 @@ const addQuestionMcq = async (req, res, next) => {
   }
   console.log("mcqQues:", mcqQues);
   try {
-    doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, {
-      mcqQuestion: mcqQues,
-    });
+    doc1 = await SpecialExam.findOneAndUpdate(
+      { _id: examIdObj },
+      {
+        mcqQuestion: mcqQues,
+      }
+    );
   } catch (err) {
     return res.status(500).json(err);
   }
