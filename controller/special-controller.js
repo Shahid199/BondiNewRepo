@@ -655,6 +655,29 @@ const addQuestionWritten = async (req, res, next) => {
   }
   return res.status(200).json("Question save correctly.");
 };
+const getWrittenQuestionByExamSub = async (req, res, next) => {
+  let writtenQuestion = null;
+  let examId = req.query.examId;
+  let subjectId = req.query.subjectId;
+  examId = new mongoose.Types.ObjectId(examId);
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  try {
+    writtenQuestion = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("SOmething went wrong.");
+  }
+  if (writtenQuestion == null) return res.status(404).json("No data found.");
+  writtenQuestion = writtenQuestion.questionWritten;
+  let questionData = [];
+  for (let i = 0; i < writtenQuestion.length; i++) {
+    if (String(subjectId) == String(writtenQuestion[i].subjectId)) {
+      questionData = writtenQuestion[i].subjectId;
+      break;
+    }
+  }
+  console.log(questionData);
+  return res.status(200).json(questionData);
+};
 
 exports.addQuestionWritten = addQuestionWritten;
 exports.questionByExamSub = questionByExamSub;
@@ -669,3 +692,4 @@ exports.updateSpecialExam = updateSpecialExam;
 exports.showSpecialExamById = showSpecialExamById;
 exports.showSpecialExamAll = showSpecialExamAll;
 exports.deactivateSpecialExam = deactivateSpecialExam;
+exports.getWrittenQuestionByExamSub = getWrittenQuestionByExamSub;
