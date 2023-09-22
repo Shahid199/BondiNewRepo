@@ -422,7 +422,6 @@ const addQuestionMcq = async (req, res, next) => {
     if (!file.iLink) {
       return res.status(404).json("Question File not uploaded.");
     }
-
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
     explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
@@ -472,7 +471,7 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(500).json(err);
     }
   } else {
-    let mcqQues = mcqData.questionMcq;
+    let mcqQues = mcqData;
     for (let i = 0; i < mcqQues.length; i++) {
       if (subjectIdObj == mcqQues[i].subjectId) {
         mcqQues[i].questionMcq.push(questionId);
