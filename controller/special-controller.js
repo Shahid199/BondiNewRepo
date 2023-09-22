@@ -256,6 +256,7 @@ const showSpecialExamByCourse = async (req, res, next) => {
     data1["totalQuestionsMcq"] = data[i].totalQuestionsMcq;
     data1["marksPerMcq"] = data[i].marksPerMcq;
     data1["totalMarksMcq"] = data[i].totalMarksMcq;
+    data1["negativeMarksMcq"] = data[i].negativeMarksMcq;
     data1["totalQuestionsWritten"] = data[i].totalQuestionsWritten;
     data1["totalMarksWritten"] = data[i].totalMarksWritten;
     data1["totalMarks"] = data[i].totalMarks;
