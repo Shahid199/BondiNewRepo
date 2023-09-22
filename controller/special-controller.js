@@ -165,7 +165,7 @@ const createSpecialExam = async (req, res, next) => {
     endTime: moment(endTime),
     mcqDuration: mcqDuration,
     marksPerMcq: marksPerMcq,
-    negativeMarksMcq: negativeVarks,
+    negativeMarksMcq: JSON.parse(negativeVarks),
     totalQuestionsMcq: totalQuestionMcq,
     totalQuestionsWritten: totalQuestionWritten,
     writtenDuration: writtenDuration,
