@@ -465,38 +465,25 @@ const addQuestionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  console.log("mcqData:", mcqData);
+  //console.log("mcqData:", mcqData);
   mcqData = mcqData.questionMcq;
-  if (mcqData == null) {
-    mcqQuestion.push(questionId);
-    let qObj = {};
-    qObj["subjectId"] = subjectIdObj;
-    qObj["mcqId"] = mcqQuestion;
-    let questionExam = {
-      questionMcq: qObj,
-    };
-    try {
-      doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, questionExam);
-    } catch (err) {
-      return res.status(500).json(err);
-    }
-  } else {
-    let mcqQues = mcqData;
-    for (let i = 0; i < mcqQues.length; i++) {
-      if (subjectIdObj == mcqQues[i].subjectId) {
-        console.log(mcqQues[i].subjectId);
-        mcqQues[i].mcqId.push(questionId);
-        break;
-      }
-    }
-    try {
-      doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, {
-        mcqQuestion: mcqQues,
-      });
-    } catch (err) {
-      return res.status(500).json(err);
+  let mcqQues = mcqData;
+  for (let i = 0; i < mcqQues.length; i++) {
+    console.log(i);
+    if (subjectIdObj == mcqQues[i].subjectId) {
+      console.log(mcqQues[i].subjectId);
+      mcqQues[i].mcqId.push(questionId);
+      break;
     }
   }
+  try {
+    doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, {
+      mcqQuestion: mcqQues,
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
