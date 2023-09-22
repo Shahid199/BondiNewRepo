@@ -610,17 +610,14 @@ const questionByExamSub = async (req, res, next) => {
 };
 //written question
 const addQuestionWritten = async (req, res, next) => {
-  let examId = req.body.examId;
-  let subjectId = req.body.subjectId;
-  let marksPerQuestion = req.body.marksPerQuestion;
-  if (
-    !ObjectId.isValid(examId) ||
-    !ObjectId.isValid(subjectId) ||
-    marksPerQuestion.length > 0
-  )
+  const { examId, subjectId, marksPerQuestion } = req.body;
+  console.log(req.body);
+  //let subjectId = req.body.subjectId;
+  //let marksPerQuestion = req.body.marksPerQuestion;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
     return res.status(404).json("Exam Id is not valid.");
-  examId = new mongoose.Types.ObjectId(examId);
-  subjectId = new mongoose.Types.ObjectId(subjectId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   //file upload handle
   const file = req.files;
   let questionILinkPath = null;
@@ -636,7 +633,7 @@ const addQuestionWritten = async (req, res, next) => {
   }
   writtenData = writtenData.questionWritten;
   for (let i = 0; i < writtenData.length; i++) {
-    if (String(subjectId) == String(writtenData[i].subjectId)) {
+    if (String(subjectIdObj) == String(writtenData[i].subjectId)) {
       writtenData[i].marksPerQuestion = marksPerQuestion;
       writtenData[i].writtenILink = questionILinkPath;
       break;
@@ -645,7 +642,7 @@ const addQuestionWritten = async (req, res, next) => {
   let doc1 = null;
   try {
     doc1 = await SpecialExam.findOneAndUpdate(
-      { _id: examId },
+      { _id: examIdObj },
       {
         questionWritten: writtenData,
       }
