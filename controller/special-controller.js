@@ -121,8 +121,6 @@ const createSpecialExam = async (req, res, next) => {
     subjectInfo, //array of subjectinfo
   } = req.body;
   const negative = req.body.negativeMarks;
-  console.log(req.body.negativeMarks);
-  console.log(negative);
   if (!ObjectId.isValid(courseId)) {
     return res.status(404).json("Course Id is not valid.");
   }
@@ -138,6 +136,14 @@ const createSpecialExam = async (req, res, next) => {
     subObj["subjectId"] = allSubjects[i];
     subObj["mcqId"] = [];
     mcqQuestionSub.push(subObj);
+  }
+  let writtenQuestionSub = [];
+  for (let i = 0; i < allSubjects.length; i++) {
+    let subObj = {};
+    subObj["subjectId"] = allSubjects[i];
+    subObj["marksPerQuestion"] = [];
+    subObj["writtenILink"] = null;
+    writtenQuestionSub.push(subObj);
   }
   let optionalSubjects = [];
   let optionalId = JSON.parse(optionalSubject);
@@ -513,12 +519,11 @@ const addQuestionMcqBulk = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  if (!mIdArray) return res.status(404).json("No exam found.");
   mIdArray = mIdArray.questionMcq;
   let bulkData = [];
-  for (let i = 0; i < mIdArray.length; i++) {
-    if (subjectIdObj == mIdArray[i].subjectId) {
-      bulkData = mIdArray[i].questionMcq.mcqId;
+  for (let i = 0; i < mIdArray[i].length; i++) {
+    if (subjectId == String(mIdArray[i].subjectId)) {
+      bulkData = mIdArray[i].mcqId;
       break;
     }
   }
@@ -532,16 +537,19 @@ const addQuestionMcqBulk = async (req, res, next) => {
     (e) => new mongoose.Types.ObjectId(e)
   );
   for (let i = 0; i < mIdArray.length; i++) {
-    if (subjectIdObj == mIdArray[i].subjectId) {
+    if (subjectId == String(mIdArray[i].subjectId)) {
       mIdArray[i].mcqId = withoutDuplicate;
       break;
     }
   }
   //console.log(withoutDuplicate);
   try {
-    sav = await SpecialExam.findByIdAndUpdate(examIdObj, {
-      questionMcq: mIdArray,
-    });
+    sav = await SpecialExam.findOneAndUpdate(
+      { _id: examIdObj },
+      {
+        questionMcq: mIdArray,
+      }
+    );
   } catch (err) {
     return res.status(500).json(err);
   }

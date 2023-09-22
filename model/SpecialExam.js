@@ -84,10 +84,12 @@ const SpecialExamSchema = new Schema(
           ref: subjects,
           required: false,
         },
-        marksPerQuestion: {
-          type: Number,
-          required: false,
-        },
+        marksPerQuestion: [
+          {
+            type: Number,
+            required: false,
+          },
+        ],
         writtenILink: {
           type: String,
           required: false,
