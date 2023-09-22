@@ -671,7 +671,7 @@ const getWrittenQuestionByExamSub = async (req, res, next) => {
   let questionData = [];
   for (let i = 0; i < writtenQuestion.length; i++) {
     if (String(subjectId) == String(writtenQuestion[i].subjectId)) {
-      questionData = writtenQuestion[i].subjectId;
+      questionData = writtenQuestion[i];
       break;
     }
   }
