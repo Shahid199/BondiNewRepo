@@ -209,7 +209,7 @@ const showSpecialExamById = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (data == null) return res.status(404).json("No data found.");
-  return res.status(200).json(data[0].negativeMarks);
+  return res.status(200).json(data);
 };
 const showSpecialExamByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
