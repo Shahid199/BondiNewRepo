@@ -101,34 +101,42 @@ const SpecialExamSchema = new Schema(
     mcqDuration: {
       type: Number,
       required: false,
+      default: 0,
     },
     writtenDuration: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalQuestionsMcq: {
       type: Number,
       required: false,
+      default: 0,
     },
     marksPerMcq: {
       type: Number,
       required: false,
+      default: -1,
     },
-    megativeMarksMcq: {
+    negativeMarksMcq: {
       type: Number,
       required: false,
+      default: -1,
     },
     totalMarksMcq: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalQuestionsWritten: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalMarksWritten: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalMarks: {
       type: Number,
