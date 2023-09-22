@@ -559,7 +559,54 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   return res.status(201).json("Inserted question to the exam.");
 };
+const questionByExamSub = async (req, res, next) => {
+  const examId = req.query.examId;
+  const subjectId = req.query.subjectId;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  const subjectIdIdObj = new mongoose.Types.ObjectId(subjectId);
+  let queryResult = null;
 
+  try {
+    queryResult = await SpecialExam.findOne({ eId: examId });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  queryResult = queryResult.questionMcq;
+  let mcqId = [];
+  for (let i = 0; i < queryResult.length; i++) {
+    if (subjectId == String(queryResult[i].subjectId)) {
+      mcqId = queryResult[i].mcqId;
+      break;
+    }
+  }
+  mcqId = mcqId.map((e) => new mongoose.Types.ObjectId(e));
+  let quesData = [];
+  try {
+    quesData = await QuestionsMcq.find({
+      $and: [{ _id: { $in: mcqId } }, { status: true }],
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let resultAll = [];
+  for (let i = 0; i < quesData.length; i++) {
+    let result = {};
+    // if (queryResult.mId[i] == null) continue;
+    result["type"] = quesData[i].type;
+    result["question"] = quesData[i].question;
+    result["options"] = quesData[i].options;
+    result["correctOption"] = quesData[i].correctOption;
+    result["explanation"] = quesData[i].explanationILink;
+    result["questionId"] = quesData[i]._id;
+    result["status"] = quesData[i].status;
+    resultAll.push(result);
+  }
+  // resultAll.push({ totalQuestion: queryResult.mId.length });
+  // resultAll.push({ examId: String(queryResult.eId) });
+  return res.status(200).json(resultAll);
+};
 //written question
 const addQuestionWritten = async (req, res, next) => {
   let examId = req.body.examId;
@@ -593,6 +640,7 @@ const addQuestionWritten = async (req, res, next) => {
   return res.status(200).json("Question save correctly.");
 };
 
+exports.questionByExamSub = questionByExamSub;
 exports.addQuestionMcqBulk = addQuestionMcqBulk;
 exports.examRuleSet = examRuleSet;
 exports.examRuleGet = examRuleGet;
