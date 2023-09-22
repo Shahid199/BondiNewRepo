@@ -472,7 +472,7 @@ const addQuestionMcq = async (req, res, next) => {
     console.log(i);
     console.log("mcq question:", mcqQues[i].subjectId);
     console.log("subjectId:", subjectIdObj);
-    if (subjectIdObj === mcqQues[i].subjectId) {
+    if (subjectId == String(mcqQues[i].subjectId)) {
       console.log(mcqQues[i].subjectId);
       mcqQues[i].mcqId.push(questionId);
       break;
