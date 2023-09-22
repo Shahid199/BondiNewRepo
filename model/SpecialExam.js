@@ -72,7 +72,7 @@ const SpecialExamSchema = new Schema(
           {
             type: mongoose.Schema.Types.ObjectId,
             ref: questions,
-            required: true,
+            required: false,
           },
         ],
       },
