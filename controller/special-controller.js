@@ -499,7 +499,9 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
-  const { questionArray, examId, subjectId } = req.body;
+  const questionArray = req.body.questionArray;
+  const examId = req.body.examId;
+  const subjectId = req.body.subjectId;
   console.log(examId);
   console.log(subjectId);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
