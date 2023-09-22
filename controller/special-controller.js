@@ -626,7 +626,7 @@ const addQuestionWritten = async (req, res, next) => {
   let questionILinkPath = null;
   if (!file.iLink[0].filename)
     return res.status(400).json("File not uploaded.");
-  questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
+  questionILinkPath = "uploads/".concat(file.iLink[0].filename);
   //written question save to db table
   let writtenData = null;
   try {
