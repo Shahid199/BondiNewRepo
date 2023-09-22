@@ -569,7 +569,7 @@ const questionByExamSub = async (req, res, next) => {
   let queryResult = null;
 
   try {
-    queryResult = await SpecialExam.findOne({ eId: examId });
+    queryResult = await SpecialExam.findById(examId);
   } catch (err) {
     return res.status(500).json(err);
   }
