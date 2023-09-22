@@ -456,6 +456,7 @@ const addQuestionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+  console.log("mcqData:", mcqData);
   mcqData = mcqData.questionMcq;
   if (mcqData == null) {
     mcqQuestion.push(questionId);
