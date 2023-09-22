@@ -120,8 +120,7 @@ const SpecialExamSchema = new Schema(
     },
     negativeMarksMcq: {
       type: Number,
-      required: false,
-      default: -1,
+      required: true,
     },
     totalMarksMcq: {
       type: Number,
