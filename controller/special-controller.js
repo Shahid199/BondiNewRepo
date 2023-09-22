@@ -479,9 +479,10 @@ const addQuestionMcq = async (req, res, next) => {
         break;
       }
     }
+    console.log(mcqQues);
     try {
       doc1 = await SpecialExam.findByIdAndUpdate(examIdObj, {
-        $set: { mcqQuestion: mcqQues },
+        mcqQuestion: mcqQues,
       });
     } catch (err) {
       return res.status(500).json(err);
