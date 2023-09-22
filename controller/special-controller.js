@@ -470,6 +470,8 @@ const addQuestionMcq = async (req, res, next) => {
   let mcqQues = mcqData;
   for (let i = 0; i < mcqQues.length; i++) {
     console.log(i);
+    console.log("mcq question:", mcqQues[i].subjectId);
+    console.log("subjectId:", subjectIdObj);
     if (subjectIdObj == mcqQues[i].subjectId) {
       console.log(mcqQues[i].subjectId);
       mcqQues[i].mcqId.push(questionId);
