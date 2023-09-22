@@ -132,6 +132,13 @@ const createSpecialExam = async (req, res, next) => {
   for (let i = 0; i < subjectId.length; i++) {
     allSubjects[i] = new mongoose.Types.ObjectId(subjectId[i]);
   }
+  let mcqQuestionSub = [];
+  for (let i = 0; i < allSubjects.length; i++) {
+    let subObj = {};
+    subObj["subjectId"] = allSubjects[i];
+    subObj["mcqId"] = [];
+    mcqQuestionSub.push(subObj);
+  }
   let optionalSubjects = [];
   let optionalId = JSON.parse(optionalSubject);
   console.log("optionalId", optionalId);
@@ -180,6 +187,7 @@ const createSpecialExam = async (req, res, next) => {
     subjectInfo: subjectsInfos,
     optionalSubject: optionalSubjects,
     allSubject: allSubjects,
+    questionMcq: mcqQuestionSub,
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
     status: JSON.parse(status),
@@ -447,6 +455,7 @@ const addQuestionMcq = async (req, res, next) => {
     return res.status(500).json(err);
   }
   let questionId = doc._id;
+  console.log(questionId);
   if (!questionId) return res.status(400).send("question not inserted");
   let mcqData,
     doc1,
