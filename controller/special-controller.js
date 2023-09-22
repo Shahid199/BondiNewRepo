@@ -122,6 +122,7 @@ const createSpecialExam = async (req, res, next) => {
     subjectInfo, //array of subjectinfo
   } = req.body;
   console.log(req.body);
+  console.log(negativeMarks);
   if (!ObjectId.isValid(courseId)) {
     return res.status(404).json("Course Id is not valid.");
   }
@@ -165,7 +166,7 @@ const createSpecialExam = async (req, res, next) => {
     endTime: moment(endTime),
     mcqDuration: mcqDuration,
     marksPerMcq: marksPerMcq,
-    negativeMarksMcq: JSON.parse(negativeVarks),
+    negativeMarksMcq: negativeVarks,
     totalQuestionsMcq: totalQuestionMcq,
     totalQuestionsWritten: totalQuestionWritten,
     writtenDuration: writtenDuration,
