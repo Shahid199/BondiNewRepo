@@ -120,9 +120,9 @@ const createSpecialExam = async (req, res, next) => {
     optionalSubject, //array of subject Id
     subjectInfo, //array of subjectinfo
   } = req.body;
-  const negativeVarks = req.body.negativeMarks;
+  const negative = req.body.negativeMarks;
   console.log(req.body.negativeMarks);
-  console.log(negativeMarks);
+  console.log(negative);
   if (!ObjectId.isValid(courseId)) {
     return res.status(404).json("Course Id is not valid.");
   }
