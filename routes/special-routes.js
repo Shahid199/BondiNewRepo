@@ -33,7 +33,14 @@ router.post(
 );
 router.post(
   "/addquestionmcq",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.fields([
+      { name: "iLink", maxCount: 1 },
+      { name: "explanationILink", maxCount: 1 },
+    ]),
+  ],
   addQuestionMcq
 );
 
