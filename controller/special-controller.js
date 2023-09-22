@@ -622,6 +622,7 @@ const addQuestionWritten = async (req, res, next) => {
   let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   //file upload handle
   const file = req.files;
+  console.log(file);
   let questionILinkPath = null;
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
