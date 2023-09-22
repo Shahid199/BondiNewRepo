@@ -610,7 +610,9 @@ const questionByExamSub = async (req, res, next) => {
 };
 //written question
 const addQuestionWritten = async (req, res, next) => {
-  const { examId, subjectId, marksPerQuestion } = req.body;
+  const examId = req.body.examId;
+  const subjectId = req.body.subjectId;
+  const marksPerQuestion = req.body.marksPerQuestion;
   console.log(req.body);
   //let subjectId = req.body.subjectId;
   //let marksPerQuestion = req.body.marksPerQuestion;
