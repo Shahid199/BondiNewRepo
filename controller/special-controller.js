@@ -194,6 +194,7 @@ const createSpecialExam = async (req, res, next) => {
     optionalSubject: optionalSubjects,
     allSubject: allSubjects,
     questionMcq: mcqQuestionSub,
+    questionWritten: writtenQuestionSub,
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
     status: JSON.parse(status),
