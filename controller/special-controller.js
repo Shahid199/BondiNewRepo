@@ -483,7 +483,7 @@ const addQuestionMcq = async (req, res, next) => {
     doc1 = await SpecialExam.findOneAndUpdate(
       { _id: examIdObj },
       {
-        mcqQuestion: mcqQues,
+        questionMcq: mcqQues,
       }
     );
   } catch (err) {
