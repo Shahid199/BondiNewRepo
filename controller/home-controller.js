@@ -1,6 +1,7 @@
 const BothExam = require("../model/BothExam");
 const Course = require("../model/Course");
 const Exam = require("../model/Exam");
+const SpecialExam = require("../model/SpecialExam");
 const Student = require("../model/Student");
 const Subject = require("../model/Subject");
 const moment = require("moment");
@@ -75,25 +76,41 @@ const getHomePage = async (req, res, next) => {
     //   return res.status(500).json("Something went wrong!");
     // }
 
-      try {
-        running = await BothExam.find(
-          {
-            $and: [
-              { status: true },
-              { startTime: { $lte: currentTime } },
-              { endTime: { $gt: currentTime } },
-            ],
-          },
-          "_id name startTime endTime iLink examVariation examType"
-        )
-          .sort("startTime")
-          .limit(2);
-      } catch (err) {
-        return res.status(500).json("Something went wrong!");
-      }
+    // try {
+    //   running = await BothExam.find(
+    //     {
+    //       $and: [
+    //         { status: true },
+    //         { startTime: { $lte: currentTime } },
+    //         { endTime: { $gt: currentTime } },
+    //       ],
+    //     },
+    //     "_id name startTime endTime iLink examVariation examType"
+    //   )
+    //     .sort("startTime")
+    //     .limit(2);
+    // } catch (err) {
+    //   return res.status(500).json("Something went wrong!");
+    // }
     //   //console.log(running);
-      homeDataTop["runningExam"] = running;
-      homeDataTop["comingExam"] = coming;
+    try {
+      running = await SpecialExam.find(
+        {
+          $and: [
+            { status: true },
+            { startTime: { $lte: currentTime } },
+            { endTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink examVariation"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
+    homeDataTop["runningExam"] = running;
+    homeDataTop["comingExam"] = coming;
     return res.status(200).json(homeDataTop);
   }
   //bottom

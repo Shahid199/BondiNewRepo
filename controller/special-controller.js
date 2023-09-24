@@ -696,9 +696,6 @@ const getWrittenQuestionByExamSub = async (req, res, next) => {
 //exam system
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.eId;
-  const examType = req.query.examType;
-  console.log(req.query.examType);
-  console.log(JSON.parse(req.query.examType));
   const studentId = req.user.studentId;
   let examIdObj, studentIdObj;
   studentIdObj = new mongoose.Types.ObjectId(studentId);
@@ -723,27 +720,13 @@ const examCheckMiddleware = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.Something went wrong.");
   }
-  if (JSON.parse(examType) == 1) {
-    if (status == null) {
-      return res.status(200).json("Mcq assign");
-    } else if (status.finishStatus == true) {
-      return res.status(200).json("Mcq ended");
-    } else return res.status(200).json("Mcq running");
-  } else if (JSON.parse(examType) == 2) {
-    if (status == null) {
-      return res.status(200).json("Written assign");
-    } else if (status.uploadStatus == true) {
-      return res.status(200).json("Written ended");
-    } else return res.status(200).json("Written running");
-  } else {
-    if (status == null) return res.status(200).json("Both Mcq assign");
-    else {
-      if (status.finishStatus == true && status.uploadStatus == true)
-        return res.status(200).json("Both ended");
-      if (status.finishStatus == true)
-        return res.status(200).json("Both Mcq ended");
-      return res.status(200).json("Both Mcq running");
-    }
+
+  if (status == null) return res.status(200).json("Mcq assign");
+  else {
+    if (status.finishStatus == true && status.uploadStatus == true)
+      return res.status(200).json("ended");
+    if (status.finishStatus == true) return res.status(200).json("Mcq ended");
+    return res.status(200).json("Mcq running");
   }
 };
 const getOptionalSubects = async (req, res, next) => {
