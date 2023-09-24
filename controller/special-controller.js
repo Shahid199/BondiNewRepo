@@ -844,9 +844,9 @@ const assignQuestionMcq = async (req, res, next) => {
   let mcqIds = [],
     questionPerSub = [];
   questionPerSub = examData.subjectInfo[0].noOfQuestionsMcq;
-  let flag = 0;
   let questionsId = [];
   for (let i = 0; i < 4; i++) {
+    let flag = 0;
     let doc = [];
     for (let j = 0; j < 4; j++) {
       if (String(questionMcq[j].subjectId) == String(subjects[i])) {
@@ -855,6 +855,7 @@ const assignQuestionMcq = async (req, res, next) => {
       }
     }
     rand = parseInt(Date.now()) % mcqIds.length;
+    console.log("rand", rand);
     for (let j = rand; j >= 0; j--) {
       if (doc.length == questionPerSub) {
         flag = 1;
