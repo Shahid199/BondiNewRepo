@@ -132,7 +132,7 @@ const createSpecialExam = async (req, res, next) => {
   console.log(fixedSubjectsId);
   console.log(req.body.fixedSubject);
   for (let i = 0; i < fixedSubjectsId.length; i++) {
-    fixedSubjects[i] = new mongoose.Types.ObjectId(fixedSubjectsId[i]);
+    fixedSubjects[i] = new mongoose.Types.ObjectId(fixedSubjectsId[i].value);
   }
   let allSubjects = [];
   let subjectId = JSON.parse(allSubject);
