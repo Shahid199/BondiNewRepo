@@ -871,7 +871,7 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     questionsId.push(doc);
   }
-  return res.status(200).json(questionId);
+  return res.status(200).json(questionsId);
   // questions.push({ studStartTime: examStartTime });
   // questions.push({ studEndTime: examEndTime });
   // questions.push({ examEndTime: examFinishTime });
