@@ -757,22 +757,23 @@ const getCombination = async (req, res, next) => {
   // let optionalIdObj = new mongoose.Types.ObjectId(optionalId);
   let fixedId = null;
   try {
-    fixedId = await SpecialExam.findById(examId)
-      .select("fixedSubject allSubject optionalSubject -_id")
-      .populate(
-        {
-          path: "fixedSubject",
-          select: "name",
-        },
-        {
-          path: "optionalSubject",
-          select: "name",
-        },
-        {
-          path: "allSubject",
-          select: "name",
-        }
-      );
+    fixedId = await SpecialExam.findById(examId).select(
+      "fixedSubject allSubject optionalSubject -_id"
+    );
+    // .populate(
+    //   {
+    //     path: "fixedSubject",
+    //     select: "name",
+    //   },
+    //   {
+    //     path: "optionalSubject",
+    //     select: "name",
+    //   },
+    //   {
+    //     path: "allSubject",
+    //     select: "name",
+    //   }
+    // )
   } catch (err) {
     return res.status(500).json(err);
   }
