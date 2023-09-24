@@ -854,7 +854,7 @@ const assignQuestionMcq = async (req, res, next) => {
         rand = parseInt(Date.now()) % mcqIds.length;
         max = mcqIds.length - 1;
         if (rand == 0) rand = 1;
-        if (rand == questionPerSub - 1) rand = rand - 1;
+        if (rand == mcqIds.length - 1) rand = rand - 1;
         for (let j = rand; j >= 0; j--) {
           if (doc.length == questionPerSub) {
             flag = 1;
