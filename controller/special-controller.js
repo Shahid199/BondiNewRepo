@@ -748,7 +748,7 @@ const getOptionalSubects = async (req, res, next) => {
   return res.status(200).json(optionalSubjects.optionalSubject);
 };
 const getCombination = async (req, res, next) => {
-  let optionalSubjectId = req.query.optionalSubjectId;
+  let selectedId = req.query.optionalSubjectId;
   let examId = req.query.examId;
   let studentId = req.user.studentId;
   //let optionalId = req.query.optionalId;
@@ -758,15 +758,64 @@ const getCombination = async (req, res, next) => {
   let fixedId = null;
   try {
     fixedId = await SpecialExam.findById(examId)
-      .select("fixedSubject -_id")
-      .populate({
-        path: "fixedSubject",
-        select: "name",
-      });
+      .select("fixedSubject allSubject optionalSubject -_id")
+      .populate(
+        {
+          path: "fixedSubject",
+          select: "name",
+        },
+        {
+          path: "optionalSubject",
+          select: "name",
+        },
+        {
+          path: "allSubject",
+          select: "name",
+        }
+      );
   } catch (err) {
     return res.status(500).json("1.sonmething went wrong.");
   }
-  return res.status(200).json(fixedId);
+  fixedId = fixedId.fixedSubject;
+  let optionalId = fixedId.optionalSubject;
+  let allId = fixedId.allSubject;
+  let data = [];
+  let otherId = [],
+    ind = 0,
+    temp = null,
+    allIdsTemp = allId;
+  Sindex = null;
+  for (let i = 0; i < optionalId.length; i++) {
+    if (String(optionalId[i]._id) == selectedId) {
+      selectedId = optionalId[i];
+      break;
+    }
+    sIndex = i;
+  }
+  for (let i = 0; i < allId.length; i++) {
+    temp = allIdsTemp.pop();
+    if (
+      String(temp._id) == String(optionalId[0]._id) ||
+      String(temp._id) == String(optionalId[1])
+    ) {
+      continue;
+    } else if (
+      String(temp._id) == String(fixedId[0]) ||
+      String(temp._id) == String(fixedId[1])
+    ) {
+      continue;
+    } else {
+      let others = {};
+      others["_id"] = temp._id;
+      others["name"] = temp.name;
+      otherId.push(others);
+      ind++;
+    }
+  }
+  data.push(fixedId[0], fixedId[1], selectedId, optionalId[sIndex]);
+  data.push(fixedId[0], fixedId[1], selectedId, otherId[0]);
+  data.push(fixedId[0], fixedId[1], selectedId, otherId[1]);
+  return res.status(200).json(data);
 };
 const assignQuestionMcq = async (req, res, next) => {
   //data get from examcheck function req.body
