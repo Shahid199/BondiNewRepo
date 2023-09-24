@@ -543,7 +543,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   console.log("midarray:", mIdArray);
   let bulkData = [];
   for (let i = 0; i < mIdArray[i].length; i++) {
-    if (subjectId == String(mIdArray[i].subjectId)) {
+    if (String(subjectId) == String(mIdArray[i].subjectId)) {
       bulkData = mIdArray[i].mcqId;
       console.log("bulkData:", bulkData);
       break;
