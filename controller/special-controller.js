@@ -811,7 +811,12 @@ const getCombination = async (req, res, next) => {
 };
 const assignQuestionMcq = async (req, res, next) => {
   const eId = req.query.examId;
-  const subjects = req.query.subjectId;
+  const subject1 = req.query.subjectId1;
+  const subject2 = req.query.subjectId2;
+  const subject3 = req.query.subjectId3;
+  const subject4 = req.query.subjectId4;
+  const subjects = [subject1, subject2, subject3, subject4];
+
   const studentId = req.user.studentId;
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
