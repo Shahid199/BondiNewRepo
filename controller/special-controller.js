@@ -871,8 +871,8 @@ const assignQuestionMcq = async (req, res, next) => {
             }
             doc.push(mcqIds[j]);
           }
-          break;
         }
+        break;
       }
     }
     questionsId.push(doc);
