@@ -774,7 +774,7 @@ const getCombination = async (req, res, next) => {
         }
       );
   } catch (err) {
-    return res.status(500).json("1.sonmething went wrong.");
+    return res.status(500).json(err);
   }
   fixedId = fixedId.fixedSubject;
   let optionalId = fixedId.optionalSubject;
