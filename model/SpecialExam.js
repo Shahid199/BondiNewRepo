@@ -28,6 +28,10 @@ const SpecialExamSchema = new Schema(
       type: Number,
       required: true,
     },
+    noOfFixedSubject: {
+      type: Number,
+      required: true,
+    },
     allSubject: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -36,6 +40,13 @@ const SpecialExamSchema = new Schema(
       },
     ],
     optionalSubject: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: subjects,
+        required: true,
+      },
+    ],
+    fixedSubject: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: subjects,
@@ -152,6 +163,11 @@ const SpecialExamSchema = new Schema(
       required: true,
     },
     status: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    publishStatus: {
       type: Boolean,
       required: true,
       default: false,
