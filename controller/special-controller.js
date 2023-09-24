@@ -534,11 +534,13 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
   try {
-    mIdArray = await SpecialExam.findById(examIdObj, "questionMcq");
+    mIdArray = await SpecialExam.findById(examId, "questionMcq");
   } catch (err) {
     return res.status(500).json(err);
   }
+  console.log("midarray:", mIdArray);
   mIdArray = mIdArray.questionMcq;
+  console.log("midarray:", mIdArray);
   let bulkData = [];
   for (let i = 0; i < mIdArray[i].length; i++) {
     if (subjectId == String(mIdArray[i].subjectId)) {
@@ -550,7 +552,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   let finalIdsString = [];
   finalIdsString = finalIds.map((e) => String(e));
   bulkData = bulkData.map((e) => String(e));
+  console.log("bulk:", bulkData);
   bulkData = bulkData.concat(finalIdsString);
+  console.log("bulk:", bulkData);
   let withoutDuplicate = Array.from(new Set(bulkData));
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
