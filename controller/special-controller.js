@@ -757,27 +757,24 @@ const getCombination = async (req, res, next) => {
   // let optionalIdObj = new mongoose.Types.ObjectId(optionalId);
   let fixedId = null;
   try {
-    fixedId = await SpecialExam.findById(examId).select(
-      "fixedSubject allSubject optionalSubject -_id"
-    );
-    // .populate(
-    //   {
-    //     path: "fixedSubject",
-    //     select: "name",
-    //   },
-    //   {
-    //     path: "optionalSubject",
-    //     select: "name",
-    //   },
-    //   {
-    //     path: "allSubject",
-    //     select: "name",
-    //   }
-    // )
+    fixedId = await SpecialExam.findById(examId)
+      .select("fixedSubject allSubject optionalSubject -_id")
+      .populate({
+        path: "fixedSubject",
+        select: "name",
+      })
+      .populate({
+        path: "optionalSubject",
+        select: "name",
+      })
+      .populate({
+        path: "allSubject",
+        select: "name",
+      });
   } catch (err) {
     return res.status(500).json(err);
   }
-  return res.status(200).json(fixedId);
+  //return res.status(200).json(fixedId);
   fixedId = fixedId.fixedSubject;
   let optionalId = fixedId.optionalSubject;
   let allId = fixedId.allSubject;
@@ -817,7 +814,7 @@ const getCombination = async (req, res, next) => {
   data.push(fixedId[0], fixedId[1], selectedId, optionalId[sIndex]);
   data.push(fixedId[0], fixedId[1], selectedId, otherId[0]);
   data.push(fixedId[0], fixedId[1], selectedId, otherId[1]);
-  //return res.status(200).json(data);
+  return res.status(200).json(data);
 };
 const assignQuestionMcq = async (req, res, next) => {
   //data get from examcheck function req.body
