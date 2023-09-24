@@ -18,6 +18,7 @@ const {
   addQuestionWritten,
   getWrittenQuestionByExamSub,
   getOptionalSubects,
+  getCombination,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -131,6 +132,14 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   getOptionalSubects
+);
+router.get(
+  "/getcombination",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getCombination
 );
 
 module.exports = router;

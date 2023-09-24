@@ -910,6 +910,8 @@ const assignQuestionMcq = async (req, res, next) => {
   }
   return res.status(201).json(questions);
 };
+
+exports.getCombination = getCombination;
 exports.getOptionalSubects = getOptionalSubects;
 exports.examCheckMiddleware = examCheckMiddleware;
 exports.addQuestionWritten = addQuestionWritten;
