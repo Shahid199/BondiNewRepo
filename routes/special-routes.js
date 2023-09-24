@@ -19,6 +19,7 @@ const {
   getWrittenQuestionByExamSub,
   getOptionalSubects,
   getCombination,
+  assignQuestionMcq,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -140,6 +141,14 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   getCombination
+);
+router.get(
+  "/startexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  assignQuestionMcq
 );
 
 module.exports = router;

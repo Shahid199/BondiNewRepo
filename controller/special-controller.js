@@ -695,7 +695,7 @@ const getWrittenQuestionByExamSub = async (req, res, next) => {
 
 //exam system
 const examCheckMiddleware = async (req, res, next) => {
-  const examId = req.query.eId;
+  const examId = req.query.examId;
   const studentId = req.user.studentId;
   let examIdObj, studentIdObj;
   studentIdObj = new mongoose.Types.ObjectId(studentId);
@@ -730,7 +730,7 @@ const examCheckMiddleware = async (req, res, next) => {
   }
 };
 const getOptionalSubects = async (req, res, next) => {
-  const examId = req.query.eId;
+  const examId = req.query.examId;
   const studentId = req.user.studentId;
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
     return res.status(404).json("Exam Id or Student Id is not valid.");
@@ -750,11 +750,6 @@ const getOptionalSubects = async (req, res, next) => {
 const getCombination = async (req, res, next) => {
   let selectedId = req.query.optionalSubjectId;
   let examId = req.query.examId;
-  let studentId = req.user.studentId;
-  //let optionalId = req.query.optionalId;
-  let studentIdObj = new mongoose.Types.ObjectId(studentId);
-  let examIdObj = new mongoose.Types.ObjectId(examId);
-  // let optionalIdObj = new mongoose.Types.ObjectId(optionalId);
   let fixedId = null;
   try {
     fixedId = await SpecialExam.findById(examId)
@@ -774,7 +769,6 @@ const getCombination = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err);
   }
-  //return res.status(200).json(fixedId);
   let fixedIds = fixedId.fixedSubject;
   let optionalId = fixedId.optionalSubject;
   let allId = fixedId.allSubject;
@@ -816,148 +810,74 @@ const getCombination = async (req, res, next) => {
   return res.status(200).json(data);
 };
 const assignQuestionMcq = async (req, res, next) => {
-  //data get from examcheck function req.body
-  const eId = req.query.eId; //bothexam id
-  const examType = Number(JSON.parse(req.query.type));
+  const eId = req.query.examId;
   const subjects = req.query.subjectId;
   const studentId = req.user.studentId;
-  //start:check student already complete the exam or not
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
-  let doc = [],
-    size,
+  subjects = subjects.map((e) => new mongoose.Types.ObjectId(e));
+  let examData = null,
     min = 0,
     max = 0,
-    rand;
+    rand,
+    rand1;
   try {
-    size = await BothMcqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
-    size = size.mId.length;
+    examData = await SpecialExam.findById(eId);
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
-  if (!size) return res.status(404).json("No question assigned in the exam.");
-  let totalQuesData;
-  try {
-    totalQuesData = await BothExam.findById(eId).select(
-      "totalQuestionMcq mcqDuration endTime"
-    );
-  } catch (err) {
-    return res.status(500).json("2.something went wrong");
-  }
-  let examFinishTime = totalQuesData.endTime;
-  //start:generating random index of questions
-  let totalQues = Number(totalQuesData.totalQuestionMcq);
-  //console.log(totalQues, "totalQues");
-  max = size - 1;
-  rand = parseInt(Date.now() % totalQues);
-  if (rand == 0) rand = 1;
-  if (rand == totalQues - 1) rand = rand - 1;
-  for (let j = rand; j >= 0; j--) doc.push(j);
-  for (let j = rand + 1; j < totalQues; j++) doc.push(j);
-  let doc1;
-  try {
-    doc1 = await BothMcqQuestionVsExam.findOne({ eId: eId1 }).select("mId");
-  } catch (err) {
-    return res.status(500).json("3.Something went wrong.");
-  }
-  let statQues = [];
-  // console.log(doc1.mId,'doc1.mId');
-  for (let i = 0; i < doc1.mId.length; i++) {
-    let quesId = String(doc1.mId[i]);
-    let stat;
-    try {
-      stat = await QuestionsMcq.findById(quesId).select("status");
-      stat = stat.status;
-    } catch (err) {
-      return res.status(500).json("4.Something went wrong.");
-    }
-    if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
-  }
+  if (!examData) return res.status(404).json("No Exam found.");
+  let mcqQuestionNumber = examData.totalQuestionsMcq;
+  let questionMcq = examData.questionMcq;
+  let mcqIds = [],
+    questionPerSub = [];
+  questionPerSub = examData.subjectInfo[0].noOfQuestionsMcq;
+  let flag = 0;
+  let questionsId = [];
+  for (let i = 0; i < 4; i++) {
+    let doc = [];
+    for (let j = 0; j < 4; j++) {
+      if (String(questionMcq[i].subjectId) == String(subjects[j])) {
+        mcqIds = questionMcq[i].mcqId;
+        max = mcqIds.length - 1;
+        rand = parseInt(Date.now()) % mcqIds.length;
 
-  if (totalQues > statQues.length)
-    return res
-      .status(404)
-      .json("Total exam questions is less then exam's questions.");
-  let doc2 = statQues;
-  let resultQuestion = [];
-  for (let i = 0; i < totalQues; i++) {
-    let data = String(doc2[doc[i]]);
-    resultQuestion.push(data);
+        if (rand == 0) rand = 1;
+        if (rand == questionPerSub - 1) rand = rand - 1;
+        for (let j = rand; j >= 0; j--) {
+          if (doc.length == questionPerSub) {
+            flag = 1;
+            break;
+          }
+          doc.push(mcqIds[j]);
+        }
+        if (flag == 0) {
+          for (let j = rand + 1; j < questionPerSub; j++) {
+            if (doc.length == questionPerSub) {
+              flag = 1;
+              break;
+            }
+            doc.push(mcqIds[j]);
+          }
+          break;
+        }
+      }
+    }
+    questionsId.push(doc);
   }
-  // console.log(totalQues,'totalQues')
-  //console.log(resultQuestion, "resultQuestion");
-  let questions = [];
-  try {
-    questions = await QuestionsMcq.find(
-      { _id: { $in: resultQuestion } },
-      "question type options"
-    );
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-  // console.log(questions);
-  if (sId == null)
-    return res
-      .status(404)
-      .json("student not found or not permissible for the exam");
-  let answered = [];
-  for (let i = 0; i < totalQues; i++) {
-    answered[i] = "-1";
-  }
-  let saveStudentQuestion = null,
-    examEndTimeActual = null;
-  try {
-    examEndTimeActual = await BothExam.findById(eId1);
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("6.Something went wrong.");
-  }
-  let duration = Number(totalQuesData.mcqDuration);
-  let examStartTime = moment(new Date());
-  let examEndTime = moment(examStartTime).add(duration, "minutes");
-  if (examEndTime > examEndTimeActual.endTime)
-    examEndTime = examEndTimeActual.endTime;
-  let writtenQuestion = null;
-  try {
-    writtenQuestion = await BothQuestionsWritten.findOne(
-      { examId: eId1 },
-      "_id"
-    );
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("7.Something went wrong.");
-  }
-  let studentExamVsQuestionsMcq = new BothStudentExamVsQuestions({
-    studentId: sId,
-    examId: eId1,
-    mcqQuestionId: resultQuestion,
-    answeredOption: answered,
-    runningStatus: true,
-    finishedStatus: false,
-    checkStatus: false,
-    uploadStatus: false,
-    examStartTimeMcq: examStartTime,
-    examEndTimeMcq: examEndTime,
-    mcqDuration: duration,
-    writtenQuestionId: writtenQuestion,
-  });
-  try {
-    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("8.Something went wrong.");
-  }
-  questions.push({ studStartTime: examStartTime });
-  questions.push({ studEndTime: examEndTime });
-  questions.push({ examEndTime: examFinishTime });
-  questions.push({ answeredOption: answered });
-  if (saveStudentQuestion == null) {
-    return res.status(404).json("Problem occur to assign question.");
-  }
-  return res.status(201).json(questions);
+  return res.status(200).json(questionId);
+  // questions.push({ studStartTime: examStartTime });
+  // questions.push({ studEndTime: examEndTime });
+  // questions.push({ examEndTime: examFinishTime });
+  // questions.push({ answeredOption: answered });
+  // if (saveStudentQuestion == null) {
+  //   return res.status(404).json("Problem occur to assign question.");
+  // }
+  // return res.status(201).json(questions);
 };
 
+exports.assignQuestionMcq = assignQuestionMcq;
 exports.getCombination = getCombination;
 exports.getOptionalSubects = getOptionalSubects;
 exports.examCheckMiddleware = examCheckMiddleware;
