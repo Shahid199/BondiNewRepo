@@ -704,7 +704,7 @@ const examCheckMiddleware = async (req, res, next) => {
   let query = null;
   let examEndTime = null;
   let currentDate = moment(new Date());
-  //(currentDate, "current Date");
+  console.log(currentDate, "current Date");
   try {
     query = await SpecialExam.findById(examId, "endTime");
   } catch (err) {
@@ -750,9 +750,23 @@ const getOptionalSubects = async (req, res, next) => {
 const getCombination = async (req, res, next) => {
   let optionalSubjectId = req.query.optionalSubjectId;
   let examId = req.query.examId;
-  let studentId = req.query.studentId;
+  let studentId = req.user.studentId;
+  //let optionalId = req.query.optionalId;
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
+  // let optionalIdObj = new mongoose.Types.ObjectId(optionalId);
+  let fixedId = null;
+  try {
+    fixedId = await SpecialExam.findById(examId)
+      .select("fixedSubject -_id")
+      .populate({
+        path: "fixedSubject",
+        select: "name",
+      });
+  } catch (err) {
+    return res.status(500).json("1.sonmething went wrong.");
+  }
+  return res.status(200).json(fixedId);
 };
 const assignQuestionMcq = async (req, res, next) => {
   //data get from examcheck function req.body
