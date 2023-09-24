@@ -775,7 +775,7 @@ const getCombination = async (req, res, next) => {
     return res.status(500).json(err);
   }
   //return res.status(200).json(fixedId);
-  fixedId = fixedId.fixedSubject;
+  let fixedIds = fixedId.fixedSubject;
   let optionalId = fixedId.optionalSubject;
   let allId = fixedId.allSubject;
   let data = [];
@@ -811,9 +811,9 @@ const getCombination = async (req, res, next) => {
       ind++;
     }
   }
-  data.push(fixedId[0], fixedId[1], selectedId, optionalId[sIndex]);
-  data.push(fixedId[0], fixedId[1], selectedId, otherId[0]);
-  data.push(fixedId[0], fixedId[1], selectedId, otherId[1]);
+  data.push(fixedIds[0], fixedIds[1], selectedId, optionalId[sIndex]);
+  data.push(fixedIds[0], fixedIds[1], selectedId, otherId[0]);
+  data.push(fixedIds[0], fixedIds[1], selectedId, otherId[1]);
   return res.status(200).json(data);
 };
 const assignQuestionMcq = async (req, res, next) => {
