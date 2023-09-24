@@ -840,7 +840,6 @@ const assignQuestionMcq = async (req, res, next) => {
     return res.status(500).json("1.something went wrong.");
   }
   if (!examData) return res.status(404).json("No Exam found.");
-  let mcqQuestionNumber = examData.totalQuestionsMcq;
   let questionMcq = examData.questionMcq;
   let mcqIds = [],
     questionPerSub = [];
@@ -850,8 +849,8 @@ const assignQuestionMcq = async (req, res, next) => {
   for (let i = 0; i < 4; i++) {
     let doc = [];
     for (let j = 0; j < 4; j++) {
-      if (String(questionMcq[i].subjectId) == String(subjects[j])) {
-        mcqIds = questionMcq[i].mcqId;
+      if (String(questionMcq[j].subjectId) == String(subjects[i])) {
+        mcqIds = questionMcq[j].mcqId;
         rand = parseInt(Date.now()) % mcqIds.length;
         max = mcqIds.length - 1;
         if (rand == 0) rand = 1;
