@@ -851,8 +851,8 @@ const assignQuestionMcq = async (req, res, next) => {
     let doc = [];
     for (let j = 0; j < 4; j++) {
       if (String(questionMcq[i].subjectId) == String(subjects[j])) {
-        rand = parseInt(Date.now()) % mcqIds.length;
         mcqIds = questionMcq[i].mcqId;
+        rand = parseInt(Date.now()) % mcqIds.length;
         max = mcqIds.length - 1;
         if (rand == 0) rand = 1;
         if (rand == questionPerSub - 1) rand = rand - 1;
