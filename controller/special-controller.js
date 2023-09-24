@@ -863,7 +863,7 @@ const assignQuestionMcq = async (req, res, next) => {
           doc.push(mcqIds[j]);
         }
         if (flag == 0) {
-          for (let j = rand + 1; j < questionPerSub; j++) {
+          for (let j = rand + 1; j < mcqIds.length; j++) {
             if (doc.length == questionPerSub) {
               flag = 1;
               break;
