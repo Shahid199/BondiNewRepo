@@ -60,7 +60,7 @@ const specialVsStudentSchema = new Schema(
           default: 0,
         },
         totalCorrectAnswer: {
-          type: NUmber,
+          type: Number,
           required: false,
           default: 0,
         },
