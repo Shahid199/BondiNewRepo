@@ -745,7 +745,7 @@ const getOptionalSubects = async (req, res, next) => {
   }
   let optionalSubjects = subjects;
 
-  return res.status(200).json(optionalSubjects);
+  return res.status(200).json(optionalSubjects.optionalSubject);
 };
 const getCombination = async (req, res, next) => {
   let optionalSubjectId = req.query.optionalSubjectId;
