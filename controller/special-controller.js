@@ -214,6 +214,7 @@ const createSpecialExam = async (req, res, next) => {
     iLink: iLinkPath,
   });
   let updStatus = null;
+  console.log("number of tota subhect:", req.query.noOfTotalSubject);
   try {
     updStatus = await saveExam.save();
   } catch (err) {
