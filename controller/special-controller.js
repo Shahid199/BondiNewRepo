@@ -823,7 +823,7 @@ const assignQuestionMcq = async (req, res, next) => {
   const subject3 = req.query.subjectId3;
   const subject4 = req.query.subjectId4;
   let subjects = [subject1, subject2, subject3, subject4];
-
+  console.log("subjects:", subjects);
   const studentId = req.user.studentId;
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
