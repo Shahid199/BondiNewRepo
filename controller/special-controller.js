@@ -787,9 +787,7 @@ const getCombination = async (req, res, next) => {
   for (let i = 0; i < optionalId.length; i++) {
     if (String(optionalId[i]._id) == selectedId) {
       selectedId = optionalId[i];
-      break;
-    }
-    sIndex = i;
+    } else sIndex = i;
   }
   for (let i = 0; i < allId.length; i++) {
     temp = allIdsTemp.pop();
@@ -811,6 +809,7 @@ const getCombination = async (req, res, next) => {
       ind++;
     }
   }
+  console.log(optionalId[sIndex]);
   data.push(fixedIds[0], fixedIds[1], selectedId, optionalId[sIndex]);
   data.push(fixedIds[0], fixedIds[1], selectedId, otherId[0]);
   data.push(fixedIds[0], fixedIds[1], selectedId, otherId[1]);
