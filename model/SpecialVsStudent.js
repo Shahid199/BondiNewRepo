@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const exams = require("./SpecialExam");
 const students = require("./Student");
 const questions = require("./QuestionsMcq");
-const subjects=require("../Subject");
+const subjects = require("./Subject");
 const Schema = mongoose.Schema;
 
 const specialVsStudentSchema = new Schema(
