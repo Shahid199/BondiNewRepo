@@ -65,17 +65,17 @@ const specialVsStudentSchema = new Schema(
           default: 0,
         },
         totalWrongAnswer: {
-          type: NUmber,
+          type: Number,
           required: false,
           default: 0,
         },
         totalCorrectMarks: {
-          type: NUmber,
+          type: Number,
           required: false,
           default: 0,
         },
         totalWrongMarks: {
-          type: NUmber,
+          type: Number,
           required: false,
           default: 0,
         },
