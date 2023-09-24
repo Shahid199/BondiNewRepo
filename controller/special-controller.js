@@ -815,7 +815,7 @@ const assignQuestionMcq = async (req, res, next) => {
   const subject2 = req.query.subjectId2;
   const subject3 = req.query.subjectId3;
   const subject4 = req.query.subjectId4;
-  const subjects = [subject1, subject2, subject3, subject4];
+  let subjects = [subject1, subject2, subject3, subject4];
 
   const studentId = req.user.studentId;
   let eId1, sId;
