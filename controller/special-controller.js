@@ -783,7 +783,7 @@ const getCombination = async (req, res, next) => {
     ind = 0,
     temp = null,
     allIdsTemp = allId;
-  Sindex = null;
+  sIndex = null;
   for (let i = 0; i < optionalId.length; i++) {
     if (String(optionalId[i]._id) == selectedId) {
       selectedId = optionalId[i];
