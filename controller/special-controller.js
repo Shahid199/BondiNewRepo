@@ -736,12 +736,15 @@ const getOptionalSubects = async (req, res, next) => {
     return res.status(404).json("Exam Id or Student Id is not valid.");
   let subjects = null;
   try {
-    subjects = await SpecialExam.findById(examId);
+    subjects = await SpecialExam.findById(examId).populate({
+      path: "optionalSubject",
+      select: "name",
+    });
   } catch (err) {
     return res.status(500).json("1.sonmething went wrong.");
   }
-  let optionalSubjects = subjects.optionalSubject;
-  optionalSubjects = optionalSubjects.populate("subjectId");
+  let optionalSubjects = subjects;
+
   return res.status(200).json(optionalSubjects);
 };
 const getCombination = async (req, res, next) => {
