@@ -851,27 +851,24 @@ const assignQuestionMcq = async (req, res, next) => {
     for (let j = 0; j < 4; j++) {
       if (String(questionMcq[j].subjectId) == String(subjects[i])) {
         mcqIds = questionMcq[j].mcqId;
-        rand = parseInt(Date.now()) % mcqIds.length;
-        max = mcqIds.length - 1;
-        if (rand == 0) rand = 1;
-        if (rand == mcqIds.length - 1) rand = rand - 1;
-        for (let j = rand; j >= 0; j--) {
-          if (doc.length == questionPerSub) {
-            flag = 1;
-            break;
-          }
-          doc.push(mcqIds[j]);
-        }
-        if (flag == 0) {
-          for (let j = rand + 1; j < mcqIds.length; j++) {
-            if (doc.length == questionPerSub) {
-              flag = 1;
-              break;
-            }
-            doc.push(mcqIds[j]);
-          }
-        }
         break;
+      }
+    }
+    rand = parseInt(Date.now()) % mcqIds.length;
+    for (let j = rand; j >= 0; j--) {
+      if (doc.length == questionPerSub) {
+        flag = 1;
+        break;
+      }
+      doc.push(mcqIds[j]);
+    }
+    if (flag == 0) {
+      for (let j = rand + 1; j < mcqIds.length; j++) {
+        if (doc.length == questionPerSub) {
+          flag = 1;
+          break;
+        }
+        doc.push(mcqIds[j]);
       }
     }
     questionsId.push(doc);
