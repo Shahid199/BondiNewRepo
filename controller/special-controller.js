@@ -129,6 +129,8 @@ const createSpecialExam = async (req, res, next) => {
   }
   let fixedSubjects = [];
   let fixedSubjectsId = JSON.parse(fixedSubject);
+  console.log(fixedSubjectsId);
+  console.log(req.body.fixedSubject);
   for (let i = 0; i < fixedSubjectsId.length; i++) {
     fixedSubjects[i] = new mongoose.Types.ObjectId(fixedSubjectsId[i]);
   }
@@ -202,7 +204,7 @@ const createSpecialExam = async (req, res, next) => {
     subjectInfo: subjectsInfos,
     optionalSubject: optionalSubjects,
     allSubject: allSubjects,
-    fixedSubject: fixedSubjectsId,
+    fixedSubject: fixedSubjects,
     questionMcq: mcqQuestionSub,
     questionWritten: writtenQuestionSub,
     sscStatus: JSON.parse(sscStatus),
