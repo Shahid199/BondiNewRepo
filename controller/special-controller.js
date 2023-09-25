@@ -965,9 +965,7 @@ const assignQuestionWritten = async (req, res, next) => {
   if (updId.startTimeWritten != null) return res.status(200).json(false);
   let examData = null;
   try {
-    examData = await SpecialExam.findOne({
-      $and: [{ examId: examId }, { status: true }],
-    }).populate({
+    examData = await SpecialExam.findById(examId).populate({
       path: "questionWritten",
       populate: { path: "subjectId", select: "_id name" },
     });
