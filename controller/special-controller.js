@@ -962,7 +962,7 @@ const assignQuestionWritten = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   let insertId = updId._id;
-  //if (updId.startTimeWritten != null) return res.status(200).json(false);
+  if (updId.startTimeWritten != null) return res.status(200).json(false);
   let examData = null;
   try {
     examData = await SpecialExam.findById(examId).populate({
