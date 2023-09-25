@@ -838,7 +838,7 @@ const assignQuestionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
-  console.log(examData);
+  console.log(examData.questionMcq);
   if (!examData) return res.status(404).json("No Exam found.");
   let questionMcq = examData.questionMcq;
   let mcqIds = [],
