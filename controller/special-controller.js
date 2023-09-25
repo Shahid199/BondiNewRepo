@@ -880,7 +880,7 @@ const assignQuestionMcq = async (req, res, next) => {
   let studExamStartTime = new Date();
   let studExamEndTime = moment(studExamStartTime).add(
     examData.mcqDuration,
-    "minnutes"
+    "minnute"
   );
   if (studExamEndTime >= examData.endTime) studExamEndTime = examData.endTime;
   console.log(examData.mcqDuration);
