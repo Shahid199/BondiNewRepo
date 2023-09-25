@@ -877,14 +877,28 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     questionsId.push(doc);
   }
-  // for (let i = 0; i < questionsId.length; i++) {
-  //   for (let j = 0; j < questionsId[i].length; j++) {
-  //     let qObj = {};
-  //     qObj["question"] = questionsId[i][j].question;
-  //   }
-  // }
-  return res.status(200).json(questionsId);
-  // questions.push({ studStartTime: examStartTime });
+  let studExamStartTime = moment(new Date());
+  let studExamEndTime = moment(studExamStartTime).add(
+    examData.mcqDuration,
+    "minnutes"
+  );
+  if (studExamEndTime >= examData.endTime)
+    studExamEndTime = moment(examData.endTime);
+  let sav = null;
+  let upd = new SpecialVsStudent({
+    studentId: sId,
+    examId: eId1,
+  });
+  try {
+    sav = await Special;
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //return res.status(200).json(questionsId);
+  questionsId.push({ studStartTime: studExamStartTime });
+  questionsId.push({ studEndTime: studExamEndTime });
+  questionsId.push({ examStartTime: examData.startTime });
+  questionsId.push({ examEndTime: examData.endTime });
   // questions.push({ studEndTime: examEndTime });
   // questions.push({ examEndTime: examFinishTime });
   // questions.push({ answeredOption: answered });
