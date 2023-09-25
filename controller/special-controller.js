@@ -1021,6 +1021,95 @@ const assignQuestionWritten = async (req, res, next) => {
   data1.push({ duration: (studExamEndTime - studExamStartTime) / 60000 });
   return res.status(200).json(data1);
 };
+
+const getRunningDataMcq = async (req, res, next) => {
+  const sId = req.user.studentId;
+  const eId = req.query.examId;
+  if (!ObjectId.isValid(sId) || !ObjectId.isValid(eId))
+    return res.status(404).json("invalid student ID or exam ID.");
+  let eId1, sId1;
+  sId1 = new mongoose.Types.ObjectId(sId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  //exam status Check:start
+  let studentCheck = null;
+  try {
+    studentCheck = await SpecialVsStudent.findOne({
+      $and: [{ examId: eId1 }, { studentId: sId1 }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentCheck.finishStatus == true)
+    return res.status(409).json("Exam End.");
+  //exam status Check:end
+  let getQuestionMcq, getExamData;
+  try {
+    getQuestionMcq = await SpecialVsStudent.findOne(
+      {
+        $and: [{ studentId: sId1 }, { examId: eId1 }],
+      },
+      "questionMcq"
+    ).populate({
+      path: "questionMcq",
+      populate: {
+        path: "mcqId",
+        select: "question type options optionCount status _id",
+      },
+      populate: { path: "subjectId", select: "name" },
+    });
+  } catch (err) {
+    return res.status(500).json("can't get question.Problem Occur.");
+  }
+  return res.status.json(getQuestionMcq);
+  try {
+    getExamData = await BothStudentExamVsQuestions.findOne(
+      { $and: [{ examId: eId1 }, { studentId: sId1 }] },
+      "examStartTimeMcq examEndTimeMcq examId"
+    )
+      .populate({
+        path: "examId",
+        populate: {
+          path: "subjectId",
+          select: "name",
+          model: "Subject",
+        },
+      })
+      .populate({
+        path: "examId",
+        populate: {
+          path: "courseId",
+          select: "name",
+          model: "Course",
+        },
+      });
+  } catch (err) {
+    return res.status(500).json("Can't get exam info.");
+  }
+  let runningResponseLast = [];
+  let examData = new Object();
+  let questionData = new Object();
+  let timeData = new Object();
+  for (let i = 0; i < getQuestionMcq.mcqQuestionId.length; i++) {
+    let runningResponse = {};
+    runningResponse["question"] = getQuestionMcq.mcqQuestionId[i].question;
+    runningResponse["options"] = getQuestionMcq.mcqQuestionId[i].options;
+    runningResponse["type"] = getQuestionMcq.mcqQuestionId[i].type;
+    runningResponse["answeredOption"] = getQuestionMcq.answeredOption[i];
+    runningResponse["optionCount"] =
+      getQuestionMcq.mcqQuestionId[i].optionCount;
+    runningResponseLast.push(runningResponse);
+  }
+  timeData["examDuration"] = getExamData.examId.duration;
+  let examStartTime = getExamData.examStartTimeMcq;
+  let examEndTime = getExamData.examEndTimeMcq;
+  timeData["startTime"] = examStartTime;
+  timeData["endTine"] = examEndTime;
+  questionData = runningResponseLast;
+  examData = getExamData.examId;
+  return res.status(200).json({ timeData, questionData, examData });
+};
+
+exports.getRunningDataMcq = getRunningDataMcq;
 exports.assignQuestionWritten = assignQuestionWritten;
 exports.assignQuestionMcq = assignQuestionMcq;
 exports.getCombination = getCombination;
