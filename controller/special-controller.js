@@ -892,7 +892,7 @@ const assignQuestionMcq = async (req, res, next) => {
     let objMcq = [];
     let dataQ = questionsId[i];
 
-    for (let p = 0; i < dataQ.length; p++) {
+    for (let p = 0; p < dataQ.length; p++) {
       console.log(p);
       console.log("dataQ:", dataQ[p]._id);
       objMcq[p] = dataQ[p]._id;
