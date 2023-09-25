@@ -995,7 +995,7 @@ const assignQuestionWritten = async (req, res, next) => {
     questionWritten: questionWrittenArr,
     startTimeWritten: studExamStartTime,
     endTimeWritten: studExamEndTime,
-    writtenDuration: (studExamEndTime - studExamStartTime) / 6000,
+    writtenDuration: (studExamEndTime - studExamStartTime) / 60000,
   };
   let sav = null;
   try {
