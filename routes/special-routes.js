@@ -20,6 +20,7 @@ const {
   getOptionalSubects,
   getCombination,
   assignQuestionMcq,
+  assignQuestionWritten,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -149,6 +150,14 @@ router.get(
     authorize(["student", "superadmin", "moderator"]),
   ],
   assignQuestionMcq
+);
+router.get(
+  "/assignquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  assignQuestionWritten
 );
 
 module.exports = router;
