@@ -852,7 +852,7 @@ const assignQuestionMcq = async (req, res, next) => {
   for (let i = 0; i < 4; i++) {
     let flag = 0;
     let doc = [];
-    for (let j = 0; j < 4; j++) {
+    for (let j = 0; j < 6; j++) {
       if (String(questionMcq[j].subjectId) == String(subjects[i])) {
         mcqIds = questionMcq[j].mcqId;
         break;
@@ -884,28 +884,56 @@ const assignQuestionMcq = async (req, res, next) => {
   );
   if (studExamEndTime >= examData.endTime)
     studExamEndTime = moment(examData.endTime);
-  let sav = null;
+  let sav = null,
+    mcqData = [];
+  for (let i = 0; i < 4; i++) {
+    let objSub = {};
+    objSub["subjectId"] = subjects[i];
+    for (let i = 0; i < questionsId[i].length; i++) {
+      let objMcq = [];
+      objMcq[i] = questionsId[i]._id;
+    }
+    objSub["mcqId"] = objMcq;
+    let answerArr = [];
+    for (let j = 0; j < questionsId[i].length; j++) {
+      answerArr[j] = -1;
+    }
+    objSub["mcqAnswer"] = answerArr;
+    objSub["mcqMarksPerSub"] = parseInt(
+      examData.totalQuestionsMcq * marksPerMcq
+    );
+    objSub["totalCorrectAnswer"] = 0;
+    objSub["totalWrongAnswer"] = 0;
+    objSub["totalCorrectMarks"] = 0;
+    objSub["totalWrongMarks"] = 0;
+    mcqData[i] = objSub;
+  }
   let upd = new SpecialVsStudent({
     studentId: sId,
     examId: eId1,
+    startTimeMcq: studExamStartTime,
+    endTimeMcq: studExamEndTime,
+    mcqDuration: (studExamEndTime - studExamStartTime) / 60000,
+    questionMcq: mcqData,
+    runningStatus: true,
+    finishStatus: false,
   });
   try {
-    sav = await Special;
+    sav = await upd.save();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  if (!sav) return res.status(404).json("not assign mcq questions.");
   //return res.status(200).json(questionsId);
   questionsId.push({ studStartTime: studExamStartTime });
   questionsId.push({ studEndTime: studExamEndTime });
   questionsId.push({ examStartTime: examData.startTime });
   questionsId.push({ examEndTime: examData.endTime });
-  // questions.push({ studEndTime: examEndTime });
-  // questions.push({ examEndTime: examFinishTime });
-  // questions.push({ answeredOption: answered });
-  // if (saveStudentQuestion == null) {
-  //   return res.status(404).json("Problem occur to assign question.");
-  // }
-  // return res.status(201).json(questions);
+  questionsId.push({
+    mcqDuration: (studExamEndTime - studExamStartTime) / 60000,
+  });
+
+  return res.status(201).json(questionsId);
 };
 
 exports.assignQuestionMcq = assignQuestionMcq;
