@@ -833,7 +833,7 @@ const assignQuestionMcq = async (req, res, next) => {
   try {
     examData = await SpecialExam.findById(eId).populate({
       path: "questionMcq",
-      select: { path: "mcqId" },
+      populate: { path: "mcqId" },
     });
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
