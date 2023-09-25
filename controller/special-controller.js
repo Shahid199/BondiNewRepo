@@ -883,6 +883,7 @@ const assignQuestionMcq = async (req, res, next) => {
     "minnutes"
   );
   if (studExamEndTime >= examData.endTime) studExamEndTime = examData.endTime;
+  console.log(examData.mcqDuration);
   console.log("studExamStartTime", studExamStartTime);
   console.log("studExamEndTime", studExamEndTime);
   console.log("duration", (studExamEndTime - studExamStartTime) / 60000);
