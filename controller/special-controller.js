@@ -904,7 +904,7 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     objSub["mcqAnswer"] = answerArr;
     objSub["mcqMarksPerSub"] = parseInt(
-      examData.totalQuestionsMcq * marksPerMcq
+      examData.totalQuestionsMcq * examData.marksPerMcq
     );
     objSub["totalCorrectAnswer"] = 0;
     objSub["totalWrongAnswer"] = 0;
