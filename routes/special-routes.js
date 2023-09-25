@@ -21,6 +21,7 @@ const {
   getCombination,
   assignQuestionMcq,
   assignQuestionWritten,
+  getRunningDataMcq,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -158,6 +159,15 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   assignQuestionWritten
+);
+
+router.get(
+  "/getrunningdatamcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  getRunningDataMcq
 );
 
 module.exports = router;
