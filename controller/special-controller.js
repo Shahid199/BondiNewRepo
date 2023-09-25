@@ -1015,10 +1015,10 @@ const assignQuestionWritten = async (req, res, next) => {
     objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
     data1.push(objWritten);
   }
-  data1.push({ studExamStartTIme: studExamStartTime });
-  data1.push({ studExamENdTIme: studExamEndTime });
-  data1.push({ examStartTIme: examData.endTime });
-  data1.push({ duration: (studExamEndTime - studExamStartTime) / 6000 });
+  data1.push({ studExamStartTime: studExamStartTime });
+  data1.push({ studExamEndTime: studExamEndTime });
+  data1.push({ examEndTime: examData.endTime });
+  data1.push({ duration: (studExamEndTime - studExamStartTime) / 60000 });
   return res.status(200).json(data1);
 };
 exports.assignQuestionWritten = assignQuestionWritten;
