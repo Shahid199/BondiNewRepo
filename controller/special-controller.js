@@ -877,13 +877,12 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     questionsId.push(doc);
   }
-  let studExamStartTime = moment(new Date());
-  let studExamEndTime = moment(studExamStartTime).add(
-    examData.mcqDuration,
-    "minnutes"
-  );
-  if (studExamEndTime >= examData.endTime)
-    studExamEndTime = moment(examData.endTime);
+  let studExamStartTime = new Date();
+  let studExamEndTime = studExamStartTime.add(examData.mcqDuration, "minnutes");
+  if (studExamEndTime >= examData.endTime) studExamEndTime = examData.endTime;
+  console.log("studExamStartTime", studExamStartTime);
+  console.log("studExamEndTime", studExamEndTime);
+  console.log("duration", (studExamEndTime - studExamStartTime) / 60000);
   let sav = null,
     mcqData = [];
   for (let i = 0; i < 4; i++) {
