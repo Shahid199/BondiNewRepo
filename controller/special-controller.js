@@ -889,9 +889,10 @@ const assignQuestionMcq = async (req, res, next) => {
   for (let i = 0; i < 4; i++) {
     let objSub = {};
     objSub["subjectId"] = subjects[i];
-    for (let i = 0; i < questionsId[i].length; i++) {
-      let objMcq = [];
-      objMcq[i] = questionsId[i]._id;
+    let objMcq = [];
+    let dataQ = questionsId[i];
+    for (let p = 0; i < dataQ.length; p++) {
+      objMcq[p] = dataQ[p]._id;
     }
     objSub["mcqId"] = objMcq;
     let answerArr = [];
@@ -932,6 +933,7 @@ const assignQuestionMcq = async (req, res, next) => {
   questionsId.push({
     mcqDuration: (studExamEndTime - studExamStartTime) / 60000,
   });
+  questionsId.push({ data: sav });
 
   return res.status(201).json(questionsId);
 };
