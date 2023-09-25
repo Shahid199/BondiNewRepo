@@ -833,7 +833,11 @@ const assignQuestionMcq = async (req, res, next) => {
   try {
     examData = await SpecialExam.findById(eId).populate({
       path: "questionMcq",
-      populate: { path: "mcqId" },
+      populate: {
+        path: "mcqId",
+        match: { status: true },
+        select: "question type options optionCount status -_id",
+      },
     });
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
@@ -873,6 +877,12 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     questionsId.push(doc);
   }
+  // for (let i = 0; i < questionsId.length; i++) {
+  //   for (let j = 0; j < questionsId[i].length; j++) {
+  //     let qObj = {};
+  //     qObj["question"] = questionsId[i][j].question;
+  //   }
+  // }
   return res.status(200).json(questionsId);
   // questions.push({ studStartTime: examStartTime });
   // questions.push({ studEndTime: examEndTime });
