@@ -823,22 +823,22 @@ const assignQuestionMcq = async (req, res, next) => {
   const subject3 = req.query.subjectId3;
   const subject4 = req.query.subjectId4;
   let subjects = [subject1, subject2, subject3, subject4];
-  console.log("subjects:", subjects);
   const studentId = req.user.studentId;
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
   subjects = subjects.map((e) => new mongoose.Types.ObjectId(e));
   let examData = null,
-    min = 0,
-    max = 0,
-    rand,
-    rand1;
+    rand;
   try {
-    examData = await SpecialExam.findById(eId);
+    examData = await SpecialExam.findById(eId).populate({
+      path: "questionMcq",
+      select: { path: "mcqId" },
+    });
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
+  console.log(examData);
   if (!examData) return res.status(404).json("No Exam found.");
   let questionMcq = examData.questionMcq;
   let mcqIds = [],
@@ -855,7 +855,6 @@ const assignQuestionMcq = async (req, res, next) => {
       }
     }
     rand = parseInt(Date.now()) % mcqIds.length;
-    console.log("rand", rand);
     for (let j = rand; j >= 0; j--) {
       if (doc.length == questionPerSub) {
         flag = 1;
