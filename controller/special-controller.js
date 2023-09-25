@@ -891,8 +891,10 @@ const assignQuestionMcq = async (req, res, next) => {
     objSub["subjectId"] = subjects[i];
     let objMcq = [];
     let dataQ = questionsId[i];
-    console.log("dataQ:", dataQ[0]._id);
+
     for (let p = 0; i < dataQ.length; p++) {
+      console.log(p);
+      console.log("dataQ:", dataQ[p]._id);
       objMcq[p] = dataQ[p]._id;
     }
     objSub["mcqId"] = objMcq;
