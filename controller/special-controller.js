@@ -1081,7 +1081,7 @@ const updateAssignQuestion = async (req, res, next) => {
   }
   if (
     studentCheck.finishStatus == true ||
-    moment(studentCheck.examEndTime) <= moment(new Date())
+    studentCheck.examEndTime <= moment(new Date())
   )
     return res.status(409).json("Exam End.");
   let data = [],
