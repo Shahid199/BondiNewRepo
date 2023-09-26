@@ -1105,7 +1105,7 @@ const updateAssignQuestion = async (req, res, next) => {
     return res.status(500).json("cant save to db");
   }
   console.log("result:", result);
-  if (!result) return res.status(201).json("Ok");
+  if (result) return res.status(201).json("Ok");
   else return res.status(201).json("Not updated.");
 };
 
