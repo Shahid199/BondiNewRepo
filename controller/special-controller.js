@@ -1034,12 +1034,9 @@ const getRunningDataMcq = async (req, res, next) => {
   let studentCheck = null;
   let getQuestionMcq, getExamData;
   try {
-    getQuestionMcq = await SpecialVsStudent.findOne(
-      {
-        $and: [{ studentId: sId1 }, { examId: eId1 }],
-      },
-      "questionMcq"
-    )
+    getQuestionMcq = await SpecialVsStudent.findOne({
+      $and: [{ studentId: sId1 }, { examId: eId1 }],
+    })
       .populate({
         path: "questionMcq",
         populate: {
