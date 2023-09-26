@@ -1053,7 +1053,11 @@ const getRunningDataMcq = async (req, res, next) => {
     return res.status(409).json("Exam End.");
   //exam status Check:end
   getQuestionMcq = getQuestionMcq.questionMcq;
-  return res.status(200).json(getQuestionMcq);
+  let data = [];
+  for (let i = 0; i < getQuestionMcq.length; i++) {
+    data[i] = getQuestionMcq[i].mcqId;
+  }
+  return res.status(200).json(data);
   try {
     getExamData = await BothStudentExamVsQuestions.findOne(
       { $and: [{ examId: eId1 }, { studentId: sId1 }] },
