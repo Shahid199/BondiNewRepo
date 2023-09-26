@@ -23,6 +23,9 @@ const {
   assignQuestionWritten,
   getRunningDataMcq,
   updateAssignQuestion,
+  ruunningWritten,
+  submitStudentScript,
+  submitWritten,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -178,5 +181,32 @@ router.post(
     authorize(["student", "superadmin", "moderator"]),
   ],
   updateAssignQuestion
+);
+
+router.get(
+  "/runningwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  ruunningWritten
+);
+router.post(
+  "/submitstudentscript",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  submitStudentScript
+);
+
+router.post(
+  "/submitwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  submitWritten
 );
 module.exports = router;

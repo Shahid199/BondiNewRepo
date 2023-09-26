@@ -943,6 +943,97 @@ const assignQuestionMcq = async (req, res, next) => {
 
   return res.status(201).json(questionsId);
 };
+const getRunningDataMcq = async (req, res, next) => {
+  const sId = req.user.studentId;
+  const eId = req.query.examId;
+  if (!ObjectId.isValid(sId) || !ObjectId.isValid(eId))
+    return res.status(404).json("invalid student ID or exam ID.");
+  let eId1, sId1;
+  sId1 = new mongoose.Types.ObjectId(sId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  //exam status Check:start
+  let studentCheck = null;
+  let getQuestionMcq, getExamData;
+  try {
+    getQuestionMcq = await SpecialVsStudent.findOne({
+      $and: [{ studentId: sId1 }, { examId: eId1 }],
+    })
+      .populate({
+        path: "questionMcq",
+        populate: {
+          path: "mcqId",
+          match: { status: true },
+          select: "question type options optionCount status _id",
+        },
+      })
+      .populate("examId");
+  } catch (err) {
+    return res.status(500).json("can't get question.Problem Occur.");
+  }
+  let examData = getQuestionMcq;
+  if (getQuestionMcq.finishStatus == true)
+    return res.status(409).json("Exam End.");
+  //exam status Check:end
+  getQuestionMcq = getQuestionMcq.questionMcq;
+  let data = [];
+  for (let i = 0; i < getQuestionMcq.length; i++) {
+    let dataQ = {};
+    dataQ["questions"] = getQuestionMcq[i].mcqId;
+    dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
+    data[i] = dataQ;
+  }
+  let examDet = [];
+  examDet.push({ studExamStartTime: examData.startTimeMcq });
+  examDet.push({ studExamEndTime: examData.endTimeMcq });
+  examDet.push({ duration: examData.mcqDuration });
+  examDet.push({ dueDuration: moment(new Date()) - examData.endTimeMcq });
+
+  return res.status(200).json({ data, examDet });
+};
+const updateAssignQuestion = async (req, res, next) => {
+  let studentId = req.user.studentId;
+  let examId = req.body.examId;
+  let subjectId = req.body.subjectId;
+  let questionIndexNumber = Number(req.body.questionIndexNumber);
+  let optionIndexNumber = Number(req.body.optionIndexNumber);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  let result;
+  let studentCheck = null;
+  try {
+    studentCheck = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let data = [],
+    insertId,
+    sIndex = 0;
+  insertId = studentCheck._id;
+  for (let i = 0; i < 4; i++) {
+    if (String(subjectId) == String(studentCheck.questionMcq[i].subjectId)) {
+      data = studentCheck.questionMcq;
+      sIndex = i;
+      break;
+    }
+  }
+  data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
+  let upd = { questionMcq: data };
+  console.log("upd:", upd);
+  console.log("data:", data);
+  try {
+    result = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    return res.status(500).json("cant save to db");
+  }
+  console.log("result:", result);
+  if (result) return res.status(201).json("Ok");
+  else return res.status(201).json("Not updated.");
+};
+
+//written
 const assignQuestionWritten = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
@@ -973,8 +1064,6 @@ const assignQuestionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  if (examData == null || moment(examData.endTime) < moment(new Date()))
-    return res.status(404).json("no question found or time expired.");
   let questionWrittenArr = [];
   for (let i = 0; i < 4; i++) {
     let subObj = {};
@@ -1021,94 +1110,169 @@ const assignQuestionWritten = async (req, res, next) => {
   data1.push({ duration: (studExamEndTime - studExamStartTime) / 60000 });
   return res.status(200).json(data1);
 };
-const getRunningDataMcq = async (req, res, next) => {
-  const sId = req.user.studentId;
-  const eId = req.query.examId;
-  if (!ObjectId.isValid(sId) || !ObjectId.isValid(eId))
-    return res.status(404).json("invalid student ID or exam ID.");
-  let eId1, sId1;
-  sId1 = new mongoose.Types.ObjectId(sId);
-  eId1 = new mongoose.Types.ObjectId(eId);
-  //exam status Check:start
-  let studentCheck = null;
-  let getQuestionMcq, getExamData;
-  try {
-    getQuestionMcq = await SpecialVsStudent.findOne({
-      $and: [{ studentId: sId1 }, { examId: eId1 }],
-    })
-      .populate({
-        path: "questionMcq",
-        populate: {
-          path: "mcqId",
-          match: { status: true },
-          select: "question type options optionCount status _id",
-        },
-      })
-      .populate("examId");
-  } catch (err) {
-    return res.status(500).json("can't get question.Problem Occur.");
-  }
-  if (getQuestionMcq.finishStatus == true)
-    return res.status(409).json("Exam End.");
-  //exam status Check:end
-  getQuestionMcq = getQuestionMcq.questionMcq;
-  let data = [];
-  for (let i = 0; i < getQuestionMcq.length; i++) {
-    let dataQ = {};
-    dataQ["questions"] = getQuestionMcq[i].mcqId;
-    dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
-    data[i] = dataQ;
-  }
-  return res.status(200).json(data);
-};
-const updateAssignQuestion = async (req, res, next) => {
-  let studentId = req.user.studentId;
-  let examId = req.body.examId;
-  let subjectId = req.body.subjectId;
-  let questionIndexNumber = Number(req.body.questionIndexNumber);
-  let optionIndexNumber = Number(req.body.optionIndexNumber);
+const ruunningWritten = async (req, res, next) => {
+  let examId = req.query.examId;
+  examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
+  let updId = null;
+  try {
+    updId = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  let examData = null;
+  try {
+    examData = await SpecialExam.findById(examId).populate({
+      path: "questionWritten",
+      populate: { path: "subjectId", select: "_id name" },
+    });
+    console.log("examData:", examData);
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  let data1 = [];
+  for (let i = 0; i < 4; i++) {
+    let objWritten = {};
+    objWritten["subjectId"] = examData.questionWritten[i].subjectId._id;
+    objWritten["subjectName"] = examData.questionWritten[i].subjectId.name;
+    objWritten["marksPerQuestion"] =
+      examData.questionWritten[i].marksPerQuestion;
+    objWritten["totalQuestion"] =
+      examData.questionWritten[i].marksPerQuestion.length;
+    objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
+    data1.push(objWritten);
+  }
+  data1.push({ studExamStartTime: examData.startTimeWritten });
+  data1.push({ studExamEndTime: examData.endTimeWritten });
+  data1.push({ examEndTime: examData.endTime });
+  data1.push({
+    dueDuration: (moment(new Date()) - examData.endTimeWritten) / 60000,
+  });
+  data1.push({
+    Duration: (examData.endTimeWritten - examData.startTimeWritten) / 60000,
+  });
+  return res.status(200).json(data1);
+};
+const submitStudentScript = async (req, res, next) => {
+  const files = req.files;
+  //file upload handle:start
+  const file = req.files;
+  //console.log(file);
+  let questionILinkPath = [];
+  if (!file.questionILink) return res.status(400).json("Files not uploaded.");
+  for (let i = 0; i < file.questionILink.length; i++) {
+    questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
+  }
+  //file upload handle:end
+  let examId = req.body.examId;
+  let studentId = req.user.studentId;
+  let subjectId = req.body.subjectId;
+  let questionNo = Number(req.body.questionNo);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(subjectId) ||
+    questionNo <= 0
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   subjectId = new mongoose.Types.ObjectId(subjectId);
-  let result;
-  let studentCheck = null;
+  let getQuestionScript = null;
   try {
-    studentCheck = await SpecialVsStudent.findOne({
-      $and: [{ examId: examId }, { studentId: studentId }],
+    getQuestionScript = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
     });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (
-    studentCheck.finishStatus == true ||
-    studentCheck.examEndTime <= moment(new Date())
-  )
-    return res.status(409).json("Exam End.");
-  let data = [],
-    insertId,
-    sIndex = 0;
-  insertId = studentCheck._id;
+  let insertId = getQuestionScript._id;
+  let uploadStatus = getQuestionScript.uploadStatus;
+  let checkStatus = getQuestionScript.checkStatus;
+  if (uploadStatus == true || checkStatus == true)
+    return res.status(404).json("Can not upload file.");
+  let submittedScript = [];
+  let sIndex = null;
   for (let i = 0; i < 4; i++) {
-    if (String(subjectId) == String(studentCheck.questionMcq[i].subjectId)) {
-      data = studentCheck.questionMcq;
+    if (String(subjectId) == getQuestionScript.questionWritten[i].subjectId) {
+      submittedScript = getQuestionScript.questionWritten;
       sIndex = i;
       break;
     }
   }
-  data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
-  let upd = { questionMcq: data };
-  console.log("upd:", upd);
-  console.log("data:", data);
-  try {
-    result = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
-  } catch (err) {
-    return res.status(500).json("cant save to db");
+  if (submittedScript[sIndex].submittedScriptILink[questionNo]) {
+    for (
+      let i = 0;
+      i < submittedScript[sIndex].submittedScriptILink[questionNo].length;
+      i++
+    ) {
+      fs.unlinkSync(
+        submittedScript[sIndex].submittedScriptILink[questionNo][i]
+      );
+    }
   }
-  console.log("result:", result);
-  if (result) return res.status(201).json("Ok");
-  else return res.status(201).json("Not updated.");
+
+  submittedScript[sIndex].submittedScriptILink[questionNo] = questionILinkPath;
+  //console.log(getQuestionScript[questionNo]);
+  let upd = {
+    questionWritten: submittedScript,
+  };
+  let doc;
+  try {
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Submitted Successfully.");
+};
+const submitWritten = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.user.studentId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or subject Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  let startTime = null;
+  let endTime = new Date();
+  try {
+    startTime = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  let insertId = startTime._id;
+  startTime = startTime.startTimeWritten;
+  console.log(startTime);
+  console.log(endTime);
+  let upd = {
+    endTimeWritten: endTime,
+    writtenDuration: (moment(endTime) - moment(startTime)) / 60000,
+    uploadStatus: true,
+  };
+  console.log(upd.writtenDuration);
+  let sav = null;
+  try {
+    sav = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("2.Something went wrong.");
+  }
+  return res.status(201).json("Submitted Sccessfully.");
 };
 
+exports.submitWritten = submitWritten;
+exports.submitStudentScript = submitStudentScript;
+exports.ruunningWritten = ruunningWritten;
 exports.updateAssignQuestion = updateAssignQuestion;
 exports.getRunningDataMcq = getRunningDataMcq;
 exports.assignQuestionWritten = assignQuestionWritten;
