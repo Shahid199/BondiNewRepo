@@ -26,6 +26,7 @@ const {
   ruunningWritten,
   submitStudentScript,
   submitWritten,
+  examCheckMiddleware,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -132,6 +133,7 @@ router.get(
   getWrittenQuestionByExamSub
 );
 
+//subject Choice
 router.get(
   "/getoptionalsubject",
   [
@@ -148,6 +150,17 @@ router.get(
   ],
   getCombination
 );
+
+//exam check middlwear
+router.get(
+  "/examcheckmiddleware",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  examCheckMiddleware
+);
+//MCQ
 router.get(
   "/startexam",
   [
@@ -155,14 +168,6 @@ router.get(
     authorize(["student", "superadmin", "moderator"]),
   ],
   assignQuestionMcq
-);
-router.get(
-  "/assignquestionwritten",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
-  ],
-  assignQuestionWritten
 );
 
 router.get(
@@ -183,6 +188,15 @@ router.post(
   updateAssignQuestion
 );
 
+//written
+router.get(
+  "/assignquestionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  assignQuestionWritten
+);
 router.get(
   "/runningwritten",
   [
