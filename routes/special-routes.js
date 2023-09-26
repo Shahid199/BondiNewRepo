@@ -22,6 +22,7 @@ const {
   assignQuestionMcq,
   assignQuestionWritten,
   getRunningDataMcq,
+  updateAssignQuestion,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -170,4 +171,12 @@ router.get(
   getRunningDataMcq
 );
 
+router.post(
+  "/updateanswer",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  updateAssignQuestion
+);
 module.exports = router;

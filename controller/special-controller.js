@@ -1021,7 +1021,6 @@ const assignQuestionWritten = async (req, res, next) => {
   data1.push({ duration: (studExamEndTime - studExamStartTime) / 60000 });
   return res.status(200).json(data1);
 };
-
 const getRunningDataMcq = async (req, res, next) => {
   const sId = req.user.studentId;
   const eId = req.query.examId;
@@ -1061,54 +1060,53 @@ const getRunningDataMcq = async (req, res, next) => {
     data[i] = dataQ;
   }
   return res.status(200).json(data);
+};
+const updateAssignQuestion = async (req, res, next) => {
+  let studentId = req.user.studentId;
+  let examId = req.body.examId;
+  let subjectId = req.body.subjectId;
+  let questionIndexNumber = Number(req.body.questionIndexNumber);
+  let optionIndexNumber = Number(req.body.optionIndexNumber);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  let result;
+  let studentCheck = null;
   try {
-    getExamData = await BothStudentExamVsQuestions.findOne(
-      { $and: [{ examId: eId1 }, { studentId: sId1 }] },
-      "examStartTimeMcq examEndTimeMcq examId"
-    )
-      .populate({
-        path: "examId",
-        populate: {
-          path: "subjectId",
-          select: "name",
-          model: "Subject",
-        },
-      })
-      .populate({
-        path: "examId",
-        populate: {
-          path: "courseId",
-          select: "name",
-          model: "Course",
-        },
-      });
+    studentCheck = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
   } catch (err) {
-    return res.status(500).json("Can't get exam info.");
+    return res.status(500).json("Something went wrong.");
   }
-  let runningResponseLast = [];
-  let examData = new Object();
-  let questionData = new Object();
-  let timeData = new Object();
-  for (let i = 0; i < getQuestionMcq.mcqQuestionId.length; i++) {
-    let runningResponse = {};
-    runningResponse["question"] = getQuestionMcq.mcqQuestionId[i].question;
-    runningResponse["options"] = getQuestionMcq.mcqQuestionId[i].options;
-    runningResponse["type"] = getQuestionMcq.mcqQuestionId[i].type;
-    runningResponse["answeredOption"] = getQuestionMcq.answeredOption[i];
-    runningResponse["optionCount"] =
-      getQuestionMcq.mcqQuestionId[i].optionCount;
-    runningResponseLast.push(runningResponse);
+  if (
+    studentCheck.finishStatus == true ||
+    moment(studentCheck.examEndTime) <= moment(new Date())
+  )
+    return res.status(409).json("Exam End.");
+  let data = [],
+    insertId,
+    sIndex = 0;
+  insertId = studentCheck._id;
+  for (let i = 0; i < 4; i++) {
+    if (String(subjectId) == String(studentCheck.questionMcq[i].subjectId)) {
+      data = studentCheck.questionMcq;
+      sIndex = i;
+      break;
+    }
   }
-  timeData["examDuration"] = getExamData.examId.duration;
-  let examStartTime = getExamData.examStartTimeMcq;
-  let examEndTime = getExamData.examEndTimeMcq;
-  timeData["startTime"] = examStartTime;
-  timeData["endTine"] = examEndTime;
-  questionData = runningResponseLast;
-  examData = getExamData.examId;
-  return res.status(200).json({ timeData, questionData, examData });
+  data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
+  let upd = { questionMcq: data };
+  try {
+    result = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    return res.status(500).json("cant save to db");
+  }
+  if (!result) return res.status(201).json("Ok");
+  else return res.status(201).json("Not updated.");
 };
 
+exports.updateAssignQuestion = updateAssignQuestion;
 exports.getRunningDataMcq = getRunningDataMcq;
 exports.assignQuestionWritten = assignQuestionWritten;
 exports.assignQuestionMcq = assignQuestionMcq;
