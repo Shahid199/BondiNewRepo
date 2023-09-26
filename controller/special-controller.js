@@ -1097,11 +1097,14 @@ const updateAssignQuestion = async (req, res, next) => {
   }
   data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
   let upd = { questionMcq: data };
+  console.log("upd:", upd);
+  console.log("data:", data);
   try {
     result = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
   } catch (err) {
     return res.status(500).json("cant save to db");
   }
+  console.log("result:", result);
   if (!result) return res.status(201).json("Ok");
   else return res.status(201).json("Not updated.");
 };
