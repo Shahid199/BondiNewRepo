@@ -1055,7 +1055,10 @@ const getRunningDataMcq = async (req, res, next) => {
   getQuestionMcq = getQuestionMcq.questionMcq;
   let data = [];
   for (let i = 0; i < getQuestionMcq.length; i++) {
-    data[i] = getQuestionMcq[i].mcqId;
+    let dataQ = {};
+    dataQ["questions"] = getQuestionMcq[i].mcqId;
+    dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
+    data[i] = dataQ;
   }
   return res.status(200).json(data);
   try {
