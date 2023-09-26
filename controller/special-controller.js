@@ -1032,16 +1032,6 @@ const getRunningDataMcq = async (req, res, next) => {
   eId1 = new mongoose.Types.ObjectId(eId);
   //exam status Check:start
   let studentCheck = null;
-  try {
-    studentCheck = await SpecialVsStudent.findOne({
-      $and: [{ examId: eId1 }, { studentId: sId1 }],
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  if (studentCheck.finishStatus == true)
-    return res.status(409).json("Exam End.");
-  //exam status Check:end
   let getQuestionMcq, getExamData;
   try {
     getQuestionMcq = await SpecialVsStudent.findOne(
@@ -1049,18 +1039,24 @@ const getRunningDataMcq = async (req, res, next) => {
         $and: [{ studentId: sId1 }, { examId: eId1 }],
       },
       "questionMcq"
-    ).populate({
-      path: "questionMcq",
-      populate: {
-        path: "mcqId",
-        select: "question type options optionCount status _id",
-      },
-      populate: { path: "subjectId", select: "name" },
-    });
+    )
+      .populate({
+        path: "questionMcq",
+        populate: {
+          path: "mcqId",
+          select: "question type options optionCount status _id",
+        },
+        populate: { path: "subjectId", select: "name" },
+      })
+      .populate("examId");
   } catch (err) {
     return res.status(500).json("can't get question.Problem Occur.");
   }
-  return res.status.json(getQuestionMcq);
+  if (getQuestionMcq.finishStatus == true)
+    return res.status(409).json("Exam End.");
+  //exam status Check:end
+
+  return res.status(200).json(getQuestionMcq);
   try {
     getExamData = await BothStudentExamVsQuestions.findOne(
       { $and: [{ examId: eId1 }, { studentId: sId1 }] },
