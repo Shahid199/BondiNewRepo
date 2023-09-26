@@ -1032,6 +1032,126 @@ const updateAssignQuestion = async (req, res, next) => {
   if (result) return res.status(201).json("Ok");
   else return res.status(201).json("Not updated.");
 };
+const submitAnswerMcq = async (req, res, next) => {
+  const eId = req.body.eId;
+  const sId = req.user.studentId;
+  if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
+    return res.status(404).json("Invalid studnet Id or Exam Id");
+  const examEndTime = new Date();
+  let eId1, sId1;
+  sId1 = new mongoose.Types.ObjectId(sId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  //exam status Check:start
+  let studentCheck = null;
+  try {
+    studentCheck = await SpecialVsStudent.findOne({
+      $and: [{ examId: eId1 }, { studentId: sId1 }],
+    })
+      .populate({
+        path: "questionMcq",
+        populate: {
+          path: "mcqId",
+          match: { status: true },
+          select: "question type options optionCount status _id",
+        },
+        populate: {
+          path: "subjectId",
+          match: { status: true },
+          select: "name",
+        },
+      })
+      .populate("examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //exam status Check:end
+  let findId = studentCheck._id;
+  timeStudent[0] = studentCheck.startTimeMcq;
+  timeStudent[1] = studentCheck.endTimeMcq;
+  let submitTime = moment(new Date());
+  let totalMarksMcq = 0;
+  for (let i = 0; i < 4; i++) {
+    let totalCorrectAnswer = 0,
+      totalCorrectMarks = 0,
+      totalWrongAnswer = 0,
+      totalWrongMarks = 0,
+      totalNotAnswered = 0;
+    let subjectId = studentCheck.questionMcq[i].subjectId;
+    for (let j = 0; j < studentCheck.questionMcq[i].mcqId.length; i++) {
+      let questions = studentCheck.questionMcq[i].mcqId[j];
+      if (studentCheck.questionMcq[i].mcqAnswer[j] == -1) {
+        totalNotAnswered++;
+      } else if (
+        questions.correctOption == studentCheck.questionMcq[i].mcqAnswer[j]
+      ) {
+        totalCorrectAnswer++;
+      } else totalWrongAnswer++;
+    }
+    studentCheck.questionMcq[i].totalCorrectAnswer = totalCorrectAnswer;
+    studentCheck.questionMcq[i].totalWrongAnswer = totalWrongAnswer;
+    studentCheck.questionMcq[i].totalNotAnswered = totalNotAnswered;
+    studentCheck.questionMcq[i].totalCorrectMarks =
+      totalCorrectAnswer * studentCheck.examId.marksPerMcq;
+    studentCheck.questionMcq[i].totalWrongMarks =
+      totalWrongAnswer * (studentCheck.examId.negativeMarksMcq / 100);
+    studentCheck.questionMcq[i].mcqMarksPerSub =
+      totalCorrectMarks - totalWrongMarks;
+    totalMarksMcq = totalMarksMcq + studentCheck.questionMcq[i].mcqMarksPerSub;
+  }
+  let dataUpd = {
+    totalMarksMcq: totalMarksMcq,
+    questionMcq: studentCheck,
+    finishStatus: true,
+    runningStatus: false,
+    endTimeMcq: submitTime,
+    mcqDuration: (moment(timeStudent[0]) - moment(submitTime)) / 60000,
+  };
+  let sav = null;
+  try {
+    sav = await SpecialVsStudent.findByIdAndUpdate(findId, dataUpd);
+  } catch (err) {
+    return res.status(500).json("Problem when updating student marks.");
+  }
+  return res.status(201).json("submited mcq Successfully.");
+  // let data1 = {};
+  // data1["examId"] = studentCheck.examId.name;
+  // data1["startTime"] = moment(studentCheck.examId.startTime).format("LLL");
+  // data1["endTime"] = moment(studentCheck.examId.endTime).format("LLL");
+  // data1["totalMarksMcq"] = studentCheck.examId.totalMarksMcq;
+  // data1["examVariation"] = 4;
+  // data1["totalCorrectAnswer"] =
+  //   studentCheck.questionMcq[0].totalCorrectAnswer +
+  //   studentCheck.questionMcq[1].totalCorrectAnswer +
+  //   studentCheck.questionMcq[2].totalCorrectAnswer +
+  //   studentCheck.questionMcq[3].totalCorrectAnswer;
+
+  // data1["totalWrongAnswer"] =
+  //   studentCheck.questionMcq[0].totalWrongAnswer +
+  //   studentCheck.questionMcq[1].totalWrongAnswer +
+  //   studentCheck.questionMcq[2].totalWrongAnswer +
+  //   studentCheck.questionMcq[3].totalWrongAnswer;
+  // data1["totalCorrectMarks"] =
+  //   studentCheck.questionMcq[0].totalCorrectMarks +
+  //   studentCheck.questionMcq[1].totalCorrectMarks +
+  //   studentCheck.questionMcq[2].totalCorrectMarks +
+  //   studentCheck.questionMcq[3].totalCorrectMarks;
+  // data1["totalWrongMarks"] =
+  //   studentCheck.questionMcq[0].totalWrongMarks +
+  //   studentCheck.questionMcq[1].totalWrongMarks +
+  //   studentCheck.questionMcq[2].totalWrongMarks +
+  //   studentCheck.questionMcq[3].totalWrongMarks;
+  // data1["totalNotAnswered"] =
+  //   studentCheck.questionMcq[0].totalNotAnswered +
+  //   studentCheck.questionMcq[1].totalNotAnswered +
+  //   studentCheck.questionMcq[2].totalNotAnswered +
+  //   studentCheck.questionMcq[3].totalNotAnswered;
+  // data1["rank"] = -1;
+  // data1["studExamStartTime"] = moment(timeStudent[0]).format("LLL");
+  // data1["studExamEndTime"] = moment(submitTime).format("LLL");
+  // data1["studExamTime"] = (moment(timeStudent[0]) - moment(submitTime)) / 60000;
+
+  // return res.status(200).json(data1);
+};
 
 //written
 const assignQuestionWritten = async (req, res, next) => {
@@ -1270,6 +1390,7 @@ const submitWritten = async (req, res, next) => {
   return res.status(201).json("Submitted Sccessfully.");
 };
 
+exports.submitAnswerMcq = submitAnswerMcq;
 exports.submitWritten = submitWritten;
 exports.submitStudentScript = submitStudentScript;
 exports.ruunningWritten = ruunningWritten;

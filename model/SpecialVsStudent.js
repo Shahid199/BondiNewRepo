@@ -74,6 +74,11 @@ const specialVsStudentSchema = new Schema(
           required: false,
           default: 0,
         },
+        totalNotAnswered: {
+          type: Number,
+          required: false,
+          default: 0,
+        },
         totalWrongMarks: {
           type: Number,
           required: false,

@@ -27,6 +27,7 @@ const {
   submitStudentScript,
   submitWritten,
   examCheckMiddleware,
+  submitAnswerMcq,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -187,7 +188,14 @@ router.post(
   ],
   updateAssignQuestion
 );
-
+router.post(
+  "/submitanswermcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  submitAnswerMcq
+);
 //written
 router.get(
   "/assignquestionwritten",
