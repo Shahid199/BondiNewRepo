@@ -1052,7 +1052,7 @@ const getRunningDataMcq = async (req, res, next) => {
   if (getQuestionMcq.finishStatus == true)
     return res.status(409).json("Exam End.");
   //exam status Check:end
-
+  getQuestionMcq = getQuestionMcq.questionMcq;
   return res.status(200).json(getQuestionMcq);
   try {
     getExamData = await BothStudentExamVsQuestions.findOne(
