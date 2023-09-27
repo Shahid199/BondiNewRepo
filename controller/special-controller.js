@@ -712,27 +712,54 @@ const viewSollutionMcq = async (req, res, next) => {
   //console.log(studentIdObj, examIdObj);
   let data = null;
   try {
-    data = await BothStudentExamVsQuestions.find({
+    data = await SpecialVsStudent.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-    }).populate("mcqQuestionId");
+    })
+      .populate({
+        path: "questionMcq",
+        populate: { path: "mcqId" },
+        populate: { path: "subjectId" },
+      })
+      .populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
-  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+  let subjectData = [];
+  for (let i = 0; i < 4; i++) {
     let data1 = {};
-    data1["id"] = data[0].mcqQuestionId[i]._id;
-    data1["question"] = data[0].mcqQuestionId[i].question;
-    data1["options"] = data[0].mcqQuestionId[i].options;
-    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
-    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
-    data1["type"] = data[0].mcqQuestionId[i].type;
-    data1["answeredOption"] = data[0].answeredOption[i];
-    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
-    resultData.push(data1);
+    for (let j = 0; j < data.questionMcq[i].mcqId.length; j++) {
+      data1["question"] = data.questionMcq[i].mcqId[j].question;
+      data1["options"] = data.questionMcq[i].mcqId[j].options;
+      data1["correctOptions"] = Number(
+        data.questionMcq[i].mcqId[j].correctOption
+      );
+      data1["explanationILink"] = data.questionMcq[i].mcqId[j].explanationILink;
+      data1["type"] = data.questionMcq[i].mcqId[j].type;
+      data1["answeredOption"] = data.questionMcq[i].mcqAnswer[j];
+      data1["optionCount"] = data.questionMcq[i].mcqId[j].optionCount;
+      subjectData.push(data1);
+    }
+    subjectData.push({ subjectName: data.questionMcq[i].subjectId.name });
+    subjectData.push({ mcqMarksPerSub: data.questionMcq[i].mcqMarksPerSub });
+    subjectData.push({
+      totalCorrectAnswer: data.questionMcq[i].totalCorrectAnswer,
+    });
+    subjectData.push({
+      totalCorrectMarks: data.questionMcq[i].totalCorrectMarks,
+    });
+    subjectData.push({
+      totalWrongAnswer: data.questionMcq[i].totalWrongAnswer,
+    });
+    subjectData.push({ totalWrongMarks: data.questionMcq[i].totalWrongMarks });
+    subjectData.push({
+      totalNotAnswered: data.questionMcq[i].totalNotAnswered,
+    });
+    resultData.push(subjectData);
   }
+
   return res.status(200).json(resultData);
 };
 const viewSollutionWritten = async (req, res, next) => {
@@ -745,36 +772,57 @@ const viewSollutionWritten = async (req, res, next) => {
   //console.log(studentIdObj, examIdObj);
   let data = null;
   try {
-    data = await BothStudentExamVsQuestions.findOne({
+    data = await SpecialVsStudent.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-      //studentId: studentIdObj,
+    }).populate({
+      path: "questionWritten",
+      populate: { path: "subjectId" },
     });
   } catch (err) {
-    return res.status(500).json("1.Something went wrong.");
+    return res.status(500).json("2.Something went wrong.");
   }
   console.log(data);
   if (data == null)
     return res.status(404).json("No exam found under this student.");
-  let dataWritten = null;
-  try {
-    dataWritten = await QuestionsWritten.findOne({
-      examId: examIdObj,
-    }).populate("examId");
-  } catch (err) {
-    return res.status(500).json("1.Something went wrong.");
+  let subjects = [];
+  for (i = 0; i < 4; i++) {
+    let sObj = {};
+    sObj["id"] = data.questionWritten[i].subjectId._id;
+    sObj["name"] = data.questionWritten[i].subjectId.name;
+    sObj["iLink"] = null;
+    sObj["answerScript"] = null;
+    sObj["marksPerSub"] = null;
+    sObj["marksPerQuestion"] = null;
+    subjects[i] = sObj;
   }
-
-  console.log(dataWritten);
-  let data1 = {};
-  data1["question"] = dataWritten.questionILink;
-  data1["sollutionScript"] = data.ansewerScriptILink;
-  data1["obtainedMarks"] = data.obtainedMarks;
-  data1["totalObtainedMarks"] = data.totalObtainedMarks;
-  data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
-  data1["totalQuestion"] = dataWritten.totalQuestions;
-  data1["totalMarks"] = dataWritten.totalMarks;
-
-  return res.status(200).json(data1);
+  let writtenQuestion = null;
+  try {
+    writtenQuestion = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  let dataNew = [];
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 6; j++) {
+      if (
+        String(subjects[i].id) ==
+        String(writtenQuestion.questionWritten[j].subjectId)
+      ) {
+        subjects[i].iLink = writtenQuestion.questionWritten[j].writtenILink;
+        subjects[i].answerScript =
+          writtenQuestion.questionWritten[j].answerScriptILink;
+        subjects[i].marksPerSub =
+          writtenQuestion.questionWritten[j].totalObtainedMarksWritten;
+        subjects[i].marksPerQuestion =
+          writtenQuestion.questionWritten[j].obtainedMarks;
+        subjects[i].push({
+          totalMarksWritten: writtenQuestion.totalMarksWritten,
+        });
+      }
+    }
+    dataNew[i] = subjects;
+  }
+  return res.status(200).json(dataNew);
 };
 const historyData = async (req, res, next) => {
   const studentId = req.user.studentId;
@@ -801,7 +849,15 @@ const historyData = async (req, res, next) => {
   try {
     data = await SpecialVsStudent.find({
       $and: [{ studentId: studentIdObj }],
-    }).populate({ path: "examId" });
+    })
+      .populate({
+        path: "examId",
+        populate: { path: "courseId", select: "name -_id" },
+      })
+      .populate({
+        path: "questionMcq",
+        populate: { path: "subjectId", select: "name -_id" },
+      });
     // .skip(paginateData.skippedIndex)
     // .limit(paginateData.perPage);
   } catch (err) {
@@ -820,42 +876,34 @@ const historyData = async (req, res, next) => {
     try {
       resultRank = await SpecialRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
-      }).select("rank -_id");
+      });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
     if (resultRank == null) resultRank = "-1";
     else resultRank = resultRank.rank;
-    let subjectIdObj = String(data[i].examId.subjectId);
-    let subjectName = null;
-    try {
-      subjectName = await Subject.findById(subjectIdObj).select("name");
-    } catch (err) {
-      return res.status(500).json("3.Something went wrong.");
-    }
-    subjectName = subjectName.name;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
-    data1["variation"] = examType[Number(data[i].examId.examType)];
-    //data1["type"] = examVariation[Number(data[i].examId.examVariation)];
-    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
-    data1["totalMarksMcq"] = data[i].totalObtainedMarksMcq;
-    data1["totalMarksWritten"] = data[i].totalObtainedMarksWritten;
-    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
+    data1["variation"] = "Special Exam";
+    data1["totalObtainedMarks"] = resultRank.totalObtainedMarks;
+    data1["totalMarksMcq"] = data[i].totalMarksMcq;
+    data1["totalMarksWritten"] = data[i].totalMarksWritten;
     data1["meritPosition"] = resultRank;
-    data1["examStartTimeMcq"] = moment(data[i].examStartTimeMcq).format("LLL");
-    data1["examEndTimeMcq"] = moment(data[i].examEndTimeMcq).format("LLL");
-    data1["examStartTimeWritten"] = moment(data[i].examStartTimeWritten).format(
+    data1["examStartTimeMcq"] = moment(data[i].startTimeMcq).format("LLL");
+    data1["examEndTimeMcq"] = moment(data[i].endTimeMcq).format("LLL");
+    data1["examStartTimeWritten"] = moment(data[i].startTimeWritten).format(
       "LLL"
     );
-    data1["examEndTimeWritten"] = moment(data[i].examEndTimeWritten).format(
-      "LLL"
-    );
+    data1["examEndTimeWritten"] = moment(data[i].endTimeWritten).format("LLL");
     data1["mcqDuration"] = data[i].mcqDuration;
     data1["writtenDuration"] = data[i].writtenDuration;
     data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
-    data1["subjectName"] = subjectName;
-    resultData.push(data1);
+    data1["courseName"] = data[i].examId.courseId.name;
+    let subObj = [];
+    for (let j = 0; j < 4; j++) {
+      subObj.push(data[i].questionMcq[j].subjectId.name);
+    }
+    data1["subjects"] = subObj;
   }
   return res.status(200).json({ resultData, paginateData });
 };
