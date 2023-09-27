@@ -783,34 +783,31 @@ const historyData = async (req, res, next) => {
 
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let data;
-  let count = 0;
-  try {
-    count = await SpecialVsStudent.find({
-      $and: [{ studentId: studentIdObj }],
-    })
-      .populate({ path: "examId", match: { publishStatus: true } })
-      .count();
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  //return res.status(200).json(count);
-  //console.log(count);
-  if (count == 0) return res.status(404).json("1.No data found.");
-  let paginateData = pagination(count, page);
+  // //let count = 0;
+  // // try {
+  // //   count = await SpecialVsStudent.find({
+  // //     $and: [{ studentId: studentIdObj }],
+  // //   })
+  // //     .populate({ path: "examId", match: { publishStatus: true } })
+  // //     .count();
+  // // } catch (err) {
+  // //   return res.status(500).json("Something went wrong.");
+  // // }
+  // //return res.status(200).json(count);
+  // //console.log(count);
+  // if (count == 0) return res.status(404).json("1.No data found.");
+  // let paginateData = pagination(count, page);
   try {
     data = await SpecialVsStudent.find({
-      $and: [{ studentId: studentIdObj }, { examId: { $ne: null } }],
-    })
-      .populate({ path: "examId", match: { publishStatus: true } })
-      .skip(paginateData.skippedIndex)
-      .limit(paginateData.perPage);
+      $and: [{ studentId: studentIdObj }],
+    }).populate({ path: "examId" });
+    // .skip(paginateData.skippedIndex)
+    // .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
-  return res.status(200).json(data);
+  //return res.status(200).json(data);
   console.log(data);
-  if (data == null)
-    return res.status(404).json("No exam data found for the student.");
   let resultData = [];
   let flag = false;
   //console.log(data.length);
@@ -820,7 +817,7 @@ const historyData = async (req, res, next) => {
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     let resultRank = null;
     try {
-      resultRank = await BothRank.findOne({
+      resultRank = await SpecialRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
       }).select("rank -_id");
     } catch (err) {
