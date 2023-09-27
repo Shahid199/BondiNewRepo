@@ -807,6 +807,7 @@ const historyData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
+  return res.status(200).json(data);
   console.log(data);
   if (data == null)
     return res.status(404).json("No exam data found for the student.");
