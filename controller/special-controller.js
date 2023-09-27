@@ -6,6 +6,7 @@ const moment = require("moment");
 const QuestionsMcq = require("../model/QuestionsMcq");
 const SpecialExamRule = require("../model/SpecialExamRule");
 const SpecialVsStudent = require("../model/SpecialVsStudent");
+const SpecialRank = require("../model/SpecialRank");
 const updateSpecialExam = async (req, res, next) => {
   const {
     examId,
