@@ -699,7 +699,167 @@ const getWrittenQuestionByExamSub = async (req, res, next) => {
   console.log(questionData);
   return res.status(200).json(questionData);
 };
+//others
+const viewSollutionMcq = async (req, res, next) => {
+  //console.log(req.query);
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["id"] = data[0].mcqQuestionId[i]._id;
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
+    resultData.push(data1);
+  }
+  return res.status(200).json(resultData);
+};
+const viewSollutionWritten = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      //studentId: studentIdObj,
+    });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  console.log(data);
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let dataWritten = null;
+  try {
+    dataWritten = await QuestionsWritten.findOne({
+      examId: examIdObj,
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
 
+  console.log(dataWritten);
+  let data1 = {};
+  data1["question"] = dataWritten.questionILink;
+  data1["sollutionScript"] = data.ansewerScriptILink;
+  data1["obtainedMarks"] = data.obtainedMarks;
+  data1["totalObtainedMarks"] = data.totalObtainedMarks;
+  data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
+  data1["totalQuestion"] = dataWritten.totalQuestions;
+  data1["totalMarks"] = dataWritten.totalMarks;
+
+  return res.status(200).json(data1);
+};
+const historyData = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  if (!ObjectId.isValid(studentId))
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let data;
+  let count = 0;
+  try {
+    count = await SpecialVsStudent.find({
+      $and: [{ studentId: studentIdObj }],
+    })
+      .populate({ path: "examId", match: { publishStatus: true } })
+      .count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //return res.status(200).json(count);
+  //console.log(count);
+  if (count == 0) return res.status(404).json("1.No data found.");
+  let paginateData = pagination(count, page);
+  try {
+    data = await SpecialVsStudent.find({
+      $and: [{ studentId: studentIdObj }],
+    })
+      .populate({ path: "examId", match: { publishStatus: true } })
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    return res.status(500).json("1.SOmething went wrong.");
+  }
+  console.log(data);
+  if (data == null)
+    return res.status(404).json("No exam data found for the student.");
+  let resultData = [];
+  let flag = false;
+  //console.log(data.length);
+  for (let i = 0; i < data.length; i++) {
+    let data1 = {};
+    let rank = null;
+    let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+    let resultRank = null;
+    try {
+      resultRank = await BothRank.findOne({
+        $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+      }).select("rank -_id");
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (resultRank == null) resultRank = "-1";
+    else resultRank = resultRank.rank;
+    let subjectIdObj = String(data[i].examId.subjectId);
+    let subjectName = null;
+    try {
+      subjectName = await Subject.findById(subjectIdObj).select("name");
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    subjectName = subjectName.name;
+    data1["examId"] = data[i].examId._id;
+    data1["title"] = data[i].examId.name;
+    data1["variation"] = examType[Number(data[i].examId.examType)];
+    //data1["type"] = examVariation[Number(data[i].examId.examVariation)];
+    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
+    data1["totalMarksMcq"] = data[i].totalObtainedMarksMcq;
+    data1["totalMarksWritten"] = data[i].totalObtainedMarksWritten;
+    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
+    data1["meritPosition"] = resultRank;
+    data1["examStartTimeMcq"] = moment(data[i].examStartTimeMcq).format("LLL");
+    data1["examEndTimeMcq"] = moment(data[i].examEndTimeMcq).format("LLL");
+    data1["examStartTimeWritten"] = moment(data[i].examStartTimeWritten).format(
+      "LLL"
+    );
+    data1["examEndTimeWritten"] = moment(data[i].examEndTimeWritten).format(
+      "LLL"
+    );
+    data1["mcqDuration"] = data[i].mcqDuration;
+    data1["writtenDuration"] = data[i].writtenDuration;
+    data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
+    data1["subjectName"] = subjectName;
+    resultData.push(data1);
+  }
+  return res.status(200).json({ resultData, paginateData });
+};
 //exam system
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.examId;
@@ -1390,6 +1550,9 @@ const submitWritten = async (req, res, next) => {
   return res.status(201).json("Submitted Sccessfully.");
 };
 
+exports.historyData = historyData;
+exports.viewSollutionWritten = viewSollutionWritten;
+exports.viewSollutionMcq = viewSollutionMcq;
 exports.submitAnswerMcq = submitAnswerMcq;
 exports.submitWritten = submitWritten;
 exports.submitStudentScript = submitStudentScript;

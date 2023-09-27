@@ -28,6 +28,9 @@ const {
   submitWritten,
   examCheckMiddleware,
   submitAnswerMcq,
+  viewSollutionMcq,
+  viewSollutionWritten,
+  historyData,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -233,5 +236,31 @@ router.post(
     authorize(["superadmin", "moderator", "student"]),
   ],
   submitWritten
+);
+
+//other
+router.get(
+  "viewsollutionwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  viewSollutionWritten
+);
+router.get(
+  "/viewsollutionmcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  viewSollutionMcq
+);
+router.get(
+  "/historydata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  historyData
 );
 module.exports = router;
