@@ -1330,7 +1330,7 @@ const getRunningDataMcq = async (req, res, next) => {
       .populate("examId")
       .populate({
         path: "questionMcq",
-        populate: { path: "subjectId", select: "name -_id" },
+        populate: { path: "subjectId", select: "name" },
       });
   } catch (err) {
     return res.status(500).json("can't get question.Problem Occur.");
@@ -1344,15 +1344,16 @@ const getRunningDataMcq = async (req, res, next) => {
     let dataQ = {};
     dataQ["questions"] = getQuestionMcq[i].mcqId;
     dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
-    dataQ["subjectId"] = getQuestionMcq[i].subjectId;
+    dataQ["subjectId"] = getQuestionMcq[i].subjectId._id;
     dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
     data[i] = dataQ;
   }
-  let examDet = [];
-  examDet.push({ studExamStartTime: examData.startTimeMcq });
-  examDet.push({ studExamEndTime: examData.endTimeMcq });
-  examDet.push({ duration: examData.mcqDuration });
-  examDet.push({ dueDuration: moment(new Date()) - examData.endTimeMcq });
+  let examDet = {};
+  examDet["studExamStartTime"] = examData.startTimeMcq;
+  examDet["studExamEndTime"] = examData.endTimeMcq;
+  examDet["duration"] = examData.mcqDuration;
+  examDet["dueDuration"] =
+    (moment(new Date()) - moment(examData.endTimeMcq)) / 60000;
 
   return res.status(200).json({ data, examDet });
 };
