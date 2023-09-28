@@ -256,16 +256,14 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   }
   let dataWritten = null;
   try {
-    dataWritten = await SpecialExam.findOne({
-      $and: [{ examId: examId }],
-    });
+    dataWritten = await SpecialExam.findById(examId);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
   let writtenObj = {};
-  // writtenObj["totalWrittenMarks"] = dataWritten.totalMarksWritten;
-  // writtenObj["writtenDuration"] = dataWritten.writtenDuration;
-  // writtenObj["marksPerSub"] = dataWritten.totalMarksWritten / 4;
+  writtenObj["totalWrittenMarks"] = dataWritten.totalMarksWritten;
+  writtenObj["writtenDuration"] = dataWritten.writtenDuration;
+  writtenObj["marksPerSub"] = dataWritten.totalMarksWritten / 4;
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json({ data, dataWritten });
 };
