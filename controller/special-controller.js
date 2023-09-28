@@ -1321,14 +1321,17 @@ const getRunningDataMcq = async (req, res, next) => {
     })
       .populate({
         path: "questionMcq",
-        populate: { path: "subjectId", select: "name" },
         populate: {
           path: "mcqId",
           match: { status: true },
           select: "question type options optionCount status _id",
         },
       })
-      .populate("examId");
+      .populate("examId")
+      .populate({
+        path: "questionMcq",
+        populate: { path: "subjectId", select: "name -_id" },
+      });
   } catch (err) {
     return res.status(500).json("can't get question.Problem Occur.");
   }
