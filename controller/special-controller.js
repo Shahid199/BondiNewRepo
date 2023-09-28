@@ -1432,16 +1432,16 @@ const submitAnswerMcq = async (req, res, next) => {
           match: { status: true },
           select: "question type options optionCount status _id",
         },
-        populate: {
-          path: "subjectId",
-          match: { status: true },
-          select: "name",
-        },
       })
-      .populate("examId");
+      .populate("examId")
+      .populate({
+        path: "questionMcq",
+        populate: { path: "subjectId", select: "name" },
+      });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("studentCheck:", studentCheck);
   //exam status Check:end
   let findId = studentCheck._id;
   let timeStudent = [];
