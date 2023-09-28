@@ -1441,7 +1441,7 @@ const submitAnswerMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log("studentCheck:", studentCheck.questionMcq[0].mcqId.length);
+  //console.log("studentCheck:", studentCheck.questionMcq[i].mcqId.length);
   //exam status Check:end
   let findId = studentCheck._id;
   let timeStudent = [];
@@ -1456,7 +1456,9 @@ const submitAnswerMcq = async (req, res, next) => {
       totalWrongMarks = 0,
       totalNotAnswered = 0;
     let subjectId = studentCheck.questionMcq[i].subjectId;
-    for (let j = 0; j < studentCheck.questionMcq[i].mcqId.length; i++) {
+    let lengthMcq = studentCheck.questionMcq[i].mcqId.length;
+    console.log("lengthMcq:", lengthMcq);
+    for (let j = 0; j < lengthMcq; i++) {
       let questions = studentCheck.questionMcq[i].mcqId[j];
       if (studentCheck.questionMcq[i].mcqAnswer[j] == -1) {
         totalNotAnswered++;
