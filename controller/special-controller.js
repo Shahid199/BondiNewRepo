@@ -275,6 +275,12 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   );
   mcqObj["totalQuestion"] = dataWritten.totalQuestionsMcq;
   mcqObj["marksPerMcq"] = dataWritten.marksPerMcq;
+  let subjectsId = [
+    data.questionMcq[0].subjectId._id,
+    data.questionMcq[1].subjectId._id,
+    data.questionMcq[2].subjectId._id,
+    data.questionMcq[3].subjectId._id,
+  ];
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json({ data, writtenObj, mcqObj });
 };
