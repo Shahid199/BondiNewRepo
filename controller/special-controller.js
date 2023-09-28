@@ -225,7 +225,6 @@ const createSpecialExam = async (req, res, next) => {
   console.log(updStatus);
   return res.status(201).json("Created special exam successfully.");
 };
-
 const showSpecialExamById = async (req, res, next) => {
   let examId = req.query.examId;
   if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
@@ -234,7 +233,7 @@ const showSpecialExamById = async (req, res, next) => {
   try {
     data = await SpecialExam.findOne({
       $and: [{ _id: examId }, { status: true }],
-    });
+    }).populate({ path: "questionMcq", populate: { path: "subjectId" } });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
@@ -306,7 +305,6 @@ const showSpecialExamByCourse = async (req, res, next) => {
   data = dataObj;
   return res.status(200).json(data);
 };
-
 const showSpecialExamAll = async (req, res, next) => {
   let data = null;
   let page = Number(req.query.page) || 1;
@@ -420,7 +418,6 @@ const examRuleGetAll = async (req, res, next) => {
   if (data) return res.status(200).json(data);
   else return res.status(404).json("No data found.");
 };
-
 //mcq question
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
@@ -907,7 +904,6 @@ const historyData = async (req, res, next) => {
   }
   return res.status(200).json({ resultData, paginateData });
 };
-//exam system
 const examCheckMiddleware = async (req, res, next) => {
   const examId = req.query.examId;
   const studentId = req.user.studentId;
@@ -1023,6 +1019,137 @@ const getCombination = async (req, res, next) => {
   data.push([fixedIds[0], fixedIds[1], selectedId, otherId[1]]);
   return res.status(200).json(data);
 };
+const bothUpdateStudentExamInfo = async (req, res, next) => {
+  const examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let getEndTime = null;
+  try {
+    getEndTime = await SpecialExam.findById(examId).select("endTime -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let examUncheckStudent = null;
+  try {
+    examUncheckStudent = await SpecialVsStudent.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let studentIds = [];
+  try {
+    studentIds = await SpecialExam.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "studentId -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (examUncheckStudent.length > 0) {
+    //return res.status(200).json("All student submit the exam.");
+    let updateStatus = null;
+    try {
+      updateStatus = await SpecialVsStudent.updateMany(
+        {
+          _id: { $in: examUncheckStudent },
+        },
+        { $set: { runningStatus: false, finishStatus: true } }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    for (let i = 0; i < studentIds.length; i++) {
+      let examData = null;
+      try {
+        examData = await SpecialVsStudent.findOne({
+          $and: [{ studentId: studentIds[i] }, { examId: examIdObj }],
+        })
+          .populate({
+            path: "questionMcq",
+            populate: { path: "mcqId" },
+            populate: { path: "subjectId" },
+          })
+          .populate("examId");
+      } catch (err) {
+        return res.status(500).json("Problem when get exam data.");
+      }
+
+      let id = String(examData._id);
+      let correctMarks = examData.examId.marksPerMcq;
+      let negativeMarks = examData.examId.negativeMarks;
+      let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+      let examDataMcq = examData.mcqQuestionId;
+      let answered = examData.answeredOption;
+      let notAnswered = 0;
+      let totalCorrectAnswer = 0;
+      let totalWrongAnswer = 0;
+      let totalObtainedMarks = 0;
+      let totalCorrectMarks = 0;
+      let totalWrongMarks = 0;
+      for (let i = 0; i < examDataMcq.length; i++) {
+        if (answered[i] == "-1") {
+          notAnswered = notAnswered + 1;
+        } else if (answered[i] == examDataMcq[i].correctOption) {
+          totalCorrectAnswer = totalCorrectAnswer + 1;
+        } else totalWrongAnswer = totalWrongAnswer + 1;
+      }
+      totalCorrectMarks = totalCorrectAnswer * correctMarks;
+      totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+      totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+      const update1 = {
+        totalCorrectAnswer: totalCorrectAnswer,
+        totalWrongAnswer: totalWrongAnswer,
+        totalNotAnswered: notAnswered,
+        totalCorrectMarks: totalCorrectMarks,
+        totalWrongMarks: totalWrongMarks,
+        totalObtainedMarksMcq: totalObtainedMarks,
+        uploadStatus: true,
+      };
+      let result = null,
+        upd = null;
+      try {
+        result = await BothStudentExamVsQuestions.findByIdAndUpdate(
+          id,
+          update1
+        );
+      } catch (err) {
+        console.log(err);
+        return res
+          .status(500)
+          .json("Problem when update total obtained marks.");
+      }
+    }
+  }
+  //written
+  let writtenUpd = null;
+  try {
+    writtenUpd = await BothStudentExamVsQuestions.updateMany(
+      {
+        $and: [{ examId: examIdObj }, { uploadStatus: false }],
+      },
+      { $set: { uploadStatus: true } }
+    );
+  } catch (err) {
+    return res.status(500).json("55.Something went wrong.");
+  }
+  return res.status(201).json("Updated successfully.");
+};
+//exam system
 const assignQuestionMcq = async (req, res, next) => {
   const eId = req.query.examId;
   const subject1 = req.query.subjectId1;
@@ -1359,7 +1486,6 @@ const submitAnswerMcq = async (req, res, next) => {
 
   // return res.status(200).json(data1);
 };
-
 //written
 const assignQuestionWritten = async (req, res, next) => {
   let examId = req.query.examId;
