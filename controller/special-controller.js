@@ -1486,10 +1486,10 @@ const submitAnswerMcq = async (req, res, next) => {
       totalCorrectMarks - totalWrongMarks;
     totalMarksMcq = totalMarksMcq + studentCheck.questionMcq[i].mcqMarksPerSub;
   }
-  console.log("studentCheck:", studentCheck);
+  console.log("studentCheck:", studentCheck.questionMcq);
   let dataUpd = {
     totalMarksMcq: totalMarksMcq,
-    questionMcq: studentCheck,
+    questionMcq: studentCheck.questionMcq,
     finishStatus: true,
     runningStatus: false,
     endTimeMcq: submitTime,
