@@ -1444,6 +1444,7 @@ const submitAnswerMcq = async (req, res, next) => {
   }
   //exam status Check:end
   let findId = studentCheck._id;
+  let timeStudent = [];
   timeStudent[0] = studentCheck.startTimeMcq;
   timeStudent[1] = studentCheck.endTimeMcq;
   let submitTime = moment(new Date());
