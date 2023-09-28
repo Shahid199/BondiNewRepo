@@ -282,7 +282,7 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
     data.questionMcq[3].subjectId._id,
   ];
   if (data == null) return res.status(404).json("No data found.");
-  return res.status(200).json({ data, writtenObj, mcqObj });
+  return res.status(200).json({ data, writtenObj, mcqObj, subjectsId });
 };
 const showSpecialExamByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
