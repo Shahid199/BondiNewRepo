@@ -1458,7 +1458,7 @@ const submitAnswerMcq = async (req, res, next) => {
     let subjectId = studentCheck.questionMcq[i].subjectId;
     let lengthMcq = studentCheck.questionMcq[i].mcqId.length;
     console.log("lengthMcq:", lengthMcq);
-    for (let j = 0; j < lengthMcq; i++) {
+    for (let j = 0; j < lengthMcq; j++) {
       let questions = studentCheck.questionMcq[i].mcqId[j];
       if (studentCheck.questionMcq[i].mcqAnswer[j] == -1) {
         totalNotAnswered++;
