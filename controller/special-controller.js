@@ -1441,7 +1441,7 @@ const submitAnswerMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log("studentCheck:", studentCheck);
+  console.log("studentCheck:", studentCheck.questionMcq);
   //exam status Check:end
   let findId = studentCheck._id;
   let timeStudent = [];
