@@ -1321,7 +1321,6 @@ const getRunningDataMcq = async (req, res, next) => {
     })
       .populate({
         path: "questionMcq",
-        populate: { path: "subjectId" },
         populate: {
           path: "mcqId",
           match: { status: true },
