@@ -242,12 +242,13 @@ const showSpecialExamById = async (req, res, next) => {
 };
 const showSpecialExamByIdStudent = async (req, res, next) => {
   let examId = req.query.examId;
+  let studentId = req.user.studentId;
   if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null;
   try {
     data = await SpecialVsStudent.findOne({
-      $and: [{ examId: examId }],
+      $and: [{ examId: examId }, { studentId: studentId }],
     })
       .populate({ path: "questionMcq", populate: { path: "subjectId" } })
       .populate({ path: "questionWritten", populate: { path: "subjectId" } });
