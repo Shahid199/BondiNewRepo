@@ -1321,12 +1321,12 @@ const getRunningDataMcq = async (req, res, next) => {
     })
       .populate({
         path: "questionMcq",
+        populate: { path: "subjectId" },
         populate: {
           path: "mcqId",
           match: { status: true },
           select: "question type options optionCount status _id",
         },
-        populate: { path: "subjectId", select: "name _id" },
       })
       .populate("examId");
   } catch (err) {
@@ -1342,7 +1342,7 @@ const getRunningDataMcq = async (req, res, next) => {
     let dataQ = {};
     dataQ["questions"] = getQuestionMcq[i].mcqId;
     dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
-    dataQ["subjectId"] = getQuestionMcq[i].subjectId._id;
+    dataQ["subjectId"] = getQuestionMcq[i].subjectId;
     dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
   }
   let examDet = [];
