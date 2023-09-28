@@ -275,7 +275,7 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   );
   mcqObj["totalQuestion"] = dataWritten.totalQuestionsMcq;
   mcqObj["marksPerMcq"] = dataWritten.marksPerMcq;
-  console.log("data",data);
+  console.log("data", data);
   let subjectsId = [
     data.questionMcq[0].subjectId,
     data.questionMcq[1].subjectId,
@@ -1486,6 +1486,7 @@ const submitAnswerMcq = async (req, res, next) => {
       totalCorrectMarks - totalWrongMarks;
     totalMarksMcq = totalMarksMcq + studentCheck.questionMcq[i].mcqMarksPerSub;
   }
+  console.log("studentCheck:", studentCheck);
   let dataUpd = {
     totalMarksMcq: totalMarksMcq,
     questionMcq: studentCheck,
@@ -1494,6 +1495,7 @@ const submitAnswerMcq = async (req, res, next) => {
     endTimeMcq: submitTime,
     mcqDuration: (moment(timeStudent[0]) - moment(submitTime)) / 60000,
   };
+
   let sav = null;
   try {
     sav = await SpecialVsStudent.findByIdAndUpdate(findId, dataUpd);
