@@ -275,6 +275,7 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   );
   mcqObj["totalQuestion"] = dataWritten.totalQuestionsMcq;
   mcqObj["marksPerMcq"] = dataWritten.marksPerMcq;
+  console.log("data",data);
   let subjectsId = [
     data.questionMcq[0].subjectId,
     data.questionMcq[1].subjectId,
