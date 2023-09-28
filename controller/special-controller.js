@@ -1341,8 +1341,8 @@ const getRunningDataMcq = async (req, res, next) => {
     let dataQ = {};
     dataQ["questions"] = getQuestionMcq[i].mcqId;
     dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
-    dataQ["subjectId"] = getQuestionMcq[i].subjectId;
-    dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
+    //dataQ["subjectId"] = getQuestionMcq[i].subjectId;
+    //dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
   }
   let examDet = [];
   examDet.push({ studExamStartTime: examData.startTimeMcq });
