@@ -1331,9 +1331,8 @@ const getRunningDataMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("can't get question.Problem Occur.");
   }
+  console.log(getQuestionMcq);
   let examData = getQuestionMcq;
-  if (getQuestionMcq.finishStatus == true)
-    return res.status(409).json("Exam End.");
   //exam status Check:end
   getQuestionMcq = getQuestionMcq.questionMcq;
   let data = [];
