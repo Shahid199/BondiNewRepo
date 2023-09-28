@@ -1322,11 +1322,11 @@ const getRunningDataMcq = async (req, res, next) => {
       .populate({
         path: "questionMcq",
         populate: { path: "subjectId", select: "name" },
-        populate: {
-          path: "mcqId",
-          match: { status: true },
-          select: "question type options optionCount status _id",
-        },
+        // populate: {
+        //   path: "mcqId",
+        //   match: { status: true },
+        //   select: "question type options optionCount status _id",
+        // },
       })
       .populate("examId");
   } catch (err) {
