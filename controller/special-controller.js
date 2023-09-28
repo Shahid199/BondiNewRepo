@@ -240,6 +240,23 @@ const showSpecialExamById = async (req, res, next) => {
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json(data);
 };
+const showSpecialExamByIdStudent = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }],
+    })
+      .populate({ path: "questionMcq", populate: { path: "subjectId" } })
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data == null) return res.status(404).json("No data found.");
+  return res.status(200).json(data);
+};
 const showSpecialExamByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
