@@ -1621,6 +1621,7 @@ const assignQuestionWritten = async (req, res, next) => {
 };
 const ruunningWritten = async (req, res, next) => {
   let examId = req.query.examId;
+  let studentId = req.user.studentId;
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
   let updId = null;
