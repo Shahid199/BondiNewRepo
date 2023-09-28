@@ -1321,6 +1321,7 @@ const getRunningDataMcq = async (req, res, next) => {
     })
       .populate({
         path: "questionMcq",
+        populate: { path: "subjectId" },
         populate: {
           path: "mcqId",
           match: { status: true },
@@ -1340,8 +1341,9 @@ const getRunningDataMcq = async (req, res, next) => {
     let dataQ = {};
     dataQ["questions"] = getQuestionMcq[i].mcqId;
     dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
-    //dataQ["subjectId"] = getQuestionMcq[i].subjectId;
-    //dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
+    dataQ["subjectId"] = getQuestionMcq[i].subjectId;
+    dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
+    data[i] = dataQ;
   }
   let examDet = [];
   examDet.push({ studExamStartTime: examData.startTimeMcq });
