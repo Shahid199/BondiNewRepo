@@ -263,14 +263,15 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   let writtenObj = {};
   writtenObj["totalWrittenMarks"] = dataWritten.totalMarksWritten;
   writtenObj["writtenDuration"] = dataWritten.writtenDuration;
-  writtenObj["marksPerSub"] = dataWritten.totalMarksWritten / 4;
+  writtenObj["marksPerSub"] = Math.round(dataWritten.totalMarksWritten / 4);
   let mcqObj = {};
   mcqObj["totalMcqMarks"] = dataWritten.totalMarksMcq;
   mcqObj["mcqDuration"] = dataWritten.mcqDuration;
-  mcqObj["marksPerSub"] = dataWritten.totalMarksMcq / 4;
+  mcqObj["marksPerSub"] = Math.round(dataWritten.totalMarksMcq / 4);
   mcqObj["negativeMarks"] = dataWritten.negativeMarksMcq;
-  mcqObj["negativeValue"] =
-    (dataWritten.marksPerMcq * dataWritten.negativeMarksMcq) / 100;
+  mcqObj["negativeValue"] = Math.round(
+    (dataWritten.marksPerMcq * dataWritten.negativeMarksMcq) / 100
+  );
   mcqObj["totalQuestion"] = dataWritten.totalQuestionsMcq;
   mcqObj["marksPerMcq"] = dataWritten.marksPerMcq;
   if (data == null) return res.status(404).json("No data found.");
