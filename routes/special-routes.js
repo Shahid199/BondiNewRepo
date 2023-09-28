@@ -31,6 +31,7 @@ const {
   viewSollutionMcq,
   viewSollutionWritten,
   historyData,
+  showSpecialExamByIdStudent,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -80,6 +81,14 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   showSpecialExamById
+);
+router.get(
+  "/showspecialexambyidstudent",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  showSpecialExamByIdStudent
 );
 
 router.put(

@@ -1740,6 +1740,7 @@ const submitWritten = async (req, res, next) => {
   return res.status(201).json("Submitted Sccessfully.");
 };
 
+exports.showSpecialExamByIdStudent = showSpecialExamByIdStudent;
 exports.historyData = historyData;
 exports.viewSollutionWritten = viewSollutionWritten;
 exports.viewSollutionMcq = viewSollutionMcq;
