@@ -678,7 +678,7 @@ const addQuestionWritten = async (req, res, next) => {
   const subjectId = req.body.subjectId;
   const marksPerQuestion = req.body.marksPerQuestion; //array
   let marksAll = marksPerQuestion.split(",");
-  console.log(marksall);
+  console.log(marksAll);
   //let subjectId = req.body.subjectId;
   //let marksPerQuestion = req.body.marksPerQuestion;
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
