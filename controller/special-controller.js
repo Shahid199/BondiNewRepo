@@ -705,7 +705,7 @@ const addQuestionWritten = async (req, res, next) => {
   writtenData = writtenData.questionWritten;
   for (let i = 0; i < writtenData.length; i++) {
     if (String(subjectIdObj) == String(writtenData[i].subjectId)) {
-      writtenData[i].marksPerQuestion = marksPerQuestion;
+      writtenData[i].marksPerQuestion = marksAll;
       writtenData[i].writtenILink = questionILinkPath;
       break;
     }
