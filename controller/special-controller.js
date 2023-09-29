@@ -1659,8 +1659,10 @@ const ruunningWritten = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   let data1 = [];
+  let subjectsId = [];
   for (let i = 0; i < 4; i++) {
     let objWritten = {};
+    subjectsId[i] = examData.questionWritten[i].subjectId._id;
     objWritten["subjectId"] = examData.questionWritten[i].subjectId._id;
     objWritten["subjectName"] = examData.questionWritten[i].subjectId.name;
     objWritten["marksPerQuestion"] =
@@ -1680,7 +1682,7 @@ const ruunningWritten = async (req, res, next) => {
   data1.push({
     Duration: examData.writtenDuration,
   });
-  return res.status(200).json(data1);
+  return res.status(200).json({ data1, subjectsId });
 };
 const submitStudentScript = async (req, res, next) => {
   const files = req.files;
