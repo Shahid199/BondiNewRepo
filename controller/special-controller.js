@@ -7,6 +7,8 @@ const QuestionsMcq = require("../model/QuestionsMcq");
 const SpecialExamRule = require("../model/SpecialExamRule");
 const SpecialVsStudent = require("../model/SpecialVsStudent");
 const SpecialRank = require("../model/SpecialRank");
+const fs = require("fs");
+const fsp = fs.promises;
 const updateSpecialExam = async (req, res, next) => {
   const {
     examId,
@@ -970,7 +972,7 @@ const examCheckMiddleware = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   examEndTime = query.endTime;
-  if (moment(examEndTime) < currentDate)
+  if (moment(examEndTime) < moment(currentDate))
     return res.status(200).json("Exam ended");
   try {
     status = await SpecialVsStudent.findOne({
