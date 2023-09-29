@@ -1657,14 +1657,17 @@ const ruunningWritten = async (req, res, next) => {
     objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
     data1.push(objWritten);
   }
+  console.log(data1);
   data1.push({ studExamStartTime: examData.startTimeWritten });
   data1.push({ studExamEndTime: examData.endTimeWritten });
   data1.push({ examEndTime: examData.endTime });
   data1.push({
-    dueDuration: (moment(new Date()) - examData.endTimeWritten) / 60000,
+    dueDuration: (moment(new Date()) - moment(examData.endTimeWritten)) / 60000,
   });
   data1.push({
-    Duration: (examData.endTimeWritten - examData.startTimeWritten) / 60000,
+    Duration:
+      (moment(examData.endTimeWritten) - moment(examData.startTimeWritten)) /
+      60000,
   });
   return res.status(200).json(data1);
 };
