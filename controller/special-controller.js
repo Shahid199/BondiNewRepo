@@ -1488,8 +1488,8 @@ const submitAnswerMcq = async (req, res, next) => {
     studentCheck.questionMcq[i].totalWrongMarks =
       totalWrongAnswer * (studentCheck.examId.negativeMarksMcq / 100);
     studentCheck.questionMcq[i].mcqMarksPerSub =
-      studentCheck.questionMcq[i].totalCorrectMarks -
-      studentCheck.questionMcq[i].totalWrongMarks;
+      totalCorrectAnswer * studentCheck.examId.marksPerMcq -
+      totalWrongAnswer * (studentCheck.examId.negativeMarksMcq / 100);
     totalMarksMcq = totalMarksMcq + studentCheck.questionMcq[i].mcqMarksPerSub;
   }
   //console.log("studentCheck:", studentCheck.questionMcq);
