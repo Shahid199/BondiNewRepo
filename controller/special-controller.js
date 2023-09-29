@@ -1387,6 +1387,8 @@ const updateAssignQuestion = async (req, res, next) => {
   let subjectId = req.body.subjectId;
   let questionIndexNumber = Number(req.body.questionIndexNumber);
   let optionIndexNumber = Number(req.body.optionIndexNumber);
+  console.log(questionIndexNumber);
+  console.log(optionIndexNumber);
   studentId = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   subjectId = new mongoose.Types.ObjectId(subjectId);
@@ -1412,14 +1414,11 @@ const updateAssignQuestion = async (req, res, next) => {
   }
   data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
   let upd = { questionMcq: data };
-  console.log("upd:", upd);
-  console.log("data:", data);
   try {
     result = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
   } catch (err) {
     return res.status(500).json("cant save to db");
   }
-  console.log("result:", result);
   if (result) return res.status(201).json("Ok");
   else return res.status(201).json("Not updated.");
 };
@@ -1470,9 +1469,9 @@ const submitAnswerMcq = async (req, res, next) => {
       totalNotAnswered = 0;
     let subjectId = studentCheck.questionMcq[i].subjectId;
     let lengthMcq = studentCheck.questionMcq[i].mcqId.length;
-    console.log("lengthMcq:", lengthMcq);
     for (let j = 0; j < lengthMcq; j++) {
       let questions = studentCheck.questionMcq[i].mcqId[j];
+      console.log("questions:", questions);
       if (studentCheck.questionMcq[i].mcqAnswer[j] == -1) {
         totalNotAnswered++;
       } else if (
@@ -1492,7 +1491,7 @@ const submitAnswerMcq = async (req, res, next) => {
       totalCorrectMarks - totalWrongMarks;
     totalMarksMcq = totalMarksMcq + studentCheck.questionMcq[i].mcqMarksPerSub;
   }
-  console.log("studentCheck:", studentCheck.questionMcq);
+  //console.log("studentCheck:", studentCheck.questionMcq);
   let dataUpd = {
     totalMarksMcq: totalMarksMcq,
     questionMcq: studentCheck.questionMcq,
