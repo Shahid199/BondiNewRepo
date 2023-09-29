@@ -678,6 +678,9 @@ const addQuestionWritten = async (req, res, next) => {
   const subjectId = req.body.subjectId;
   const marksPerQuestion = req.body.marksPerQuestion; //array
   let marksAll = marksPerQuestion.split(",");
+  marksAll = marksAll.map((str) => {
+    return parseInt(str, 10);
+  });
   console.log(marksAll);
   //let subjectId = req.body.subjectId;
   //let marksPerQuestion = req.body.marksPerQuestion;
