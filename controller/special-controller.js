@@ -1649,6 +1649,15 @@ const ruunningWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
+  let timeData = null;
+  try {
+    timeData = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
+    console.log("examData:", timeData);
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
   let data1 = [];
   for (let i = 0; i < 4; i++) {
     let objWritten = {};
@@ -1662,16 +1671,14 @@ const ruunningWritten = async (req, res, next) => {
     data1.push(objWritten);
   }
   console.log(data1);
-  data1.push({ studExamStartTime: examData.startTimeWritten });
-  data1.push({ studExamEndTime: examData.endTimeWritten });
+  data1.push({ studExamStartTime: timeData.startTimeWritten });
+  data1.push({ studExamEndTime: timeData.endTimeWritten });
   data1.push({ examEndTime: examData.endTime });
   data1.push({
-    dueDuration: (moment(new Date()) - moment(examData.endTimeWritten)) / 60000,
+    dueDuration: (moment(timeData.endTimeWritten) - moment(new Date())) / 60000,
   });
   data1.push({
-    Duration:
-      (moment(examData.endTimeWritten) - moment(examData.startTimeWritten)) /
-      60000,
+    Duration: examData.writtenDuration,
   });
   return res.status(200).json(data1);
 };
