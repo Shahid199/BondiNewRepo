@@ -1593,7 +1593,8 @@ const assignQuestionWritten = async (req, res, next) => {
     questionWritten: questionWrittenArr,
     startTimeWritten: studExamStartTime,
     endTimeWritten: studExamEndTime,
-    writtenDuration: (studExamEndTime - studExamStartTime) / 60000,
+    writtenDuration:
+      (moment(studExamEndTime) - moment(studExamStartTime)) / 60000,
   };
   let sav = null;
   try {
@@ -1616,7 +1617,9 @@ const assignQuestionWritten = async (req, res, next) => {
   data1.push({ studExamStartTime: studExamStartTime });
   data1.push({ studExamEndTime: studExamEndTime });
   data1.push({ examEndTime: examData.endTime });
-  data1.push({ duration: (studExamEndTime - studExamStartTime) / 60000 });
+  data1.push({
+    duration: (moment(studExamEndTime) - moment(studExamStartTime)) / 60000,
+  });
   return res.status(200).json(data1);
 };
 const ruunningWritten = async (req, res, next) => {
