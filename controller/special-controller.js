@@ -1682,7 +1682,8 @@ const ruunningWritten = async (req, res, next) => {
   data1.push({
     Duration: examData.writtenDuration,
   });
-  return res.status(200).json({ data1, subjectsId });
+  data1.push({ subectsId: subjectsId });
+  return res.status(200).json(data1);
 };
 const submitStudentScript = async (req, res, next) => {
   const files = req.files;
