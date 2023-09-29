@@ -1442,7 +1442,7 @@ const submitAnswerMcq = async (req, res, next) => {
         populate: {
           path: "mcqId",
           match: { status: true },
-          select: "question type options optionCount status _id",
+          select: "question type options optionCount status correctOption _id",
         },
       })
       .populate("examId")
