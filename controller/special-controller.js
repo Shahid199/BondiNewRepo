@@ -25,9 +25,6 @@ const updateSpecialExam = async (req, res, next) => {
     totalDuration,
     totalMarksMcq,
     totalMarks,
-    status,
-    sscStatus,
-    hscStatus,
   } = req.body;
   console.log(req.body);
   if (!ObjectId.isValid(examId)) {
@@ -45,9 +42,7 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksMcq: totalMarksMcq,
     totalMarksWritten: totalMarksWritten,
     totalMarks: totalMarks,
-    sscStatus: JSON.parse(sscStatus),
-    hscStatus: JSON.parse(hscStatus),
-    status: JSON.parse(status),
+    status: true,
   }();
   let updStatus = null;
   try {
