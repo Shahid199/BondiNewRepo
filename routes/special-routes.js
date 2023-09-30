@@ -55,7 +55,7 @@ router.post(
   ],
   createSpecialExam
 );
-router.post(
+router.put(
   "/updatespecialexam",
   [passport.authenticate("jwt", { session: false }), authorize()],
   updateSpecialExam
