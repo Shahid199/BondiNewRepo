@@ -32,6 +32,7 @@ const {
   viewSollutionWritten,
   historyData,
   showSpecialExamByIdStudent,
+  assignStudentToTeacher,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -271,5 +272,14 @@ router.get(
     authorize(["student", "superadmin", "moderator"]),
   ],
   historyData
+);
+
+router.post(
+  "/assignstudenttoteacher",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  assignStudentToTeacher
 );
 module.exports = router;
