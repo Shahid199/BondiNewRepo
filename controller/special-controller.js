@@ -30,7 +30,7 @@ const updateSpecialExam = async (req, res, next) => {
   if (!ObjectId.isValid(examId)) {
     return res.status(404).json("exam Id is not valid.");
   }
-  let saveExam = new {
+  let saveExam = {
     name: name,
     startTime: moment(startTime),
     endTime: moment(endTime),
@@ -43,7 +43,7 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksWritten: totalMarksWritten,
     totalMarks: totalMarks,
     status: true,
-  }();
+  };
   let updStatus = null;
   try {
     updStatus = await SpecialExam.findByIdAndUpdate(examId, saveExam);
