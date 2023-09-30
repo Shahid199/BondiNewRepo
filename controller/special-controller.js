@@ -1946,6 +1946,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("STUDENTS:", students);
   try {
     studentCount = await SpecialVsStudent.findOne({
       examId: examIdObj,
