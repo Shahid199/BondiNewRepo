@@ -81,7 +81,10 @@ router.get(
 
 router.get(
   "/showspecialexambycourse",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
   showSpecialExamByCourse
 );
 
