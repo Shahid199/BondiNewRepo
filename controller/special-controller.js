@@ -1955,7 +1955,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   subjects = subjects.allSubject;
-  let perSubSt = [];
+  let perSubSt = [[]];
   for (let i = 0; i < 6; i++) {
     let sub = subjects[i];
     for (let j = 0; j < studentCount; j++) {
