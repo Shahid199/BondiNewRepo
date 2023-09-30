@@ -1942,13 +1942,13 @@ const assignStudentToTeacher = async (req, res, next) => {
   let students = null;
   let studentCount = 0;
   try {
-    students = await SpecialVsStudent.findOne({ examId: examIdObj });
+    students = await SpecialVsStudent.find({ examId: examIdObj });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
   console.log("STUDENTS:", students);
   try {
-    studentCount = await SpecialVsStudent.findOne({
+    studentCount = await SpecialVsStudent.find({
       examId: examIdObj,
     }).count();
   } catch (err) {
@@ -1959,6 +1959,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   for (let i = 0; i < 6; i++) {
     let sub = subjects[i];
     for (let j = 0; j < studentCount; j++) {
+      if (students[j].questionWritten == null) continue;
       for (let p = 0; p < 4; p++) {
         if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
           perSubSt[i].push(students[j].studentId);
