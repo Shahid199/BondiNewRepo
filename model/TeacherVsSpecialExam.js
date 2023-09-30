@@ -27,4 +27,7 @@ const teacherVsSpecialExamSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("TeacherVsExam", teacherVsSpecialExamSchema);
+module.exports = mongoose.model(
+  "TeacherVsSpecialExam",
+  teacherVsSpecialExamSchema
+);
