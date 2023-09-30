@@ -1946,7 +1946,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log("STUDENTS:", students);
+
   try {
     studentCount = await SpecialVsStudent.find({
       examId: examIdObj,
@@ -1961,6 +1961,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     for (let j = 0; j < studentCount; j++) {
       if (students[j].questionWritten == null) continue;
       for (let p = 0; p < 4; p++) {
+        console.log("STUDENTS:", students[j].questionWritten[p]);
         if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
           perSubSt[i].push(students[j].studentId);
           break;
