@@ -172,6 +172,11 @@ const specialVsStudentSchema = new Schema(
       required: true,
       default: false,
     },
+    publishStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     rank: {
       type: Number,
       required: false,

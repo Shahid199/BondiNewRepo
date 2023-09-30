@@ -33,6 +33,16 @@ const {
   historyData,
   showSpecialExamByIdStudent,
   assignStudentToTeacher,
+  updateStudentExamInfo,
+  getStudentData,
+  getRecheckStudentData,
+  getWrittenScriptSingle,
+  checkScriptSingle,
+  marksCalculation,
+  publishExam,
+  updateRank,
+  getRank,
+  getAllRank,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -281,5 +291,90 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   assignStudentToTeacher
+);
+
+router.post(
+  "/updatestudentexaminfo",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  updateStudentExamInfo
+);
+
+router.get(
+  "/getstudentdata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getStudentData
+);
+router.get(
+  "/getrecheckstudentdata",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getRecheckStudentData
+);
+router.get(
+  "/getwrittenscriptsingle",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getWrittenScriptSingle
+);
+
+router.post(
+  "/checkscriptsingle",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+    //upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  checkScriptSingle
+);
+router.post(
+  "/markscalculation",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  marksCalculation
+);
+router.post(
+  "/publishexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  publishExam
+);
+router.post(
+  "/updaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  updateRank
+);
+router.get(
+  "/getrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getRank
+);
+
+router.get(
+  "/getallrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getAllRank
 );
 module.exports = router;
