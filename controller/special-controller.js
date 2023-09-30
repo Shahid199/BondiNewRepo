@@ -2088,9 +2088,7 @@ const getStudentData = async (req, res, next) => {
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
-    dataObj["examVariation"] =
-      examVariation[checkStatus[i].examId.examVariation];
-    dataObj["examType"] = examType[checkStatus[i].examId.examType];
+    dataObj["examVariation"] = "specialExam";
     dataObj["studentName"] = checkStatus[i].studentId.name;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
