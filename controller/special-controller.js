@@ -14,6 +14,7 @@ const User = require("../model/User");
 const fsp = fs.promises;
 const updateSpecialExam = async (req, res, next) => {
   const {
+    examId,
     name,
     startTime,
     endTime,
