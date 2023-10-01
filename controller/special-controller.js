@@ -2053,7 +2053,7 @@ const getStudentData = async (req, res, next) => {
     }
   }
   console.log(indexValue);
-  console.log("dataex:", dataEx[indexValue]);
+  console.log("dataex:", dataEx.questionWritten[indexValue]);
   try {
     students = await TeacherVsSpecialExam.findOne({
       $and: [{ teacherId: teacherId }, { examId: examId }],
@@ -2097,9 +2097,11 @@ const getStudentData = async (req, res, next) => {
     dataObj["studentName"] = checkStatus[i].studentId.name;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
-    dataObj["totalQuestions"] = dataEx[indexValue].marksPerQuestion.length;
+    dataObj["totalQuestions"] =
+      dataEx.questionWritten[indexValue].marksPerQuestion.length;
     dataObj["totalMarks"] = dataEx.totalMarksWritten / 4;
-    dataObj["marksPerQuestion"] = dataEx[indexValue].marksPerQuestion;
+    dataObj["marksPerQuestion"] =
+      dataEx.questionWritten[indexValue].marksPerQuestion;
     data.push(dataObj);
   }
   let count = data.length;
