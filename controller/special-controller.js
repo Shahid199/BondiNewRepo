@@ -12,6 +12,7 @@ const TeacherVsExam = require("../model/TeacherVsExam");
 const TeacherVsSpecialExam = require("../model/TeacherVsSpecialExam");
 const User = require("../model/User");
 const fsp = fs.promises;
+const path = require("path");
 const updateSpecialExam = async (req, res, next) => {
   const {
     examId,
@@ -2385,7 +2386,16 @@ const checkScriptSingle = async (req, res, next) => {
 const marksCalculation = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
-  let subjectId = req.body.subjectId;
+  let teacherId = req.user.id;
+  teacherId = new mongoose.Types.ObjectId(teacherId);
+  let subjectId = null;
+  try {
+    subjectId = await User.findOne({ _id: teacherId }, "subjectId -_id");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  subjectId = subjectId.subjectId;
   console.log(req.body);
   if (
     !ObjectId.isValid(studentId) ||
