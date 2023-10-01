@@ -2077,12 +2077,9 @@ const getStudentData = async (req, res, next) => {
   console.log(studId);
   let checkStatus = null;
   try {
-    checkStatus = await SpecialVsStudent.find(
-      {
-        $and: [{ studentId: { $in: studId } }, { examId: examId }],
-      },
-      "studentId checkStatus -_id"
-    ).populate("studentId examId");
+    checkStatus = await SpecialVsStudent.find({
+      $and: [{ studentId: { $in: studId } }, { examId: examId }],
+    }).populate("studentId examId");
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
