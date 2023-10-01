@@ -2043,7 +2043,7 @@ const getStudentData = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("dataex:");
+  console.log("dataex:", dataEx);
   questionData = dataEx.questionWritten;
   let indexValue = null;
   for (let i = 0; i < 4; i++) {
