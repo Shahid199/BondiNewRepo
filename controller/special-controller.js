@@ -2909,7 +2909,7 @@ const checkScriptSingleAdmin = async (req, res, next) => {
 const marksCalculationAdmin = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
-  let subjectId = req.body.subectId;
+  let subjectId = req.body.subjectId;
   console.log(req.body);
   if (
     !ObjectId.isValid(studentId) ||
