@@ -2584,6 +2584,158 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   //console.log(data.checkStatus);
   return res.status(200).json(dataObj);
 };
+const getWrittenStudentSingleByExamAdmin = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.query.studentId;
+  let subjectId = req.query.subjectId;
+
+  if (
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(teacherId) ||
+    !ObjectId.isValid(subjectId)
+  )
+    return res
+      .status(404)
+      .json("exam ID or student ID or Teacher ID is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  let data = null,
+    data1 = [];
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [
+        { examId: examId },
+        { studentId: studentId },
+        { uploadStatus: true },
+      ],
+    }).populate("studentId examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log("data", data);
+  let indexValue1 = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(data.questionWritten[i].subjectId) == String(subjectId)) {
+      indexValue1 = i;
+      break;
+    }
+  }
+  let data2 = null;
+  try {
+    data2 = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let indexValue = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(data2.questionWritten[i].subjectId) == String(subjectId)) {
+      indexValue = i;
+      break;
+    }
+  }
+  let dataObj = {};
+  dataObj["examName"] = data.examId.name;
+  dataObj["examVariation"] = "specialExam";
+  dataObj["studentName"] = data.studentId.name;
+  dataObj["studentId"] = data.studentId._id;
+  dataObj["answerScript"] =
+    data.questionWritten[indexValue1].submittedScriptILink;
+  dataObj["totalQuestions"] =
+    data2.questionWritten[indexValue].marksPerQuestion.length;
+  dataObj["totalMarks"] = data2.totalMarksWritten / 4;
+  dataObj["marksPerQuestion"] =
+    data2.questionWritten[indexValue].marksPerQuestion;
+
+  //dataObj["checkStatus"] = data.checkStatus;
+  //console.log(data.checkStatus);
+  return res.status(200).json(dataObj);
+};
+const getStudentDataAdmin = async (req, res, next) => {
+  let page = req.query.page || 1;
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let students = [];
+  try {
+    students = await SpecialVsStudent.find({
+      $and: [{ examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log("students:", students);
+  if (students.length == 0) return res.status(404).json("No student assigned.");
+  let studId = [];
+  for (let i = 0; i < students.length; i++) {
+    studId[i] = students[i].studentId._id;
+  }
+  console.log(studId);
+  let checkStatus = null;
+  try {
+    checkStatus = await SpecialVsStudent.find(
+      {
+        $and: [
+          { studentId: { $in: studId } },
+          { examId: examId },
+          { checkStatus: false },
+        ],
+      },
+      "studentId checkStatus -_id"
+    )
+      .populate("studentId examId")
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  let data = [];
+  for (let i = 0; i < checkStatus.length; i++) {
+    let dataObj = {};
+    dataObj["examName"] = checkStatus[i].examId.name;
+    dataObj["examVariation"] = "specialExam";
+    dataObj["studentName"] = checkStatus[i].studentId.name;
+    dataObj["studentId"] = checkStatus[i].studentId._id;
+    dataObj["checkStatus"] = checkStatus[i].checkStatus;
+    dataObj["subject1"] = {
+      id: checkStatus[i].questionWritten[0].subjectId._id,
+      name: checkStatus[i].questionWritten[0].subjectId.name,
+    };
+    dataObj["subject2"] = {
+      id: checkStatus[i].questionWritten[1].subjectId._id,
+      name: checkStatus[i].questionWritten[1].subjectId.name,
+    };
+    dataObj["subject3"] = {
+      id: checkStatus[i].questionWritten[2].subjectId._id,
+      name: checkStatus[i].questionWritten[2].subjectId.name,
+    };
+    dataObj["subject4"] = {
+      id: checkStatus[i].questionWritten[3].subjectId._id,
+      name: checkStatus[i].questionWritten[3].subjectId.name,
+    };
+    data.push(dataObj);
+  }
+  let count = data.length;
+  let paginateData = pagination(count, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
+  let data1 = [];
+  if (count > 0) {
+    for (let i = start; i < end; i++) {
+      if (i == data.length) break;
+      data1.push(data[i]);
+    }
+  }
+  return res.status(200).json({ data1, paginateData });
+};
+exports.getStudentDataAdmin = getStudentDataAdmin;
+exports.getWrittenStudentSingleByExamAdmin = getWrittenStudentSingleByExamAdmin;
 exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
 exports.updateRank = updateRank;
 exports.getRank = getRank;

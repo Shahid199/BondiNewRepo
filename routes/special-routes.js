@@ -44,6 +44,8 @@ const {
   getRank,
   getAllRank,
   getWrittenStudentSingleByExam,
+  getStudentDataAdmin,
+  getWrittenStudentSingleByExamAdmin,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -315,6 +317,14 @@ router.get(
   getStudentData
 );
 router.get(
+  "/getstudentdataadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getStudentDataAdmin
+);
+router.get(
   "/getrecheckstudentdata",
   [
     passport.authenticate("jwt", { session: false }),
@@ -388,5 +398,13 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getWrittenStudentSingleByExam
+);
+router.get(
+  "/getwrittenstudentsinglebyexamadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getWrittenStudentSingleByExamAdmin
 );
 module.exports = router;
