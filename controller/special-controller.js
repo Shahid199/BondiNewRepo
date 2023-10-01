@@ -2375,7 +2375,7 @@ const checkScriptSingle = async (req, res, next) => {
   };
   let doc;
   try {
-    doc = await BothStudentExamVsQuestions.findByIdAndUpdate(insertId, upd);
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
   } catch (err) {
     //console.log(err);
     return res.status(500).json("Something went wrong!");
