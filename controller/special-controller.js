@@ -1812,6 +1812,7 @@ const submitStudentScript = async (req, res, next) => {
       .status(404)
       .json("Student Id or Exam Id or question Id is not valid.");
   }
+  questionNo = questionNo - 1;
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   subjectId = new mongoose.Types.ObjectId(subjectId);
