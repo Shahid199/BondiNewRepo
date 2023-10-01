@@ -13,6 +13,7 @@ const TeacherVsSpecialExam = require("../model/TeacherVsSpecialExam");
 const User = require("../model/User");
 const fsp = fs.promises;
 const path = require("path");
+const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const updateSpecialExam = async (req, res, next) => {
   const {
     examId,
