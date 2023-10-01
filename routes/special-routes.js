@@ -48,6 +48,8 @@ const {
   getWrittenStudentSingleByExamAdmin,
   statusUpdate,
   getRecheckStudentDataAdmin,
+  checkScriptSingleAdmin,
+  marksCalculationAdmin,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -369,6 +371,16 @@ router.post(
   ],
   checkScriptSingle
 );
+
+router.post(
+  "/checkscriptsingleadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+    //upload.fields([{ name: "questionILink", maxCount: 5 }]),
+  ],
+  checkScriptSingleAdmin
+);
 router.post(
   "/markscalculation",
   [
@@ -376,6 +388,14 @@ router.post(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   marksCalculation
+);
+router.post(
+  "/markscalculationadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  marksCalculationAdmin
 );
 router.post(
   "/publishexam",

@@ -2811,6 +2811,162 @@ const getRecheckStudentDataAdmin = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+const checkScriptSingleAdmin = async (req, res, next) => {
+  let questionNo = Number(req.body.questionNo);
+  let obtainedMarks = Number(req.body.obtainedMarks);
+  let studentId = req.body.studentId;
+  let examId = req.body.examId;
+  let images = req.body.uploadImages;
+  let subjectId = req.body.subjectId;
+  console.log(req.body.obtainedMarks);
+  console.log(obtainedMarks);
+  console.log(req.body.uploadImages);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    questionNo < 0 ||
+    obtainedMarks < 0 ||
+    !ObjectId.isValid(subjectId)
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  questionNo = questionNo - 1;
+  let uploadImages = [];
+  for (let i = 0; i < images.length; i++) {
+    const matches = String(images[i]).replace(
+      /^data:([A-Za-z-+/]+);base64,/,
+      ""
+    );
+
+    let fileNameDis =
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(subjectId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".png";
+    let fileName =
+      dir +
+      "/" +
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(subjectId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".png";
+    try {
+      fs.writeFileSync(fileName, matches, { encoding: "base64" });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json(e);
+    }
+    uploadImages[i] = "uploads/answers/" + fileNameDis;
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let getData = null;
+  try {
+    getData = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getData._id;
+  let indexValue = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(getData.questionWritten[i].subjectId) == String(subjectIdObj)) {
+      indexValue = i;
+      break;
+    }
+  }
+  getData.questionWritten[indexValue].answerScriptILink[questionNo] =
+    uploadImages;
+  getData.questionWritten[indexValue].obtainedMarks[questionNo] = obtainedMarks;
+  let upd = {
+    questionWritten: getData.questionWritten,
+  };
+  let doc;
+  try {
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Updated Successfully.");
+};
+const marksCalculationAdmin = async (req, res, next) => {
+  let studentId = req.body.studentId;
+  let examId = req.body.examId;
+  let subjectId = req.body.subectId;
+  console.log(req.body);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(subjectId)
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  console.log(studentIdObj);
+  let getData;
+  try {
+    getData = await SpecialVsStudent.findOne({
+      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+    });
+    // getData = await StudentExamVsQuestionsWritten.findById(
+    //   "64f5a1dd50c6b7e0c5f3549c"
+    // );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let indexValue = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(getData.questionWritten[i].subjectId) == String(subjectIdObj)) {
+      indexValue = i;
+      break;
+    }
+  }
+  let totalMarks = 0;
+  let marks = getData.questionWritten[indexValue].obtainedMarks;
+  // console.log(getData);
+  // console.log(marks);
+  // console.log(marks);
+  marks.forEach((value) => {
+    totalMarks = totalMarks + value;
+  });
+  getData.questionWritten[indexValue].totalObtainedMarksWritten = totalMarks;
+  // console.log(totalMarks);
+  let insertId = getData._id;
+  let upd = {
+    questionWritten: getData.questionWritten,
+    checkStatus: true,
+  };
+  let doc;
+  try {
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+
+  return res.status(201).json("Status Change Successfully.");
+};
 const statusUpdate = async (req, res, next) => {
   let examId = req.body.examId;
   console.log(examId);
@@ -2828,6 +2984,8 @@ const statusUpdate = async (req, res, next) => {
     return res.status(500).json("problem!");
   }
 };
+exports.marksCalculationAdmin = marksCalculationAdmin;
+exports.checkScriptSingleAdmin = checkScriptSingleAdmin;
 exports.getRecheckStudentDataAdmin = getRecheckStudentDataAdmin;
 exports.statusUpdate = statusUpdate;
 exports.getStudentDataAdmin = getStudentDataAdmin;
