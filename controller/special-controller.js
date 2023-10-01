@@ -1683,7 +1683,6 @@ const assignQuestionWritten = async (req, res, next) => {
   for (let i = 0; i < 4; i++) {
     let subObj = {};
     subObj["subjectId"] = new mongoose.Types.ObjectId(subjects[i]);
-    let questionNo = examData.questionWritten[i].marksPerQuestion.length;
     subObj["submittedScriptILink"] = [];
     subObj["answerScriptILink"] = [];
     subObj["obtainedMarks"] = [];
