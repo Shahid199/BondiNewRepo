@@ -1686,7 +1686,7 @@ const assignQuestionWritten = async (req, res, next) => {
     subObj["submittedScriptILink"] = [];
     subObj["answerScriptILink"] = [];
     subObj["obtainedMarks"] = [];
-    subObj["totalObtainedMarksWritten"] = 0;
+    subObj["totalObtainedMarksWritten"] = -1;
     questionWrittenArr.push(subObj);
   }
   let studExamStartTime = moment(new Date());
