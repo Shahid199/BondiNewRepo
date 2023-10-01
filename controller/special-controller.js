@@ -2045,9 +2045,11 @@ const getStudentData = async (req, res, next) => {
   }
   console.log("dataex:");
   questionData = dataEx.questionWritten;
+  let indexValue = null;
   for (let i = 0; i < 4; i++) {
     if (String(questionData[i].subjectId) == String(subjectRole)) {
       questionData = questionData[i];
+      indexValue = i;
       break;
     }
   }
@@ -2094,9 +2096,9 @@ const getStudentData = async (req, res, next) => {
     dataObj["studentName"] = checkStatus[i].studentId.name;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
-    dataObj["totalQuestions"] = dataEx.marksPerQuestion.length;
+    dataObj["totalQuestions"] = dataEx[indexValue].marksPerQuestion.length;
     dataObj["totalMarks"] = dataEx.totalMarksWritten / 4;
-    dataObj["marksPerQuestion"] = dataEx.marksPerQuestion;
+    dataObj["marksPerQuestion"] = dataEx[indexValue].marksPerQuestion;
     data.push(dataObj);
   }
   let count = data.length;
