@@ -2020,6 +2020,7 @@ const assignStudentToTeacher = async (req, res, next) => {
 const getStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
+  teacherId = new mongoose.Types.ObjectId(teacherId);
   let subjectRole = null;
   try {
     subjectRole = await User.findOne({ _id: teacherId }, "subjectId -_id");
@@ -2030,9 +2031,9 @@ const getStudentData = async (req, res, next) => {
   subjectRole = subjectRole.subjectId;
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
-  teacherId = new mongoose.Types.ObjectId(teacherId);
   console.log(teacherId);
   console.log(examId);
+  console.log(subjectRole);
   let students = [];
   let questionData = null;
   let dataEx = null;
@@ -2042,7 +2043,7 @@ const getStudentData = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("dataex:")
+  console.log("dataex:");
   questionData = dataEx.questionWritten;
   for (let i = 0; i < 4; i++) {
     if (String(questionData[i].subjectId) == String(subjectRole)) {
