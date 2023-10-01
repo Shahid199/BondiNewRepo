@@ -43,6 +43,7 @@ const {
   updateRank,
   getRank,
   getAllRank,
+  getWrittenStudentSingleByExam,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -379,5 +380,13 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getAllRank
+);
+router.get(
+  "/getwrittenstudentsinglebyexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getWrittenStudentSingleByExam
 );
 module.exports = router;

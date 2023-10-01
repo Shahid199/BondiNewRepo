@@ -2488,15 +2488,30 @@ const publishExam = async (req, res, next) => {
 const getWrittenStudentSingleByExam = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
+  let teacherId = req.user.id;
 
-  if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
-    return res.status(404).json("exam ID or student ID is not valid.");
+  if (
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(teacherId)
+  )
+    return res
+      .status(404)
+      .json("exam ID or student ID or Teacher ID is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
+  teacherId = new mongoose.Types.ObjectId(teacherId);
+  let subjectId = null;
+  try {
+    subjectId = await User.findById(teacherId, "subjectId -_id");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  subjectId = subjectId.subjectId;
   let data = null,
     data1 = [];
   try {
-    data = await BothStudentExamVsQuestions.findOne({
+    data = await SpecialVsStudent.findOne({
       $and: [
         { examId: examId },
         { studentId: studentId },
@@ -2507,26 +2522,43 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   console.log("data", data);
+  let indexValue1 = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(data.questionWritten[i].subjectId) == String(subjectId)) {
+      indexValue1 = i;
+      break;
+    }
+  }
   let data2 = null;
   try {
-    data2 = await BothQuestionsWritten.findOne({ $and: [{ examId: examId }] });
+    data2 = await SpecialExam.findById(examId);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  let indexValue = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(data2.questionWritten[i].subjectId) == String(subjectId)) {
+      indexValue = i;
+      break;
+    }
+  }
   let dataObj = {};
   dataObj["examName"] = data.examId.name;
-  dataObj["examVariation"] = examVariation[data.examId.examVariation];
-  dataObj["examType"] = examType[data.examId.examType];
+  dataObj["examVariation"] = "specialExam";
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
-  dataObj["answerScript"] = data.submittedScriptILink;
-  dataObj["totalQuestions"] = data2.totalQuestions;
-  dataObj["totalMarks"] = data2.totalMarks;
-  dataObj["marksPerQuestion"] = data2.marksPerQuestion;
+  dataObj["answerScript"] =
+    data.questionWritten[indexValue1].submittedScriptILink;
+  dataObj["totalQuestions"] =
+    data2.questionWritten[indexValue].marksPerQuestion.length;
+  dataObj["totalMarks"] = data2.totalMarksWritten / 4;
+  dataObj["marksPerQuestion"] =
+    data2.questionWritten[indexValue].marksPerQuestion;
   //dataObj["checkStatus"] = data.checkStatus;
   //console.log(data.checkStatus);
   return res.status(200).json(dataObj);
 };
+exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
 exports.updateRank = updateRank;
 exports.getRank = getRank;
 exports.getAllRank = getAllRank;
