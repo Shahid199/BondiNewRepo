@@ -2681,9 +2681,7 @@ const getStudentDataAdmin = async (req, res, next) => {
         { examId: examId },
         { checkStatus: false },
       ],
-    })
-      .populate("studentId examId")
-      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+    }).populate("studentId examId");
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
