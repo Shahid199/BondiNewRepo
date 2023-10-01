@@ -2741,7 +2741,7 @@ const statusUpdate = async (req, res, next) => {
   try {
     upd = await SpecialVsStudent.updateOne(
       { examId: examId },
-      { checkStatus: false }
+      { $set: { checkStatus: false } }
     );
   } catch (err) {
     console.log(err);
