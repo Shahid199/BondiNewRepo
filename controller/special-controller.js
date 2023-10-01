@@ -2733,6 +2733,9 @@ const getStudentDataAdmin = async (req, res, next) => {
 
 const statusUpdate = async (req, res, next) => {
   let examId = req.body.examId;
+  console.log(examId);
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   let upd = null;
   try {
