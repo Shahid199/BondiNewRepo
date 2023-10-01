@@ -2741,6 +2741,7 @@ const statusUpdate = async (req, res, next) => {
       { checkStatus: false }
     );
   } catch (err) {
+    console.log(err);
     return res.status(500).json("problem!");
   }
 };
