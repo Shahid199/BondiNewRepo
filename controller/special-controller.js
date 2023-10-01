@@ -2592,7 +2592,6 @@ const getWrittenStudentSingleByExamAdmin = async (req, res, next) => {
   if (
     !ObjectId.isValid(examId) ||
     !ObjectId.isValid(studentId) ||
-    !ObjectId.isValid(teacherId) ||
     !ObjectId.isValid(subjectId)
   )
     return res
