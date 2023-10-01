@@ -2042,6 +2042,7 @@ const getStudentData = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+  console.log("dataex:")
   questionData = dataEx.questionWritten;
   for (let i = 0; i < 4; i++) {
     if (String(questionData[i].subjectId) == String(subjectRole)) {
@@ -2481,6 +2482,7 @@ const publishExam = async (req, res, next) => {
 const getWrittenStudentSingleByExam = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
+
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(studentId))
     return res.status(404).json("exam ID or student ID is not valid.");
   examId = new mongoose.Types.ObjectId(examId);
