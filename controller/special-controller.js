@@ -2126,6 +2126,7 @@ const getStudentData = async (req, res, next) => {
 const getRecheckStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
+  teacherId = new mongoose.Types.ObjectId(teacherId);
   let subjectRole = null;
   try {
     subjectRole = await User.findOne({ _id: teacherId }, "subjectId -_id");
@@ -2138,6 +2139,7 @@ const getRecheckStudentData = async (req, res, next) => {
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
+  let subjectId = new mongoose.Types.ObjectId(subjectRole);
   console.log(teacherId);
   console.log(examId);
   let students = [];
@@ -2150,9 +2152,11 @@ const getRecheckStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   questionData = dataEx.questionWritten;
+  let indexValue = null;
   for (let i = 0; i < 4; i++) {
-    if (String(questionData[i].subjectId) == String(subjectRole)) {
+    if (String(questionData[i].subjectId) == String(subjectId)) {
       questionData = questionData[i];
+      indexValue = i;
       break;
     }
   }
@@ -2199,9 +2203,11 @@ const getRecheckStudentData = async (req, res, next) => {
     dataObj["studentName"] = checkStatus[i].studentId.name;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
-    dataObj["totalQuestions"] = dataEx.marksPerQuestion.length;
+    dataObj["totalQuestions"] =
+      dataEx.questionWritten[indexValue].marksPerQuestion.length;
     dataObj["totalMarks"] = dataEx.totalMarksWritten / 4;
-    dataObj["marksPerQuestion"] = dataEx.marksPerQuestion;
+    dataObj["marksPerQuestion"] =
+      dataEx.questionWritten[indexValue].marksPerQuestion;
     data.push(dataObj);
   }
   let count = data.length;
