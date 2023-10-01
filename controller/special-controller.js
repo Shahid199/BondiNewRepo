@@ -2730,6 +2730,21 @@ const getStudentDataAdmin = async (req, res, next) => {
   }
   return res.status(200).json({ data, paginateData });
 };
+
+const statusUpdate = async (req, res, next) => {
+  let examId = req.body.examId;
+  examId = new mongoose.Types.ObjectId(examId);
+  let upd = null;
+  try {
+    upd = await SpecialVsStudent.updateOne(
+      { examId: examId },
+      { checkStatus: false }
+    );
+  } catch (err) {
+    return res.status(500).json("problem!");
+  }
+};
+exports.statusUpdate = statusUpdate;
 exports.getStudentDataAdmin = getStudentDataAdmin;
 exports.getWrittenStudentSingleByExamAdmin = getWrittenStudentSingleByExamAdmin;
 exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;

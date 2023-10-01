@@ -46,6 +46,7 @@ const {
   getWrittenStudentSingleByExam,
   getStudentDataAdmin,
   getWrittenStudentSingleByExamAdmin,
+  statusUpdate,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -323,6 +324,14 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getStudentDataAdmin
+);
+router.post(
+  "/statusupdate",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  statusUpdate
 );
 router.get(
   "/getrecheckstudentdata",
