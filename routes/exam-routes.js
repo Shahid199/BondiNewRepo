@@ -30,6 +30,7 @@ const {
   getWrittenBySub,
   bothAssignStudentToTeacher,
   getExamBySubQuestion,
+  getExamBySubWritten,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -80,7 +81,14 @@ router.get(
   ],
   getExamBySub
 );
-
+router.get(
+  "/getexambysubwritten",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student", "teacher"]),
+  ],
+  getExamBySubWritten
+);
 router.get(
   "/getexambysubquestion",
   [

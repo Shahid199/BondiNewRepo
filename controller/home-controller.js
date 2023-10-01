@@ -59,22 +59,22 @@ const getHomePage = async (req, res, next) => {
     // }
 
     //console.log(coming);
-    // try {
-    //   running = await Exam.find(
-    //     {
-    //       $and: [
-    //         { status: true },
-    //         { startTime: { $lte: currentTime } },
-    //         { endTime: { $gt: currentTime } },
-    //       ],
-    //     },
-    //     "_id name startTime endTime iLink examVariation examType"
-    //   )
-    //     .sort("startTime")
-    //     .limit(2);
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong!");
-    // }
+    try {
+      running = await Exam.find(
+        {
+          $and: [
+            { status: true },
+            { startTime: { $lte: currentTime } },
+            { endTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink examVariation examType"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
 
     // try {
     //   running = await BothExam.find(
@@ -93,22 +93,23 @@ const getHomePage = async (req, res, next) => {
     //   return res.status(500).json("Something went wrong!");
     // }
     //   //console.log(running);
-    try {
-      running = await SpecialExam.find(
-        {
-          $and: [
-            { status: true },
-            { startTime: { $lte: currentTime } },
-            { endTime: { $gt: currentTime } },
-          ],
-        },
-        "_id name startTime endTime iLink examVariation"
-      )
-        .sort("startTime")
-        .limit(2);
-    } catch (err) {
-      return res.status(500).json("Something went wrong!");
-    }
+
+    // try {
+    //   running = await SpecialExam.find(
+    //     {
+    //       $and: [
+    //         { status: true },
+    //         { startTime: { $lte: currentTime } },
+    //         { endTime: { $gt: currentTime } },
+    //       ],
+    //     },
+    //     "_id name startTime endTime iLink examVariation"
+    //   )
+    //     .sort("startTime")
+    //     .limit(2);
+    // } catch (err) {
+    //   return res.status(500).json("Something went wrong!");
+    // }
     homeDataTop["runningExam"] = running;
     homeDataTop["comingExam"] = coming;
     return res.status(200).json(homeDataTop);

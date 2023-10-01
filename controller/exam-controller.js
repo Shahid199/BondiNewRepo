@@ -369,6 +369,69 @@ const getExamBySub = async (req, res, next) => {
   }
   return res.status(200).json(examData);
 };
+const getExamBySubWritten = async (req, res, next) => {
+  const subjectId = req.query.subjectId;
+  const examType = req.query.examType;
+  if (!ObjectId.isValid(subjectId))
+    return res.status(404).json("subject Id is not valid.");
+  const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let examData1 = null;
+  try {
+    examData1 = await Exam.find({
+      $and: [
+        { subjectId: subjectIdObj },
+        { examVariation: examType },
+        // { examFreeOrNot: false },
+        { status: true },
+      ],
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  let examData = [];
+  for (let i = 0; i < examData1.length; i++) {
+    let examObj = {};
+    let dataRule = "0";
+    try {
+      dataRule = await ExamRule.findOne({ examId: examData1[i]._id }).select(
+        "ruleILink -_id"
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    examObj["_id"] = examData1[i]._id;
+    examObj["name"] = examData1[i].name;
+    examObj["examType"] = examData1[i].examType;
+    examObj["examVariation"] = examData1[i].examVariation;
+    examObj["examFreeOrNot"] = examData1[i].examFreeOrNot;
+    examObj["startTime"] = new Date(
+      moment(examData1[i].startTime).subtract(6, "hours")
+    );
+    examObj["endTime"] = new Date(
+      moment(examData1[i].endTime).subtract(6, "hours")
+    );
+    examObj["duration"] = examData1[i].duration;
+    examObj["totalQuestionMcq"] = examData1[i].totalQuestionMcq;
+    examObj["marksPerMcq"] = examData1[i].marksPerMcq;
+    examObj["totalMarksMcq"] = examData1[i].totalMarksMcq;
+    examObj["status"] = examData1[i].status;
+    examObj["subjectId"] = examData1[i].subjectId;
+    examObj["courseId"] = examData1[i].courseId;
+    examObj["sscStatus"] = examData1[i].sscStatus;
+    examObj["hscStatus"] = examData1[i].hscStatus;
+    examObj["negativeMarks"] = examData1[i].negativeMarks;
+    examObj["iLink"] = examData1[i].iLink;
+    examObj["createdAt"] = examData1[i].createdAt;
+    examObj["updatedAt"] = examData1[i].updatedAt;
+    examObj["__v"] = examData1[i].__v;
+    if (dataRule == null) examObj["RuleImage"] = "0";
+    else {
+      examObj["RuleImage"] = dataRule.ruleILink;
+    }
+    examData.push(examObj);
+  }
+  return res.status(200).json(examData);
+};
 const getExamBySubQuestion = async (req, res, next) => {
   const subjectId = req.query.subjectId;
   if (!ObjectId.isValid(subjectId))
@@ -1330,6 +1393,7 @@ const freeCourseSub = async (req, res, next) => {
   return res.status(200).json(data);
 };
 //export functions
+exports.getExamBySubWritten = getExamBySubWritten;
 exports.getExamBySubQuestion = getExamBySubQuestion;
 exports.bothAssignStudentToTeacher = bothAssignStudentToTeacher;
 exports.getWrittenBySub = getWrittenBySub;
