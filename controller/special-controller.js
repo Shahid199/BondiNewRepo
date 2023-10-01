@@ -2052,6 +2052,7 @@ const getStudentData = async (req, res, next) => {
       break;
     }
   }
+  console.log(indexValue);
   console.log("dataex:", dataEx[indexValue]);
   try {
     students = await TeacherVsSpecialExam.findOne({
