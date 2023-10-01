@@ -2574,8 +2574,17 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["examVariation"] = "specialExam";
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
-  dataObj["answerScript"] =
-    data.questionWritten[indexValue1].submittedScriptILink;
+  dataObj["answerScript"] = [];
+  for (
+    let i = 0;
+    i < data2.questionWritten[indexValue].marksPerQuestion.length;
+    i++
+  ) {
+    dataObj["answerScript"][i] = null;
+    if (data.questionWritten[indexValue1].submittedScriptILink[i])
+      dataObj["answerScript"][i] =
+        data.questionWritten[indexValue1].submittedScriptILink[i];
+  }
   dataObj["totalQuestions"] =
     data2.questionWritten[indexValue].marksPerQuestion.length;
   dataObj["totalMarks"] = data2.totalMarksWritten / 4;
