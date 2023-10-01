@@ -2422,7 +2422,7 @@ const marksCalculation = async (req, res, next) => {
   try {
     getData = await SpecialVsStudent.findOne({
       $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
-    });
+    }).populate("examId");
     // getData = await StudentExamVsQuestionsWritten.findById(
     //   "64f5a1dd50c6b7e0c5f3549c"
     // );
@@ -2447,18 +2447,31 @@ const marksCalculation = async (req, res, next) => {
   getData.questionWritten[indexValue].totalObtainedMarksWritten = totalMarks;
   // console.log(totalMarks);
   let insertId = getData._id;
-  let upd = {
-    questionWritten: getData.questionWritten,
-    checkStatus: true,
-  };
   let doc;
   try {
-    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, {
+      questionWritten: getData.questionWritten,
+    });
   } catch (err) {
-    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-
+  let upd = {};
+  let flag = true;
+  for (let i = 0; i < getData.questionWritten.length; i++) {
+    if (getData.questionWritten[i].totalObtainedMarksWritten == -1) {
+      upd = { questionWritten: getData.questionWritten };
+      flag = false;
+      break;
+    }
+  }
+  if (flag == true)
+    upd = { questionWritten: getData.questionWritten, checkStatus: true };
+  let subData = null;
+  try {
+    subData = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    return res.status(500).json("Something went wrong!");
+  }
   return res.status(201).json("Status Change Successfully.");
 };
 const publishExam = async (req, res, next) => {

@@ -133,7 +133,7 @@ const specialVsStudentSchema = new Schema(
         totalObtainedMarksWritten: {
           type: Number,
           required: false,
-          default: 0,
+          default: -1,
         },
       },
     ],
