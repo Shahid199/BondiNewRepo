@@ -47,6 +47,7 @@ const {
   getStudentDataAdmin,
   getWrittenStudentSingleByExamAdmin,
   statusUpdate,
+  getRecheckStudentDataAdmin,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -341,6 +342,15 @@ router.get(
   ],
   getRecheckStudentData
 );
+router.get(
+  "/getrecheckstudentdataadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getRecheckStudentDataAdmin
+);
+
 router.get(
   "/getwrittenscriptsingle",
   [

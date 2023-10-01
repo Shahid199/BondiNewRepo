@@ -2681,7 +2681,9 @@ const getStudentDataAdmin = async (req, res, next) => {
         { examId: examId },
         { checkStatus: false },
       ],
-    }).populate("studentId examId");
+    })
+      .populate("studentId examId")
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
@@ -2730,7 +2732,86 @@ const getStudentDataAdmin = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
-
+const getRecheckStudentDataAdmin = async (req, res, next) => {
+  let page = req.query.page || 1;
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let students = [];
+  try {
+    students = await SpecialVsStudent.find({
+      $and: [{ examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log("students:", students);
+  if (students.length == 0) return res.status(404).json("No student assigned.");
+  let studId = [];
+  for (let i = 0; i < students.length; i++) {
+    studId[i] = students[i].studentId._id;
+  }
+  console.log(studId);
+  let checkStatus = null;
+  try {
+    checkStatus = await SpecialVsStudent.find({
+      $and: [
+        { studentId: { $in: studId } },
+        { examId: examId },
+        { checkStatus: true },
+      ],
+    })
+      .populate("studentId examId")
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(checkStatus);
+  let data = [];
+  for (let i = 0; i < checkStatus.length; i++) {
+    let dataObj = {};
+    dataObj["examName"] = checkStatus[i].examId.name;
+    dataObj["examVariation"] = "specialExam";
+    dataObj["studentName"] = checkStatus[i].studentId.name;
+    dataObj["studentId"] = checkStatus[i].studentId._id;
+    dataObj["checkStatus"] = checkStatus[i].checkStatus;
+    dataObj["subject1"] = {
+      id: checkStatus[i].questionWritten[0].subjectId._id,
+      name: checkStatus[i].questionWritten[0].subjectId.name,
+    };
+    dataObj["subject2"] = {
+      id: checkStatus[i].questionWritten[1].subjectId._id,
+      name: checkStatus[i].questionWritten[1].subjectId.name,
+    };
+    dataObj["subject3"] = {
+      id: checkStatus[i].questionWritten[2].subjectId._id,
+      name: checkStatus[i].questionWritten[2].subjectId.name,
+    };
+    dataObj["subject4"] = {
+      id: checkStatus[i].questionWritten[3].subjectId._id,
+      name: checkStatus[i].questionWritten[3].subjectId.name,
+    };
+    data.push(dataObj);
+  }
+  let count = data.length;
+  let paginateData = pagination(count, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
+  let data1 = [];
+  if (count > 0) {
+    for (let i = start; i < end; i++) {
+      if (i == data.length) break;
+      data1.push(data[i]);
+    }
+  }
+  return res.status(200).json({ data1, paginateData });
+};
 const statusUpdate = async (req, res, next) => {
   let examId = req.body.examId;
   console.log(examId);
@@ -2748,6 +2829,7 @@ const statusUpdate = async (req, res, next) => {
     return res.status(500).json("problem!");
   }
 };
+exports.getRecheckStudentDataAdmin = getRecheckStudentDataAdmin;
 exports.statusUpdate = statusUpdate;
 exports.getStudentDataAdmin = getStudentDataAdmin;
 exports.getWrittenStudentSingleByExamAdmin = getWrittenStudentSingleByExamAdmin;
