@@ -2284,7 +2284,16 @@ const checkScriptSingle = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
   let images = req.body.uploadImages;
-  let subjectId = req.body.subjectId;
+  let teacherId = req.user.id;
+  teacherId = new mongoose.Types.ObjectId(teacherId);
+  let subjectId = null;
+  try {
+    subjectId = await User.findOne({ _id: teacherId }, "subjectId -_id");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  subjectId = subjectId.subjectId;
   console.log(req.body.obtainedMarks);
   console.log(obtainedMarks);
   console.log(req.body.uploadImages);
