@@ -2675,22 +2675,20 @@ const getStudentDataAdmin = async (req, res, next) => {
   console.log(studId);
   let checkStatus = null;
   try {
-    checkStatus = await SpecialVsStudent.find(
-      {
-        $and: [
-          { studentId: { $in: studId } },
-          { examId: examId },
-          { checkStatus: false },
-        ],
-      },
-      "studentId checkStatus -_id"
-    )
+    checkStatus = await SpecialVsStudent.find({
+      $and: [
+        { studentId: { $in: studId } },
+        { examId: examId },
+        { checkStatus: false },
+      ],
+    })
       .populate("studentId examId")
       .populate({ path: "questionWritten", populate: { path: "subjectId" } });
   } catch (err) {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+  console.log(checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
