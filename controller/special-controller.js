@@ -2732,7 +2732,7 @@ const getStudentDataAdmin = async (req, res, next) => {
       data1.push(data[i]);
     }
   }
-  return res.status(200).json({ data1, paginateData });
+  return res.status(200).json({ data, paginateData });
 };
 exports.getStudentDataAdmin = getStudentDataAdmin;
 exports.getWrittenStudentSingleByExamAdmin = getWrittenStudentSingleByExamAdmin;
