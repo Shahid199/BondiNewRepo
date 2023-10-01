@@ -135,6 +135,11 @@ const specialVsStudentSchema = new Schema(
           required: false,
           default: -1,
         },
+        subStatus: {
+          type: Boolean,
+          required: true,
+          default: false,
+        },
       },
     ],
     totalMarksMcq: {

@@ -2079,11 +2079,7 @@ const getStudentData = async (req, res, next) => {
   try {
     checkStatus = await SpecialVsStudent.find(
       {
-        $and: [
-          { studentId: { $in: studId } },
-          { examId: examId },
-          { checkStatus: false },
-        ],
+        $and: [{ studentId: { $in: studId } }, { examId: examId }],
       },
       "studentId checkStatus -_id"
     ).populate("studentId examId");
@@ -2094,6 +2090,7 @@ const getStudentData = async (req, res, next) => {
   console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
+    if (checkStatus[i].questionWritten[indexValue].subStatus == true) continue;
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
@@ -2183,11 +2180,7 @@ const getRecheckStudentData = async (req, res, next) => {
   try {
     checkStatus = await SpecialVsStudent.find(
       {
-        $and: [
-          { studentId: { $in: studId } },
-          { examId: examId },
-          { checkStatus: true },
-        ],
+        $and: [{ studentId: { $in: studId } }, { examId: examId }],
       },
       "studentId checkStatus -_id"
     ).populate("studentId examId");
@@ -2445,6 +2438,7 @@ const marksCalculation = async (req, res, next) => {
     totalMarks = totalMarks + value;
   });
   getData.questionWritten[indexValue].totalObtainedMarksWritten = totalMarks;
+  getData.questionWritten[indexValue].subStatus = true;
   // console.log(totalMarks);
   let insertId = getData._id;
   let doc;
@@ -2709,11 +2703,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   let checkStatus = null;
   try {
     checkStatus = await SpecialVsStudent.find({
-      $and: [
-        { studentId: { $in: studId } },
-        { examId: examId },
-        { checkStatus: false },
-      ],
+      $and: [{ studentId: { $in: studId } }, { examId: examId }],
     })
       .populate("studentId examId")
       .populate({ path: "questionWritten", populate: { path: "subjectId" } });
@@ -2725,6 +2715,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
+    if (checkStatus[i].checkStatus == true) continue;
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
     dataObj["studentName"] = checkStatus[i].studentId.name;
@@ -2789,11 +2780,7 @@ const getRecheckStudentDataAdmin = async (req, res, next) => {
   let checkStatus = null;
   try {
     checkStatus = await SpecialVsStudent.find({
-      $and: [
-        { studentId: { $in: studId } },
-        { examId: examId },
-        { checkStatus: true },
-      ],
+      $and: [{ studentId: { $in: studId } }, { examId: examId }],
     })
       .populate("studentId examId")
       .populate({ path: "questionWritten", populate: { path: "subjectId" } });
