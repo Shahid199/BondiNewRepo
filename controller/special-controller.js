@@ -2709,6 +2709,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   }
   console.log(checkStatus);
   let data = [];
+  console.log("object",checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
     //if (checkStatus[i].checkStatus == true) continue;
