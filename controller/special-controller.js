@@ -819,6 +819,8 @@ const viewSollutionMcq = async (req, res, next) => {
     console.log("data", data.questionMcq[i].mcqId);
     let data1 = {};
     data1["subjectName"] = data.questionMcq[i].subjectId.name;
+    data1["totalObtainedMarksPerSub"] = data.questionMcq[i].mcqMarksPerSub;
+    data1["totalMarksPerSub"] = data.examId.totalMarksMcq / 4;
     data1["questions"] = [];
     for (let j = 0; j < data.questionMcq[i].mcqId.length; j++) {
       let qData = {};
