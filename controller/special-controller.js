@@ -1755,7 +1755,7 @@ const ruunningWritten = async (req, res, next) => {
   try {
     timeData = await SpecialVsStudent.findOne({
       $and: [{ examId: examId }, { studentId: studentId }],
-    });
+    }).populate({ path: "questionWritte", populate: { path: "subjectId" } });
     console.log("timeData:", timeData);
   } catch (err) {
     return res.status(500).json("something went wrong.");
