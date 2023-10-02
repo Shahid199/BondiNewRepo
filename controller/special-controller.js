@@ -1764,14 +1764,21 @@ const ruunningWritten = async (req, res, next) => {
   let subjectsId = [];
   for (let i = 0; i < 4; i++) {
     let objWritten = {};
-    subjectsId[i] = examData.questionWritten[i].subjectId._id;
-    objWritten["subjectId"] = examData.questionWritten[i].subjectId._id;
-    objWritten["subjectName"] = examData.questionWritten[i].subjectId.name;
-    objWritten["marksPerQuestion"] =
-      examData.questionWritten[i].marksPerQuestion;
-    objWritten["totalQuestion"] =
-      examData.questionWritten[i].marksPerQuestion.length;
-    objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
+    subjectsId[i] = timeData.questionWritten[i].subjectId._id;
+    objWritten["subjectId"] = timeData.questionWritten[i].subjectId._id;
+    objWritten["subjectName"] = timeData.questionWritten[i].subjectId.name;
+    for (let j = 0; j < 6; j++) {
+      if (
+        String(examData.questionWritten[j].subjectId._id) ==
+        String(subjectsId[i])
+      ) {
+        objWritten["marksPerQuestion"] =
+          examData.questionWritten[j].marksPerQuestion;
+        objWritten["totalQuestion"] =
+          examData.questionWritten[j].marksPerQuestion.length;
+        objWritten["writtenILink"] = examData.questionWritten[j].writtenILink;
+      } else continue;
+    }
     data1.push(objWritten);
   }
   data1.push({ studExamStartTime: timeData.startTimeWritten });
