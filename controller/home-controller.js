@@ -37,7 +37,7 @@ const getHomePage = async (req, res, next) => {
           $and: [
             { status: true },
             { courseId: courseId },
-            // { startTime: { $gt: currentTime } },
+            { startTime: { $gt: currentTime } },
           ],
         },
         "_id name startTime endTime iLink"
