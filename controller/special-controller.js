@@ -2188,7 +2188,7 @@ const getRecheckStudentData = async (req, res, next) => {
     studId[i] = studentData[i]._id;
   }
   //console.log(studId);
-  let checkStatus = null;
+  let checkStatus = [];
   try {
     checkStatus = await SpecialVsStudent.find({
       $and: [{ studentId: { $in: studId } }, { examId: examId }],
@@ -2198,14 +2198,13 @@ const getRecheckStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let indexValue1 = null;
-  for (let j = 0; j < 4; j++) {
+  for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
       indexValue1 = j;
       console.log(j);
       break;
     }
   }
-  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
@@ -2222,6 +2221,11 @@ const getRecheckStudentData = async (req, res, next) => {
       }
     }
     if (indexValue == null || questionData.subStatus == false) continue;
+    console.log(i);
+    console.log(
+      "check status",
+      checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
+    );
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
@@ -2234,7 +2238,7 @@ const getRecheckStudentData = async (req, res, next) => {
       ].marksPerQuestion.length;
     dataObj["totalMarks"] = checkStatus[i].examId.totalMarksWritten / 4;
     dataObj["marksPerQuestion"] =
-      checkStatus[i].questionWritten[indexValue1].marksPerQuestion;
+      checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion;
     data.push(dataObj);
   }
   let count = data.length;
@@ -2704,7 +2708,7 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let indexValue = null;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     if (String(data2.questionWritten[i].subjectId) == String(subjectId)) {
       indexValue = i;
       break;
