@@ -87,6 +87,13 @@ mongoose
     // console.log(examStartTime);
     // console.log(moment(new Date()));
     const dir = path.resolve(path.join(__dirname, "uploads"));
-   // console.log(dataArr);
+    let a;
+    let b = [1, 2, 4];
+    let c = [3, 4, 5];
+    let d = [10, 8];
+    a = b.concat(c);
+    a = a.concat(d);
+    console.log(a);
+    // console.log(dataArr);
   })
   .catch((err) => console.log(err));

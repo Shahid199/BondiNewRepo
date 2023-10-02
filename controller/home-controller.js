@@ -11,7 +11,10 @@ const getHomePage = async (req, res, next) => {
   let section = req.query.section;
   let homeDataTop = new Object(),
     homeDataBottom = new Object(),
-    running,
+    running1,
+    runnig2,
+    running3,
+    runningAll,
     coming,
     subjectDataDaily,
     subjectDataMonthly,
@@ -59,43 +62,43 @@ const getHomePage = async (req, res, next) => {
     // }
 
     //console.log(coming);
-    // try {
-    //   running = await Exam.find(
-    //     {
-    //       $and: [
-    //         { status: true },
-    //         { startTime: { $lte: currentTime } },
-    //         { endTime: { $gt: currentTime } },
-    //       ],
-    //     },
-    //     "_id name startTime endTime iLink examVariation examType"
-    //   )
-    //     .sort("startTime")
-    //     .limit(2);
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong!");
-    // }
+    try {
+      running1 = await Exam.find(
+        {
+          $and: [
+            { status: true },
+            { startTime: { $lte: currentTime } },
+            { endTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink examVariation examType"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
 
-    // try {
-    //   running = await BothExam.find(
-    //     {
-    //       $and: [
-    //         { status: true },
-    //         { startTime: { $lte: currentTime } },
-    //         { endTime: { $gt: currentTime } },
-    //       ],
-    //     },
-    //     "_id name startTime endTime iLink examVariation examType"
-    //   )
-    //     .sort("startTime")
-    //     .limit(2);
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong!");
-    // }
+    try {
+      running2 = await BothExam.find(
+        {
+          $and: [
+            { status: true },
+            { startTime: { $lte: currentTime } },
+            { endTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink examVariation examType"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
     //   //console.log(running);
 
     try {
-      running = await SpecialExam.find(
+      running3 = await SpecialExam.find(
         {
           $and: [
             { status: true },
@@ -110,6 +113,12 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
+    runningAll = running1.concat(runnig2);
+    runningAll = runningAll.concat(running3);
+    runningAll = runningAll.sort(a.startTime);
+    let running = [];
+    running[0] = runningAll[0];
+    running[1] = runningAll[1];
     homeDataTop["runningExam"] = running;
     homeDataTop["comingExam"] = coming;
     return res.status(200).json(homeDataTop);
