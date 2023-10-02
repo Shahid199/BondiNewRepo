@@ -872,7 +872,7 @@ const historyData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
-  return res.status(200).json(data);
+  //return res.status(200).json(data);
   console.log(data);
   let resultData = [];
   let flag = false;
@@ -889,12 +889,14 @@ const historyData = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
+    console.log("res", resultRank);
     if (resultRank == null) resultRank = "-1";
     else resultRank = resultRank.rank;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["variation"] = "Special Exam";
-    data1["totalObtainedMarks"] = resultRank.totalObtainedMarks;
+    data1["examType"] = "no";
+    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
     data1["totalMarksMcq"] = data[i].totalMarksMcq;
     data1["totalMarksWritten"] = data[i].totalMarksWritten;
     data1["meritPosition"] = resultRank;
@@ -908,12 +910,14 @@ const historyData = async (req, res, next) => {
     data1["writtenDuration"] = data[i].writtenDuration;
     data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
     data1["courseName"] = data[i].examId.courseId.name;
-    let subObj = [];
-    for (let j = 0; j < 4; j++) {
-      subObj.push(data[i].questionMcq[j].subjectId.name);
-    }
-    data1["subjects"] = subObj;
+    resultData.push(data1);
   }
+  let subObj = [];
+  for (let j = 0; j < 4; j++) {
+    subObj.push(data[i].questionMcq[j].subjectId.name);
+  }
+  resultData.push({ subjects: subObj });
+
   return res.status(200).json({ resultData, paginateData });
 };
 const examCheckMiddleware = async (req, res, next) => {
