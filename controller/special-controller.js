@@ -808,11 +808,12 @@ const viewSollutionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
-  console.log("data", data);
+ 
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
   for (let i = 0; i < 4; i++) {
+    console.log("data", data.questionMcq[i].mcqId);
     let data1 = {};
     data1["subjectName"] = data.questionMcq[i].subjectId.name;
     data1["questions"] = [];
