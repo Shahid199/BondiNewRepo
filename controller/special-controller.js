@@ -2785,7 +2785,7 @@ const getRecheckStudentDataAdmin = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(checkStatus[0].questionWritten);
+  console.log("CC:",checkStatus[0].questionWritten);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
