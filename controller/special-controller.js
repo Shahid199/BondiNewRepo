@@ -838,6 +838,7 @@ const viewSollutionWritten = async (req, res, next) => {
   return res.status(200).json(dataNew);
 };
 const historyData = async (req, res, next) => {
+  console.log(req.user);
   const studentId = req.user.studentIdStr;
   if (!ObjectId.isValid(studentId))
     return res.status(404).json("Student ID not valid.");
