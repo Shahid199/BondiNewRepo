@@ -12,7 +12,7 @@ const getHomePage = async (req, res, next) => {
   let homeDataTop = new Object(),
     homeDataBottom = new Object(),
     running1,
-    runnig2,
+    running2,
     running3,
     runningAll,
     coming,
