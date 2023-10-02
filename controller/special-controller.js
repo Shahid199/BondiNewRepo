@@ -915,6 +915,7 @@ const historyData = async (req, res, next) => {
       subObj.push(data[i].questionMcq[j].subjectId.name);
     }
     data1["subjects"] = subObj;
+    resultData.push(data1);
   }
 
   return res.status(200).json({ resultData, paginateData });
