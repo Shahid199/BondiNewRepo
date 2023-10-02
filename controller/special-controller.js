@@ -2058,6 +2058,7 @@ const getStudentData = async (req, res, next) => {
     if (String(questionData[i].subjectId) == String(subjectRole)) {
       questionData = questionData[i];
       indexValue = i;
+      console.log(i);
       console.log(questionData[i].subjectId);
       break;
     }
