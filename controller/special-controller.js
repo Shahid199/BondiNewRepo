@@ -2108,7 +2108,7 @@ const getStudentData = async (req, res, next) => {
     console.log(i);
     console.log(
       "check status",
-      checkStatus[i].examId.questionWritten[indexValue1]
+      checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
     );
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
@@ -2122,7 +2122,7 @@ const getStudentData = async (req, res, next) => {
       ].marksPerQuestion.length;
     dataObj["totalMarks"] = checkStatus[i].examId.totalMarksWritten / 4;
     dataObj["marksPerQuestion"] =
-      checkStatus[i].questionWritten[indexValue1].marksPerQuestion;
+      checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion;
     data.push(dataObj);
   }
   let count = data.length;
