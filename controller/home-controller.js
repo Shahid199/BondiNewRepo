@@ -137,6 +137,7 @@ const getHomePage = async (req, res, next) => {
     // console.log(running2);
     // console.log(running3);
     console.log(runningAll);
+    console.log(comingAll);
     let running = [];
     running[0] = runningAll[0];
     running[1] = runningAll[1];
