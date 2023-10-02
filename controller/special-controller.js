@@ -2062,7 +2062,7 @@ const getStudentData = async (req, res, next) => {
       break;
     }
   }
-  console.log(questionData[indexValue].subjectId);
+  console.log(questionData);
   // console.log(indexValue);
   // console.log("dataex:", dataEx.questionWritten[indexValue]);
   try {
