@@ -16,6 +16,10 @@ const getHomePage = async (req, res, next) => {
     running3,
     runningAll,
     coming,
+    coming1,
+    coming2,
+    coming3,
+    comingAll,
     subjectDataDaily,
     subjectDataMonthly,
     subjectDataweekly;
@@ -28,7 +32,7 @@ const getHomePage = async (req, res, next) => {
     console.log(currentTime);
     console.log(courseId);
     try {
-      coming = await Exam.find(
+      coming1 = await Exam.find(
         {
           $and: [
             { status: true },
@@ -43,24 +47,36 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
-    // let bothExam = [];
-    // try {
-    //   bothExam = await BothExam.find(
-    //     {
-    //       $and: [
-    //         { status: true },
-    //         { courseId: courseId },
-    //         { startTime: { $gt: currentTime } },
-    //       ],
-    //     },
-    //     "_id name startTime endTime iLink"
-    //   )
-    //     .sort("startTime")
-    //     .limit(2);
-    // } catch (err) {
-    //   return res.status(500).json("Something went wrong!");
-    // }
-
+    try {
+      coming2 = await BothExam.find(
+        {
+          $and: [
+            { status: true },
+            { courseId: courseId },
+            { startTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
+    coming3 = await SpecialExam.find(
+      {
+        $and: [
+          { status: true },
+          { courseId: courseId },
+          { startTime: { $gt: currentTime } },
+        ],
+      },
+      "_id name startTime endTime iLink"
+    )
+      .sort("startTime")
+      .limit(2);
+    comingAll = coming1.concat(coming2);
+    comingAll = comingAll.concat(coming3);
     //console.log(coming);
     try {
       running1 = await Exam.find(
@@ -116,13 +132,16 @@ const getHomePage = async (req, res, next) => {
     runningAll = running1.concat(running2);
     runningAll = runningAll.concat(running3);
     runningAll = runningAll.sort((a, b) => a.startTime >= b.startTime);
-    console.log(running1);
-    console.log(running2);
-    console.log(running3);
+    comingAll = comingAll.sort((a, b) => a.startTime >= b.startTime);
+    // console.log(running1);
+    // console.log(running2);
+    // console.log(running3);
     console.log(runningAll);
     let running = [];
     running[0] = runningAll[0];
     running[1] = runningAll[1];
+    coming[0] = comingAll[0];
+    coming[1] = comingAll[1];
     homeDataTop["runningExam"] = running;
     homeDataTop["comingExam"] = coming;
     return res.status(200).json(homeDataTop);
