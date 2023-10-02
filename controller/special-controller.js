@@ -1599,7 +1599,7 @@ const submitAnswerMcq = async (req, res, next) => {
     finishStatus: true,
     runningStatus: false,
     endTimeMcq: submitTime,
-    mcqDuration: (moment(timeStudent[0]) - moment(submitTime)) / 60000,
+    mcqDuration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
   };
 
   let sav = null;
@@ -2711,7 +2711,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
-    if (checkStatus[i].checkStatus == true) continue;
+    //if (checkStatus[i].checkStatus == true) continue;
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
     dataObj["studentName"] = checkStatus[i].studentId.name;
