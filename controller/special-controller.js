@@ -837,6 +837,59 @@ const viewSollutionWritten = async (req, res, next) => {
   }
   return res.status(200).json(dataNew);
 };
+const retakeSpecial = async (req, res, next) => {
+  const sId = req.user.studentId;
+  const eId = req.query.examId;
+  if (!ObjectId.isValid(sId) || !ObjectId.isValid(eId))
+    return res.status(404).json("invalid student ID or exam ID.");
+  let eId1, sId1;
+  sId1 = new mongoose.Types.ObjectId(sId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  //exam status Check:start
+  let studentCheck = null;
+  let getQuestionMcq, getExamData;
+  try {
+    getQuestionMcq = await SpecialVsStudent.findOne({
+      $and: [{ studentId: sId1 }, { examId: eId1 }],
+    })
+      .populate({
+        path: "questionMcq",
+        populate: {
+          path: "mcqId",
+          match: { status: true },
+          select: "question type options optionCount status _id",
+        },
+      })
+      .populate("examId")
+      .populate({
+        path: "questionMcq",
+        populate: { path: "subjectId", select: "name" },
+      });
+  } catch (err) {
+    return res.status(500).json("can't get question.Problem Occur.");
+  }
+  console.log(getQuestionMcq);
+  let examData = getQuestionMcq;
+  //exam status Check:end
+  getQuestionMcq = getQuestionMcq.questionMcq;
+  let data = [];
+  for (let i = 0; i < getQuestionMcq.length; i++) {
+    let dataQ = {};
+    dataQ["questions"] = getQuestionMcq[i].mcqId;
+    dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
+    dataQ["subjectId"] = getQuestionMcq[i].subjectId._id;
+    dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
+    data[i] = dataQ;
+  }
+  let examDet = {};
+  examDet["studExamStartTime"] = examData.startTimeMcq;
+  examDet["studExamEndTime"] = examData.endTimeMcq;
+  examDet["duration"] = examData.mcqDuration;
+  examDet["dueDuration"] =
+    moment(moment(examData.endTimeMcq) - new Date()) / 60000;
+
+  return res.status(200).json({ data, examDet });
+};
 const historyData = async (req, res, next) => {
   console.log(req.user);
   const studentId = req.user.studentId;
@@ -894,6 +947,7 @@ const historyData = async (req, res, next) => {
     else resultRank = resultRank.rank;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
+    data1["examStartTime"] = data[i].examId.startTime;
     data1["variation"] = "Special Exam";
     data1["examType"] = "no";
     data1["totalObtainedMarks"] =
@@ -917,7 +971,7 @@ const historyData = async (req, res, next) => {
     for (let j = 0; j < 4; j++) {
       subObj.push(data[i].questionMcq[j].subjectId.name);
     }
-    data1["subjects"] = subObj;
+    data1["subjectName"] = subObj.join("+");
     resultData.push(data1);
   }
 
@@ -1303,6 +1357,85 @@ const getAllRank = async (req, res, next) => {
   }
   return res.status(200).json(allData);
 };
+// const examHistory = async (req, res, next) => {
+//   const studentId = req.user.studentId;
+//   const eId = req.query.examId;
+//   let data;
+//   let count = 0;
+//   try {
+//     count = await SpecialVsStudent.find({
+//       $and: [{ studentId: studentIdObj }, { publishStatus: false }],
+//     }).count();
+//   } catch (err) {
+//     return res.status(500).json("Something went wrong.");
+//   }
+//   let paginateData = pagination(count, page);
+//   try {
+//     data = await SpecialVsStudent.find({
+//       $and: [{ studentId: studentIdObj }, { publishStatus: false }],
+//     })
+//       .populate({
+//         path: "examId",
+//         populate: { path: "courseId", select: "name -_id" },
+//       })
+//       .populate({
+//         path: "questionMcq",
+//         populate: { path: "subjectId", select: "name -_id" },
+//       })
+//       .skip(paginateData.skippedIndex)
+//       .limit(paginateData.perPage);
+//   } catch (err) {
+//     return res.status(500).json("1.SOmething went wrong.");
+//   }
+//   //return res.status(200).json(data);
+//   console.log(data);
+//   let resultData = [];
+//   let flag = false;
+//   //console.log(data.length);
+//   for (let i = 0; i < data.length; i++) {
+//     let data1 = {};
+//     let rank = null;
+//     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+//     let resultRank = null;
+//     try {
+//       resultRank = await SpecialRank.findOne({
+//         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+//       });
+//     } catch (err) {
+//       return res.status(500).json("Something went wrong.");
+//     }
+//     console.log("res", resultRank);
+//     if (resultRank == null) resultRank = "-1";
+//     else resultRank = resultRank.rank;
+//     data1["examId"] = data[i].examId._id;
+//     data1["title"] = data[i].examId.name;
+//     data1["variation"] = "Special Exam";
+//     data1["examType"] = "no";
+//     data1["totalObtainedMarks"] =
+//       data[i].totalMarksMcq + data[i].totalMarksWritten;
+//     data1["totalMarksMcqExam"] = data[i].totalMarksMcq;
+//     data1["totalMarksWrittenExam"] = data[i].totalMarksWritten;
+//     data1["totalMarksMcq"] =
+//       data[i].examId.totalMarksMcq + data[i].totalMarksWritten;
+//     data1["meritPosition"] = resultRank;
+//     data1["examStartTimeMcq"] = moment(data[i].startTimeMcq).format("LLL");
+//     data1["examEndTimeMcq"] = moment(data[i].endTimeMcq).format("LLL");
+//     data1["examStartTimeWritten"] = moment(data[i].startTimeWritten).format(
+//       "LLL"
+//     );
+//     data1["examEndTimeWritten"] = moment(data[i].endTimeWritten).format("LLL");
+//     data1["mcqDuration"] = data[i].mcqDuration;
+//     data1["writtenDuration"] = data[i].writtenDuration;
+//     data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
+//     data1["courseName"] = data[i].examId.courseId.name;
+//     let subObj = [];
+//     for (let j = 0; j < 4; j++) {
+//       subObj.push(data[i].questionMcq[j].subjectId.name);
+//     }
+//     data1["subjects"] = subObj;
+//     resultData.push(data1);
+//   }
+// };
 //exam system
 const assignQuestionMcq = async (req, res, next) => {
   const eId = req.query.examId;
@@ -3150,6 +3283,7 @@ const statusUpdate = async (req, res, next) => {
     return res.status(500).json("problem!");
   }
 };
+exports.retakeSpecial = retakeSpecial;
 exports.marksCalculationAdmin = marksCalculationAdmin;
 exports.checkScriptSingleAdmin = checkScriptSingleAdmin;
 exports.getRecheckStudentDataAdmin = getRecheckStudentDataAdmin;
