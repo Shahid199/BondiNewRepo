@@ -811,38 +811,26 @@ const viewSollutionMcq = async (req, res, next) => {
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
-  let subjectData = [];
   for (let i = 0; i < 4; i++) {
     let data1 = {};
+    data1["subjectName"] = data.questionMcq[i].subjectId.name;
+    data1["questions"] = [];
     for (let j = 0; j < data.questionMcq[i].mcqId.length; j++) {
-      data1["question"] = data.questionMcq[i].mcqId[j].question;
-      data1["options"] = data.questionMcq[i].mcqId[j].options;
-      data1["correctOptions"] = Number(
+      let qData = {};
+      qData["iLink"] = data.questionMcq[i].mcqId[j].question;
+      qData["options"] = data.questionMcq[i].mcqId[j].options;
+      qData["correctOptions"] = Number(
         data.questionMcq[i].mcqId[j].correctOption
       );
-      data1["explanationILink"] = data.questionMcq[i].mcqId[j].explanationILink;
-      data1["type"] = data.questionMcq[i].mcqId[j].type;
-      data1["answeredOption"] = data.questionMcq[i].mcqAnswer[j];
-      data1["correctOption"] = data.questionMcq[i].mcqId[j].correctOption;
-      data1["optionCount"] = data.questionMcq[i].mcqId[j].optionCount;
-      subjectData.push(data1);
+      qData["explanationILink"] = data.questionMcq[i].mcqId[j].explanationILink;
+      qData["type"] = data.questionMcq[i].mcqId[j].type;
+      qData["answeredOption"] = data.questionMcq[i].mcqAnswer[j];
+      qData["correctOption"] = data.questionMcq[i].mcqId[j].correctOption;
+      qData["optionCount"] = data.questionMcq[i].mcqId[j].optionCount;
+      data1["questions"].push(qData);
     }
-    subjectData.push({ subjectName: data.questionMcq[i].subjectId.name });
-    subjectData.push({ mcqMarksPerSub: data.questionMcq[i].mcqMarksPerSub });
-    subjectData.push({
-      totalCorrectAnswer: data.questionMcq[i].totalCorrectAnswer,
-    });
-    subjectData.push({
-      totalCorrectMarks: data.questionMcq[i].totalCorrectMarks,
-    });
-    subjectData.push({
-      totalWrongAnswer: data.questionMcq[i].totalWrongAnswer,
-    });
-    subjectData.push({ totalWrongMarks: data.questionMcq[i].totalWrongMarks });
-    subjectData.push({
-      totalNotAnswered: data.questionMcq[i].totalNotAnswered,
-    });
-    resultData.push(subjectData);
+
+    resultData.push(data1);
   }
 
   return res.status(200).json(resultData);
