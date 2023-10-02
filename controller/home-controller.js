@@ -140,14 +140,15 @@ const getHomePage = async (req, res, next) => {
     // console.log(running1);
     // console.log(running2);
     // console.log(running3);
-
+    console.log(comingAll.length);
+    console.log(comingAll);
     let running = [];
     for (let i = 0; i < runningAll.length; i++) {
       running[i] = runningAll[i];
       if (i == 1) break;
     }
     for (let i = 0; i < comingAll.length; i++) {
-      if (comingAll[i] != {}) coming[i] = comingAll[i];
+      coming[i] = comingAll[i];
       if (i == 1) break;
     }
     homeDataTop["runningExam"] = running;
