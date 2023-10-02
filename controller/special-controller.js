@@ -385,7 +385,6 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   let dataEx = [];
   for (let i = 0; i < 4; i++) {
     let dataObject = {};
-    dataObject["examName"] = data.examId.name;
     dataObject["subjectId"] = data.questionMcq[i].subjectId._id;
     dataObject["subjectName"] = data.questionMcq[i].subjectId.name;
     dataObject["marksMcqPerSub"] = data.questionMcq[i].mcqMarksPerSub;
@@ -393,27 +392,34 @@ const studentSubmittedExamDetail = async (req, res, next) => {
       data.questionWritten[i].totalObtainedMarksWritten;
     dataObject["totalMarksMcqPerSub"] = data.examId.totalMarksMcq / 4;
     dataObject["totalMarksWrittenPerSub"] = data.examId.totalMarksWritten / 4;
-    dataObject["startTime"] = moment(data.examId.startTime).format("LLLL");
-    dataObject["endTime"] = moment(data.examId.endTime).format("LLLL");
-    dataObject["examVariation"] = "Special Exam";
-    dataObject["studExamStartTimeMcq"] = moment(data.startTimeMcq).format(
-      "LLLL"
-    );
-    dataObject["studExamEndTimeMcq"] = moment(data.endTimeMcq).format("LLLL");
-    dataObject["studExamStartTimeWritten"] = moment(
-      data.startTimeWritten
-    ).format("LLLL");
-    dataObject["studExamEndTimeWritten"] = moment(data.endTimeWritten).format(
-      "LLLL"
-    );
-    dataObject["studDuration"] = data.mcqDuration + data.writtenDuration;
-    dataObject["rank"] = mcqRank;
-    dataObject["totalObtainedMarks"] = data.totalObtainedMarks;
-    dataObject["totalMarks"] =
-      data.examId.totalMarksMcq + data.examId.totalMarksWritten;
-
     dataEx = dataObject;
   }
+  dataEx.push({
+    totalMarks: data.examId.totalMarksMcq + data.examId.totalMarksWritten,
+  });
+  dataEx.push({ totalObtainedMarks: data.totalObtainedMarks });
+  dataEx.push({ rank: mcqRank });
+  dataEx.push({ studDuration: data.mcqDuration + data.writtenDuration });
+  dataEx.push({
+    studExamStartTimeMcq: moment(data.startTimeMcq).format("LLLL"),
+  });
+  dataEx.push({
+    studExamEndTimeMcq: moment(data.endTimeMcq).format("LLLL"),
+  });
+  dataEx.push({
+    studExamStartTimeWritten: moment(data.startTimeWritten).format("LLLL"),
+  });
+  dataEx.push({
+    studExamEndTimeWritten: moment(data.endTimeWritten).format("LLLL"),
+  });
+  dataEx.push({
+    startTime: moment(data.examId.tartTime).format("LLLL"),
+  });
+  dataEx.push({
+    endTime: moment(data.examId.endTime).format("LLLL"),
+  });
+  dataEx.push({ examVariation: "Special Exam" });
+  dataEx.push({ examName: data.examId.name });
   return res.status(200).json(dataEx);
 };
 //rule api
