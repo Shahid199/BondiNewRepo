@@ -803,6 +803,10 @@ const viewSollutionMcq = async (req, res, next) => {
         path: "questionMcq",
         populate: { path: "mcqId" },
       })
+      .populate({
+        path: "questionMcq",
+        populate: { path: "subjectId" },
+      })
       .populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
