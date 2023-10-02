@@ -839,7 +839,7 @@ const viewSollutionWritten = async (req, res, next) => {
 };
 const historyData = async (req, res, next) => {
   console.log(req.user);
-  const studentId = req.user.studentIdStr;
+  const studentId = req.user.studentId;
   if (!ObjectId.isValid(studentId))
     return res.status(404).json("Student ID not valid.");
   let page = req.query.page || 1;
