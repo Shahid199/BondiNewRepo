@@ -2037,6 +2037,7 @@ const getStudentData = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+
   subjectRole = subjectRole.subjectId;
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
@@ -2049,7 +2050,6 @@ const getStudentData = async (req, res, next) => {
   try {
     dataEx = await SpecialExam.findById(examId);
   } catch (err) {
-    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   questionData = dataEx.questionWritten;
@@ -2061,14 +2061,14 @@ const getStudentData = async (req, res, next) => {
       break;
     }
   }
-  console.log(indexValue);
-  console.log("dataex:", dataEx.questionWritten[indexValue]);
+  // console.log(indexValue);
+  // console.log("dataex:", dataEx.questionWritten[indexValue]);
   try {
     students = await TeacherVsSpecialExam.findOne({
       $and: [{ teacherId: teacherId }, { examId: examId }],
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   console.log(students);
@@ -2080,17 +2080,17 @@ const getStudentData = async (req, res, next) => {
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  console.log(studId);
+  //console.log(studId);
   let checkStatus = null;
   try {
     checkStatus = await SpecialVsStudent.find({
       $and: [{ studentId: { $in: studId } }, { examId: examId }],
     }).populate("studentId examId");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("check status", checkStatus);
+  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     if (checkStatus[i].questionWritten[indexValue].subStatus == true) continue;
