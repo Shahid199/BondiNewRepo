@@ -2037,7 +2037,6 @@ const getStudentData = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-
   subjectRole = subjectRole.subjectId;
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
@@ -2052,17 +2051,7 @@ const getStudentData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  questionData = dataEx.questionWritten;
-  let indexValue = null;
-  for (let i = 0; i < 4; i++) {
-    if (String(questionData[i].subjectId) == String(subjectRole)) {
-      questionData = questionData[i];
-      indexValue = i;
-      console.log(i);
-      break;
-    }
-  }
-  console.log(questionData);
+  //console.log(questionData);
   // console.log(indexValue);
   // console.log("dataex:", dataEx.questionWritten[indexValue]);
   try {
@@ -2092,10 +2081,31 @@ const getStudentData = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+  let indexValue1 = null;
+  for (let j = 0; j < 4; j++) {
+    if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
+      indexValue1 = j;
+      console.log(j);
+      break;
+    }
+  }
   //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
-    if (checkStatus[i].questionWritten[indexValue].subStatus == true) continue;
+    let questionData = null;
+    let indexValue = null;
+    for (let j = 0; j < 4; j++) {
+      if (
+        String(checkStatus[i].questionWritten[j].subjectId) ==
+        String(subjectRole)
+      ) {
+        questionData = checkStatus[i].questionWritten[j];
+        indexValue = j;
+        console.log(j);
+        break;
+      }
+    }
+    if (indexValue == null || questionData.subStatus == true) continue;
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
@@ -2103,10 +2113,12 @@ const getStudentData = async (req, res, next) => {
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
     dataObj["totalQuestions"] =
-      dataEx.questionWritten[indexValue].marksPerQuestion.length;
-    dataObj["totalMarks"] = dataEx.totalMarksWritten / 4;
+      checkStatus[i].examId.questionWritten[
+        indexValue1
+      ].marksPerQuestion.length;
+    dataObj["totalMarks"] = checkStatus[i].examId.totalMarksWritten / 4;
     dataObj["marksPerQuestion"] =
-      dataEx.questionWritten[indexValue].marksPerQuestion;
+      checkStatus[i].questionWritten[indexValue1].marksPerQuestion;
     data.push(dataObj);
   }
   let count = data.length;
@@ -2127,6 +2139,118 @@ const getStudentData = async (req, res, next) => {
   return res.status(200).json({ data1, paginateData });
 };
 const getRecheckStudentData = async (req, res, next) => {
+  let page = req.query.page || 1;
+  let teacherId = req.user.id;
+  teacherId = new mongoose.Types.ObjectId(teacherId);
+  let subjectRole = null;
+  try {
+    subjectRole = await User.findOne({ _id: teacherId }, "subjectId -_id");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  subjectRole = subjectRole.subjectId;
+  let examId = req.query.examId;
+  examId = new mongoose.Types.ObjectId(examId);
+  console.log(teacherId);
+  console.log(examId);
+  console.log(subjectRole);
+  let students = [];
+  let questionData = null;
+  let dataEx = null;
+  try {
+    dataEx = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //console.log(questionData);
+  // console.log(indexValue);
+  // console.log("dataex:", dataEx.questionWritten[indexValue]);
+  try {
+    students = await TeacherVsSpecialExam.findOne({
+      $and: [{ teacherId: teacherId }, { examId: examId }],
+    });
+  } catch (err) {
+    // console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(students);
+  if (students.studentId.length == 0)
+    return res.status(404).json("No student assigned.");
+  let studentData = students.studentId;
+  // console.log(studentData);
+  let studId = [];
+  for (let i = 0; i < studentData.length; i++) {
+    studId[i] = studentData[i]._id;
+  }
+  //console.log(studId);
+  let checkStatus = null;
+  try {
+    checkStatus = await SpecialVsStudent.find({
+      $and: [{ studentId: { $in: studId } }, { examId: examId }],
+    }).populate("studentId examId");
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  let indexValue1 = null;
+  for (let j = 0; j < 4; j++) {
+    if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
+      indexValue1 = j;
+      console.log(j);
+      break;
+    }
+  }
+  //console.log("check status", checkStatus);
+  let data = [];
+  for (let i = 0; i < checkStatus.length; i++) {
+    let questionData = null;
+    let indexValue = null;
+    for (let j = 0; j < 4; j++) {
+      if (
+        String(checkStatus[i].questionWritten[j].subjectId) ==
+        String(subjectRole)
+      ) {
+        questionData = checkStatus[i].questionWritten[j];
+        indexValue = j;
+        console.log(j);
+        break;
+      }
+    }
+    if (indexValue == null || questionData.subStatus == false) continue;
+    let dataObj = {};
+    dataObj["examName"] = checkStatus[i].examId.name;
+    dataObj["examVariation"] = "specialExam";
+    dataObj["studentName"] = checkStatus[i].studentId.name;
+    dataObj["studentId"] = checkStatus[i].studentId._id;
+    dataObj["checkStatus"] = checkStatus[i].checkStatus;
+    dataObj["totalQuestions"] =
+      checkStatus[i].examId.questionWritten[
+        indexValue1
+      ].marksPerQuestion.length;
+    dataObj["totalMarks"] = checkStatus[i].examId.totalMarksWritten / 4;
+    dataObj["marksPerQuestion"] =
+      checkStatus[i].questionWritten[indexValue1].marksPerQuestion;
+    data.push(dataObj);
+  }
+  let count = data.length;
+  let paginateData = pagination(count, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
+  let data1 = [];
+  if (count > 0) {
+    for (let i = start; i < end; i++) {
+      if (i == data.length) break;
+      data1.push(data[i]);
+    }
+  }
+  return res.status(200).json({ data1, paginateData });
+};
+const getRecheckStudentData1 = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
   teacherId = new mongoose.Types.ObjectId(teacherId);
