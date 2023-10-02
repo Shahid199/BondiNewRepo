@@ -3290,7 +3290,6 @@ const statusUpdate = async (req, res, next) => {
     return res.status(500).json("problem!");
   }
 };
-exports.retakeSpecial = retakeSpecial;
 exports.marksCalculationAdmin = marksCalculationAdmin;
 exports.checkScriptSingleAdmin = checkScriptSingleAdmin;
 exports.getRecheckStudentDataAdmin = getRecheckStudentDataAdmin;
