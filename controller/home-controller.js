@@ -147,7 +147,7 @@ const getHomePage = async (req, res, next) => {
       if (i == 1) break;
     }
     for (let i = 0; i < comingAll.length; i++) {
-      coming[i] = comingAll[i];
+      if (comingAll[i] != {s}) coming[i] = comingAll[i];
       if (i == 1) break;
     }
     homeDataTop["runningExam"] = running;
