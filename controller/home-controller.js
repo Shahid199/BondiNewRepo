@@ -37,7 +37,7 @@ const getHomePage = async (req, res, next) => {
           $and: [
             { status: true },
             { courseId: courseId },
-            { startTime: { $lt: currentTime } },
+            // { startTime: { $gt: currentTime } },
           ],
         },
         "_id name startTime endTime iLink"
@@ -47,6 +47,7 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
+    console.log(coming1);
     try {
       coming2 = await BothExam.find(
         {
@@ -75,7 +76,7 @@ const getHomePage = async (req, res, next) => {
     )
       .sort("startTime")
       .limit(2);
-    console.log(coming1);
+
     console.log(coming2);
     console.log(coming3);
     comingAll = coming1.concat(coming2);
