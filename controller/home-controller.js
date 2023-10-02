@@ -32,7 +32,9 @@ const getHomePage = async (req, res, next) => {
     console.log(currentTime);
     console.log(courseId);
     try {
-      coming1 = await Exam.find({});
+      coming1 = await Exam.find({
+        $and: [{ status: true, courseId: courseId }],
+      });
       //   {
       //     $and: [
       //       { status: true },
