@@ -1755,11 +1755,11 @@ const ruunningWritten = async (req, res, next) => {
   try {
     timeData = await SpecialVsStudent.findOne({
       $and: [{ examId: examId }, { studentId: studentId }],
-    }).populate({ path: "questionWritte", populate: { path: "subjectId" } });
-    console.log("timeData:", timeData);
+    }).populate({ path: "questionWritten", populate: { path: "subjectId" } });
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
+  console.log("timeData:", timeData);
   let data1 = [];
   let subjectsId = [];
   for (let i = 0; i < 4; i++) {
