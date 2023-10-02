@@ -861,7 +861,7 @@ const historyData = async (req, res, next) => {
   // let paginateData = pagination(count, page);
   try {
     data = await SpecialVsStudent.find({
-      $and: [{ studentId: studentIdObj }],
+      $and: [{ studentId: studentIdObj }, { publishStatus: false }],
     })
       .populate({
         path: "examId",
