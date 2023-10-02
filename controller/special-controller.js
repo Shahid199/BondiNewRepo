@@ -2059,10 +2059,10 @@ const getStudentData = async (req, res, next) => {
       questionData = questionData[i];
       indexValue = i;
       console.log(i);
-      console.log(questionData[i].subjectId);
       break;
     }
   }
+  console.log(questionData[indexValue].subjectId);
   // console.log(indexValue);
   // console.log("dataex:", dataEx.questionWritten[indexValue]);
   try {
