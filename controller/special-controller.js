@@ -837,7 +837,8 @@ const viewSollutionMcq = async (req, res, next) => {
 
     resultData.push(data1);
   }
-
+  resultData.push({ totalObtainedMarks: data.examId.totalMarksMcq });
+  resultData.push({ totalObtainedMarks: data.totalObtainedMarks });
   return res.status(200).json(resultData);
 };
 const viewSollutionWritten = async (req, res, next) => {
