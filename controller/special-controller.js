@@ -846,20 +846,15 @@ const historyData = async (req, res, next) => {
 
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let data;
-  // //let count = 0;
-  // // try {
-  // //   count = await SpecialVsStudent.find({
-  // //     $and: [{ studentId: studentIdObj }],
-  // //   })
-  // //     .populate({ path: "examId", match: { publishStatus: true } })
-  // //     .count();
-  // // } catch (err) {
-  // //   return res.status(500).json("Something went wrong.");
-  // // }
-  // //return res.status(200).json(count);
-  // //console.log(count);
-  // if (count == 0) return res.status(404).json("1.No data found.");
-  // let paginateData = pagination(count, page);
+  let count = 0;
+  try {
+    count = await SpecialVsStudent.find({
+      $and: [{ studentId: studentIdObj }, { publishStatus: false }],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let paginateData = pagination(count, page);
   try {
     data = await SpecialVsStudent.find({
       $and: [{ studentId: studentIdObj }, { publishStatus: false }],
@@ -871,9 +866,9 @@ const historyData = async (req, res, next) => {
       .populate({
         path: "questionMcq",
         populate: { path: "subjectId", select: "name -_id" },
-      });
-    // .skip(paginateData.skippedIndex)
-    // .limit(paginateData.perPage);
+      })
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
