@@ -896,9 +896,12 @@ const historyData = async (req, res, next) => {
     data1["title"] = data[i].examId.name;
     data1["variation"] = "Special Exam";
     data1["examType"] = "no";
-    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
-    data1["totalMarksMcq"] = data[i].totalMarksMcq;
-    data1["totalMarksWritten"] = data[i].totalMarksWritten;
+    data1["totalObtainedMarks"] =
+      data[i].totalMarksMcq + data[i].totalMarksWritten;
+    data1["totalMarksMcqExam"] = data[i].totalMarksMcq;
+    data1["totalMarksWrittenExam"] = data[i].totalMarksWritten;
+    data1["totalMarksMcq"] =
+      data[i].examId.totalMarksMcq + data[i].totalMarksWritten;
     data1["meritPosition"] = resultRank;
     data1["examStartTimeMcq"] = moment(data[i].startTimeMcq).format("LLL");
     data1["examEndTimeMcq"] = moment(data[i].endTimeMcq).format("LLL");
