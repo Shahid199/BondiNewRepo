@@ -2058,6 +2058,7 @@ const getStudentData = async (req, res, next) => {
     if (String(questionData[i].subjectId) == String(subjectRole)) {
       questionData = questionData[i];
       indexValue = i;
+      console.log(questionData[i].subjectId);
       break;
     }
   }
@@ -2075,7 +2076,7 @@ const getStudentData = async (req, res, next) => {
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  console.log(studentData);
+  // console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
