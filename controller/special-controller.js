@@ -351,6 +351,66 @@ const deactivateSpecialExam = async (req, res, next) => {
   if (upd == null) return res.status(404).json("No data found.");
   return res.status(201).json("Deactivated.");
 };
+const studentSubmittedExamDetail = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("Student Id is not valid.");
+  const studentIdObj = new mongoose.Types.ObjectId(studentId);
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null) return res.status(404).json("No data found.");
+  let dataRank = null;
+  try {
+    dataRank = await StudentMarksRank.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (dataRank == null) return res.status(404).json("No data found.");
+  //star rank
+  let mcqRank = null;
+  try {
+    mcqRank = await McqRank.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (mcqRank != null) mcqRank = mcqRank.rank;
+  else mcqRank = "-1";
+  //end rank
+
+  let dataObject = {};
+  dataObject["examName"] = data.examId.name;
+  dataObject["totalMarksMcq"] = data.examId.totalMarksMcq;
+  dataObject["startTime"] = data.examId.startTime;
+  dataObject["endTime"] = data.examId.endTime;
+  dataObject["examVariation"] = examType[Number(data.examId.examType)];
+  dataObject["examType"] = examVariation[Number(data.examId.examVariation)];
+  dataObject["studExamTime"] = dataObject["totalCorrectAnswer"] =
+    data.totalCorrectAnswer;
+  dataObject["studExamStartTime"] = dataRank.examStartTime;
+  dataObject["studExamEndTime"] = dataRank.examEndTime;
+  dataObject["studDuration"] = dataRank.duration;
+  dataObject["rank"] = mcqRank;
+  dataObject["totalObtainedMarks"] = dataRank.totalObtainedMarks;
+  dataObject["totalWrongAnswer"] = data.totalWrongAnswer;
+  dataObject["totalCorrectMarks"] = data.totalCorrectMarks;
+  dataObject["totalWrongMarks"] = data.totalWrongMarks;
+  dataObject["totalNotAnswered"] = data.totalNotAnswered;
+  dataObject["marksPerMcq"] = data.examId.marksPerMcq;
+  dataObject["marksPerWrong"] = data.examId.negativeMarks / 100;
+  return res.status(200).json(dataObject);
+};
 //rule api
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -836,59 +896,6 @@ const viewSollutionWritten = async (req, res, next) => {
     dataNew[i] = subjects;
   }
   return res.status(200).json(dataNew);
-};
-const retakeSpecial = async (req, res, next) => {
-  const sId = req.user.studentId;
-  const eId = req.query.examId;
-  if (!ObjectId.isValid(sId) || !ObjectId.isValid(eId))
-    return res.status(404).json("invalid student ID or exam ID.");
-  let eId1, sId1;
-  sId1 = new mongoose.Types.ObjectId(sId);
-  eId1 = new mongoose.Types.ObjectId(eId);
-  //exam status Check:start
-  let studentCheck = null;
-  let getQuestionMcq, getExamData;
-  try {
-    getQuestionMcq = await SpecialVsStudent.findOne({
-      $and: [{ studentId: sId1 }, { examId: eId1 }],
-    })
-      .populate({
-        path: "questionMcq",
-        populate: {
-          path: "mcqId",
-          match: { status: true },
-          select: "question type options optionCount status _id",
-        },
-      })
-      .populate("examId")
-      .populate({
-        path: "questionMcq",
-        populate: { path: "subjectId", select: "name" },
-      });
-  } catch (err) {
-    return res.status(500).json("can't get question.Problem Occur.");
-  }
-  console.log(getQuestionMcq);
-  let examData = getQuestionMcq;
-  //exam status Check:end
-  getQuestionMcq = getQuestionMcq.questionMcq;
-  let data = [];
-  for (let i = 0; i < getQuestionMcq.length; i++) {
-    let dataQ = {};
-    dataQ["questions"] = getQuestionMcq[i].mcqId;
-    dataQ["answeredOptions"] = getQuestionMcq[i].mcqAnswer;
-    dataQ["subjectId"] = getQuestionMcq[i].subjectId._id;
-    dataQ["subjectName"] = getQuestionMcq[i].subjectId.name;
-    data[i] = dataQ;
-  }
-  let examDet = {};
-  examDet["studExamStartTime"] = examData.startTimeMcq;
-  examDet["studExamEndTime"] = examData.endTimeMcq;
-  examDet["duration"] = examData.mcqDuration;
-  examDet["dueDuration"] =
-    moment(moment(examData.endTimeMcq) - new Date()) / 60000;
-
-  return res.status(200).json({ data, examDet });
 };
 const historyData = async (req, res, next) => {
   console.log(req.user);
