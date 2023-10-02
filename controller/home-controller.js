@@ -113,7 +113,7 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
-    runningAll = running1.concat(runnig2);
+    runningAll = running1.concat(running2);
     runningAll = runningAll.concat(running3);
     runningAll = runningAll.sort((a, b) => a.startTime >= b.startTime);
     console.log(running1);
