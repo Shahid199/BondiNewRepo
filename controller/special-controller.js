@@ -910,13 +910,12 @@ const historyData = async (req, res, next) => {
     data1["writtenDuration"] = data[i].writtenDuration;
     data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
     data1["courseName"] = data[i].examId.courseId.name;
-    resultData.push(data1);
+    let subObj = [];
+    for (let j = 0; j < 4; j++) {
+      subObj.push(data[i].questionMcq[j].subjectId.name);
+    }
+    data1["subjects"] = subObj;
   }
-  let subObj = [];
-  for (let j = 0; j < 4; j++) {
-    subObj.push(data[i].questionMcq[j].subjectId.name);
-  }
-  resultData.push({ subjects: subObj });
 
   return res.status(200).json({ resultData, paginateData });
 };
