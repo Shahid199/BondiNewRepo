@@ -2721,18 +2721,22 @@ const getStudentDataAdmin = async (req, res, next) => {
     dataObj["subject1"] = {
       id: checkStatus[i].questionWritten[0].subjectId._id,
       name: checkStatus[i].questionWritten[0].subjectId.name,
+      status: checkStatus[i].questionWritten[0].subStatus,
     };
     dataObj["subject2"] = {
       id: checkStatus[i].questionWritten[1].subjectId._id,
       name: checkStatus[i].questionWritten[1].subjectId.name,
+      status: checkStatus[i].questionWritten[1].subStatus,
     };
     dataObj["subject3"] = {
       id: checkStatus[i].questionWritten[2].subjectId._id,
       name: checkStatus[i].questionWritten[2].subjectId.name,
+      status: checkStatus[i].questionWritten[2].subStatus,
     };
     dataObj["subject4"] = {
       id: checkStatus[i].questionWritten[3].subjectId._id,
       name: checkStatus[i].questionWritten[3].subjectId.name,
+      status: checkStatus[i].questionWritten[3].subStatus,
     };
     data.push(dataObj);
   }
@@ -2797,22 +2801,18 @@ const getRecheckStudentDataAdmin = async (req, res, next) => {
     dataObj["subject1"] = {
       id: checkStatus[i].questionWritten[0].subjectId._id,
       name: checkStatus[i].questionWritten[0].subjectId.name,
-      status: checkStatus[i].questionWritten[0].subStatus,
     };
     dataObj["subject2"] = {
       id: checkStatus[i].questionWritten[1].subjectId._id,
       name: checkStatus[i].questionWritten[1].subjectId.name,
-      status: checkStatus[i].questionWritten[1].subStatus,
     };
     dataObj["subject3"] = {
       id: checkStatus[i].questionWritten[2].subjectId._id,
       name: checkStatus[i].questionWritten[2].subjectId.name,
-      status: checkStatus[i].questionWritten[2].subStatus,
     };
     dataObj["subject4"] = {
       id: checkStatus[i].questionWritten[3].subjectId._id,
       name: checkStatus[i].questionWritten[3].subjectId.name,
-      status: checkStatus[i].questionWritten[3].subStatus,
     };
     data.push(dataObj);
   }
