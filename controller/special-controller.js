@@ -802,13 +802,12 @@ const viewSollutionMcq = async (req, res, next) => {
       .populate({
         path: "questionMcq",
         populate: { path: "mcqId" },
-        populate: { path: "subjectId" },
       })
       .populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
- 
+
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
