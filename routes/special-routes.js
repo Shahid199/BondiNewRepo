@@ -50,6 +50,7 @@ const {
   getRecheckStudentDataAdmin,
   checkScriptSingleAdmin,
   marksCalculationAdmin,
+  studentSubmittedExamDetail,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -445,5 +446,13 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getWrittenStudentSingleByExamAdmin
+);
+router.get(
+  "/studentSubmittedExamDetail",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  studentSubmittedExamDetail
 );
 module.exports = router;

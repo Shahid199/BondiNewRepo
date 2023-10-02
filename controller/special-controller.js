@@ -362,24 +362,18 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   try {
     data = await SpecialVsStudent.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-    }).populate("examId");
+    })
+      .populate("examId")
+      .populate({ path: "questionMcq", populate: { path: "subjectId" } })
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
   if (data == null) return res.status(404).json("No data found.");
-  let dataRank = null;
-  try {
-    dataRank = await StudentMarksRank.findOne({
-      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
-    });
-  } catch (err) {
-    return res.status(500).json("2.Something went wrong.");
-  }
-  if (dataRank == null) return res.status(404).json("No data found.");
   //star rank
   let mcqRank = null;
   try {
-    mcqRank = await McqRank.findOne({
+    mcqRank = await SpecialRank.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     });
   } catch (err) {
@@ -388,28 +382,39 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   if (mcqRank != null) mcqRank = mcqRank.rank;
   else mcqRank = "-1";
   //end rank
+  let dataEx = [];
+  for (let i = 0; i < 4; i++) {
+    let dataObject = {};
+    dataObject["examName"] = data.examId.name;
+    dataObject["subjectId"] = data.questionMcq[i].subjectId._id;
+    dataObject["subjectName"] = data.questionMcq[i].subjectId.name;
+    dataObject["marksMcqPerSub"] = data.questionMcq[i].mcqMarksPerSub;
+    dataObject["marksWrittenPerSub"] =
+      data.questionWritten[i].totalObtainedMarksWritten;
+    dataObject["totalMarksMcqPerSub"] = data.examId.totalMarksMcq / 4;
+    dataObject["totalMarksWrittenPerSub"] = data.examId.totalMarksWritten / 4;
+    dataObject["startTime"] = moment(data.examId.startTime).format("LLLL");
+    dataObject["endTime"] = moment(data.examId.endTime).format("LLLL");
+    dataObject["examVariation"] = "Special Exam";
+    dataObject["studExamStartTimeMcq"] = moment(data.startTimeMcq).format(
+      "LLLL"
+    );
+    dataObject["studExamEndTimeMcq"] = moment(data.endTimeMcq).format("LLLL");
+    dataObject["studExamStartTimeWritten"] = moment(
+      data.startTimeWritten
+    ).format("LLLL");
+    dataObject["studExamEndTimeWritten"] = moment(data.endTimeWritten).format(
+      "LLLL"
+    );
+    dataObject["studDuration"] = data.mcqDuration + data.writtenDuration;
+    dataObject["rank"] = mcqRank;
+    dataObject["totalObtainedMarks"] = data.totalObtainedMarks;
+    dataObject["totalMarks"] =
+      data.examId.totalMarksMcq + data.examId.totalMarksWritten;
 
-  let dataObject = {};
-  dataObject["examName"] = data.examId.name;
-  dataObject["totalMarksMcq"] = data.examId.totalMarksMcq;
-  dataObject["startTime"] = data.examId.startTime;
-  dataObject["endTime"] = data.examId.endTime;
-  dataObject["examVariation"] = examType[Number(data.examId.examType)];
-  dataObject["examType"] = examVariation[Number(data.examId.examVariation)];
-  dataObject["studExamTime"] = dataObject["totalCorrectAnswer"] =
-    data.totalCorrectAnswer;
-  dataObject["studExamStartTime"] = dataRank.examStartTime;
-  dataObject["studExamEndTime"] = dataRank.examEndTime;
-  dataObject["studDuration"] = dataRank.duration;
-  dataObject["rank"] = mcqRank;
-  dataObject["totalObtainedMarks"] = dataRank.totalObtainedMarks;
-  dataObject["totalWrongAnswer"] = data.totalWrongAnswer;
-  dataObject["totalCorrectMarks"] = data.totalCorrectMarks;
-  dataObject["totalWrongMarks"] = data.totalWrongMarks;
-  dataObject["totalNotAnswered"] = data.totalNotAnswered;
-  dataObject["marksPerMcq"] = data.examId.marksPerMcq;
-  dataObject["marksPerWrong"] = data.examId.negativeMarks / 100;
-  return res.status(200).json(dataObject);
+    dataEx = dataObject;
+  }
+  return res.status(200).json(dataEx);
 };
 //rule api
 const examRuleSet = async (req, res, next) => {
@@ -3290,6 +3295,7 @@ const statusUpdate = async (req, res, next) => {
     return res.status(500).json("problem!");
   }
 };
+exports.studentSubmittedExamDetail = studentSubmittedExamDetail;
 exports.marksCalculationAdmin = marksCalculationAdmin;
 exports.checkScriptSingleAdmin = checkScriptSingleAdmin;
 exports.getRecheckStudentDataAdmin = getRecheckStudentDataAdmin;
