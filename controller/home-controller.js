@@ -75,9 +75,10 @@ const getHomePage = async (req, res, next) => {
     )
       .sort("startTime")
       .limit(2);
-    console.log(comingAll);
+    console.log(coming1);
+    console.log(coming2);
+    console.log(coming3);
     comingAll = coming1.concat(coming2);
-    console.log(comingAll);
     comingAll = comingAll.concat(coming3);
     //console.log(coming);
     try {
