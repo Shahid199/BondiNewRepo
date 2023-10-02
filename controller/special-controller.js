@@ -2082,7 +2082,7 @@ const getStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let indexValue1 = null;
-  for (let j = 0; j < 4; j++) {
+  for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
       indexValue1 = j;
       console.log(j);
@@ -2106,7 +2106,10 @@ const getStudentData = async (req, res, next) => {
     }
     if (indexValue == null || questionData.subStatus == true) continue;
     console.log(i);
-    console.log("check status", checkStatus[i].examId);
+    console.log(
+      "check status",
+      checkStatus[i].examId.questionWritten[indexValue1]
+    );
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
