@@ -808,6 +808,7 @@ const viewSollutionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  console.log("data", data);
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
@@ -819,9 +820,7 @@ const viewSollutionMcq = async (req, res, next) => {
       let qData = {};
       qData["iLink"] = data.questionMcq[i].mcqId[j].question;
       qData["options"] = data.questionMcq[i].mcqId[j].options;
-      qData["correctOptions"] = Number(
-        data.questionMcq[i].mcqId[j].correctOption
-      );
+      qData["correctOptions"] = data.questionMcq[i].mcqId[j].correctOption;
       qData["explanationILink"] = data.questionMcq[i].mcqId[j].explanationILink;
       qData["type"] = data.questionMcq[i].mcqId[j].type;
       qData["answeredOption"] = data.questionMcq[i].mcqAnswer[j];
