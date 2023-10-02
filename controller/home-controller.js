@@ -15,7 +15,7 @@ const getHomePage = async (req, res, next) => {
     running2 = [],
     running3 = [],
     runningAll = [],
-    coming,
+    coming = [],
     coming1 = [],
     coming2 = [],
     coming3 = [],
