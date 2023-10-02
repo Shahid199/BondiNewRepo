@@ -1657,6 +1657,7 @@ const assignQuestionWritten = async (req, res, next) => {
   const subject3 = req.query.subjectId3;
   const subject4 = req.query.subjectId4;
   let subjects = [subject1, subject2, subject3, subject4];
+  console.log("subjects:", subjects);
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
   let updId = null;
@@ -1675,7 +1676,6 @@ const assignQuestionWritten = async (req, res, next) => {
       path: "questionWritten",
       populate: { path: "subjectId", select: "_id name" },
     });
-    console.log("examData:", examData);
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
@@ -1756,7 +1756,7 @@ const ruunningWritten = async (req, res, next) => {
     timeData = await SpecialVsStudent.findOne({
       $and: [{ examId: examId }, { studentId: studentId }],
     });
-    console.log("examData:", timeData);
+    console.log("timeData:", timeData);
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
@@ -1774,7 +1774,6 @@ const ruunningWritten = async (req, res, next) => {
     objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
     data1.push(objWritten);
   }
-  console.log(data1);
   data1.push({ studExamStartTime: timeData.startTimeWritten });
   data1.push({ studExamEndTime: timeData.endTimeWritten });
   data1.push({ examEndTime: examData.endTime });
@@ -2709,7 +2708,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   }
   console.log(checkStatus);
   let data = [];
-  console.log("object",checkStatus.length);
+  console.log("object", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
     //if (checkStatus[i].checkStatus == true) continue;
