@@ -28,7 +28,7 @@ const getHomePage = async (req, res, next) => {
   let currentTime = moment(Date.now()).add(6, "hours");
   //Top
   if (section == "top") {
-    let currentTime = new Date();
+    let currentTime = moment(new Date());
     console.log(currentTime);
     console.log(courseId);
     try {
