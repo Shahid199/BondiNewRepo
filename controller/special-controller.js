@@ -947,7 +947,7 @@ const historyData = async (req, res, next) => {
     else resultRank = resultRank.rank;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
-    data1["examStartTime"] = moment(data[i].startTime).format("LLL");
+    data1["examStartTime"] = moment(data[i].examId.startTime).format("LLL");
     data1["variation"] = "Special Exam";
     data1["examType"] = "no";
     data1["totalObtainedMarks"] =
