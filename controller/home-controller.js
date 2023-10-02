@@ -75,7 +75,9 @@ const getHomePage = async (req, res, next) => {
     )
       .sort("startTime")
       .limit(2);
+    console.log(comingAll);
     comingAll = coming1.concat(coming2);
+    console.log(comingAll);
     comingAll = comingAll.concat(coming3);
     //console.log(coming);
     try {
@@ -136,8 +138,7 @@ const getHomePage = async (req, res, next) => {
     // console.log(running1);
     // console.log(running2);
     // console.log(running3);
-    console.log(runningAll);
-    console.log(comingAll);
+
     let running = [];
     for (let i = 0; i < runningAll.length; i++) {
       running[i] = runningAll[i];
