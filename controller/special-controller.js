@@ -2072,7 +2072,7 @@ const getStudentData = async (req, res, next) => {
     studId[i] = studentData[i]._id;
   }
   //console.log(studId);
-  let checkStatus = null;
+  let checkStatus = [];
   try {
     checkStatus = await SpecialVsStudent.find({
       $and: [{ studentId: { $in: studId } }, { examId: examId }],
