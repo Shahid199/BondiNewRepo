@@ -2717,7 +2717,7 @@ const getStudentDataAdmin = async (req, res, next) => {
     dataObj["studentName"] = checkStatus[i].studentId.name;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
-    console.log("check ", checkStatus[i].questionWritten[0]);
+    console.log("check ", i);
     dataObj["subject1"] = {
       id: checkStatus[i].questionWritten[0].subjectId._id,
       name: checkStatus[i].questionWritten[0].subjectId.name,
