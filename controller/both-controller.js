@@ -70,8 +70,8 @@ const createBothExam = async (req, res, next) => {
     subjectId: subjectIdObj,
     name: name,
     examType: Number(examType),
-    startTime: moment(startTime1),
-    endTime: moment(endTime1),
+    startTime: moment(startTime),
+    endTime: moment(endTime),
     totalDuration: Number(totalDuration),
     mcqDuration: Number(mcqDuration),
     writtenDuration: Number(writtenDuration),
@@ -202,9 +202,9 @@ const getBothExamBySubject = async (req, res, next) => {
   for (let i = 0; i < exams1.length; i++) {
     let dataRule = null;
     try {
-      dataRule = await BothExamRule.findOne({ bothExamId: exams1[i]._id }).select(
-        "ruleILink -_id"
-      );
+      dataRule = await BothExamRule.findOne({
+        bothExamId: exams1[i]._id,
+      }).select("ruleILink -_id");
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
