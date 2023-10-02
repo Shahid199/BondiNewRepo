@@ -32,20 +32,18 @@ const getHomePage = async (req, res, next) => {
     console.log(currentTime);
     console.log(courseId);
     try {
-      coming1 = await Exam.find({
-        $and: [{ status: true, courseId: courseId }],
-      });
-      //   {
-      //     $and: [
-      //       { status: true },
-      //       { courseId: courseId },
-      //       // { startTime: { $gt: currentTime } },
-      //     ],
-      //   },
-      //   "_id name startTime endTime iLink"
-      // )
-      //   .sort("startTime")
-      //   .limit(2);
+      coming1 = await Exam.find(
+        {
+          $and: [
+            { status: true },
+            { courseId: courseId },
+            // { startTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink"
+      )
+        .sort("startTime")
+        .limit(2);
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
