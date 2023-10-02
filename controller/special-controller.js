@@ -823,6 +823,7 @@ const viewSollutionMcq = async (req, res, next) => {
       data1["explanationILink"] = data.questionMcq[i].mcqId[j].explanationILink;
       data1["type"] = data.questionMcq[i].mcqId[j].type;
       data1["answeredOption"] = data.questionMcq[i].mcqAnswer[j];
+      data1["correctOption"] = data.questionMcq[i].mcqId[j].correctOption;
       data1["optionCount"] = data.questionMcq[i].mcqId[j].optionCount;
       subjectData.push(data1);
     }
