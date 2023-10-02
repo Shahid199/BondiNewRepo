@@ -2189,7 +2189,7 @@ const getRecheckStudentData = async (req, res, next) => {
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
-    if (checkStatus[i].questionWritten[indexValue].subStatus == true) continue;
+    if (checkStatus[i].questionWritten[indexValue].subStatus == false) continue;
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = 4;
     dataObj["studentName"] = checkStatus[i].studentId.name;
