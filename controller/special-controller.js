@@ -2105,7 +2105,8 @@ const getStudentData = async (req, res, next) => {
       }
     }
     if (indexValue == null || questionData.subStatus == true) continue;
-    console.log("check status", checkStatus[i].questionWritten);
+    console.log(i);
+    console.log("check status", checkStatus[i].examId);
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
