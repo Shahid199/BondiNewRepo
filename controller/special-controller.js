@@ -973,7 +973,7 @@ const specialGetHistory = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await SpecialExam.findById(String(examIdObj)).populate(
-      "courseId subjectId"
+      "courseId"
     );
   } catch (err) {
     return res.status(500).json("5.Something went wrong.");
@@ -984,7 +984,6 @@ const specialGetHistory = async (req, res, next) => {
     id: String(examDetails._id),
     name: examDetails.name,
     courseName: examDetails.courseId.name,
-    subjectName: examDetails.subjectId.name,
     startTime: moment(examDetails.examStartTime).format("LLL"),
     endTime: moment(examDetails.examEndTime).format("LLL"),
     totalQuestion: qWritten.totalQuestions,
