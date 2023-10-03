@@ -87,6 +87,7 @@ const getHomePage = async (req, res, next) => {
         {
           $and: [
             { status: true },
+            { courseId: courseId },
             { startTime: { $lte: currentTime } },
             { endTime: { $gt: currentTime } },
           ],
@@ -104,6 +105,7 @@ const getHomePage = async (req, res, next) => {
         {
           $and: [
             { status: true },
+            { courseId: courseId },
             { startTime: { $lte: currentTime } },
             { endTime: { $gt: currentTime } },
           ],
@@ -122,6 +124,7 @@ const getHomePage = async (req, res, next) => {
         {
           $and: [
             { status: true },
+            { courseId: courseId },
             { startTime: { $lte: currentTime } },
             { endTime: { $gt: currentTime } },
           ],
