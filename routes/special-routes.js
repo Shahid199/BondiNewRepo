@@ -271,7 +271,7 @@ router.post(
 
 //other
 router.get(
-  "viewsollutionwritten",
+  "/viewsollutionwritten",
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["student", "superadmin", "moderator"]),
