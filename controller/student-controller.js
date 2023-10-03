@@ -3665,7 +3665,6 @@ const bothHistoryData = async (req, res, next) => {
     data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
     data1["totalMarksMcq"] = data[i].totalObtainedMarksMcq;
     data1["totalMarksWritten"] = data[i].totalObtainedMarksWritten;
-    data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
     data1["meritPosition"] = resultRank;
     data1["examStartTimeMcq"] = moment(data[i].examStartTimeMcq).format("LLL");
     data1["examEndTimeMcq"] = moment(data[i].examEndTimeMcq).format("LLL");
@@ -3679,6 +3678,7 @@ const bothHistoryData = async (req, res, next) => {
     data1["writtenDuration"] = data[i].writtenDuration;
     data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
     data1["subjectName"] = subjectName;
+    data1["examStartTime"] = null;
     resultData.push(data1);
   }
   return res.status(200).json({ resultData, paginateData });
