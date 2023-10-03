@@ -914,7 +914,7 @@ const specialGetHistory = async (req, res, next) => {
       $and: [{ examId: examIdObj }],
     }).count();
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   if (count == 0) {
     return res.status(404).json("No data found.");
@@ -931,7 +931,7 @@ const specialGetHistory = async (req, res, next) => {
       .limit(paginateData.perPage);
   } catch (err) {
     //console.log(err);
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("2.Something went wrong.");
   }
   let qWritten = null;
   try {
@@ -946,7 +946,7 @@ const specialGetHistory = async (req, res, next) => {
         $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
       });
     } catch (err) {
-      return res.status(500).json("Something went wrong.");
+      return res.status(500).json("3.Something went wrong.");
     }
     if (mcqRank == null) mcqRank = "-1";
     else mcqRank = mcqRank.rank;
@@ -958,7 +958,7 @@ const specialGetHistory = async (req, res, next) => {
         $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
       }).populate("studentId");
     } catch (err) {
-      return res.status(500).json("Something went wrong.");
+      return res.status(500).json("4.Something went wrong.");
     }
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
@@ -976,7 +976,7 @@ const specialGetHistory = async (req, res, next) => {
       "courseId subjectId"
     );
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("5.Something went wrong.");
   }
   console.log(examDetails.totalMarksMcq);
   console.log(examDetails.totalMarksWritten);
@@ -988,8 +988,6 @@ const specialGetHistory = async (req, res, next) => {
     startTime: moment(examDetails.examStartTime).format("LLL"),
     endTime: moment(examDetails.examEndTime).format("LLL"),
     totalQuestion: qWritten.totalQuestions,
-    variation: examType[Number(examDetails.examType)],
-    type: examVariation[Number(examDetails.examVariation)],
     totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
   };
   return res.status(200).json({ data, examInfo, paginateData });
