@@ -897,7 +897,7 @@ const viewSollutionWritten = async (req, res, next) => {
         break;
       }
     }
-    dataNew[i] = subjects;
+    dataNew.push(subjects[i]);
   }
   return res.status(200).json(dataNew);
 };
