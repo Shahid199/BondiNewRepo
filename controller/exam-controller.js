@@ -149,10 +149,11 @@ const getExamById = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId is invalid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
   let examData = null;
   try {
     examData = await Exam.findOne({
-      $and: [{ _id: examId }, { status: true }],
+      $and: [{ _id: examIdObj }, { status: true }],
     }).populate("courseId subjectId");
   } catch (err) {
     return res.status(500).json("Something went wrong.");
