@@ -78,6 +78,7 @@ const {
   bothViewSollutionMcqAdmin,
   viewSollutionWrittenAdmin,
   getHistoryByExamIdFilter,
+  getHistoryByWrittenIdFilter,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -188,6 +189,14 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getHistoryByWrittenId
+);
+router.get(
+  "/gethistorybywrittenidfilter",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  getHistoryByWrittenIdFilter
 );
 router.get(
   "/getrunningdata",
