@@ -914,7 +914,7 @@ const historyData = async (req, res, next) => {
   let count = 0;
   try {
     count = await SpecialVsStudent.find({
-      $and: [{ studentId: studentIdObj }, { publishStatus: false }],
+      $and: [{ studentId: studentIdObj }, { publishStatus: true }],
     }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
@@ -922,7 +922,7 @@ const historyData = async (req, res, next) => {
   let paginateData = pagination(count, page);
   try {
     data = await SpecialVsStudent.find({
-      $and: [{ studentId: studentIdObj }, { publishStatus: false }],
+      $and: [{ studentId: studentIdObj }, { publishStatus: true }],
     })
       .populate({
         path: "examId",
