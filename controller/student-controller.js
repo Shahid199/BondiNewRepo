@@ -4633,7 +4633,7 @@ const bothViewSollutionWritten = async (req, res, next) => {
     return res.status(404).json("No exam found under this student.");
   let dataWritten = null;
   try {
-    dataWritten = await QuestionsWritten.findOne({
+    dataWritten = await BothQuestionsWritten.findOne({
       examId: examIdObj,
     }).populate("examId");
   } catch (err) {
