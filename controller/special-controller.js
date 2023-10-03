@@ -872,6 +872,7 @@ const viewSollutionWritten = async (req, res, next) => {
     sObj["answerScript"] = null;
     sObj["marksPerSub"] = null;
     sObj["marksPerQuestion"] = null;
+    sObj["marksPerSub"] = 0;
     subjects[i] = sObj;
   }
   let writtenQuestion = null;
@@ -894,9 +895,7 @@ const viewSollutionWritten = async (req, res, next) => {
           writtenQuestion.questionWritten[j].totalObtainedMarksWritten;
         subjects[i].marksPerQuestion =
           writtenQuestion.questionWritten[j].obtainedMarks;
-        subjects[i].push({
-          totalMarksWritten: writtenQuestion.totalMarksWritten,
-        });
+        subjects[i].marksPerSub = writtenQuestion.totalMarksWritten;
       }
     }
     dataNew[i] = subjects;
