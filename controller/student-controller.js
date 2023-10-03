@@ -1975,6 +1975,7 @@ const getHistoryByExamIdFilter = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  if (studentId.length == 0) return res.status(404).json("No data found.");
   let studIds = [];
   for (let i = 0; i < studentId.length; i++) {
     studIds[i] = studentId[i]._id;
@@ -2176,6 +2177,7 @@ const getHistoryByWrittenIdFilter = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  if (studentId.length == 0) return res.status(404).json("No data found.");
   let studIds = [];
   for (let i = 0; i < studentId.length; i++) {
     studIds[i] = studentId[i]._id;
@@ -2287,6 +2289,114 @@ const bothGetHistory = async (req, res, next) => {
   try {
     rank = await BothStudentExamVsQuestions.find({
       $and: [{ examId: examIdObj }],
+    })
+      .populate("studentId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  let qWritten = null;
+  try {
+    qWritten = await BothQuestionsWritten.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  for (let i = 0; i < rank.length; i++) {
+    let mcqRank = null;
+    try {
+      mcqRank = await BothRank.findOne({
+        $and: [{ examId: examIdObj }, { studentId: rank[i].studentId._id }],
+      });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (mcqRank == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
+    let data1 = {},
+      examStud = null;
+    data1["studentId"] = rank[i].studentId._id;
+    try {
+      examStud = await BothStudentExamVsQuestions.findOne({
+        $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
+      }).populate("studentId");
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    data1["examStud"] = examStud;
+    data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
+    data1["meritPosition"] = mcqRank;
+    data1["examStartTime"] = moment(rank[i].examStartTimeMcq).format("LLL");
+    data1["examEndTime"] = moment(rank[i].examEndTimeWritten).format("LLL");
+    data1["duration"] = rank[i].totalDuration;
+    data1["totalObtainedMarksMcq"] = examStud.totalObtainedMarksMcq;
+    data1["totalObtainedMarksWritten"] = examStud.totalObtainedMarksWritten;
+    data.push(data1);
+  }
+  examDetails = null;
+  try {
+    examDetails = await BothExam.findById(String(examIdObj)).populate(
+      "courseId subjectId"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  console.log(examDetails.totalMarksMcq);
+  console.log(examDetails.totalMarksWritten);
+  let examInfo = {
+    id: String(examDetails._id),
+    name: examDetails.name,
+    courseName: examDetails.courseId.name,
+    subjectName: examDetails.subjectId.name,
+    startTime: moment(examDetails.examStartTime).format("LLL"),
+    endTime: moment(examDetails.examEndTime).format("LLL"),
+    totalQuestion: qWritten.totalQuestions,
+    variation: examType[Number(examDetails.examType)],
+    type: examVariation[Number(examDetails.examVariation)],
+    totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
+  };
+  return res.status(200).json({ data, examInfo, paginateData });
+};
+const bothGetHistoryFilter = async (req, res, next) => {
+  const examId = req.query.examId;
+  const regNo = req.query.regNo;
+  if (!ObjectId.isValid(examId) || !regNo)
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+  let studentId = null;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  try {
+    studentId = await Student.find({
+      regNo: {
+        $regex: new RegExp(".*" + regNo.toLowerCase() + ".*", "i"),
+      },
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentId.length == 0) return res.status(404).json("No data found.");
+  let studIds = [];
+  for (let i = 0; i < studentId.length; i++) {
+    studIds[i] = studentId[i]._id;
+  }
+  let count = 0;
+  try {
+    count = await BothStudentExamVsQuestions.find({
+      $and: [{ examId: examIdObj }, { studentId: { $in: studIds } }],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (count == 0) {
+    return res.status(404).json("No data found.");
+  }
+  let paginateData = pagination(count, page);
+  let data = [],
+    rank;
+  try {
+    rank = await BothStudentExamVsQuestions.find({
+      $and: [{ examId: examIdObj }, { studentId: { $in: studIds } }],
     })
       .populate("studentId")
       .skip(paginateData.skippedIndex)
@@ -4981,6 +5091,7 @@ const bothViewSollutionWrittenAdmin = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+exports.bothGetHistoryFilter = bothGetHistoryFilter;
 exports.getHistoryByWrittenIdFilter = getHistoryByWrittenIdFilter;
 exports.getHistoryByExamIdFilter = getHistoryByExamIdFilter;
 exports.bothGetHistory = bothGetHistory;
