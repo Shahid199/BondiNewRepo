@@ -882,6 +882,7 @@ const viewSollutionWritten = async (req, res, next) => {
   }
   let dataNew = [];
   for (let i = 0; i < 4; i++) {
+    console.log("subject i Id", subjects[i].id);
     for (let j = 0; j < 6; j++) {
       if (
         String(subjects[i].id) ==
@@ -895,7 +896,6 @@ const viewSollutionWritten = async (req, res, next) => {
         console.log("examQ", writtenQuestion.questionWritten[j].subjectId);
         break;
       }
-      console.log("subject i Id", subjects[i].id);
     }
     dataNew[i] = subjects;
   }
