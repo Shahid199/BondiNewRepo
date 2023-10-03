@@ -236,7 +236,8 @@ const deactivateUser = async (req, res, next) => {
 };
 
 const updatePassword = async (req, res, next) => {
-  const { userId, oldPassowrd, newPassword } = req.body;
+  const { oldPassowrd, newPassword } = req.body;
+  const userId = req.user._id;
   if (!ObjectId.isValid(userId))
     return res.status(404).json("Invalid user Id.");
   let userInfo = null;
