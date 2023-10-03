@@ -52,6 +52,8 @@ const {
   marksCalculationAdmin,
   studentSubmittedExamDetail,
   specialGetHistory,
+  viewSollutionMcqAdmin,
+  viewSollutionWrittenAdmin,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -287,6 +289,24 @@ router.get(
   ],
   viewSollutionMcq
 );
+
+router.get(
+  "/viewsollutionwrittenadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  viewSollutionWrittenAdmin
+);
+router.get(
+  "/viewsollutionmcqadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  viewSollutionMcqAdmin
+);
+
 router.get(
   "/historydata",
   [

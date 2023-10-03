@@ -74,6 +74,9 @@ const {
   bothGetWrittenStudentAllByExam,
   bothGetCheckWrittenStudentAllByExam,
   bothGetHistory,
+  bothViewSollutionWrittenAdmin,
+  bothViewSollutionMcqAdmin,
+  viewSollutionWrittenAdmin,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -469,6 +472,14 @@ router.get(
   viewSollutionWritten
 );
 router.get(
+  "/viewSollutionwrittenadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  viewSollutionWrittenAdmin
+);
+router.get(
   "/examdetailwritten",
   [
     passport.authenticate("jwt", { session: false }),
@@ -579,6 +590,23 @@ router.get(
   bothViewSollutionMcq
 );
 router.get(
+  "/bothviewsollutionwrittenadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothViewSollutionWrittenAdmin
+);
+router.get(
+  "/bothviewsollutionmcqadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothViewSollutionMcqAdmin
+);
+
+router.get(
   "/bothhistorydata",
   [
     passport.authenticate("jwt", { session: false }),
@@ -600,7 +628,7 @@ router.get(
   "/bothgetwrittenstudentsinglebyexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator","teacher"]),
+    authorize(["superadmin", "moderator", "teacher"]),
   ],
   bothGetWrittenStudentSingleByExam
 );
@@ -617,7 +645,7 @@ router.get(
   "/bothgetwrittenstudentallbyexam",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator","teacher"]),
+    authorize(["superadmin", "moderator", "teacher"]),
   ],
   bothGetWrittenStudentAllByExam
 );

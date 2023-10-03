@@ -991,6 +991,122 @@ const specialGetHistory = async (req, res, next) => {
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
+const viewSollutionMcqAdmin = async (req, res, next) => {
+  //console.log(req.query);
+  const studentId = req.query.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    })
+      .populate({
+        path: "questionMcq",
+        populate: { path: "mcqId" },
+      })
+      .populate({
+        path: "questionMcq",
+        populate: { path: "subjectId" },
+      })
+      .populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < 4; i++) {
+    console.log("data", data.questionMcq[i].mcqId);
+    let data1 = {};
+    data1["subjectName"] = data.questionMcq[i].subjectId.name;
+    data1["totalObtainedMarksPerSub"] = data.questionMcq[i].mcqMarksPerSub;
+    data1["totalMarksPerSub"] = data.examId.totalMarksMcq / 4;
+    data1["questions"] = [];
+    for (let j = 0; j < data.questionMcq[i].mcqId.length; j++) {
+      let qData = {};
+      qData["iLink"] = data.questionMcq[i].mcqId[j].question;
+      qData["options"] = data.questionMcq[i].mcqId[j].options;
+      qData["correctOptions"] = data.questionMcq[i].mcqId[j].correctOption;
+      qData["explanationILink"] = data.questionMcq[i].mcqId[j].explanationILink;
+      qData["type"] = data.questionMcq[i].mcqId[j].type;
+      qData["answeredOption"] = data.questionMcq[i].mcqAnswer[j];
+      qData["correctOption"] = data.questionMcq[i].mcqId[j].correctOption;
+      qData["optionCount"] = data.questionMcq[i].mcqId[j].optionCount;
+      data1["questions"].push(qData);
+    }
+
+    resultData.push(data1);
+  }
+  resultData.push({ totalMarks: data.examId.totalMarksMcq });
+  resultData.push({ totalObtainedMarks: data.totalObtainedMarks });
+  return res.status(200).json(resultData);
+};
+const viewSollutionWrittenAdmin = async (req, res, next) => {
+  const studentId = req.query.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate({
+      path: "questionWritten",
+      populate: { path: "subjectId" },
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  console.log(data);
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let subjects = [];
+  for (i = 0; i < 4; i++) {
+    let sObj = {};
+    sObj["id"] = data.questionWritten[i].subjectId._id;
+    sObj["name"] = data.questionWritten[i].subjectId.name;
+    sObj["iLink"] = null;
+    sObj["answerScript"] = null;
+    sObj["marksPerQuestion"] = null;
+    sObj["marksPerSub"] = 0;
+    subjects[i] = sObj;
+  }
+  let writtenQuestion = null;
+  try {
+    writtenQuestion = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  let dataNew = [];
+  for (let i = 0; i < 4; i++) {
+    console.log("subject i Id", subjects[i].id);
+    for (let j = 0; j < 6; j++) {
+      if (
+        String(subjects[i].id) ==
+        String(writtenQuestion.questionWritten[j].subjectId)
+      ) {
+        subjects[i].iLink = writtenQuestion.questionWritten[j].writtenILink;
+        subjects[i].answerScript = data.questionWritten[i].answerScriptILink;
+        subjects[i].marksPerSub =
+          data.questionWritten[i].totalObtainedMarksWritten;
+        subjects[i].marksPerQuestion = data.questionWritten[i].obtainedMarks;
+        console.log("examQ", writtenQuestion.questionWritten[j].subjectId);
+        break;
+      }
+    }
+    dataNew.push(subjects[i]);
+  }
+  return res.status(200).json(dataNew);
+};
 const historyData = async (req, res, next) => {
   console.log(req.user);
   const studentId = req.user.studentId;
@@ -3413,6 +3529,8 @@ exports.updateStudentExamInfo = updateStudentExamInfo;
 exports.assignStudentToTeacher = assignStudentToTeacher;
 exports.showSpecialExamByIdStudent = showSpecialExamByIdStudent;
 exports.historyData = historyData;
+exports.viewSollutionWrittenAdmin = viewSollutionWrittenAdmin;
+exports.viewSollutionMcqAdmin = viewSollutionMcqAdmin;
 exports.viewSollutionWritten = viewSollutionWritten;
 exports.viewSollutionMcq = viewSollutionMcq;
 exports.submitAnswerMcq = submitAnswerMcq;

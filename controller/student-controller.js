@@ -3388,6 +3388,47 @@ const viewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+const viewSollutionWrittenAdmin = async (req, res, next) => {
+  const studentId = req.query.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      //studentId: studentIdObj,
+    });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  console.log(data);
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let dataWritten = null;
+  try {
+    dataWritten = await QuestionsWritten.findOne({
+      examId: examIdObj,
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+
+  console.log(dataWritten);
+  let data1 = {};
+  data1["question"] = dataWritten.questionILink;
+  data1["sollutionScript"] = data.ansewerScriptILink;
+  data1["obtainedMarks"] = data.obtainedMarks;
+  data1["totalObtainedMarks"] = data.totalObtainedMarks;
+  data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
+  data1["totalQuestion"] = dataWritten.totalQuestions;
+  data1["totalMarks"] = dataWritten.totalMarks;
+
+  return res.status(200).json(data1);
+};
 const examDetailWritten = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
@@ -4394,6 +4435,40 @@ const bothViewSollutionMcq = async (req, res, next) => {
   }
   return res.status(200).json(resultData);
 };
+const bothViewSollutionMcqAdmin = async (req, res, next) => {
+  //console.log(req.query);
+  const studentId = req.query.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["id"] = data[0].mcqQuestionId[i]._id;
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
+    resultData.push(data1);
+  }
+  return res.status(200).json(resultData);
+};
 //written
 const bothAssignQuestionWritten = async (req, res, next) => {
   let examId = req.query.examId;
@@ -4652,6 +4727,47 @@ const bothViewSollutionWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+const bothViewSollutionWrittenAdmin = async (req, res, next) => {
+  const studentId = req.query.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  //console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      //studentId: studentIdObj,
+    });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  console.log(data);
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let dataWritten = null;
+  try {
+    dataWritten = await BothQuestionsWritten.findOne({
+      examId: examIdObj,
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+
+  console.log(dataWritten);
+  let data1 = {};
+  data1["question"] = dataWritten.questionILink;
+  data1["sollutionScript"] = data.ansewerScriptILink;
+  data1["obtainedMarks"] = data.obtainedMarks;
+  data1["totalObtainedMarks"] = data.totalObtainedMarks;
+  data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
+  data1["totalQuestion"] = dataWritten.totalQuestions;
+  data1["totalMarks"] = dataWritten.totalMarks;
+
+  return res.status(200).json(data1);
+};
 exports.bothGetHistory = bothGetHistory;
 exports.bothGetCheckWrittenStudentAllByExam =
   bothGetCheckWrittenStudentAllByExam;
@@ -4662,6 +4778,9 @@ exports.bothExamDetail = bothExamDetail;
 exports.bothHistoryData = bothHistoryData;
 exports.bothViewSollutionMcq = bothViewSollutionMcq;
 exports.bothViewSollutionWritten = bothViewSollutionWritten;
+
+exports.bothViewSollutionMcqAdmin = bothViewSollutionMcqAdmin;
+exports.bothViewSollutionWrittenAdmin = bothViewSollutionWrittenAdmin;
 exports.bothUpdateStudentExamInfo = bothUpdateStudentExamInfo;
 exports.bothSubmitStudentScript = bothSubmitStudentScript;
 exports.bothSubmitWritten = bothSubmitWritten;
@@ -4676,6 +4795,7 @@ exports.historyDataWritten = historyDataWritten;
 exports.missedExamWritten = missedExamWritten;
 exports.getWrittenQuestion = getWrittenQuestion;
 exports.viewSollutionWritten = viewSollutionWritten;
+exports.viewSollutionWrittenAdmin = viewSollutionWrittenAdmin;
 exports.examDetailWritten = examDetailWritten;
 exports.getWrittenStudentSingleByExam = getWrittenStudentSingleByExam;
 exports.getWrittenStudentAllByExam = getWrittenStudentAllByExam;
