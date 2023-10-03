@@ -392,7 +392,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
       data.questionWritten[i].totalObtainedMarksWritten;
     dataObject["totalMarksMcqPerSub"] = data.examId.totalMarksMcq / 4;
     dataObject["totalMarksWrittenPerSub"] = data.examId.totalMarksWritten / 4;
-    dataEx = dataObject;
+    dataEx.push(dataObject);
   }
   dataEx.push({
     totalMarks: data.examId.totalMarksMcq + data.examId.totalMarksWritten,
