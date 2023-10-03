@@ -376,6 +376,242 @@ const freeGetHistoryByExamId = async (req, res, next) => {
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
+const freeGetHistoryByExamIdFilterM = async (req, res, next) => {
+  const examId = req.query.examId;
+  const mobileNo = req.query.mobileNo;
+  if (!ObjectId.isValid(examId) || !mobileNo)
+    return res.status(404).json("Student ID or mobileNo not valid.");
+  let page = req.query.page || 1;
+
+  let studentId = null;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  try {
+    studentId = await FreeStudent.find({
+      mobileNo: {
+        $regex: new RegExp(".*" + mobileNo.toLowerCase() + ".*", "i"),
+      },
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentId.length == 0) return res.status(404).json("No data found.");
+  let studIds = [];
+  for (let i = 0; i < studentId.length; i++) {
+    studIds[i] = studentId[i]._id;
+  }
+  let count = 0;
+  try {
+    count = await FreestudentMarksRank.find({
+      $and: [
+        { examId: examIdObj },
+        { finishedStatus: true },
+        { studentId: { $in: studIds } },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (count == 0) {
+    return res.status(404).json("No data found.");
+  }
+  let paginateData = pagination(count, page);
+  let data = [],
+    rank;
+  try {
+    rank = await FreestudentMarksRank.find({
+      $and: [
+        { examId: examIdObj },
+        { finishedStatus: true },
+        { studentId: { $in: studIds } },
+      ],
+    })
+      .populate("studentId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("2.Something went wrong.");
+  }
+  //console.log(rank);
+  for (let i = 0; i < rank.length; i++) {
+    //rank data start
+    let mcqRank = null;
+    //console.log(rank[i].studentId._id);
+    try {
+      mcqRank = await FreeMcqRank.findOne({
+        $and: [{ examId: examIdObj }, { freeStudentId: rank[i].studentId._id }],
+      });
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    //console.log("mcq rank:", mcqRank);
+    if (mcqRank == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
+    //rank data end
+
+    let data1 = {},
+      examStud = null;
+    data1["studentId"] = rank[i].studentId._id;
+    try {
+      examStud = await FreeStudentExamVsQuestionsMcq.findOne({
+        $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
+      }).populate("studentId");
+    } catch (err) {
+      return res.status(500).json("4.Something went wrong.");
+    }
+    data1["examStud"] = examStud;
+    data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
+    data1["meritPosition"] = mcqRank;
+    data1["examStartTime"] = moment(rank[i].examStartTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    data1["examEndTime"] = moment(rank[i].examEndTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    //data1["duration"] = rank[i].duration;
+    data1["duration"] = (data1.examEndTime - data1.examStartTime) / (1000 * 60);
+    data.push(data1);
+  }
+  examDetails = null;
+  try {
+    examDetails = await Exam.findById(String(examIdObj)).populate(
+      "courseId subjectId"
+    );
+  } catch (err) {
+    return res.status(500).json("5.Something went wrong.");
+  }
+  let examInfo = {
+    id: String(examDetails._id),
+    name: examDetails.name,
+    courseName: examDetails.courseId.name,
+    subjectName: examDetails.subjectId.name,
+    startTime: moment(examDetails.examStartTime).format("LLL"),
+    endTime: moment(examDetails.examEndTime).format("LLL"),
+    totalQuestion: examDetails.totalQuestionMcq,
+    variation: examType[Number(examDetails.examType)],
+    type: examVariation[Number(examDetails.examVariation)],
+    totalMarksMcq: examDetails.totalMarksMcq,
+  };
+  return res.status(200).json({ data, examInfo, paginateData });
+};
+const freeGetHistoryByExamIdFilterN = async (req, res, next) => {
+  const examId = req.query.examId;
+  const name = req.query.name;
+  if (!ObjectId.isValid(examId) || name)
+    return res.status(404).json("Student ID or name not valid.");
+  let page = req.query.page || 1;
+
+  let studentId = null;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  try {
+    studentId = await FreeStudent.find({
+      name: {
+        $regex: new RegExp(".*" + name.toLowerCase() + ".*", "i"),
+      },
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (studentId.length == 0) return res.status(404).json("No data found.");
+  let studIds = [];
+  for (let i = 0; i < studentId.length; i++) {
+    studIds[i] = studentId[i]._id;
+  }
+  let count = 0;
+  try {
+    count = await FreestudentMarksRank.find({
+      $and: [
+        { examId: examIdObj },
+        { finishedStatus: true },
+        { studentId: { $in: studIds } },
+      ],
+    }).count();
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (count == 0) {
+    return res.status(404).json("No data found.");
+  }
+  let paginateData = pagination(count, page);
+  let data = [],
+    rank;
+  try {
+    rank = await FreestudentMarksRank.find({
+      $and: [
+        { examId: examIdObj },
+        { finishedStatus: true },
+        { studentId: { $in: studIds } },
+      ],
+    })
+      .populate("studentId")
+      .skip(paginateData.skippedIndex)
+      .limit(paginateData.perPage);
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("2.Something went wrong.");
+  }
+  //console.log(rank);
+  for (let i = 0; i < rank.length; i++) {
+    //rank data start
+    let mcqRank = null;
+    //console.log(rank[i].studentId._id);
+    try {
+      mcqRank = await FreeMcqRank.findOne({
+        $and: [{ examId: examIdObj }, { freeStudentId: rank[i].studentId._id }],
+      });
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    //console.log("mcq rank:", mcqRank);
+    if (mcqRank == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
+    //rank data end
+
+    let data1 = {},
+      examStud = null;
+    data1["studentId"] = rank[i].studentId._id;
+    try {
+      examStud = await FreeStudentExamVsQuestionsMcq.findOne({
+        $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
+      }).populate("studentId");
+    } catch (err) {
+      return res.status(500).json("4.Something went wrong.");
+    }
+    data1["examStud"] = examStud;
+    data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
+    data1["meritPosition"] = mcqRank;
+    data1["examStartTime"] = moment(rank[i].examStartTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    data1["examEndTime"] = moment(rank[i].examEndTime).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+    //data1["duration"] = rank[i].duration;
+    data1["duration"] = (data1.examEndTime - data1.examStartTime) / (1000 * 60);
+    data.push(data1);
+  }
+  examDetails = null;
+  try {
+    examDetails = await Exam.findById(String(examIdObj)).populate(
+      "courseId subjectId"
+    );
+  } catch (err) {
+    return res.status(500).json("5.Something went wrong.");
+  }
+  let examInfo = {
+    id: String(examDetails._id),
+    name: examDetails.name,
+    courseName: examDetails.courseId.name,
+    subjectName: examDetails.subjectId.name,
+    startTime: moment(examDetails.examStartTime).format("LLL"),
+    endTime: moment(examDetails.examEndTime).format("LLL"),
+    totalQuestion: examDetails.totalQuestionMcq,
+    variation: examType[Number(examDetails.examType)],
+    type: examVariation[Number(examDetails.examVariation)],
+    totalMarksMcq: examDetails.totalMarksMcq,
+  };
+  return res.status(200).json({ data, examInfo, paginateData });
+};
 //free student exam system
 const getFreeExamId = async (req, res, next) => {
   let examId = [];
@@ -1520,6 +1756,8 @@ const getAllRankFree = async (req, res, next) => {
 //   }
 //   return res.status(200).json(sav);
 // };
+exports.freeGetHistoryByExamIdFilterM = freeGetHistoryByExamIdFilterM;
+exports.freeGetHistoryByExamIdFilterN = freeGetHistoryByExamIdFilterN;
 exports.addFreeStudent = addFreeStudent;
 exports.getAllFreeStudent = getAllFreeStudent;
 exports.freeLoginStudent = freeLoginStudent;

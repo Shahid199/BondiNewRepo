@@ -26,6 +26,8 @@ const {
   getAllRankFree,
   updateNullData,
   getFreeExamNew,
+  freeGetHistoryByExamIdFilterM,
+  freeGetHistoryByExamIdFilterN,
 } = require("../controller/freeStudent-controller");
 const { freeExamStatus } = require("../controller/exam-controller");
 
@@ -168,7 +170,22 @@ router.get(
   ],
   freeGetHistoryByExamId
 );
-
+router.get(
+  "/freeGetHistoryByExamIdfilterm",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  freeGetHistoryByExamIdFilterM
+);
+router.get(
+  "/freeGetHistoryByExamIdfiltern",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  freeGetHistoryByExamIdFilterN
+);
 router.get(
   "/getallrankfree",
   [
