@@ -892,7 +892,6 @@ const viewSollutionWritten = async (req, res, next) => {
         subjects[i].marksPerSub =
           data.questionWritten[i].totalObtainedMarksWritten;
         subjects[i].marksPerQuestion = data.questionWritten[i].obtainedMarks;
-        subjects[i].marksPerSub = data.questionWritten[i].totalMarksWritten;
         break;
       }
     }
