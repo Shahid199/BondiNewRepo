@@ -2804,6 +2804,7 @@ const publishExam = async (req, res, next) => {
       return res.status(500).json("4.Something went wrong.");
     }
   }
+  return res.status(201).json("successfully!");
 };
 const getWrittenStudentSingleByExam = async (req, res, next) => {
   let examId = req.query.examId;
