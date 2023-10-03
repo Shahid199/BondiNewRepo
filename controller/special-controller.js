@@ -2791,13 +2791,17 @@ const publishExam = async (req, res, next) => {
     for (let j = 0; j < 4; j++) {
       marks = marks + dataStud[i].questionWritten[j].totalObtainedMarksWritten;
     }
+    console.log("marks", marks);
     let upd2 = null;
     try {
       upd2 = await SpecialVsStudent.updateOne(
         {
           $and: [{ examId: examIdObj }, { studentId: dataStud[i].studentId }],
         },
-        { totalObtainedMarks: marks + dataStud[i].totalMarksMcq }
+        { totalObtainedMarks: marks + dataStud[i].totalMarksMcq },
+        {
+          totalMarksWritten: marks,
+        }
       );
     } catch (err) {
       return res.status(500).json("4.Something went wrong.");
