@@ -892,8 +892,10 @@ const viewSollutionWritten = async (req, res, next) => {
         subjects[i].marksPerSub =
           data.questionWritten[i].totalObtainedMarksWritten;
         subjects[i].marksPerQuestion = data.questionWritten[i].obtainedMarks;
+        console.log("examQ", writtenQuestion.questionWritten[j].subjectId);
         break;
       }
+      console.log("subject i Id", subjects[i].id);
     }
     dataNew[i] = subjects;
   }
