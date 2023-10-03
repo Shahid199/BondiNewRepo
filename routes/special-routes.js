@@ -51,6 +51,7 @@ const {
   checkScriptSingleAdmin,
   marksCalculationAdmin,
   studentSubmittedExamDetail,
+  specialGetHistory,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -454,5 +455,13 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   studentSubmittedExamDetail
+);
+router.get(
+  "/specialgethistory",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  specialGetHistory
 );
 module.exports = router;
