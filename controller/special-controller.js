@@ -870,7 +870,6 @@ const viewSollutionWritten = async (req, res, next) => {
     sObj["name"] = data.questionWritten[i].subjectId.name;
     sObj["iLink"] = null;
     sObj["answerScript"] = null;
-    sObj["marksPerSub"] = null;
     sObj["marksPerQuestion"] = null;
     sObj["marksPerSub"] = 0;
     subjects[i] = sObj;
@@ -889,11 +888,11 @@ const viewSollutionWritten = async (req, res, next) => {
         String(writtenQuestion.questionWritten[j].subjectId)
       ) {
         subjects[i].iLink = writtenQuestion.questionWritten[j].writtenILink;
-        subjects[i].answerScript = data.questionWritten[j].answerScriptILink;
+        subjects[i].answerScript = data.questionWritten[i].answerScriptILink;
         subjects[i].marksPerSub =
-          data.questionWritten[j].totalObtainedMarksWritten;
-        subjects[i].marksPerQuestion = data.questionWritten[j].obtainedMarks;
-        subjects[i].marksPerSub = data.questionWritten[j].totalMarksWritten;
+          data.questionWritten[i].totalObtainedMarksWritten;
+        subjects[i].marksPerQuestion = data.questionWritten[i].obtainedMarks;
+        subjects[i].marksPerSub = data.questionWritten[i].totalMarksWritten;
         break;
       }
     }
