@@ -435,7 +435,7 @@ const examCheckMiddleware = async (req, res, next) => {
   let status = null;
   let query = null;
   let examEndTime = null;
-  let currentDate = moment(Date.now()).add(6, "hours");
+  let currentDate = moment(new Date());
   //(currentDate, "current Date");
   try {
     query = await Exam.findById(examId, "endTime");
@@ -576,8 +576,8 @@ const assignQuestion = async (req, res, next) => {
     return res.status(500).json("4.Something went wrong.");
   }
   let duration = Number(totalQuesData.duration);
-  let examStartTime = moment(Date.now()).add(6, "hours");
-  let examEndTime = moment(examStartTime).add(duration, "minutes");
+  let examStartTime = moment(Date.now());
+  let examEndTime = moment(examStartTime).add(duration, "m");
   if (examEndTime > examEndTimeActual.endTime)
     examEndTime = examEndTimeActual.endTime;
   let studentMarksRank = new StudentMarksRank({
@@ -682,11 +682,11 @@ const getRunningData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (
-    studentCheck.finishedStatus == true ||
-    studentCheck.examEndTime <= moment(new Date())
-  )
-    return res.status(409).json("Exam End.");
+  // if (
+  //   studentCheck.finishedStatus == true ||
+  //   studentCheck.examEndTime <= moment(new Date())
+  // )
+  //   return res.status(409).json("Exam End.");
   //exam status Check:end
   let getQuestionMcq, getExamData;
   try {
@@ -886,7 +886,7 @@ const submitAnswer = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
-  const examEndTime = new Date();
+  const examEndTime = moment(new Date());
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -921,7 +921,7 @@ const submitAnswer = async (req, res, next) => {
   timeStudent[0] = findId[0].examStartTime;
   timeStudent[1] = findId[0].examEndTime;
   let saveStudentExamEnd;
-  let submitTime = moment(new Date()).add(6, "hours");
+  let submitTime = moment(new Date());
   let update = {
     finishedStatus: true,
     runningStatus: false,
@@ -2656,7 +2656,7 @@ const writtenExamCheckMiddleware = async (req, res, next) => {
   let status = null;
   let query = null;
   let examEndTime = null;
-  let currentDate = moment(Date.now()).add(6, "hours");
+  let currentDate = moment(new Date());
   //console.log(currentDate, "current Date");
   try {
     query = await Exam.findById(examId, "endTime");
@@ -2675,10 +2675,7 @@ const writtenExamCheckMiddleware = async (req, res, next) => {
   }
   if (status == null) return res.status(200).json("assign");
   else {
-    if (
-      status.uploadStatus == true ||
-      query.endTime < moment(new Date()).add(6, "hours")
-    )
+    if (status.uploadStatus == true || query.endTime < currentDate)
       return res.status(200).json("ended");
     else return res.status(200).json("running");
   }
@@ -2726,10 +2723,7 @@ const assignWrittenQuestion = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  if (
-    questionData == null ||
-    examData.endTime < moment(new Date()).add(6, "hours")
-  )
+  if (questionData == null || examData.endTime < moment(new Date()))
     return res.status(404).josn("no question found or time expired.");
 
   data1["questionILink"] = questionData.questionILink;
@@ -2737,7 +2731,7 @@ const assignWrittenQuestion = async (req, res, next) => {
   data1["totalQuestions"] = questionData.totalQuestions;
   data1["marksPerQuestions"] = questionData.marksPerQuestions;
   data1["totalMarks"] = questionData.totalMarks;
-  data1["studExamStartTime"] = moment(new Date()).add(6, "hours");
+  data1["studExamStartTime"] = moment(new Date());
   data1["studExamEndTime"] = moment(data1.studExamStartTime).add(
     examData.duration,
     "minutes"
@@ -2885,7 +2879,7 @@ const submitWritten = async (req, res, next) => {
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   let startTime = null;
-  let endTime = moment(new Date()).add(6, "hours");
+  let endTime = moment(new Date());
   try {
     startTime = await StudentMarksRank.findOne({
       $and: [{ examId: examId }, { studentId: studentIdObj }],
@@ -4108,8 +4102,8 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  if (studentCheck.finishedStatus == true)
-    return res.status(409).json("Exam End.");
+  // if (studentCheck.finishedStatus == true)
+  //   return res.status(409).json("Exam End.");
   //exam status Check:end
   let getQuestionMcq, getExamData;
   try {
@@ -4224,7 +4218,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
-  const examEndTime = new Date();
+  const examEndTime = monnet(new Date());
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
@@ -4259,7 +4253,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   timeStudent[0] = findId[0].examStartTime;
   timeStudent[1] = findId[0].examEndTime;
   let saveStudentExamEnd;
-  let submitTime = new Date();
+  let submitTime = moment(new Date());
   let update = {
     finishedStatus: true,
     runningStatus: false,
@@ -4431,7 +4425,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   if (questionData == null || moment(examData.endTime) < moment(new Date()))
-    return res.status(404).json("no question found or time expired.");
+    return res.status(404).json("Exam End.");
 
   data1["questionILink"] = questionData.questionILink;
   data1["status"] = questionData.status;
