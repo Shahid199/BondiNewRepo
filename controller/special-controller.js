@@ -889,13 +889,12 @@ const viewSollutionWritten = async (req, res, next) => {
         String(writtenQuestion.questionWritten[j].subjectId)
       ) {
         subjects[i].iLink = writtenQuestion.questionWritten[j].writtenILink;
-        subjects[i].answerScript =
-          writtenQuestion.questionWritten[j].answerScriptILink;
+        subjects[i].answerScript = data.questionWritten[j].answerScriptILink;
         subjects[i].marksPerSub =
-          writtenQuestion.questionWritten[j].totalObtainedMarksWritten;
-        subjects[i].marksPerQuestion =
-          writtenQuestion.questionWritten[j].obtainedMarks;
-        subjects[i].marksPerSub = writtenQuestion.totalMarksWritten;
+          data.questionWritten[j].totalObtainedMarksWritten;
+        subjects[i].marksPerQuestion = data.questionWritten[j].obtainedMarks;
+        subjects[i].marksPerSub = data.questionWritten[j].totalMarksWritten;
+        break;
       }
     }
     dataNew[i] = subjects;
