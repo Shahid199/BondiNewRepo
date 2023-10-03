@@ -2798,9 +2798,11 @@ const publishExam = async (req, res, next) => {
         {
           $and: [{ examId: examIdObj }, { studentId: dataStud[i].studentId }],
         },
-        { totalObtainedMarks: marks + dataStud[i].totalMarksMcq },
         {
-          totalMarksWritten: marks,
+          $set: {
+            totalObtainedMarks: marks + dataStud[i].totalMarksMcq,
+            totalMarksWritten: marks,
+          },
         }
       );
     } catch (err) {
