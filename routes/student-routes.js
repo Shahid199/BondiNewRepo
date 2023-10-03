@@ -80,6 +80,7 @@ const {
   getHistoryByExamIdFilter,
   getHistoryByWrittenIdFilter,
   bothGetHistoryFilter,
+  bothGetAllRank,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -114,6 +115,14 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   updateRank
+);
+router.post(
+  "/bothupdaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothUpdateRank
 );
 router.get(
   "/getrank",
@@ -361,6 +370,14 @@ router.get(
     authorize(["superadmin", "moderator"]),
   ],
   getAllRank
+);
+router.get(
+  "/bothgetallrank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  bothGetAllRank
 );
 router.get(
   "/examtimecheck",

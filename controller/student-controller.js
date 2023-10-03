@@ -4308,6 +4308,89 @@ const bothGetCheckWrittenStudentAllByExam = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+const bothUpdateRank = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid exam Id.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let delData = null;
+  try {
+    delData = await BothRank.deleteMany({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  // try {
+  //   checkGenerate = await FreeMcqRank.find({ examId: examIdObj });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
+  // if (checkGenerate) return res.status(404).json("Already Generated.");
+  let ranks = null;
+  try {
+    ranks = await BothStudentExamVsQuestions.find({ examId: examIdObj })
+      .select("examId totalObtainedMarks studentId -_id")
+      .sort({
+        totalObtainedMarks: -1,
+      });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //console.log("ranks:", ranks);
+  let dataLength = ranks.length;
+  let dataIns = [];
+  for (let i = 0; i < dataLength; i++) {
+    let dataFree = {};
+    dataFree["examId"] = ranks[i].examId;
+    dataFree["studentId"] = ranks[i].studentId;
+    dataFree["totalObtainedMarks"] = ranks[i].totalObtainedMarks;
+    dataFree["rank"] = i + 1;
+    dataIns.push(dataFree);
+  }
+  //console.log("dataIns:", dataIns);
+  let sav = null;
+  try {
+    sav = await BothRank.insertMany(dataIns, { ordered: false });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(201).json("Success!");
+};
+const bothGetAllRank = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId)) return res.status(200).json("Invalid examId.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let resultRank = null;
+  try {
+    resultRank = await BothRank.find({ examId: examIdObj })
+      .sort("rank")
+      .populate("examId studentId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!resultRank) return res.status(404).json("Exam not finshed yet.");
+  //console.log(resultRank);
+  //eturn res.status(200).json(resultRank);
+  let allData = [];
+  let totalStudent = null;
+  for (let i = 0; i < resultRank.length; i++) {
+    let data1 = {};
+    let conData = "*******";
+    data1["examName"] = resultRank[i].examId.name;
+    data1["studentName"] = resultRank[i].studentId.name;
+    data1["mobileNoOrg"] = resultRank[i].studentId.mobileNo;
+    data1["mobileNo"] = conData.concat(
+      resultRank[i].studentId.mobileNo.slice(7)
+    );
+    data1["institution"] = resultRank[i].studentId.institution;
+    data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks;
+    data1["rank"] = resultRank[i].rank;
+    data1["totalStudent"] = resultRank.length;
+    data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
+    allData.push(data1);
+  }
+  return res.status(200).json(allData);
+};
+
 //mcq
 const bothAssignQuestionMcq = async (req, res, next) => {
   //data get from examcheck function req.body
@@ -5132,6 +5215,8 @@ exports.submitStudentScript = submitStudentScript;
 exports.submitWritten = submitWritten;
 exports.getAllRank = getAllRank;
 exports.updateRank = updateRank;
+exports.bothGetAllRank = bothGetAllRank;
+exports.bothUpdateRank = bothUpdateRank;
 exports.loginStudent = loginStudent;
 exports.validateToken = validateToken;
 exports.addStudent = addStudent;
