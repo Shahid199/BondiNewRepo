@@ -2434,7 +2434,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
     name: examDetails.name,
     courseName: examDetails.courseId.name,
     subjectName: examDetails.subjectId.name,
-    startTime: moment(examDetails.examStartTime).subtract(6, "h").format("LLL"),
+    startTime: moment(examDetails.examStartTime).subtract(6, "h"),
     endTime: moment(examDetails.examEndTime).subtract(6, "h").format("LLL"),
     totalQuestion: qWritten.totalQuestions,
     variation: examType[Number(examDetails.examType)],
