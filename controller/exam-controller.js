@@ -190,7 +190,7 @@ const updateExam = async (req, res, next) => {
       .status(404)
       .json("exam Id or course Id or subject Id is not valid.");
   }
-  console.log("CT", new Date().getTimezoneOffset());
+  console.log("CT", new Date());
   console.log("ST", moment(new Date(startTime)));
   console.log("ET", moment(new Date(endTime)));
 
