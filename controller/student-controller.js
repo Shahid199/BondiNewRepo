@@ -3705,7 +3705,12 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["examType"] = examType[data.examId.examType];
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
-  dataObj["answerScript"] = data.submittedScriptILink;
+  dataObj["answerScript"] = [];
+  for (let p = 0; p < data.totalQuestions; p++) {
+    if (data.submittedScriptILink[p])
+      dataObj["answerScript"][p] = data.submittedScriptILink[p];
+    else dataObj["answerScript"][p] = null;
+  }
   dataObj["totalQuestions"] = data2.totalQuestions;
   dataObj["totalMarks"] = data2.totalMarks;
   dataObj["marksPerQuestion"] = data2.marksPerQuestion;
