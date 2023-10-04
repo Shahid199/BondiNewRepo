@@ -1981,7 +1981,7 @@ const assignQuestionMcq = async (req, res, next) => {
   if (!sav) return res.status(404).json("not assign mcq questions.");
   //return res.status(200).json(questionsId);
   questionsId.push({ studStartTime: moment(studExamStartTime).add(6, "h") });
-  questionsId.push({ studEndTime: moment(studExamEndTime).add(6, "h") });
+  questionsId.push({ studEndTime: moment(studExamEndTime) });
   questionsId.push({ examStartTime: examData.startTime });
   questionsId.push({ examEndTime: examData.endTime });
   questionsId.push({
