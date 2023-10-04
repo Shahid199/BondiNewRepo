@@ -1968,7 +1968,8 @@ const assignQuestionMcq = async (req, res, next) => {
     examId: eId1,
     startTimeMcq: moment(studExamStartTime).add(6, "h"),
     endTimeMcq: moment(studExamEndTime).add(6, "h"),
-    mcqDuration: (studExamEndTime - studExamStartTime) / 60000,
+    mcqDuration:
+      (studExamEndTime - moment(studExamStartTime).add(6, "h")) / 60000,
     questionMcq: mcqData,
     runningStatus: true,
     finishStatus: false,
