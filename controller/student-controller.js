@@ -4298,7 +4298,7 @@ const bothHistoryData = async (req, res, next) => {
   let count = 0;
   try {
     count = await BothStudentExamVsQuestions.find({
-      $and: [{ studentId: studentIdObj }, { checkStatus: true }],
+      $and: [{ studentId: studentIdObj }, { checkStatus: false }],
     }).count();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
@@ -4309,7 +4309,7 @@ const bothHistoryData = async (req, res, next) => {
   let paginateData = pagination(count, page);
   try {
     data = await BothStudentExamVsQuestions.find({
-      $and: [{ studentId: studentIdObj }, { checkStatus: true }],
+      $and: [{ studentId: studentIdObj }, { checkStatus: false }],
     })
       .populate("examId")
       .skip(paginateData.skippedIndex)
