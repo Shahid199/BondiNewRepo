@@ -1920,7 +1920,7 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     questionsId.push(doc);
   }
-  let studExamStartTime = moment(new Date()).add(6, "h");
+  let studExamStartTime = moment(new Date());
   let studExamEndTime = moment(studExamStartTime).add(
     examData.mcqDuration,
     "m"
@@ -1961,8 +1961,8 @@ const assignQuestionMcq = async (req, res, next) => {
   let upd = new SpecialVsStudent({
     studentId: sId,
     examId: eId1,
-    startTimeMcq: studExamStartTime,
-    endTimeMcq: studExamEndTime,
+    startTimeMcq: moment(studExamStartTime).add(6, "h"),
+    endTimeMcq: moment(studExamEndTime).add(6, "h"),
     mcqDuration: (studExamEndTime - studExamStartTime) / 60000,
     questionMcq: mcqData,
     runningStatus: true,
@@ -2035,7 +2035,7 @@ const getRunningDataMcq = async (req, res, next) => {
   examDet["studExamEndTime"] = examData.endTimeMcq;
   examDet["duration"] = examData.mcqDuration;
   examDet["dueDuration"] =
-    moment(moment(examData.endTimeMcq) - new Date()) / 60000;
+    moment(moment(examData.endTimeMcq) - moment(new Date())) / 60000;
 
   return res.status(200).json({ data, examDet });
 };
@@ -2117,7 +2117,7 @@ const submitAnswerMcq = async (req, res, next) => {
   let timeStudent = [];
   timeStudent[0] = studentCheck.startTimeMcq;
   timeStudent[1] = studentCheck.endTimeMcq;
-  let submitTime = moment(new Date()).add(6, "h");
+  let submitTime = moment(new Date());
   let totalMarksMcq = 0;
   for (let i = 0; i < 4; i++) {
     let totalCorrectAnswer = 0,
@@ -2156,7 +2156,7 @@ const submitAnswerMcq = async (req, res, next) => {
     questionMcq: studentCheck.questionMcq,
     finishStatus: true,
     runningStatus: false,
-    endTimeMcq: submitTime,
+    endTimeMcq: moment(submitTime).add(6, "h"),
     mcqDuration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
   };
 
@@ -2247,7 +2247,7 @@ const assignQuestionWritten = async (req, res, next) => {
     subObj["totalObtainedMarksWritten"] = -1;
     questionWrittenArr.push(subObj);
   }
-  let studExamStartTime = moment(new Date()).add(6, "h");
+  let studExamStartTime = moment(new Date());
   let studExamEndTime = moment(studExamStartTime).add(
     examData.writtenDuration,
     "m"
@@ -2255,8 +2255,8 @@ const assignQuestionWritten = async (req, res, next) => {
   if (studExamEndTime >= examData.endTime) studExamEndTime = examData.endTime;
   let objSav = {
     questionWritten: questionWrittenArr,
-    startTimeWritten: studExamStartTime,
-    endTimeWritten: studExamEndTime,
+    startTimeWritten: moment(studExamStartTime).add(6, "h"),
+    endTimeWritten: moment(studExamEndTime).add(6, "h"),
     writtenDuration:
       (moment(studExamEndTime) - moment(studExamStartTime)) / 60000,
   };
@@ -2439,7 +2439,7 @@ const submitWritten = async (req, res, next) => {
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   let startTime = null;
-  let endTime = moment(new Date()).add(6, "h");
+  let endTime = moment(new Date());
   try {
     startTime = await SpecialVsStudent.findOne({
       $and: [{ examId: examId }, { studentId: studentIdObj }],
@@ -2452,7 +2452,7 @@ const submitWritten = async (req, res, next) => {
   console.log(startTime);
   console.log(endTime);
   let upd = {
-    endTimeWritten: endTime,
+    endTimeWritten: moment(endTime).add(6, "h"),
     writtenDuration: (moment(endTime) - moment(startTime)) / 60000,
     uploadStatus: true,
   };
