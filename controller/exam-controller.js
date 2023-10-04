@@ -189,6 +189,7 @@ const updateExam = async (req, res, next) => {
       .status(404)
       .json("exam Id or course Id or subject Id is not valid.");
   }
+  console.log("CT", new Date());
   console.log("ST", startTime);
   console.log("ET", endTime);
 
