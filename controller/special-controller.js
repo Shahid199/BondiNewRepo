@@ -2160,7 +2160,8 @@ const submitAnswerMcq = async (req, res, next) => {
     finishStatus: true,
     runningStatus: false,
     endTimeMcq: moment(submitTime).add(6, "h"),
-    mcqDuration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
+    mcqDuration:
+      (moment(submitTime).add(6, "h") - moment(timeStudent[0])) / 60000,
   };
 
   let sav = null;
@@ -2456,7 +2457,7 @@ const submitWritten = async (req, res, next) => {
   console.log(endTime);
   let upd = {
     endTimeWritten: moment(endTime).add(6, "h"),
-    writtenDuration: (moment(endTime) - moment(startTime)) / 60000,
+    writtenDuration: (moment(endTime).add(6, "h") - moment(startTime)) / 60000,
     uploadStatus: true,
   };
   console.log(upd.writtenDuration);
