@@ -1601,7 +1601,7 @@ const missedExam = async (req, res, next) => {
     }
     let paginateData = pagination(count, page);
     try {
-      resultData = await Exam.find({
+      resultData = await SpecialExam.find({
         $and: [{ _id: { $in: removedArray } }, { status: true }],
       })
         .populate("subjectId courseId")
