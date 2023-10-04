@@ -1885,7 +1885,7 @@ const assignQuestionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.something went wrong.");
   }
-  console.log(examData.questionMcq);
+  //console.log(examData.questionMcq);
   if (!examData) return res.status(404).json("No Exam found.");
   let questionMcq = examData.questionMcq;
   let mcqIds = [],
@@ -1925,7 +1925,10 @@ const assignQuestionMcq = async (req, res, next) => {
     examData.mcqDuration,
     "m"
   );
-  if (studExamEndTime >= examData.endTime) studExamEndTime = examData.endTime;
+  console.log("studExamEndTime", studExamEndTime);
+  console.log("exam end:", examData.endTime);
+  if (studExamEndTime - examData.endTime > 0)
+    studExamEndTime = examData.endTime;
   console.log(examData.mcqDuration);
   console.log("studExamStartTime", studExamStartTime);
   console.log("studExamEndTime", studExamEndTime);
