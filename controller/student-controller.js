@@ -4977,7 +4977,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
-  const examEndTime = monnet(new Date());
+  const examEndTime = moment(new Date());
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
