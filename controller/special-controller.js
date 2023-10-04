@@ -1985,7 +1985,8 @@ const assignQuestionMcq = async (req, res, next) => {
   questionsId.push({ examStartTime: examData.startTime });
   questionsId.push({ examEndTime: examData.endTime });
   questionsId.push({
-    mcqDuration: (studExamEndTime - studExamStartTime) / 60000,
+    mcqDuration:
+      (studExamEndTime - moment(studExamStartTime).add(6, "h")) / 60000,
   });
   questionsId.push({ data: sav });
 
