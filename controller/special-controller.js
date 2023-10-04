@@ -2271,7 +2271,7 @@ const assignQuestionWritten = async (req, res, next) => {
   let objSav = {
     questionWritten: questionWrittenArr,
     startTimeWritten: moment(studExamStartTime).add(6, "h"),
-    endTimeWritten: moment(studExamEndTime).add(6, "h"),
+    endTimeWritten: moment(studExamEndTime),
     writtenDuration:
       (moment(studExamEndTime) - moment(studExamStartTime)) / 60000,
   };
