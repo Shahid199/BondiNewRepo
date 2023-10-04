@@ -5008,6 +5008,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
       .json("Proble when get student info from student marks table.");
   }
   if (findId == null) return res.status(404).json("data not found.");
+  console.log("findID", findId);
   findId = String(findId[0]._id);
   timeStudent[0] = findId[0].examStartTimeMcq;
   timeStudent[1] = findId[0].examEndTimeMcq;
