@@ -1931,6 +1931,7 @@ const assignQuestionMcq = async (req, res, next) => {
     Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
   )
     studExamEndTime = examData.endTime;
+  else studExamEndTime = moment(studExamEndTime).add(6, "h");
   console.log(examData.mcqDuration);
   console.log("studExamStartTime", studExamStartTime);
   console.log("studExamEndTime", studExamEndTime);
@@ -2268,6 +2269,7 @@ const assignQuestionWritten = async (req, res, next) => {
     Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
   )
     studExamEndTime = examData.endTime;
+  else studExamEndTime = moment(studExamEndTime).add(6, "h");
   let objSav = {
     questionWritten: questionWrittenArr,
     startTimeWritten: moment(studExamStartTime).add(6, "h"),
