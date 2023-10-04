@@ -86,7 +86,7 @@ const createExam = async (req, res, next) => {
   try {
     doc = await saveExam.save();
   } catch (err) {
-  console.log(err);
+    console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(doc);
@@ -189,6 +189,8 @@ const updateExam = async (req, res, next) => {
       .status(404)
       .json("exam Id or course Id or subject Id is not valid.");
   }
+  console.log("ST", startTime);
+  console.log("ET", endTime);
 
   let saveExamUpd = {
     courseId: new mongoose.Types.ObjectId(courseId),
