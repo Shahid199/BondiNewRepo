@@ -5223,7 +5223,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  if (questionData == null || examData.endTime < moment(new Date()).add(6, "h"))
+  if (questionData == null || examData.endTime < moment(new Date()))
     return res.status(404).json("Exam End.");
 
   data1["questionILink"] = questionData.questionILink;
@@ -5231,7 +5231,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1["totalQuestions"] = questionData.totalQuestions;
   data1["marksPerQuestions"] = questionData.marksPerQuestion;
   data1["totalMarks"] = questionData.totalMarks;
-  data1["studExamStartTime"] = moment(new Date()).add(6, "h");
+  data1["studExamStartTime"] = moment(new Date());
   data1["studExamEndTime"] = moment(data1.studExamStartTime).add(
     examData.writtenDuration,
     "minutes"
