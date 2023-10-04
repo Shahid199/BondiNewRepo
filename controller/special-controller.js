@@ -317,6 +317,7 @@ const showSpecialExamByCourse = async (req, res, next) => {
     dataObj.push(data1);
   }
   data = dataObj;
+  console.log("data", data);
   return res.status(200).json(data);
 };
 const showSpecialExamAll = async (req, res, next) => {
