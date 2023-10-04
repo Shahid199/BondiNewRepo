@@ -2215,8 +2215,12 @@ const getHistoryByExamId = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(rank[i].examStartTime).format("LLL");
-    data1["examEndTime"] = moment(rank[i].examEndTime).format("LLL");
+    data1["examStartTime"] = moment(rank[i].examStartTime)
+      .subtract(6, "h")
+      .format("LLL");
+    data1["examEndTime"] = moment(rank[i].examEndTime)
+      .subtract(6, "h")
+      .format("LLL");
     data1["duration"] = rank[i].duration;
     data.push(data1);
   }
@@ -2233,8 +2237,8 @@ const getHistoryByExamId = async (req, res, next) => {
     name: examDetails.name,
     courseName: examDetails.courseId.name,
     subjectName: examDetails.subjectId.name,
-    startTime: moment(examDetails.examStartTime).format("LLL"),
-    endTime: moment(examDetails.examEndTime).format("LLL"),
+    startTime: moment(examDetails.startTime).subtract(6, "h").format("LLL"),
+    endTime: moment(examDetails.endTime).subtract(6, "h").format("LLL"),
     totalQuestion: examDetails.totalQuestionMcq,
     variation: examType[Number(examDetails.examType)],
     type: examVariation[Number(examDetails.examVariation)],
@@ -2326,8 +2330,12 @@ const getHistoryByExamIdFilter = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = rank[i].totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(rank[i].examStartTime).format("LLL");
-    data1["examEndTime"] = moment(rank[i].examEndTime).format("LLL");
+    data1["examStartTime"] = moment(rank[i].examStartTime)
+      .subtract(6, "h")
+      .format("LLL");
+    data1["examEndTime"] = moment(rank[i].examEndTime)
+      .subtract(6, "h")
+      .format("LLL");
     data1["duration"] = rank[i].duration;
     data.push(data1);
   }
@@ -2344,8 +2352,8 @@ const getHistoryByExamIdFilter = async (req, res, next) => {
     name: examDetails.name,
     courseName: examDetails.courseId.name,
     subjectName: examDetails.subjectId.name,
-    startTime: moment(examDetails.examStartTime).format("LLL"),
-    endTime: moment(examDetails.examEndTime).format("LLL"),
+    startTime: moment(examDetails.startTime).subtract(6, "h").format("LLL"),
+    endTime: moment(examDetails.endTime).subtract(6, "h").format("LLL"),
     totalQuestion: examDetails.totalQuestionMcq,
     variation: examType[Number(examDetails.examType)],
     type: examVariation[Number(examDetails.examVariation)],
@@ -2619,8 +2627,12 @@ const bothGetHistory = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(rank[i].examStartTimeMcq).format("LLL");
-    data1["examEndTime"] = moment(rank[i].examEndTimeWritten).format("LLL");
+    data1["examStartTime"] = moment(
+      rank[i].examStartTimeMcq.subtract(6, "h")
+    ).format("LLL");
+    data1["examEndTime"] = moment(rank[i].examEndTimeWritten)
+      .subtract(6, "h")
+      .format("LLL");
     data1["duration"] = rank[i].totalDuration;
     data1["totalObtainedMarksMcq"] = examStud.totalObtainedMarksMcq;
     data1["totalObtainedMarksWritten"] = examStud.totalObtainedMarksWritten;
@@ -2641,8 +2653,8 @@ const bothGetHistory = async (req, res, next) => {
     name: examDetails.name,
     courseName: examDetails.courseId.name,
     subjectName: examDetails.subjectId.name,
-    startTime: moment(examDetails.examStartTime).format("LLL"),
-    endTime: moment(examDetails.examEndTime).format("LLL"),
+    startTime: moment(examDetails.startTime).subtract(6, "h").format("LLL"),
+    endTime: moment(examDetails.endTime).subtract(6, "h").format("LLL"),
     totalQuestion: qWritten.totalQuestions,
     variation: examType[Number(examDetails.examType)],
     type: examVariation[Number(examDetails.examVariation)],
@@ -2727,8 +2739,12 @@ const bothGetHistoryFilter = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(rank[i].examStartTimeMcq).format("LLL");
-    data1["examEndTime"] = moment(rank[i].examEndTimeWritten).format("LLL");
+    data1["examStartTime"] = moment(rank[i].examStartTimeMcq)
+      .subtract(6, "h")
+      .format("LLL");
+    data1["examEndTime"] = moment(rank[i].examEndTimeWritten)
+      .subtract(6, "h")
+      .format("LLL");
     data1["duration"] = rank[i].totalDuration;
     data1["totalObtainedMarksMcq"] = examStud.totalObtainedMarksMcq;
     data1["totalObtainedMarksWritten"] = examStud.totalObtainedMarksWritten;
@@ -2749,8 +2765,8 @@ const bothGetHistoryFilter = async (req, res, next) => {
     name: examDetails.name,
     courseName: examDetails.courseId.name,
     subjectName: examDetails.subjectId.name,
-    startTime: moment(examDetails.examStartTime).format("LLL"),
-    endTime: moment(examDetails.examEndTime).format("LLL"),
+    startTime: moment(examDetails.startTime).subtract(6, "h").format("LLL"),
+    endTime: moment(examDetails.endTime).subtract(6, "h").format("LLL"),
     totalQuestion: qWritten.totalQuestions,
     variation: examType[Number(examDetails.examType)],
     type: examVariation[Number(examDetails.examVariation)],

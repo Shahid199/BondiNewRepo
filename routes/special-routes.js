@@ -55,6 +55,7 @@ const {
   viewSollutionMcqAdmin,
   viewSollutionWrittenAdmin,
   specialGetHistoryAdmin,
+  specialGetHistoryAdminFilter,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -492,5 +493,13 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   specialGetHistoryAdmin
+);
+router.get(
+  "/specialgethistoryadminfilter",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  specialGetHistoryAdminFilter
 );
 module.exports = router;
