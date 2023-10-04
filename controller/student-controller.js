@@ -4749,7 +4749,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   //console.log(totalQues, "totalQues");
   max = size - 1;
   rand = parseInt(Date.now() % totalQues);
-  if (rand == 0) rand = 1;
+  if (rand == 0) rand = 0;
   if (rand == totalQues - 1) rand = rand - 1;
   for (let j = rand; j >= 0; j--) doc.push(j);
   for (let j = rand + 1; j < totalQues; j++) doc.push(j);
