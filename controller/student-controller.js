@@ -5017,7 +5017,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
     finishedStatus: true,
     runningStatus: false,
     examEndTimeMcq: submitTime,
-    mcqDuration: (timeStudent[0] - submitTime) / (1000 * 60),
+    mcqDuration: Number(timeStudent[0] - submitTime) / (1000 * 60),
   };
   try {
     saveStudentExamEnd = await BothStudentExamVsQuestions.findByIdAndUpdate(
