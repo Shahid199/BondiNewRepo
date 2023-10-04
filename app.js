@@ -87,13 +87,9 @@ mongoose
     // console.log(examStartTime);
     // console.log(moment(new Date()));
     const dir = path.resolve(path.join(__dirname, "uploads"));
-    let a;
-    let b = [1, 2, 4];
-    let c = [3, 4, 5];
-    let d = [10, 8];
-    a = b.concat(c);
-    a = a.concat(d);
-    console.log(a);
-    // console.log(dataArr);
+    let cur = new Date();
+    let date1 = moment(new Date()).add(6, "h");
+    console.log(cur);
+    if (cur > date1) console.log(moment(date1));
   })
   .catch((err) => console.log(err));

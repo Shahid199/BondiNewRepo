@@ -36,8 +36,8 @@ const updateSpecialExam = async (req, res, next) => {
   }
   let saveExam = {
     name: name,
-    startTime: moment(startTime),
-    endTime: moment(endTime),
+    startTime: moment(startTime).add(6, "h"),
+    endTime: moment(endTime).add(6, "h"),
     mcqDuration: mcqDuration,
     marksPerMcq: marksPerMcq,
     negativeMarks: negativeMarks,
@@ -1821,7 +1821,7 @@ const assignQuestionMcq = async (req, res, next) => {
     }
     questionsId.push(doc);
   }
-  let studExamStartTime = moment(new Date());
+  let studExamStartTime = moment(new Date()).add(6, "h");
   let studExamEndTime = moment(studExamStartTime).add(
     examData.mcqDuration,
     "m"
@@ -2018,7 +2018,7 @@ const submitAnswerMcq = async (req, res, next) => {
   let timeStudent = [];
   timeStudent[0] = studentCheck.startTimeMcq;
   timeStudent[1] = studentCheck.endTimeMcq;
-  let submitTime = moment(new Date());
+  let submitTime = moment(new Date()).add(6, "h");
   let totalMarksMcq = 0;
   for (let i = 0; i < 4; i++) {
     let totalCorrectAnswer = 0,
@@ -2148,7 +2148,7 @@ const assignQuestionWritten = async (req, res, next) => {
     subObj["totalObtainedMarksWritten"] = -1;
     questionWrittenArr.push(subObj);
   }
-  let studExamStartTime = moment(new Date());
+  let studExamStartTime = moment(new Date()).add(6, "h");
   let studExamEndTime = moment(studExamStartTime).add(
     examData.writtenDuration,
     "m"
@@ -2340,7 +2340,7 @@ const submitWritten = async (req, res, next) => {
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   let startTime = null;
-  let endTime = new Date();
+  let endTime = moment(new Date()).add(6, "h");
   try {
     startTime = await SpecialVsStudent.findOne({
       $and: [{ examId: examId }, { studentId: studentIdObj }],
