@@ -1590,7 +1590,7 @@ const missedExam = async (req, res, next) => {
     let page = Number(req.query.page) || 1;
     let count = 0;
     try {
-      count = await Exam.find({
+      count = await SpecialExam.find({
         $and: [{ _id: { $in: removedArray } }, { status: true }],
       }).count();
     } catch (err) {
