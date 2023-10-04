@@ -1502,10 +1502,12 @@ const missedExam = async (req, res, next) => {
         return !doneExamArr.includes(el);
       });
     }
+    if (removedArray.length == 0)
+      return res.status(404).json("No missed Exam found.");
     let page = Number(req.query.page) || 1;
     let count = 0;
     try {
-      count = await Exam.find({
+      count = await BothExam.find({
         $and: [{ _id: { $in: removedArray } }, { status: true }],
       }).count();
     } catch (err) {
@@ -1516,7 +1518,7 @@ const missedExam = async (req, res, next) => {
     }
     let paginateData = pagination(count, page);
     try {
-      resultData = await Exam.find({
+      resultData = await BothExam.find({
         $and: [{ _id: { $in: removedArray } }, { status: true }],
       })
         .populate("subjectId courseId")
@@ -1587,6 +1589,8 @@ const missedExam = async (req, res, next) => {
         return !doneExamArr.includes(el);
       });
     }
+    if (removedArray.length == 0)
+      return res.status(404).json("No missed Exam found.");
     console.log("removedArray", removedArray.length);
     let page = Number(req.query.page) || 1;
     let count = 0;
