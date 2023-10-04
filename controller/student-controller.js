@@ -4783,6 +4783,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     let data = String(doc2[doc[i]]);
     resultQuestion.push(data);
   }
+  console.log(data);
    console.log(totalQues,'totalQues')
   console.log(resultQuestion, "resultQuestion");
   let questions = [];
