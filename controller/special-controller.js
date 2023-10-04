@@ -266,6 +266,7 @@ const showSpecialExamByCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("data.length", data.length);
   if (data == null) return res.status(404).json("No data found.");
   let dataObj = [];
   for (let i = 0; i < data.length; i++) {
