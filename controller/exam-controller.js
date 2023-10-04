@@ -706,6 +706,7 @@ const getExamBySubject = async (req, res, next) => {
   let page = Number(req.query.page) || 1;
   et;
   let count = 0;
+  let timer = moment(new Date()).add(6, "h");
   if (type == 1) {
     try {
       count = await Exam.find({
@@ -714,7 +715,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 1 },
-          { endTime: { $gt: new Date() } },
+          { endTime: { $gt: timer } },
         ],
       }).count();
     } catch (err) {
@@ -730,7 +731,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 1 },
-          { endTime: { $gt: new Date() } },
+          { endTime: { $gt: timer } },
         ],
       },
       "name examVariation startTime endTime examType"
@@ -767,7 +768,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 2 },
-          { endTime: { $gt: new Date() } },
+          { endTime: { $gt: timer } },
         ],
       }).count();
     } catch (err) {
@@ -783,7 +784,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 2 },
-          { endTime: { $gt: new Date() } },
+          { endTime: { $gt: timer } },
         ],
       },
       "name examVariation startTime endTime examType"
@@ -820,7 +821,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 3 },
-          { endTime: { $gt: new Date() } },
+          { endTime: { $gt: timer } },
         ],
       }).count();
     } catch (err) {
@@ -836,7 +837,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 3 },
-          { endTime: { $gt: new Date() } },
+          { endTime: { $gt: timer } },
         ],
       },
       "name examVariation startTime endTime examType"
