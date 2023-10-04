@@ -2633,9 +2633,9 @@ const bothGetHistory = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(
-      rank[i].examStartTimeMcq.subtract(6, "h")
-    ).format("LLL");
+    data1["examStartTime"] = moment(rank[i].examStartTimeMcq)
+      .subtract(6, "h")
+      .format("LLL");
     data1["examEndTime"] = moment(rank[i].examEndTimeWritten)
       .subtract(6, "h")
       .format("LLL");
