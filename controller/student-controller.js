@@ -1371,14 +1371,14 @@ const missedExam = async (req, res, next) => {
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   //console.log(studentIdObj);
-  if (examVariation == 1 || examVariation == 2) {
+  if (examVariation == 1) {
     let allExam = null;
     try {
       allExam = await Exam.find({
         $and: [
           { courseId: courseIdObj },
           { status: true },
-          { examVariation: examVariation },
+          { examVariation: 1 },
           { endTime: { $lt: new Date() } },
         ],
       }).select("_id");
@@ -1450,7 +1450,91 @@ const missedExam = async (req, res, next) => {
       result["subject"] = resultData[i].subjectId.name;
       result["startTime"] = moment(resultData[i].startTime).format("LL");
       result["duration"] = Number(resultData[i].duration);
-      result["examType"] = examVariation[Number(resultData[i].examVariation)];
+      result["examType"] = "MCQ";
+      result["negativeMarks"] = resultData[i].negativeMarks;
+      resultFinal.push(result);
+    }
+    return res.status(200).json({ resultFinal, paginateData });
+  } else if (examVariation == 2) {
+    let allExam = null;
+    try {
+      allExam = await Exam.find({
+        $and: [
+          { courseId: courseIdObj },
+          { status: true },
+          { examVariation: 2 },
+          { endTime: { $lt: new Date() } },
+        ],
+      }).select("_id");
+    } catch (err) {
+      return res.status(500).json("1.Sometihing went wrong.");
+    }
+    //console.log("allexam");
+    //console.log(allExam);
+    let doneExam = null;
+    try {
+      doneExam = await StudentMarksRank.find(
+        {
+          studentId: studentIdObj,
+        },
+        "examId"
+      );
+      //console.log("doneExam");
+      //console.log(doneExam);
+    } catch (err) {
+      return res.status(500).json("2.Something went wrong.");
+    }
+    if (allExam == null) return res.status(404).json("No Exam data found.");
+    let data = [];
+    for (let i = 0; i < allExam.length; i++) {
+      data[i] = String(allExam[i]._id);
+    }
+    let doneExamArr = [];
+    for (let i = 0; i < doneExam.length; i++) {
+      doneExamArr.push(String(doneExam[i].examId));
+    }
+    let removedArray = null;
+    let resultData = null;
+    if (doneExam == null) removedArray = data;
+    else {
+      removedArray = data.filter(function (el) {
+        return !doneExamArr.includes(el);
+      });
+    }
+    let page = Number(req.query.page) || 1;
+    let count = 0;
+    try {
+      count = await Exam.find({
+        $and: [{ _id: { $in: removedArray } }, { status: true }],
+      }).count();
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (count == 0) {
+      return res.status(404).json("No data found.");
+    }
+    let paginateData = pagination(count, page);
+    try {
+      resultData = await Exam.find({
+        $and: [{ _id: { $in: removedArray } }, { status: true }],
+      })
+        .populate("subjectId courseId")
+        .skip(paginateData.skippedIndex)
+        .limit(paginateData.perPage);
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    if (resultData == null)
+      return res.status(404).json("No missed exam found.");
+    let resultFinal = [];
+    for (let i = 0; i < resultData.length; i++) {
+      let result = {};
+      result["id"] = resultData[i]._id;
+      result["exanName"] = resultData[i].name;
+      result["subject"] = resultData[i].subjectId.name;
+      result["startTime"] = moment(resultData[i].startTime).format("LL");
+      result["duration"] = Number(resultData[i].duration);
+      result["examType"] = "Written";
       result["negativeMarks"] = resultData[i].negativeMarks;
       resultFinal.push(result);
     }
