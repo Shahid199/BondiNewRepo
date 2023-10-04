@@ -5016,13 +5016,13 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   let submitTime = moment(new Date());
   console.log("duration:", Number(timeStudent[0] - submitTime) / (1000 * 60));
   console.log(submitTime);
-  console.log(timeStudent[0]);
+  //console.log(timeStudent[0]);
   console.log(moment(findId[0].examStartTimeMcq));
   let update = {
     finishedStatus: true,
     runningStatus: false,
     examEndTimeMcq: submitTime,
-    mcqDuration: Number(timeStudent[0] - submitTime) / (1000 * 60),
+    mcqDuration: Number(moment(timeStudent[0]) - submitTime) / (1000 * 60),
   };
   try {
     saveStudentExamEnd = await BothStudentExamVsQuestions.findByIdAndUpdate(
