@@ -5012,7 +5012,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   timeStudent[0] = findId[0].examStartTime;
   timeStudent[1] = findId[0].examEndTime;
   let saveStudentExamEnd;
-  let submitTime = moment(new Date()).add(6, "h");
+  let submitTime = moment(new Date());
   let update = {
     finishedStatus: true,
     runningStatus: false,
