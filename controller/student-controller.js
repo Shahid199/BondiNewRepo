@@ -3521,7 +3521,7 @@ const submitWritten = async (req, res, next) => {
   startTime = startTime.examStartTime;
   let upd = {
     examEndTime: moment(endTime).add(6, "h"),
-    duration: (endTime - moment(startTime)) / (1000 * 60),
+    duration: (moment(endTime).add(6, "h") - moment(startTime)) / (1000 * 60),
   };
   let sav = null;
   try {
