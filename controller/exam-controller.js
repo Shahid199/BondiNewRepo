@@ -190,8 +190,8 @@ const updateExam = async (req, res, next) => {
       .json("exam Id or course Id or subject Id is not valid.");
   }
   console.log("CT", moment(new Date()));
-  console.log("ST", moment(startTime));
-  console.log("ET", moment(endTime));
+  console.log("ST", moment(new Date(startTime)));
+  console.log("ET", moment(new Date(endTime)));
 
   let saveExamUpd = {
     courseId: new mongoose.Types.ObjectId(courseId),
@@ -200,8 +200,8 @@ const updateExam = async (req, res, next) => {
     examType: Number(examType),
     examVariation: Number(examVariation),
     examFreeOrNot: JSON.parse(examFreeOrNot),
-    startTime: moment(startTime),
-    endTime: moment(endTime),
+    startTime: moment(new Date(startTime)),
+    endTime: moment(new Date(endTime)),
     duration: Number(duration),
     totalQuestionMcq: Number(totalQuestionMcq),
     marksPerMcq: Number(marksPerMcq),
