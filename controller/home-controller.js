@@ -137,6 +137,8 @@ const getHomePage = async (req, res, next) => {
     }
     runningAll = running1.concat(running2);
     runningAll = runningAll.concat(running3);
+
+    console.log(runningAll);
     runningAll = runningAll.sort((a, b) => a.startTime >= b.startTime);
     comingAll = comingAll.sort((a, b) => a.startTime >= b.startTime);
     // console.log(running1);
