@@ -34,6 +34,7 @@ const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const BothExam = require("../model/BothExam");
 const BothRank = require("../model/BothRank");
 const SpecialRank = require("../model/SpecialRank");
+const SpecialExam = require("../model/SpecialExam");
 
 const Limit = 100;
 
@@ -3295,7 +3296,12 @@ const writtenExamCheckMiddleware = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   examEndTime = query.endTime;
-  if (examEndTime < currentDate) return res.status(200).json("ended");
+  if (moment(examEndTime) < currentDate) return res.status(200).json("ended");
+  // if (
+  //   Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
+  // )
+  //   studExamEndTime = examData.endTime;
+  // else studExamEndTime = moment(studExamEndTime).add(6, "h");
 
   try {
     status = await StudentExamVsQuestionsWritten.findOne({
