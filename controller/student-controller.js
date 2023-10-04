@@ -5009,8 +5009,8 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   }
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
-  timeStudent[0] = findId[0].examStartTime;
-  timeStudent[1] = findId[0].examEndTime;
+  timeStudent[0] = findId[0].examStartTimeMcq;
+  timeStudent[1] = findId[0].examEndTimeMcq;
   let saveStudentExamEnd;
   let submitTime = moment(new Date());
   console.log("duration:", Number(timeStudent[0] - submitTime) / (1000 * 60));
