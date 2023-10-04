@@ -5251,8 +5251,8 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   console.log(timeEnd);
   console.log(durationTest);
   let objSav = {
-    examStartTimeWritten: timeStart,
-    examEndTimeWritten: timeEnd,
+    examStartTimeWritten: moment(timeStart).add(6, "h"),
+    examEndTimeWritten: timeEnd.add(6, "h"),
     writtenDuration: durationTest,
   };
 
