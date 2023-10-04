@@ -4365,7 +4365,9 @@ const bothHistoryData = async (req, res, next) => {
     data1["writtenDuration"] = data[i].writtenDuration;
     data1["totalDuration"] = data[i].mcqDuration + data[i].writtenDuration;
     data1["subjectName"] = subjectName;
-    data1["examStartTime"] = moment(data[i].examId.startTime).format("LLL");
+    data1["examStartTime"] = moment(data[i].examId.startTime)
+      .subtract(6, "h")
+      .format("LLL");
     resultData.push(data1);
   }
   return res.status(200).json({ resultData, paginateData });
