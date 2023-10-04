@@ -27,7 +27,7 @@ const getHomePage = async (req, res, next) => {
   let studentId = new mongoose.Types.ObjectId(req.user.studentId);
   //Top
   if (section == "top") {
-    let currentTime = moment(new Date());
+    let currentTime = moment(new Date()).add(6, "h");
     console.log(currentTime);
     console.log(courseId);
     try {
