@@ -2273,7 +2273,7 @@ const assignQuestionWritten = async (req, res, next) => {
     startTimeWritten: moment(studExamStartTime).add(6, "h"),
     endTimeWritten: moment(studExamEndTime),
     writtenDuration:
-      (moment(studExamEndTime) - moment(studExamStartTime)) / 60000,
+      (moment(studExamEndTime) - moment(studExamStartTime).add(6, "h")) / 60000,
   };
   let sav = null;
   try {
