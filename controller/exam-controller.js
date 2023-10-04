@@ -11,7 +11,8 @@ const { default: mongoose, mongo } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
-const moment = require("moment");
+//const moment = require("moment");
+const moment = require("moment-timezone");
 const pagination = require("../utilities/pagination");
 const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
@@ -200,8 +201,8 @@ const updateExam = async (req, res, next) => {
     examType: Number(examType),
     examVariation: Number(examVariation),
     examFreeOrNot: JSON.parse(examFreeOrNot),
-    startTime: new Date(moment(startTime)),
-    endTime: new Date(moment(endTime)),
+    startTime: moment.tz(startTime, "Asia/Dhaka"),
+    endTime: moment.tz(startTime, "Asia/Dhaka"),
     duration: Number(duration),
     totalQuestionMcq: Number(totalQuestionMcq),
     marksPerMcq: Number(marksPerMcq),
