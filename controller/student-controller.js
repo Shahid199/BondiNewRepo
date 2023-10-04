@@ -4817,7 +4817,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   }
   let duration = Number(totalQuesData.mcqDuration);
   let examStartTime = moment(new Date());
-  let examEndTime = moment(examStartTime).add(duration, "minutes");
+  let examEndTime = moment(examStartTime).add(duration, "m");
   if (examEndTime > examEndTimeActual.endTime)
     examEndTime = examEndTimeActual.endTime;
   let writtenQuestion = null;
@@ -4850,8 +4850,8 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("8.Something went wrong.");
   }
-  questions.push({ studStartTime: examStartTime });
-  questions.push({ studEndTime: examEndTime });
+  questions.push({ studStartTime: moment(examStartTime).add(6, "h") });
+  questions.push({ studEndTime: moment(examEndTime).add(6, "h") });
   questions.push({ examEndTime: examFinishTime });
   questions.push({ answeredOption: answered });
   if (saveStudentQuestion == null) {
