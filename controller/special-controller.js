@@ -2037,7 +2037,8 @@ const getRunningDataMcq = async (req, res, next) => {
   console.log("start");
   console.log(examData.endTimeMcq);
   console.log(moment(new Date()));
-  examDet["dueDuration"] = (moment(examData.endTimeMcq) - new Date()) / 60000;
+  examDet["dueDuration"] =
+    (moment(examData.endTimeMcq) - moment(new Date()).subtract(6, "h")) / 60000;
 
   return res.status(200).json({ data, examDet });
 };
