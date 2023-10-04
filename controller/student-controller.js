@@ -1587,6 +1587,7 @@ const missedExam = async (req, res, next) => {
         return !doneExamArr.includes(el);
       });
     }
+    console.log("removedArray", removedArray.length);
     let page = Number(req.query.page) || 1;
     let count = 0;
     try {
