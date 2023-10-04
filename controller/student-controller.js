@@ -5379,7 +5379,7 @@ const bothSubmitWritten = async (req, res, next) => {
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   let startTime = null;
-  let endTime = moment(new Date()).add(6, "h");
+  let endTime = moment(new Date());
   try {
     startTime = await BothStudentExamVsQuestions.findOne({
       $and: [{ examId: examId }, { studentId: studentIdObj }],
@@ -5391,7 +5391,7 @@ const bothSubmitWritten = async (req, res, next) => {
   console.log(startTime);
   console.log(endTime);
   let upd = {
-    examEndTimeWritten: endTime,
+    examEndTimeWritten: moment(endTime).add(6, "h"),
     writtenDuration: Number(endTime - startTime) / (1000 * 60),
     uploadStatus: true,
   };
