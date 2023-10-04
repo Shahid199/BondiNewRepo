@@ -138,14 +138,15 @@ const getHomePage = async (req, res, next) => {
     runningAll = running1.concat(running2);
     runningAll = runningAll.concat(running3);
 
-    console.log(runningAll);
     runningAll = runningAll.sort((a, b) => a.startTime >= b.startTime);
     comingAll = comingAll.sort((a, b) => a.startTime >= b.startTime);
-    // console.log(running1);
-    // console.log(running2);
-    // console.log(running3);
-    console.log(comingAll.length);
-    console.log(comingAll);
+    console.log("running");
+    console.log(running1);
+    console.log(running2);
+    console.log(running3);
+    console.log(runningAll);
+    // console.log(comingAll.length);
+    // console.log(comingAll);
     let running = [];
     for (let i = 0; i < runningAll.length; i++) {
       running[i] = runningAll[i];
