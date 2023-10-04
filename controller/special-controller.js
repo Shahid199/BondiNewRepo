@@ -1927,7 +1927,9 @@ const assignQuestionMcq = async (req, res, next) => {
   );
   console.log("studExamEndTime", studExamEndTime);
   console.log("exam end:", examData.endTime);
-  if (studExamEndTime - examData.endTime > 0)
+  if (
+    Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
+  )
     studExamEndTime = examData.endTime;
   console.log(examData.mcqDuration);
   console.log("studExamStartTime", studExamStartTime);
@@ -1978,8 +1980,8 @@ const assignQuestionMcq = async (req, res, next) => {
   }
   if (!sav) return res.status(404).json("not assign mcq questions.");
   //return res.status(200).json(questionsId);
-  questionsId.push({ studStartTime: studExamStartTime });
-  questionsId.push({ studEndTime: studExamEndTime });
+  questionsId.push({ studStartTime: moment(studExamStartTime).add(6, "h") });
+  questionsId.push({ studEndTime: moment(studExamEndTime).add(6, "h") });
   questionsId.push({ examStartTime: examData.startTime });
   questionsId.push({ examEndTime: examData.endTime });
   questionsId.push({
