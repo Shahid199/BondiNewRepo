@@ -2165,8 +2165,7 @@ const getHistoryByWrittenIdFilter = async (req, res, next) => {
   if (!ObjectId.isValid(examId) || !regNo)
     return res.status(404).json("Student ID or RegNo not valid.");
   let page = req.query.page || 1;
-
-  let studentId = null;
+let studentId = null;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   try {
     studentId = await Student.find({
@@ -2182,6 +2181,7 @@ const getHistoryByWrittenIdFilter = async (req, res, next) => {
   for (let i = 0; i < studentId.length; i++) {
     studIds[i] = studentId[i]._id;
   }
+  
   let count = 0;
   try {
     count = await StudentMarksRank.find({
