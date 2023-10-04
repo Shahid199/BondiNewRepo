@@ -3706,7 +3706,7 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
   dataObj["answerScript"] = [];
-  for (let p = 0; p < data.totalQuestions; p++) {
+  for (let p = 0; p < data2.totalQuestions; p++) {
     if (data.submittedScriptILink[p])
       dataObj["answerScript"][p] = data.submittedScriptILink[p];
     else dataObj["answerScript"][p] = null;
