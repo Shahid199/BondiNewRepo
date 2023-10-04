@@ -5017,6 +5017,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   console.log("duration:", Number(timeStudent[0] - submitTime) / (1000 * 60));
   console.log(submitTime);
   console.log(timeStudent[0]);
+  console.log(findId[0].examStartTimeMcq);
   let update = {
     finishedStatus: true,
     runningStatus: false,
