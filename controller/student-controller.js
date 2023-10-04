@@ -4781,6 +4781,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   let resultQuestion = [];
   for (let i = 0; i < totalQues; i++) {
     let data = String(doc2[doc[i]]);
+    console.log(data);
     resultQuestion.push(data);
   }
   console.log(doc2);
