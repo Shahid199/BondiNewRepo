@@ -2264,7 +2264,10 @@ const assignQuestionWritten = async (req, res, next) => {
     examData.writtenDuration,
     "m"
   );
-  if (studExamEndTime >= examData.endTime) studExamEndTime = examData.endTime;
+  if (
+    Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
+  )
+    studExamEndTime = examData.endTime;
   let objSav = {
     questionWritten: questionWrittenArr,
     startTimeWritten: moment(studExamStartTime).add(6, "h"),
@@ -2290,11 +2293,12 @@ const assignQuestionWritten = async (req, res, next) => {
     objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
     data1.push(objWritten);
   }
-  data1.push({ studExamStartTime: studExamStartTime });
-  data1.push({ studExamEndTime: studExamEndTime });
+  data1.push({ studExamStartTime: moment(studExamStartTime).add(6, "h") });
+  data1.push({ studExamEndTime: moment(studExamEndTime) });
   data1.push({ examEndTime: examData.endTime });
   data1.push({
-    duration: (moment(studExamEndTime) - moment(studExamStartTime)) / 60000,
+    duration:
+      (moment(studExamEndTime) - moment(studExamStartTime).add(6, "h")) / 60000,
   });
   return res.status(200).json(data1);
 };
@@ -2355,12 +2359,15 @@ const ruunningWritten = async (req, res, next) => {
   data1.push({ studExamEndTime: timeData.endTimeWritten });
   data1.push({ examEndTime: examData.endTime });
   data1.push({
-    dueDuration: (moment(timeData.endTimeWritten) - moment(new Date())) / 60000,
+    dueDuration:
+      (moment(timeData.endTimeWritten) - moment(new Date()).add(12, "h")) /
+      60000,
   });
   data1.push({
     Duration: examData.writtenDuration,
   });
   data1.push({ subectsId: subjectsId });
+
   return res.status(200).json(data1);
 };
 const submitStudentScript = async (req, res, next) => {
