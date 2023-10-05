@@ -1252,14 +1252,17 @@ const submitAnswerFree = async (req, res, next) => {
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
-  let du = examEndTime - dataTimeStart / 60000;
-  console.log("du", examEndTime - dataTimeStart / 60000);
+  let du = examEndTime - moment(dataTimeStart).subtract(6, "h") / 60000;
+  console.log(
+    "du",
+    examEndTime - moment(dataTimeStart).subtract(6, "h") / 60000
+  );
   console.log("du", examEndTime);
   console.log("du", dataTimeStart);
   let update = {
     finishedStatus: true,
     runningStatus: false,
-    examEndTime: moment(examEndTime).add(6, "h"),
+    examEndTime: moment(examEndTime),
     duration: du,
   };
   try {
