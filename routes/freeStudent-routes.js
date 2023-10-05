@@ -28,6 +28,9 @@ const {
   getFreeExamNew,
   freeGetHistoryByExamIdFilterM,
   freeGetHistoryByExamIdFilterN,
+  addPublishFree,
+  statusUpdatePublishFree,
+  showPublishFree,
 } = require("../controller/freeStudent-controller");
 const { freeExamStatus } = require("../controller/exam-controller");
 
@@ -207,5 +210,30 @@ router.get("/getfreeexamnew", getFreeExamNew);
 // );
 
 //end:free student exam route
+router.post(
+  "/addpublishfree",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  addPublishFree
+);
+
+router.post(
+  "/statusupdatepublishfree",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  statusUpdatePublishFree
+);
+router.get(
+  "/showpublishfree",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "freeStudent"]),
+  ],
+  showPublishFree
+);
 
 module.exports = router;

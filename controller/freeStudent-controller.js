@@ -14,6 +14,7 @@ const examType = require("../utilities/exam-type");
 const examVariation = require("../utilities/exam-variation");
 const ExamRule = require("../model/ExamRule");
 const { response } = require("express");
+const PublishFreeExam = require("../model/PublishFreeExam");
 /**
  * login a student to a course
  * @param {Object} req courseId,regNo
@@ -647,62 +648,6 @@ const getFreeExamAll = async (req, res, next) => {
   try {
     exams = await Exam.find({
       $and: [{ status: true }, { examFreeOrNot: true }],
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  //console.log(exams.length);
-  if (exams.length == 0)
-    return res.status(404).json("No Free exam has been completed.");
-  let data1 = [];
-  for (let i = 0; i < exams.length; i++) {
-    let dataObj = {};
-    dataObj["courseId"] = exams[i].courseId;
-    dataObj["createdAt"] = exams[i].createdAt;
-    dataObj["duration"] = exams[i].duration;
-    dataObj["endTime"] = exams[i].endTime;
-    dataObj["examFreeOrNot"] = exams[i].examFreeOrNot;
-    dataObj["examType"] = -1;
-    dataObj["examVariation"] = 1;
-    dataObj["hscStatus"] = exams[i].hscStatus;
-    dataObj["iLink"] = exams[i].iLink;
-    dataObj["marksPerMcq"] = exams[i].marksPerMcq;
-    dataObj["name"] = exams[i].name;
-    dataObj["negativeMarks"] = exams[i].negativeMarks;
-    dataObj["sscStatus"] = exams[i].sscStatus;
-    dataObj["startTime"] = exams[i].startTime;
-    dataObj["endTime"] = exams[i].endTime;
-    dataObj["status"] = exams[i].status;
-    dataObj["subjectId"] = exams[i].subjectId;
-    dataObj["totalMarksMcq"] = exams[i].totalMarksMcq;
-    dataObj["totalQuestionMcq"] = exams[i].totalQuestionMcq;
-    dataObj["updatedAt"] = exams[i].updatedAt;
-    dataObj["__v"] = exams[i].__v;
-    dataObj["_id"] = exams[i]._id;
-    let dataRule = null;
-    try {
-      dataRule = await ExamRule.findOne({ examId: exams[i]._id }).select(
-        "ruleILink -_id"
-      );
-    } catch (err) {
-      return res.status(500).json("Something went wrong.");
-    }
-    if (dataRule == null) dataObj["RuleImage"] = "0";
-    else {
-      dataObj["RuleImage"] = dataRule.ruleILink;
-    }
-    data1.push(dataObj);
-  }
-  return res.status(200).json(data1);
-};
-
-const getFreeExamNew = async (req, res, next) => {
-  let exams;
-  let id = new mongoose.Types.ObjectId("64dcd8c6c227ba908b10b041");
-  let currentTime = Date.now();
-  try {
-    exams = await Exam.find({
-      $and: [{ status: true }, { examFreeOrNot: true }, { _id: id }],
     });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
@@ -1783,6 +1728,136 @@ const getAllRankFree = async (req, res, next) => {
 //   }
 //   return res.status(200).json(sav);
 // };
+
+const getFreeExamNew = async (req, res, next) => {
+  let exams;
+  let id = new mongoose.Types.ObjectId("64dcd8c6c227ba908b10b041");
+  let currentTime = Date.now();
+  try {
+    exams = await Exam.find({
+      $and: [{ status: true }, { examFreeOrNot: true }, { _id: id }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //console.log(exams.length);
+  if (exams.length == 0)
+    return res.status(404).json("No Free exam has been completed.");
+  let data1 = [];
+  for (let i = 0; i < exams.length; i++) {
+    let dataObj = {};
+    dataObj["courseId"] = exams[i].courseId;
+    dataObj["createdAt"] = exams[i].createdAt;
+    dataObj["duration"] = exams[i].duration;
+    dataObj["endTime"] = exams[i].endTime;
+    dataObj["examFreeOrNot"] = exams[i].examFreeOrNot;
+    dataObj["examType"] = -1;
+    dataObj["examVariation"] = 1;
+    dataObj["hscStatus"] = exams[i].hscStatus;
+    dataObj["iLink"] = exams[i].iLink;
+    dataObj["marksPerMcq"] = exams[i].marksPerMcq;
+    dataObj["name"] = exams[i].name;
+    dataObj["negativeMarks"] = exams[i].negativeMarks;
+    dataObj["sscStatus"] = exams[i].sscStatus;
+    dataObj["startTime"] = exams[i].startTime;
+    dataObj["endTime"] = exams[i].endTime;
+    dataObj["status"] = exams[i].status;
+    dataObj["subjectId"] = exams[i].subjectId;
+    dataObj["totalMarksMcq"] = exams[i].totalMarksMcq;
+    dataObj["totalQuestionMcq"] = exams[i].totalQuestionMcq;
+    dataObj["updatedAt"] = exams[i].updatedAt;
+    dataObj["__v"] = exams[i].__v;
+    dataObj["_id"] = exams[i]._id;
+    let dataRule = null;
+    try {
+      dataRule = await ExamRule.findOne({ examId: exams[i]._id }).select(
+        "ruleILink -_id"
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (dataRule == null) dataObj["RuleImage"] = "0";
+    else {
+      dataObj["RuleImage"] = dataRule.ruleILink;
+    }
+    data1.push(dataObj);
+  }
+  return res.status(200).json(data1);
+};
+const getFreeExamNew1 = async (req, res, next) => {
+  let exams = [];
+  try {
+    exams = await PublishFreeExam.find({
+      $and: [{ status: true }],
+    }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (exams.length == 0)
+    return res.status(404).json("No Free exam has been completed.");
+  let data1 = [];
+  for (let i = 0; i < exams.length; i++) {
+    let dataObj = {};
+    dataObj["name"] = exams[i].examId.name;
+    dataObj["_id"] = exams[i].examId._id;
+    data1.push(dataObj);
+  }
+  return res.status(200).json(data1);
+};
+const addPublishFree = async (req, res, next) => {
+  let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("exam Id not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let insertData = new PublishFreeExam({
+    examId: examId,
+    status: true,
+  });
+  let sav = null;
+  try {
+    sav = await insertData.save();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(201).json("Save Succesfully.");
+};
+const showPublishFree = async (req, res, next) => {
+  let data = null;
+  try {
+    data = await PublishFreeExam.find({ status: true }).populate("examId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let data1 = [];
+  for (let i = 0; i < data.length; i++) {
+    let objData = {};
+    objData["examId"] = data[i].examId._id;
+    objData["examName"] = data[i].examId.name;
+    objData["publishStatus"] = data[i].status;
+    data1.push(objData);
+  }
+  return res.status(200).json(data1);
+};
+const statusUpdatePublishFree = async (req, res, next) => {
+  let examId = req.body.examId;
+  let status = JSON.parse(req.post.status);
+  if (!ObjectId.isValid(examId) || !status)
+    return res.status(404).json("exam Id not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let upd = null;
+  try {
+    upd = await PublishFreeExam.updateOne(
+      { examId: examId },
+      { $set: { status: status } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(201).json("Status Updated Succesfully.");
+};
+exports.addPublishFree = addPublishFree;
+exports.showPublishFree = showPublishFree;
+exports.statusUpdatePublishFree = statusUpdatePublishFree;
 exports.freeGetHistoryByExamIdFilterM = freeGetHistoryByExamIdFilterM;
 exports.freeGetHistoryByExamIdFilterN = freeGetHistoryByExamIdFilterN;
 exports.addFreeStudent = addFreeStudent;
