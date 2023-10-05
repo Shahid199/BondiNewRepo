@@ -1738,7 +1738,7 @@ const getAllRankFree = async (req, res, next) => {
 //   return res.status(200).json(sav);
 // };
 
-const getFreeExamNew = async (req, res, next) => {
+const getFreeExamNew1 = async (req, res, next) => {
   let exams;
   let id = new mongoose.Types.ObjectId("64dcd8c6c227ba908b10b041");
   let currentTime = Date.now();
@@ -1793,7 +1793,7 @@ const getFreeExamNew = async (req, res, next) => {
   }
   return res.status(200).json(data1);
 };
-const getFreeExamNew1 = async (req, res, next) => {
+const getFreeExamNew = async (req, res, next) => {
   let exams = [];
   try {
     exams = await PublishFreeExam.find({
