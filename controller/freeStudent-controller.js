@@ -1245,13 +1245,13 @@ const submitAnswerFree = async (req, res, next) => {
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
   let du =
-    (moment(examEndTime) - moment(dataTimeNew.examStartTime).subtract(6, "h")) /
+    (moment(examEndTime).add(6, "h") - moment(dataTimeNew.examStartTime)) /
     60000;
   let update = {
     finishedStatus: true,
     runningStatus: false,
     examEndTime: moment(examEndTime).add(6, "h"),
-    duration: du - 360,
+    duration: du,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(
