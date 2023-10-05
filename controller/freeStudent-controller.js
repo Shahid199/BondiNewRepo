@@ -1017,7 +1017,7 @@ const assignQuestionFree = async (req, res, next) => {
     runningStatus: true,
     finishedStatus: false,
     examEndTime: examEndTime,
-    duration: (360 - Number(examStartTime - examEndTime)) / 60000,
+    duration: duration,
   });
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
@@ -1248,9 +1248,7 @@ const submitAnswerFree = async (req, res, next) => {
     finishedStatus: true,
     runningStatus: false,
     examEndTime: moment(examEndTime).add(6, "h"),
-    duration:
-      (moment(examEndTime).add(6, "h") - moment(dataTimeNew.examStartTime)) /
-      60000,
+    duration: (moment(examEndTime) - moment(dataTimeNew.examStartTime)) / 60000,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(
