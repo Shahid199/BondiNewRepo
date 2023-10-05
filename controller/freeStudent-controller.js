@@ -1017,6 +1017,7 @@ const assignQuestionFree = async (req, res, next) => {
     runningStatus: true,
     finishedStatus: false,
     examEndTime: examEndTime,
+    duration: (examStartTime - examEndTime) / 60000,
   });
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
@@ -1233,19 +1234,23 @@ const submitAnswerFree = async (req, res, next) => {
   try {
     findId = await FreestudentMarksRank.find({
       $and: [{ examId: eId1 }, { studentId: sId1 }],
-    }).select("_id");
+    });
   } catch (err) {
     return res
       .status(500)
       .json("Proble when get student info from student marks table.");
   }
+  let dataTimeNew = findId;
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
   let update = {
     finishedStatus: true,
     runningStatus: false,
-    examEndTime: examEndTime,
+    examEndTime: moment(examEndTime).add(6, "h"),
+    duration:
+      (moment(examEndTime).add(6, "h") - moment(dataTimeNew.examStartTime)) /
+      60000,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(

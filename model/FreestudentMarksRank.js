@@ -28,7 +28,7 @@ const FreestudentMarkRanksSchema = new Schema(
     duration: {
       type: Number,
       required: false,
-      ddefault: null,
+      default: null,
     },
     totalObtainedMarks: {
       type: Number,
