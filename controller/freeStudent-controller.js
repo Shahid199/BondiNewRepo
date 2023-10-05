@@ -1853,7 +1853,7 @@ const statusUpdatePublishFree = async (req, res, next) => {
   console.log(examId);
   console.log(req.body.status);
   console.log(status);
-  if (!ObjectId.isValid(examId) || !status)
+  if (!ObjectId.isValid(examId) || status == null)
     return res.status(404).json("exam Id not valid.");
   examId = new mongoose.Types.ObjectId(examId);
   let upd = null;
