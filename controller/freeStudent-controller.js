@@ -1264,6 +1264,7 @@ const submitAnswerFree = async (req, res, next) => {
       update
     );
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Problem when updating student marks rank.");
   }
   let sIeIObj = await FreestudentMarksRank.find(
