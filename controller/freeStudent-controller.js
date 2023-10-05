@@ -1248,7 +1248,7 @@ const submitAnswerFree = async (req, res, next) => {
   }
   let dataTimeNew = findId;
   console.log("dataTimeNew:", dataTimeNew);
-  let dataTimeStart = dataTimeNew.examStartTime;
+  let dataTimeStart = dataTimeNew[0].examStartTime;
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
