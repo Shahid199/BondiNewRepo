@@ -1006,8 +1006,14 @@ const assignQuestionFree = async (req, res, next) => {
   let saveStudentQuestion = null,
     saveStudentExam = null;
   let duration = Number(totalQuesData.duration);
+  let examEndTimeNew = totalQuesData.endTime;
   let examStartTime = moment(new Date()).add(6, "hours");
   let examEndTime = moment(examStartTime).add(duration, "minutes");
+  if (examEndTime > moment(examEndTimeNew)) {
+    console.log("pass");
+    examEndTime = examEndTimeNew;
+    console.log("EE:", examEndTime);
+  }
   console.log(examStartTime);
   console.log(examEndTime);
   let studentMarksRank = new FreestudentMarksRank({
@@ -1250,7 +1256,6 @@ const submitAnswerFree = async (req, res, next) => {
     finishedStatus: true,
     runningStatus: false,
     examEndTime: moment(examEndTime).add(6, "h"),
-    duration: du,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(
