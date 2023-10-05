@@ -1850,6 +1850,9 @@ const showPublishFree = async (req, res, next) => {
 const statusUpdatePublishFree = async (req, res, next) => {
   let examId = req.body.examId;
   let status = JSON.parse(req.body.status);
+  console.log(examId);
+  console.log(req.body.status);
+  console.log(status);
   if (!ObjectId.isValid(examId) || !status)
     return res.status(404).json("exam Id not valid.");
   examId = new mongoose.Types.ObjectId(examId);
