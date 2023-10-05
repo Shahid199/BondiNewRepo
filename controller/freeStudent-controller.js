@@ -1023,7 +1023,7 @@ const assignQuestionFree = async (req, res, next) => {
     runningStatus: true,
     finishedStatus: false,
     examEndTime: examEndTime,
-    duration: duration,
+    duration: (examEndTime - examStartTime) / 60000,
   });
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
