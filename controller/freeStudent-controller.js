@@ -1818,15 +1818,33 @@ const addPublishFree = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id not valid.");
   examId = new mongoose.Types.ObjectId(examId);
-  let insertData = new PublishFreeExam({
-    examId: examId,
-    status: true,
-  });
-  let sav = null;
+  let upd = null;
   try {
-    sav = await insertData.save();
+    upd = await PublishFreeExam.findOne({ examId: examId });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
+  }
+  if (upd) {
+    let upd1 = null;
+    try {
+      upd1 = await PublishFreeExam.updateOne(
+        { examId: examId },
+        { $set: { status: true } }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+  } else {
+    let insertData = new PublishFreeExam({
+      examId: examId,
+      status: true,
+    });
+    let sav = null;
+    try {
+      sav = await insertData.save();
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
   }
   return res.status(201).json("Save Succesfully.");
 };
