@@ -1241,12 +1241,11 @@ const submitAnswerFree = async (req, res, next) => {
       .json("Proble when get student info from student marks table.");
   }
   let dataTimeNew = findId;
+  let dataTimeStart = dataTimeNew.examStartTime;
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
-  let du =
-    (moment(examEndTime).add(6, "h") - moment(dataTimeNew.examStartTime)) /
-    60000;
+  let du = (moment(examEndTime).add(6, "h") - moment(dataTimeStart)) / 60000;
   let update = {
     finishedStatus: true,
     runningStatus: false,
