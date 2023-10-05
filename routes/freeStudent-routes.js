@@ -214,7 +214,7 @@ router.post(
   "/addpublishfree",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
+    authorize(["superadmin", "moderator"]),
   ],
   addPublishFree
 );
@@ -223,7 +223,7 @@ router.post(
   "/statusupdatepublishfree",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
+    authorize(["superadmin", "moderator"]),
   ],
   statusUpdatePublishFree
 );
@@ -231,7 +231,7 @@ router.get(
   "/showpublishfree",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
+    authorize(["superadmin", "moderator"]),
   ],
   showPublishFree
 );
