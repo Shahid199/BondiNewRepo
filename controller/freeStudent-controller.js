@@ -1248,7 +1248,10 @@ const submitAnswerFree = async (req, res, next) => {
     finishedStatus: true,
     runningStatus: false,
     examEndTime: moment(examEndTime).add(6, "h"),
-    duration: (moment(examEndTime) - moment(dataTimeNew.examStartTime)) / 60000,
+    duration:
+      360 -
+      (moment(examEndTime).add(6, "h") - moment(dataTimeNew.examStartTime)) /
+        60000,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(
