@@ -689,7 +689,7 @@ const getWrittenBySub = async (req, res, next) => {
 const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
-  let type = req.query.type;
+  let type = req.query.type || null;
   //console.log(subjectId);
   //let studentId = req.user.studentId;
   if (!ObjectId.isValid(subjectId) || !variation || !type)
