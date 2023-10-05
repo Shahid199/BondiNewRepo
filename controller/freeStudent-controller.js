@@ -1649,8 +1649,12 @@ const getRankFree = async (req, res, next) => {
   data1["rank"] = resultRank;
   data1["totalStudent"] = totalStudent;
   data1["examName"] = getResult.examId.name;
-  data1["startTime"] = moment(getResult.examId.startTime).format("LLL");
-  data1["endTime"] = moment(getResult.examId.endTime).format("LLL");
+  data1["startTime"] = moment(getResult.examId.startTime)
+    .subtract(6, "h")
+    .format("LLL");
+  data1["endTime"] = moment(getResult.examId.endTime)
+    .subtract(6, "h")
+    .format("LLL");
   data1["totalMarksMcq"] = getResult.examId.totalMarksMcq;
   data1["examVariation"] = examType[Number(getResult.examId.examType)];
   data1["examType"] = examVariation[Number(getResult.examId.examVariation)];
@@ -1660,8 +1664,12 @@ const getRankFree = async (req, res, next) => {
   data1["totalWrongMarks"] = getResult.totalWrongMarks;
   data1["totalNotAnswered"] = getResult.totalNotAnswered;
   data1["totalObtainedMarks"] = getResult.totalObtainedMarks;
-  data1["studExamStartTime"] = moment(dataTime.examStartTime).format("LLL");
-  data1["studExamEndTime"] = moment(dataTime.examEndTime).format("LLL");
+  data1["studExamStartTime"] = moment(dataTime.examStartTime)
+    .subtract(6, "h")
+    .format("LLL");
+  data1["studExamEndTime"] = moment(dataTime.examEndTime)
+    .subtract(6, "h")
+    .format("LLL");
   data1["studExamTime"] = dataTime.duration;
   data1["marksPerMcq"] = getResult.examId.marksPerMcq;
   data1["marksPerWrong"] =
@@ -1727,12 +1735,12 @@ const getAllRankFree = async (req, res, next) => {
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
-    data1["examStartTime"] = moment(data2[i].examStartTime).format(
-      "MMMM Do YYYY, h:mm:ss a"
-    );
-    data1["examEndTime"] = moment(data2[i].examEndTime).format(
-      "MMMM Do YYYY, h:mm:ss a"
-    );
+    data1["examStartTime"] = moment(data2[i].examStartTime)
+      .subtract(6, "h")
+      .format("MMMM Do YYYY, h:mm:ss a");
+    data1["examEndTime"] = moment(data2[i].examEndTime)
+      .subtract(6, "h")
+      .format("MMMM Do YYYY, h:mm:ss a");
     data1["id"] = resultRank[i].freeStudentId._id;
 
     allData.push(data1);
