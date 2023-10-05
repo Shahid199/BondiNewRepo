@@ -696,13 +696,6 @@ const getExamBySubject = async (req, res, next) => {
     return res.status(404).json("subject Id is not valid.");
   subjectId = new mongoose.Types.ObjectId(subjectId);
   let courseId = null;
-  // try {
-  //   courseId = await Subject.findById(subjectId).select("courseId");
-  //   courseId = courseId.courseId;
-  // } catch (err) {
-  //   console.log(err);
-  //   return res.status(500).json("Something went wrong!");
-  // }
   let page = Number(req.query.page) || 1;
   et;
   let count = 0;
@@ -713,7 +706,7 @@ const getExamBySubject = async (req, res, next) => {
         $and: [
           { status: true },
           { subjectId: subjectId },
-          { examType: variation },
+          { examType: variation },//variation:mcq1=1,written-2
           { examVariation: 1 },
           { endTime: { $gt: timer } },
         ],
