@@ -1247,6 +1247,7 @@ const submitAnswerFree = async (req, res, next) => {
       .json("Proble when get student info from student marks table.");
   }
   let dataTimeNew = findId;
+  console.log("dataTimeNew:", dataTimeNew);
   let dataTimeStart = dataTimeNew.examStartTime;
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
