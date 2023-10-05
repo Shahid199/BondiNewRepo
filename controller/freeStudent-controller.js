@@ -1245,8 +1245,7 @@ const submitAnswerFree = async (req, res, next) => {
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
   let du =
-    (moment(examEndTime).add(6, "h") -
-      moment(dataTimeNew.examStartTime).subtract(6, "h")) /
+    (moment(examEndTime) - moment(dataTimeNew.examStartTime).subtract(6, "h")) /
     60000;
   let update = {
     finishedStatus: true,
