@@ -1244,14 +1244,15 @@ const submitAnswerFree = async (req, res, next) => {
   if (findId == null) return res.status(404).json("data not found.");
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
+  let du =
+    (moment(examEndTime).add(6, "h") -
+      moment(dataTimeNew.examStartTime).add(6, "h")) /
+    60000;
   let update = {
     finishedStatus: true,
     runningStatus: false,
     examEndTime: moment(examEndTime).add(6, "h"),
-    duration:
-      360 -
-      (moment(examEndTime).add(6, "h") - moment(dataTimeNew.examStartTime)) /
-        60000,
+    duration: 360 - du,
   };
   try {
     saveStudentExamEnd = await FreestudentMarksRank.findByIdAndUpdate(
