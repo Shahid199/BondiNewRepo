@@ -692,6 +692,15 @@ const getFreeExamAll = async (req, res, next) => {
     else {
       dataObj["RuleImage"] = dataRule.ruleILink;
     }
+    let pubStatus = null;
+    try {
+      pubStatus = await PublishFreeExam.findOne({ examId: exams[i]._id });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (!pubStatus) dataObj["publishStatus"] = null;
+    else if (pubStatus.status == false) dataObj["publishStatus"] = false;
+    else dataObj["publishStatus"] = true;
     data1.push(dataObj);
   }
   return res.status(200).json(data1);
