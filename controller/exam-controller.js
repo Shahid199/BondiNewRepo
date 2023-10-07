@@ -697,7 +697,6 @@ const getExamBySubject = async (req, res, next) => {
   subjectId = new mongoose.Types.ObjectId(subjectId);
   let courseId = null;
   let page = Number(req.query.page) || 1;
-  et;
   let count = 0;
   let timer = moment(new Date()).add(6, "h");
   if (type == 1) {
