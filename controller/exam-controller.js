@@ -708,7 +708,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation }, //variation:mcq1=1,written-2
           { examVariation: 1 },
-          { endTime: { $gt: timer } },
+          { startTime: { $gt: timer } },
         ],
       }).count();
     } catch (err) {
@@ -724,7 +724,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 1 },
-          { endTime: { $gt: timer } },
+          { startTime: { $gt: timer } },
         ],
       },
       "name examVariation startTime endTime examType"
@@ -761,7 +761,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 2 },
-          { endTime: { $gt: timer } },
+          { startTime: { $gt: timer } },
         ],
       }).count();
     } catch (err) {
@@ -777,7 +777,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 2 },
-          { endTime: { $gt: timer } },
+          { startTime: { $gt: timer } },
         ],
       },
       "name examVariation startTime endTime examType"
@@ -814,7 +814,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 3 },
-          { endTime: { $gt: timer } },
+          { startTime: { $gt: timer } },
         ],
       }).count();
     } catch (err) {
@@ -830,7 +830,7 @@ const getExamBySubject = async (req, res, next) => {
           { subjectId: subjectId },
           { examType: variation },
           { examVariation: 3 },
-          { endTime: { $gt: timer } },
+          { startTime: { $gt: timer } },
         ],
       },
       "name examVariation startTime endTime examType"
