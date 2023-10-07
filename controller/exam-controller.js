@@ -20,6 +20,7 @@ const StudentExamVsQuestionsWritten = require("../model/StudentExamVsQuestionsWr
 const TeacherVsExam = require("../model/TeacherVsExam");
 const BothTeacherVsExam = require("../model/BothTeacherVsExam");
 const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
+const BothExam = require("../model/BothExam");
 
 const Limit = 100;
 //create Exam
@@ -817,7 +818,6 @@ const getExamBySubject = async (req, res, next) => {
         ],
       }).count();
     } catch (err) {
-      console.log(err);
       return res.status(500).json("something went wrong.");
     }
     if (count == 0) return res.status(404).json("No data found.");
