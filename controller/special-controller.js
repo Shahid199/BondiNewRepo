@@ -720,7 +720,7 @@ const addQuestionWritten = async (req, res, next) => {
   const marksPerQuestion = req.body.marksPerQuestion; //array
   let marksAll = marksPerQuestion.split(",");
   marksAll = marksAll.map((str) => {
-    return parseInt(str, 10);
+    return Number(str);
   });
   console.log(marksAll);
   //let subjectId = req.body.subjectId;
