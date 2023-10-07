@@ -81,15 +81,5 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
-    // console.log("running on 5011");
-    // let examStartTime = moment(new Date());
-    // // let examEndTime = moment(examStartTime).add(30, "minutes");
-    // console.log(examStartTime);
-    // console.log(moment(new Date()));
-    const dir = path.resolve(path.join(__dirname, "uploads"));
-    let cur = new Date();
-    let date1 = moment(new Date()).add(6, "h");
-    console.log(cur);
-    if (cur > date1) console.log(moment(date1));
   })
   .catch((err) => console.log(err));

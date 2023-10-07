@@ -91,7 +91,7 @@ const createBothExam = async (req, res, next) => {
   try {
     doc = await saveExam.save();
   } catch (err) {
-    //console.log(err);
+    console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(doc);
