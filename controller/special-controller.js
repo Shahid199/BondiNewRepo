@@ -153,7 +153,7 @@ const createSpecialExam = async (req, res, next) => {
   let saveExam = new SpecialExam({
     courseId: courseIdObj,
     name: name,
-    examVariation: examVariation,
+    examVariation: 4,
     startTime: moment(startTime),
     endTime: moment(endTime),
     mcqDuration: mcqDuration,
