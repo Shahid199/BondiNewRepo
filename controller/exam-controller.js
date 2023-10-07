@@ -705,7 +705,7 @@ const getExamBySubject = async (req, res, next) => {
         $and: [
           { status: true },
           { subjectId: subjectId },
-          { examType: variation },//variation:mcq1=1,written-2
+          { examType: variation }, //variation:mcq1=1,written-2
           { examVariation: 1 },
           { endTime: { $gt: timer } },
         ],
@@ -817,6 +817,7 @@ const getExamBySubject = async (req, res, next) => {
         ],
       }).count();
     } catch (err) {
+      console.log(err);
       return res.status(500).json("something went wrong.");
     }
     if (count == 0) return res.status(404).json("No data found.");
