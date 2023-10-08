@@ -1871,21 +1871,20 @@ const retakeSubmit = async (req, res, next) => {
   console.log(examData1);
   let dataObject = {};
   dataObject["examName"] = examData1.eId.name;
-  dataObject["totalMarksMcq"] = examData1.examId.totalMarksMcq;
-  dataObject["startTime"] = examData1.examId.startTime;
-  dataObject["endTime"] = examData1.examId.endTime;
-  dataObject["examVariation"] = examType[Number(examData1.examId.examType)];
-  dataObject["examType"] =
-    examVariation[Number(examData1.examId.examVariation)];
-  dataObject["totalCorrectAnswer"] = data.totalCorrectAnswer;
+  dataObject["totalMarksMcq"] = examData1.eId.totalMarksMcq;
+  dataObject["startTime"] = examData1.eId.startTime;
+  dataObject["endTime"] = examData1.eId.endTime;
+  dataObject["examVariation"] = examType[Number(examData1.eId.examType)];
+  dataObject["examType"] = examVariation[Number(examData1.eId.examVariation)];
+  dataObject["totalCorrectAnswer"] = totalCorrect;
   dataObject["rank"] = mcqRank;
   dataObject["totalObtainedMarks"] = marks;
   dataObject["totalWrongAnswer"] = totalWrong;
   dataObject["totalCorrectMarks"] = totalCorrect * correctMarks;
   dataObject["totalWrongMarks"] = negativeValue * totalWrong;
   dataObject["totalNotAnswered"] = notAnswered;
-  dataObject["marksPerMcq"] = examData1.examId.marksPerMcq;
-  dataObject["marksPerWrong"] = examData1.examId.negativeMarks / 100;
+  dataObject["marksPerMcq"] = examData1.Id.marksPerMcq;
+  dataObject["marksPerWrong"] = examData1.Id.negativeMarks / 100;
   return res.status(200).json(dataObject);
 
   //return res.status(200).json(answerScript);
