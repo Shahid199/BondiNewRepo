@@ -1818,15 +1818,16 @@ const retakeSubmit = async (req, res, next) => {
   const qIdObj = qId.map((s) => new mongoose.Types.ObjectId(s));
   const answered = answerArr;
   try {
-    examData = await McqQuestionVsExam.findOne({ eId: examIdObj })
-      .select("mId")
-      .populate("mId eId");
+    examData = await McqQuestionVsExam.findOne({ eId: examIdObj }).populate(
+      "mId eId"
+    );
   } catch (err) {
     //console.log(err);
     return res.status(500).json("1.Something went wrong.");
   }
   if (examData == null)
     return res.status(404).json("No exam data found for the student.");
+  let examData1 = examData;
   let validQues = [];
   try {
     validQues = await QuestionsMcq.find({
@@ -1854,20 +1855,39 @@ const retakeSubmit = async (req, res, next) => {
   }
   let negativeValue = (correctMarks * negativeMarks) / 100;
   marks = totalCorrect * correctMarks - negativeValue * totalWrong;
-  let answerScript = {};
-  answerScript["totalQuestion"] = qIdObj.length;
-  answerScript["negativePercentage"] = negativeMarks;
-  answerScript["correcMarks"] = correctMarks;
-  answerScript["negativeValue"] = negativeValue;
-  answerScript["totalCorrect"] = totalCorrect;
-  answerScript["totalWrong"] = totalWrong;
-  answerScript["notAnswered"] = notAnswered;
-  answerScript["totalMarks"] = marks;
-  answerScript["totalWrongMarks"] = negativeValue * totalWrong;
-  answerScript["totalCorrectMarks"] = totalCorrect * correctMarks;
-  answerScript["questionInfo"] = examData;
+  // let answerScript = {};
+  // answerScript["totalQuestion"] = qIdObj.length;
+  // answerScript["negativePercentage"] = negativeMarks;
+  // answerScript["correcMarks"] = correctMarks;
+  // answerScript["negativeValue"] = negativeValue;
+  // answerScript["totalCorrect"] = totalCorrect;
+  // answerScript["totalWrong"] = totalWrong;
+  // answerScript["notAnswered"] = notAnswered;
+  // answerScript["totalMarks"] = marks;
+  // answerScript["totalWrongMarks"] = negativeValue * totalWrong;
+  // answerScript["totalCorrectMarks"] = totalCorrect * correctMarks;
+  // answerScript["questionInfo"] = examData;
 
-  return res.status(200).json(answerScript);
+  let dataObject = {};
+  dataObject["examName"] = examData1.eId.name;
+  dataObject["totalMarksMcq"] = examData1.examId.totalMarksMcq;
+  dataObject["startTime"] = examData1.examId.startTime;
+  dataObject["endTime"] = examData1.examId.endTime;
+  dataObject["examVariation"] = examType[Number(examData1.examId.examType)];
+  dataObject["examType"] =
+    examVariation[Number(examData1.examId.examVariation)];
+  dataObject["totalCorrectAnswer"] = data.totalCorrectAnswer;
+  dataObject["rank"] = mcqRank;
+  dataObject["totalObtainedMarks"] = marks;
+  dataObject["totalWrongAnswer"] = totalWrong;
+  dataObject["totalCorrectMarks"] = totalCorrect * correctMarks;
+  dataObject["totalWrongMarks"] = negativeValue * totalWrong;
+  dataObject["totalNotAnswered"] = notAnswered;
+  dataObject["marksPerMcq"] = examData1.examId.marksPerMcq;
+  dataObject["marksPerWrong"] = examData1.examId.negativeMarks / 100;
+  return res.status(200).json(dataObject);
+
+  //return res.status(200).json(answerScript);
 };
 const studentSubmittedExamDetail = async (req, res, next) => {
   const studentId = req.user.studentId;
@@ -1914,8 +1934,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataObject["endTime"] = data.examId.endTime;
   dataObject["examVariation"] = examType[Number(data.examId.examType)];
   dataObject["examType"] = examVariation[Number(data.examId.examVariation)];
-  dataObject["studExamTime"] = dataObject["totalCorrectAnswer"] =
-    data.totalCorrectAnswer;
+  dataObject["totalCorrectAnswer"] = data.totalCorrectAnswer;
   dataObject["studExamStartTime"] = dataRank.examStartTime;
   dataObject["studExamEndTime"] = dataRank.examEndTime;
   dataObject["studDuration"] = dataRank.duration;
