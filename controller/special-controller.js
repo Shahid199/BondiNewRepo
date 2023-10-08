@@ -390,11 +390,14 @@ const studentSubmittedExamDetail = async (req, res, next) => {
     let dataObject = {};
     dataObject["subjectId"] = data.questionMcq[i].subjectId._id;
     dataObject["subjectName"] = data.questionMcq[i].subjectId.name;
-    dataObject["marksMcqPerSub"] = data.questionMcq[i].mcqMarksPerSub;
+    dataObject["marksMcqPerSub"] =
+      data.questionMcq[i].mcqMarksPerSub.toFixed(2);
     dataObject["marksWrittenPerSub"] =
-      data.questionWritten[i].totalObtainedMarksWritten;
+      data.questionWritten[i].totalObtainedMarksWritten.toFixed(2);
     dataObject["totalMarksMcqPerSub"] = data.examId.totalMarksMcq / 4;
-    dataObject["totalMarksWrittenPerSub"] = data.examId.totalMarksWritten / 4;
+    dataObject["totalMarksWrittenPerSub"] = (
+      data.examId.totalMarksWritten / 4
+    ).toFixed(2);
     dataEx.push(dataObject);
   }
   dataEx.push({
