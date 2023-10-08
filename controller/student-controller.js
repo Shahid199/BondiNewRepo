@@ -1625,7 +1625,7 @@ const missedExam = async (req, res, next) => {
       result["startTime"] = moment(resultData[i].startTime)
         .subtract(6, "h")
         .format("LLL");
-      result["duration"] = Number(resultData[i].duration);
+      result["duration"] = Number(resultData[i].totalDuration);
       result["examType"] = "Both";
       result["negativeMarks"] = resultData[i].negativeMarks;
       resultFinal.push(result);
