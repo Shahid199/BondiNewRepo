@@ -3224,9 +3224,11 @@ const publishExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  console.log("data Stud:", dataStud);
+
   for (let i = 0; i < dataStud.length; i++) {
     let marks = 0;
+    console.log(i);
+    console.log("data Stud:", dataStud);
     for (let j = 0; j < 4; j++) {
       marks = marks + dataStud[i].questionWritten[j].totalObtainedMarksWritten;
     }
