@@ -1877,7 +1877,7 @@ const retakeSubmit = async (req, res, next) => {
   dataObject["examVariation"] = examType[Number(examData1.eId.examType)];
   dataObject["examType"] = examVariation[Number(examData1.eId.examVariation)];
   dataObject["totalCorrectAnswer"] = totalCorrect;
-  dataObject["rank"] = mcqRank;
+  dataObject["rank"] = "-1";
   dataObject["totalObtainedMarks"] = marks;
   dataObject["totalWrongAnswer"] = totalWrong;
   dataObject["totalCorrectMarks"] = totalCorrect * correctMarks;
