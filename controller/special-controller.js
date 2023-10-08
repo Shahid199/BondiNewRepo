@@ -3228,7 +3228,7 @@ const publishExam = async (req, res, next) => {
   for (let i = 0; i < dataStud.length; i++) {
     let marks = 0;
     console.log(i);
-    console.log("data Stud:", dataStud);
+    console.log("data Stud:", dataStud[i]);
     for (let j = 0; j < 4; j++) {
       marks = marks + dataStud[i].questionWritten[j].totalObtainedMarksWritten;
     }
