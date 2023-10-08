@@ -1697,7 +1697,7 @@ const missedExam = async (req, res, next) => {
       resultData = await SpecialExam.find({
         $and: [{ _id: { $in: removedArray } }, { status: true }],
       })
-        .populate("subjectId courseId")
+        .populate("courseId")
         .skip(paginateData.skippedIndex)
         .limit(paginateData.perPage);
     } catch (err) {
@@ -1711,7 +1711,7 @@ const missedExam = async (req, res, next) => {
       let result = {};
       result["id"] = resultData[i]._id;
       result["exanName"] = resultData[i].name;
-      result["subject"] = resultData[i].subjectId.name;
+      result["subject"] = "Special Exam";
       result["startTime"] = moment(resultData[i].startTime)
         .subtract(6, "h")
         .format("LLL");
