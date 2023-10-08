@@ -1883,8 +1883,8 @@ const retakeSubmit = async (req, res, next) => {
   dataObject["totalCorrectMarks"] = totalCorrect * correctMarks;
   dataObject["totalWrongMarks"] = negativeValue * totalWrong;
   dataObject["totalNotAnswered"] = notAnswered;
-  dataObject["marksPerMcq"] = examData1.Id.marksPerMcq;
-  dataObject["marksPerWrong"] = examData1.Id.negativeMarks / 100;
+  dataObject["marksPerMcq"] = examData1.eId.marksPerMcq;
+  dataObject["marksPerWrong"] = examData1.eId.negativeMarks / 100;
   return res.status(200).json(dataObject);
 
   //return res.status(200).json(answerScript);
