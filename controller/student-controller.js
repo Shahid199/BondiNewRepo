@@ -1868,6 +1868,7 @@ const retakeSubmit = async (req, res, next) => {
   // answerScript["totalCorrectMarks"] = totalCorrect * correctMarks;
   // answerScript["questionInfo"] = examData;
 
+  console.log(examData1);
   let dataObject = {};
   dataObject["examName"] = examData1.eId.name;
   dataObject["totalMarksMcq"] = examData1.examId.totalMarksMcq;
