@@ -1701,6 +1701,7 @@ const missedExam = async (req, res, next) => {
         .skip(paginateData.skippedIndex)
         .limit(paginateData.perPage);
     } catch (err) {
+      console.log(err);
       return res.status(500).json("3.Something went wrong.");
     }
     if (resultData == null)
