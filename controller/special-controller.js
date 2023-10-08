@@ -825,7 +825,8 @@ const viewSollutionMcq = async (req, res, next) => {
     console.log("data", data.questionMcq[i].mcqId);
     let data1 = {};
     data1["subjectName"] = data.questionMcq[i].subjectId.name;
-    data1["totalObtainedMarksPerSub"] = data.questionMcq[i].mcqMarksPerSub;
+    data1["totalObtainedMarksPerSub"] =
+      data.questionMcq[i].mcqMarksPerSub.toFixed(2);
     data1["totalMarksPerSub"] = data.examId.totalMarksMcq / 4;
     data1["questions"] = [];
     for (let j = 0; j < data.questionMcq[i].mcqId.length; j++) {
@@ -844,7 +845,7 @@ const viewSollutionMcq = async (req, res, next) => {
     resultData.push(data1);
   }
   resultData.push({ totalMarks: data.examId.totalMarksMcq });
-  resultData.push({ totalObtainedMarks: data.totalObtainedMarks });
+  resultData.push({ totalObtainedMarks: data.totalObtainedMarks.toFixed(2) });
   return res.status(200).json(resultData);
 };
 const viewSollutionWritten = async (req, res, next) => {
