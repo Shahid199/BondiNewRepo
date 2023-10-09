@@ -253,6 +253,51 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json({ data, writtenObj, mcqObj, subjectsId });
 };
+const showSpecialExamByIdStudentAdmin = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.query.studentId;
+  if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    })
+      .populate({ path: "questionMcq", populate: { path: "subjectId" } })
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let dataWritten = null;
+  try {
+    dataWritten = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let writtenObj = {};
+  writtenObj["totalWrittenMarks"] = dataWritten.totalMarksWritten;
+  writtenObj["writtenDuration"] = dataWritten.writtenDuration;
+  writtenObj["marksPerSub"] = Math.round(dataWritten.totalMarksWritten / 4);
+  let mcqObj = {};
+  mcqObj["totalMcqMarks"] = dataWritten.totalMarksMcq;
+  mcqObj["mcqDuration"] = dataWritten.mcqDuration;
+  mcqObj["marksPerSub"] = Math.round(dataWritten.totalMarksMcq / 4);
+  mcqObj["negativeMarks"] = dataWritten.negativeMarksMcq;
+  mcqObj["negativeValue"] = Math.round(
+    (dataWritten.marksPerMcq * dataWritten.negativeMarksMcq) / 100
+  );
+  mcqObj["totalQuestion"] = dataWritten.totalQuestionsMcq;
+  mcqObj["marksPerMcq"] = dataWritten.marksPerMcq;
+  console.log("data", data);
+  let subjectsId = [
+    data.questionMcq[0].subjectId._id,
+    data.questionMcq[1].subjectId._id,
+    data.questionMcq[2].subjectId._id,
+    data.questionMcq[3].subjectId._id,
+  ];
+  if (data == null) return res.status(404).json("No data found.");
+  return res.status(200).json({ data, writtenObj, mcqObj, subjectsId });
+};
 const showSpecialExamByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
@@ -3795,3 +3840,4 @@ exports.showSpecialExamAll = showSpecialExamAll;
 exports.deactivateSpecialExam = deactivateSpecialExam;
 exports.getWrittenQuestionByExamSub = getWrittenQuestionByExamSub;
 exports.specialGetHistoryAdminFilter = specialGetHistoryAdminFilter;
+exports.showSpecialExamByIdStudentAdmin = showSpecialExamByIdStudentAdmin;

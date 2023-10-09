@@ -56,6 +56,7 @@ const {
   viewSollutionWrittenAdmin,
   specialGetHistoryAdmin,
   specialGetHistoryAdminFilter,
+  showSpecialExamByIdStudentAdmin,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -109,6 +110,7 @@ router.get(
   ],
   showSpecialExamById
 );
+
 router.get(
   "/showspecialexambyidstudent",
   [
@@ -116,6 +118,14 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   showSpecialExamByIdStudent
+);
+router.get(
+  "/showspecialexambyidstudentadmin",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  showSpecialExamByIdStudentAdmin
 );
 
 router.put(
