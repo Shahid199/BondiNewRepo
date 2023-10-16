@@ -2599,9 +2599,9 @@ const assignStudentToTeacher = async (req, res, next) => {
     let sub = subjects[i];
     let data = [];
     for (let j = 0; j < studentCount; j++) {
-      console.log("students[j].questionWritten", students[j].questionWritten);
+      console.log("length:", students[j].questionWritten.length);
       if (
-        students[j].questionWritten != undefined ||
+        students[j].questionWritten != null ||
         students[j].questionWritten.length > 0
       ) {
         //console.log("students[j].questionWritten", students[j].questionWritten);
