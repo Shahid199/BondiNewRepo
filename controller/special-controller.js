@@ -3493,6 +3493,7 @@ const getStudentDataAdmin = async (req, res, next) => {
       students[i].questionWritten != null
     ) {
       studId[i] = students[i].studentId._id;
+      console.log(studId[i]);
     }
   }
   //console.log(studId);
@@ -3510,7 +3511,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   let data = [];
   //console.log("object", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
-    console.log(checkStatus[i]);
+    //console.log(checkStatus[i]);
     let dataObj = {};
     //if (checkStatus[i].checkStatus == true) continue;
     dataObj["examName"] = checkStatus[i].examId.name;
