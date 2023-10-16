@@ -2731,16 +2731,18 @@ const getStudentData = async (req, res, next) => {
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
     let indexValue = null;
-    console.log("checkStatus.questionWritten:", checkStatus[i].questionWritten);
-    for (let j = 0; j < 4; j++) {
-      if (
-        String(checkStatus[i].questionWritten[j].subjectId) ==
-        String(subjectRole)
-      ) {
-        questionData = checkStatus[i].questionWritten[j];
-        indexValue = j;
-        //console.log(j);
-        break;
+    //console.log("checkStatus.questionWritten:", checkStatus[i].questionWritten);
+    if (checkStatus[i].questionWritten.length > 0) {
+      for (let j = 0; j < 4; j++) {
+        if (
+          String(checkStatus[i].questionWritten[j].subjectId) ==
+          String(subjectRole)
+        ) {
+          questionData = checkStatus[i].questionWritten[j];
+          indexValue = j;
+          //console.log(j);
+          break;
+        }
       }
     }
     if (indexValue == null || questionData.subStatus == true) continue;
