@@ -2599,7 +2599,11 @@ const assignStudentToTeacher = async (req, res, next) => {
     let sub = subjects[i];
     let data = [];
     for (let j = 0; j < studentCount; j++) {
-      if (students[j].questionWritten == null) continue;
+      if (
+        students[j].questionWritten == null ||
+        students[j].questionWritten.length == 0
+      )
+        continue;
       //console.log("students[j].questionWritten", students[j].questionWritten);
       console.log("students:", students[j]);
       for (let p = 0; p < 4; p++) {
@@ -3276,8 +3280,12 @@ const publishExam = async (req, res, next) => {
     let marks = 0;
     console.log(i);
     console.log("data Stud:", dataStud[i]);
-    for (let j = 0; j < 4; j++) {
-      marks = marks + dataStud[i].questionWritten[j].totalObtainedMarksWritten;
+    if (dataStud[i].questionWritten.length == 0) marks = 0;
+    else {
+      for (let j = 0; j < 4; j++) {
+        marks =
+          marks + dataStud[i].questionWritten[j].totalObtainedMarksWritten;
+      }
     }
     console.log("marks", marks);
     let upd2 = null;
