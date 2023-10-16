@@ -3480,7 +3480,9 @@ const getStudentDataAdmin = async (req, res, next) => {
   try {
     students = await SpecialVsStudent.find({
       $and: [{ examId: examId }],
-    });
+    })
+      .populate("studentId examId")
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
@@ -3492,23 +3494,23 @@ const getStudentDataAdmin = async (req, res, next) => {
       students[i].questionWritten.length > 0 &&
       students[i].questionWritten != null
     ) {
-      studId.push(students[i].studentId._id);
+      studId.push(students[i]);
       //console.log(studId[i]);
     }
   }
   //console.log("stud length:", studId.length, students.length);
   //console.log(studId);
-  let checkStatus = null;
-  try {
-    checkStatus = await SpecialVsStudent.find({
-      $and: [{ studentId: { $in: studId } }, { examId: examId }],
-    })
-      .populate("studentId examId")
-      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong.");
-  }
+  let checkStatus = studId;
+  // try {
+  //   checkStatus = await SpecialVsStudent.find({
+  //     $and: [{ studentId: { $in: studId } }, { examId: examId }],
+  //   })
+  //     .populate("studentId examId")
+  //     .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  // } catch (err) {
+  //   console.log(err);
+  //   return res.status(500).json("Something went wrong.");
+  // }
   let data = [];
   //console.log("check Status length:", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
