@@ -2599,6 +2599,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     let sub = subjects[i];
     let data = [];
     for (let j = 0; j < studentCount; j++) {
+      console.log("students[j].questionWritten", students[j].questionWritten);
       if (
         students[j].questionWritten != null ||
         students[j].questionWritten.length != 0
