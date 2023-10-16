@@ -3507,10 +3507,10 @@ const getStudentDataAdmin = async (req, res, next) => {
     console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(checkStatus);
   let data = [];
   //console.log("object", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
+    console.log(checkStatus[i]);
     let dataObj = {};
     //if (checkStatus[i].checkStatus == true) continue;
     dataObj["examName"] = checkStatus[i].examId.name;
