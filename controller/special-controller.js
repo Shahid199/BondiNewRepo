@@ -2600,17 +2600,17 @@ const assignStudentToTeacher = async (req, res, next) => {
     let data = [];
     for (let j = 0; j < studentCount; j++) {
       if (
-        students[j].questionWritten == null ||
-        students[j].questionWritten.length == 0
-      )
-        continue;
-      //console.log("students[j].questionWritten", students[j].questionWritten);
-      console.log("students:", students[j]);
-      for (let p = 0; p < 4; p++) {
-        //console.log("STUDENTS:", students[j].questionWritten[p]);
-        if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
-          data.push(students[j].studentId);
-          break;
+        students[j].questionWritten != null ||
+        students[j].questionWritten.length != 0
+      ) {
+        //console.log("students[j].questionWritten", students[j].questionWritten);
+        console.log("students:", students[j]);
+        for (let p = 0; p < 4; p++) {
+          //console.log("STUDENTS:", students[j].questionWritten[p]);
+          if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
+            data.push(students[j].studentId);
+            break;
+          }
         }
       }
     }
@@ -2676,9 +2676,9 @@ const getStudentData = async (req, res, next) => {
   subjectRole = subjectRole.subjectId;
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
-  console.log(teacherId);
-  console.log(examId);
-  console.log(subjectRole);
+  //console.log(teacherId);
+  //console.log(examId);
+  //console.log(subjectRole);
   let students = [];
   let questionData = null;
   let dataEx = null;
@@ -2698,13 +2698,14 @@ const getStudentData = async (req, res, next) => {
     // console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   // console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
+    //if (students[i].questionWritten.length == 0) continue;
     studId[i] = studentData[i]._id;
   }
   //console.log(studId);
@@ -2721,7 +2722,7 @@ const getStudentData = async (req, res, next) => {
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
       indexValue1 = j;
-      console.log(j);
+      //console.log(j);
       break;
     }
   }
@@ -2729,6 +2730,7 @@ const getStudentData = async (req, res, next) => {
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
     let indexValue = null;
+    console.log("checkStatus.questionWritten:", checkStatus[i].questionWritten);
     for (let j = 0; j < 4; j++) {
       if (
         String(checkStatus[i].questionWritten[j].subjectId) ==
@@ -2736,7 +2738,7 @@ const getStudentData = async (req, res, next) => {
       ) {
         questionData = checkStatus[i].questionWritten[j];
         indexValue = j;
-        console.log(j);
+        //console.log(j);
         break;
       }
     }
@@ -3483,6 +3485,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   if (students.length == 0) return res.status(404).json("No student assigned.");
   let studId = [];
   for (let i = 0; i < students.length; i++) {
+    if (students[i].questionWritten.length == 0) continue;
     studId[i] = students[i].studentId._id;
   }
   console.log(studId);
