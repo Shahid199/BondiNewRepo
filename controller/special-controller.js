@@ -3493,10 +3493,10 @@ const getStudentDataAdmin = async (req, res, next) => {
       students[i].questionWritten != null
     ) {
       studId.push(students[i].studentId._id);
-      console.log(studId[i]);
+      //console.log(studId[i]);
     }
   }
-  console.log("stud length:", studId.length, students.length);
+  //console.log("stud length:", studId.length, students.length);
   //console.log(studId);
   let checkStatus = null;
   try {
@@ -3510,9 +3510,9 @@ const getStudentDataAdmin = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let data = [];
-  console.log("check Status length:", checkStatus.length);
+  //console.log("check Status length:", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
-    //console.log(checkStatus[i]);
+    console.log(checkStatus[i].studentId._id);
     let dataObj = {};
     //if (checkStatus[i].checkStatus == true) continue;
     dataObj["examName"] = checkStatus[i].examId.name;
