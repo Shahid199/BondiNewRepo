@@ -3488,8 +3488,9 @@ const getStudentDataAdmin = async (req, res, next) => {
   if (students.length == 0) return res.status(404).json("No student assigned.");
   let studId = [];
   for (let i = 0; i < students.length; i++) {
-    if (students[i].questionWritten.length == 0) continue;
-    studId[i] = students[i].studentId._id;
+    if (students[i].questionWritten.length > 0) {
+      studId[i] = students[i].studentId._id;
+    }
   }
   console.log(studId);
   let checkStatus = null;
