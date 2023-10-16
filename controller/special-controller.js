@@ -3484,15 +3484,18 @@ const getStudentDataAdmin = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log("students:", students);
+  //console.log("students:", students);
   if (students.length == 0) return res.status(404).json("No student assigned.");
   let studId = [];
   for (let i = 0; i < students.length; i++) {
-    if (students[i].questionWritten.length > 0) {
+    if (
+      students[i].questionWritten.length > 0 &&
+      students[i].questionWritten != null
+    ) {
       studId[i] = students[i].studentId._id;
     }
   }
-  console.log(studId);
+  //console.log(studId);
   let checkStatus = null;
   try {
     checkStatus = await SpecialVsStudent.find({
@@ -3506,7 +3509,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   }
   console.log(checkStatus);
   let data = [];
-  console.log("object", checkStatus.length);
+  //console.log("object", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
     //if (checkStatus[i].checkStatus == true) continue;
@@ -3515,7 +3518,7 @@ const getStudentDataAdmin = async (req, res, next) => {
     dataObj["studentName"] = checkStatus[i].studentId.name;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
-    console.log("check ", i);
+    //console.log("check ", i);
     dataObj["subject1"] = {
       id: checkStatus[i].questionWritten[0].subjectId._id,
       name: checkStatus[i].questionWritten[0].subjectId.name,
@@ -3543,9 +3546,9 @@ const getStudentDataAdmin = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  console.log(paginateData);
-  console.log(start);
-  console.log(end);
+  //console.log(paginateData);
+  //console.log(start);
+  //console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
