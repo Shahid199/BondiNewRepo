@@ -3496,6 +3496,7 @@ const getStudentDataAdmin = async (req, res, next) => {
       console.log(studId[i]);
     }
   }
+  console.log("stud length:", studId.length, students.length);
   //console.log(studId);
   let checkStatus = null;
   try {
@@ -3509,7 +3510,7 @@ const getStudentDataAdmin = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   let data = [];
-  //console.log("object", checkStatus.length);
+  console.log("check Status length:", checkStatus.length);
   for (let i = 0; i < checkStatus.length; i++) {
     //console.log(checkStatus[i]);
     let dataObj = {};
