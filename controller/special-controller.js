@@ -3492,7 +3492,7 @@ const getStudentDataAdmin = async (req, res, next) => {
       students[i].questionWritten.length > 0 &&
       students[i].questionWritten != null
     ) {
-      studId[i] = students[i].studentId._id;
+      studId.push(students[i].studentId._id);
       console.log(studId[i]);
     }
   }
