@@ -2601,7 +2601,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     for (let j = 0; j < studentCount; j++) {
       console.log("length:", students[j].questionWritten.length);
       if (
-        students[j].questionWritten != null ||
+        students[j].questionWritten != null &&
         students[j].questionWritten.length > 0
       ) {
         //console.log("students[j].questionWritten", students[j].questionWritten);
