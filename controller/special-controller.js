@@ -2602,7 +2602,7 @@ const assignStudentToTeacher = async (req, res, next) => {
       console.log("students[j].questionWritten", students[j].questionWritten);
       if (
         students[j].questionWritten != null ||
-        students[j].questionWritten.length != 0
+        students[j].questionWritten.length > 0
       ) {
         //console.log("students[j].questionWritten", students[j].questionWritten);
         console.log("students:", students[j]);
