@@ -2843,6 +2843,7 @@ const getRecheckStudentData = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+  console.log("checkStatus", checkStatus);
   let checkStatus1 = [];
   for (let i = 0; i < studId.length; i++) {
     for (let j = 0; j < checkStatus.length; j++) {
