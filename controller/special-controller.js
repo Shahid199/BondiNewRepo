@@ -2839,6 +2839,7 @@ const getRecheckStudentData = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
+  console.log("C S L:", checkStatus.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
