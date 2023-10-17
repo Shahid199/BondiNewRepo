@@ -2836,9 +2836,7 @@ const getRecheckStudentData = async (req, res, next) => {
   try {
     checkStatus = await SpecialVsStudent.find({
       $and: [{ examId: examId }],
-    })
-      .populate("studentId examId")
-      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+    }).populate("studentId examId");
   } catch (err) {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
@@ -2864,16 +2862,16 @@ const getRecheckStudentData = async (req, res, next) => {
       break;
     }
   }
-  for (let i = 0; i < checkStatus.length; i++) {
-    //console.log(i, checkStatus[i].questionWritten);
-    // if (
-    //   checkStatus[i].questionWritten &&
-    //   checkStatus[i].questionWritten.length > 0
-    // )
-    //   for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
-    //     console.log("checkStatus:", checkStatus[i].questionWritten[j]);
-    //   }
-  }
+  // for (let i = 0; i < checkStatus.length; i++) {
+  //   //console.log(i, checkStatus[i].questionWritten);
+  //   // if (
+  //   //   checkStatus[i].questionWritten &&
+  //   //   checkStatus[i].questionWritten.length > 0
+  //   // )
+  //   //   for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
+  //   //     console.log("checkStatus:", checkStatus[i].questionWritten[j]);
+  //   //   }
+  // }
 
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
