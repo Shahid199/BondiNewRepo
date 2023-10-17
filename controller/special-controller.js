@@ -2829,6 +2829,7 @@ const getRecheckStudentData = async (req, res, next) => {
     studId[i] = studentData[i]._id;
   }
   console.log(studId);
+  console.log(studId.length);
   let checkStatus = [];
   try {
     checkStatus = await SpecialVsStudent.find({
