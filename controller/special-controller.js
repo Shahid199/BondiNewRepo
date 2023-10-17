@@ -2825,6 +2825,7 @@ const getRecheckStudentData = async (req, res, next) => {
   let studentData = students.studentId;
   // console.log(studentData);
   let studId = [];
+  //console.log("studentData:", studentData);
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
@@ -2836,7 +2837,9 @@ const getRecheckStudentData = async (req, res, next) => {
     try {
       checkStatus[i] = await SpecialVsStudent.find({
         $and: [{ examId: examId }, { studentId: studId[i] }],
-      }).populate("studentId examId");
+      })
+        .populate("studentId examId")
+        .populate({ path: "questionWritten", populate: { path: "subjectId" } });
     } catch (err) {
       //console.log(err);
       return res.status(500).json("Something went wrong.");
@@ -2852,14 +2855,14 @@ const getRecheckStudentData = async (req, res, next) => {
     }
   }
   for (let i = 0; i < checkStatus.length; i++) {
-    console.log(i, checkStatus[i]);
-    if (
-      checkStatus[i].questionWritten &&
-      checkStatus[i].questionWritten.length > 0
-    )
-      for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
-        console.log("checkStatus:", checkStatus[i].questionWritten[j]);
-      }
+    console.log(i, checkStatus[i].questionWritten);
+    // if (
+    //   checkStatus[i].questionWritten &&
+    //   checkStatus[i].questionWritten.length > 0
+    // )
+    //   for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
+    //     console.log("checkStatus:", checkStatus[i].questionWritten[j]);
+    //   }
   }
 
   let data = [];
