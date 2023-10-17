@@ -2823,7 +2823,7 @@ const getRecheckStudentData = async (req, res, next) => {
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  console.log("studentData.length:", studentData.length);
+  //console.log("studentData.length:", studentData.length);
   let studId = [];
   //console.log("studentData:", studentData);
   for (let i = 0; i < studentData.length; i++) {
@@ -2841,7 +2841,7 @@ const getRecheckStudentData = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("checkStatus", checkStatus);
+  //console.log("checkStatus", checkStatus);
   let checkStatus1 = [];
   for (let i = 0; i < studId.length; i++) {
     for (let j = 0; j < checkStatus.length; j++) {
@@ -2851,9 +2851,13 @@ const getRecheckStudentData = async (req, res, next) => {
       }
     }
   }
-  console.log("checkStatus1:", checkStatus1);
+  for (let i = 0; i < checkStatus1.length; i++) {
+    if (checkStatus.questionWritten.length == 0)
+      console.log(i, checkStatus1[i]);
+  }
+  //console.log("checkStatus1:", checkStatus1);
   checkStatus = checkStatus1;
-  console.log("C S L:", checkStatus1.length);
+  //console.log("C S L:", checkStatus1.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
