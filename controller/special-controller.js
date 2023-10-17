@@ -2791,7 +2791,7 @@ const getRecheckStudentData = async (req, res, next) => {
   try {
     subjectRole = await User.findOne({ _id: teacherId }, "subjectId -_id");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   subjectRole = subjectRole.subjectId;
@@ -2842,7 +2842,7 @@ const getRecheckStudentData = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
   }
-  console.log("C S L:", checkStatus.length);
+  //console.log("C S L:", checkStatus.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
@@ -2852,7 +2852,11 @@ const getRecheckStudentData = async (req, res, next) => {
     }
   }
   for (let i = 0; i < checkStatus.length; i++) {
-    if (checkStatus[i].questionWritten)
+    console.log(i);
+    if (
+      checkStatus[i].questionWritten &&
+      checkStatus[i].questionWritten.length > 0
+    )
       for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
         console.log("checkStatus:", checkStatus[i].questionWritten[j]);
       }
