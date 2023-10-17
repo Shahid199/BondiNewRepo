@@ -2928,6 +2928,7 @@ const getRecheckStudentData = async (req, res, next) => {
       data1.push(data[i]);
     }
   }
+  console.log(data1.length);
   return res.status(200).json({ data1, paginateData });
 };
 const getRecheckStudentData1 = async (req, res, next) => {
