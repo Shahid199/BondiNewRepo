@@ -2852,7 +2852,7 @@ const getRecheckStudentData = async (req, res, next) => {
     }
   }
   for (let i = 0; i < checkStatus1.length; i++) {
-    if (checkStatus.questionWritten.length == 0)
+    if (checkStatus1[i].questionWritten.length == 0)
       console.log(i, checkStatus1[i]);
   }
   //console.log("checkStatus1:", checkStatus1);
