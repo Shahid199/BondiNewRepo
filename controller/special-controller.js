@@ -2847,7 +2847,7 @@ const getRecheckStudentData = async (req, res, next) => {
   let checkStatus1 = [];
   for (let i = 0; i < studId.length; i++) {
     for (let j = 0; j < checkStatus.length; j++) {
-      if (studId[i] == checkStatus[j].studentId._id) {
+      if (String(studId[i]) == String(checkStatus[j].studentId._id)) {
         checkStatus1.push(checkStatus[j]);
         break;
       }
