@@ -2855,7 +2855,7 @@ const getRecheckStudentData = async (req, res, next) => {
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
     let indexValue = null;
-    console.log("checkStatus", checkStatus[i].questionWritten);
+    console.log("checkStatus", checkStatus[i]);
     for (let j = 0; j < 4; j++) {
       console.log("j", j);
       if (
