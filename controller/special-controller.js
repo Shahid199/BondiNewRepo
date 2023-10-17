@@ -2851,14 +2851,19 @@ const getRecheckStudentData = async (req, res, next) => {
       break;
     }
   }
-  console.log("checkStatusAll", checkStatus);
+  for (let i = 0; i < checkStatus.length; i++) {
+    for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
+      console.log("checkStatus:", checkStatus[i].questionWritten[j]);
+    }
+  }
+
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
     let indexValue = null;
-    if (checkStatus[i].questionWritten != undefined) {
-      console.log("checkStatus", checkStatus[i].questionWritten);
-    }
+    // if (checkStatus[i].questionWritten != undefined) {
+    //   console.log("checkStatus", checkStatus[i].questionWritten);
+    // }
     for (let j = 0; j < 4; j++) {
       //console.log("j", j);
       if (
