@@ -2831,20 +2831,23 @@ const getRecheckStudentData = async (req, res, next) => {
   console.log(studId);
   console.log(studId.length);
   let checkStatus = [];
-  try {
-    checkStatus = await SpecialVsStudent.find({
-      $and: [{ studentId: { $in: studId } }, { examId: examId }],
-    }).populate("studentId examId");
-  } catch (err) {
-    //console.log(err);
-    return res.status(500).json("Something went wrong.");
+  //{ studentId: { $in: studId } },
+  for (let i = 0; i < studId.length; i++) {
+    try {
+      checkStatus[i] = await SpecialVsStudent.find({
+        $and: [{ examId: examId }, { studentId: studId[i] }],
+      }).populate("studentId examId");
+    } catch (err) {
+      //console.log(err);
+      return res.status(500).json("Something went wrong.");
+    }
   }
   console.log("C S L:", checkStatus.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
       indexValue1 = j;
-      console.log(j);
+      //console.log(j);
       break;
     }
   }
