@@ -2855,7 +2855,7 @@ const getRecheckStudentData = async (req, res, next) => {
   }
   console.log("checkStatus1:", checkStatus1);
   checkStatus = checkStatus1;
-  //console.log("C S L:", checkStatus.length);
+  console.log("C S L:", checkStatus1.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
