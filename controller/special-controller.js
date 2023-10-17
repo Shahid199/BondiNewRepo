@@ -2797,9 +2797,9 @@ const getRecheckStudentData = async (req, res, next) => {
   subjectRole = subjectRole.subjectId;
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
-  console.log(teacherId);
-  console.log(examId);
-  console.log(subjectRole);
+  // console.log(teacherId);
+  // console.log(examId);
+  // console.log(subjectRole);
   let students = [];
   let questionData = null;
   let dataEx = null;
@@ -2819,7 +2819,7 @@ const getRecheckStudentData = async (req, res, next) => {
     // console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
@@ -2828,8 +2828,8 @@ const getRecheckStudentData = async (req, res, next) => {
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  console.log(studId);
-  console.log(studId.length);
+  // console.log(studId);
+  // console.log(studId.length);
   let checkStatus = [];
   //{ studentId: { $in: studId } },
   for (let i = 0; i < studId.length; i++) {
@@ -2851,6 +2851,7 @@ const getRecheckStudentData = async (req, res, next) => {
       break;
     }
   }
+  console.log("checkStatusAll", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
@@ -2859,7 +2860,7 @@ const getRecheckStudentData = async (req, res, next) => {
       console.log("checkStatus", checkStatus[i].questionWritten);
     }
     for (let j = 0; j < 4; j++) {
-      console.log("j", j);
+      //console.log("j", j);
       if (
         String(checkStatus[i].questionWritten[j].subjectId) ==
         String(subjectRole)
