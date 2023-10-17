@@ -2828,7 +2828,7 @@ const getRecheckStudentData = async (req, res, next) => {
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  //console.log(studId);
+  console.log(studId);
   let checkStatus = [];
   try {
     checkStatus = await SpecialVsStudent.find({
@@ -2857,16 +2857,16 @@ const getRecheckStudentData = async (req, res, next) => {
       ) {
         questionData = checkStatus[i].questionWritten[j];
         indexValue = j;
-        console.log(j);
+        //console.log(j);
         break;
       }
     }
     if (indexValue == null || questionData.subStatus == false) continue;
-    console.log(i);
-    console.log(
-      "check status",
-      checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
-    );
+    //console.log(i);
+    // console.log(
+    //   "check status",
+    //   checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
+    // );
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
@@ -2887,9 +2887,9 @@ const getRecheckStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  console.log(paginateData);
-  console.log(start);
-  console.log(end);
+  // console.log(paginateData);
+  // console.log(start);
+  // console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
