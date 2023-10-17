@@ -2823,28 +2823,37 @@ const getRecheckStudentData = async (req, res, next) => {
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  // console.log(studentData);
+  console.log("studentData.length:", studentData.length);
   let studId = [];
   //console.log("studentData:", studentData);
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
   // console.log(studId);
-  // console.log(studId.length);
+  console.log("studId.length", studId.length);
   let checkStatus = [];
   //{ studentId: { $in: studId } },
+  try {
+    checkStatus = await SpecialVsStudent.find({
+      $and: [{ examId: examId }],
+    })
+      .populate("studentId examId")
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  let checkStatus1 = [];
   for (let i = 0; i < studId.length; i++) {
-    try {
-      checkStatus[i] = await SpecialVsStudent.find({
-        $and: [{ examId: examId }, { studentId: studId[i] }],
-      })
-        .populate("studentId examId")
-        .populate({ path: "questionWritten", populate: { path: "subjectId" } });
-    } catch (err) {
-      //console.log(err);
-      return res.status(500).json("Something went wrong.");
+    for (let j = 0; j < checkStatus.length; j++) {
+      if (studId[i] == checkStatus[j].studentId._id) {
+        checkStatus1.push(checkStatus[j]);
+        break;
+      }
     }
   }
+  console.log("checkStatus1:", checkStatus1);
+  checkStatus = checkStatus1;
   //console.log("C S L:", checkStatus.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
