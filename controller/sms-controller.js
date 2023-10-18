@@ -117,7 +117,6 @@ const smsSendSingle = async (req, res, next) => {
     topScore;
   let allData = [];
   if (examType == 1) {
-    console.log(examType);
     try {
       allData = await FreeMcqRank.find({
         $and: [{ examId: examId }],
@@ -138,8 +137,6 @@ const smsSendSingle = async (req, res, next) => {
         break;
       }
     }
-    console.log("allData", allData);
-    console.log(allData[0].totalObtainedMarks);
     mobileNo = studData.freeStudentId.mobileNo;
     studentName = studData.freeStudentId.name;
     totalObtainedMarks = studData.totalObtainedMarks;
@@ -157,7 +154,7 @@ const smsSendSingle = async (req, res, next) => {
       })
         .populate("studentId examId")
         .sort({
-          rank: -1,
+          rank: 1,
         });
     } catch (err) {
       return res.status(404).json("2.Something went wrong.");
@@ -176,15 +173,14 @@ const smsSendSingle = async (req, res, next) => {
     } catch (err) {
       return res.status.json("1.Something went wrong.");
     }
-    courseName = courseId.name;
     mobileNo = studData.studentId.mobileNo;
     studentName = studData.studentId.name;
     totalObtainedMarks = studData.totalObtainedMarks;
     rank = studData.rank;
     totalStudent = studData.length;
-    courseName = studData.examId;
+    courseName = courseName.name;
     examName = studData.examId.name;
-    totalMarks = totalMarks;
+    totalMarks = studData.examId.totalMarksMcq;
     topScore = allData[0].totalObtainedMarks;
     totalRank = allData.length;
   } else if (examType == 3) {
@@ -194,7 +190,7 @@ const smsSendSingle = async (req, res, next) => {
       })
         .populate("studentId examId")
         .sort({
-          rank: -1,
+          rank: 1,
         });
     } catch (err) {
       return res.status(404).json("2.Something went wrong.");
@@ -231,7 +227,7 @@ const smsSendSingle = async (req, res, next) => {
       })
         .populate("studentId examId")
         .sort({
-          rank: -1,
+          rank: 1,
         });
     } catch (err) {
       return res.status(404).json("2.Something went wrong.");
@@ -280,8 +276,8 @@ const smsSendSingle = async (req, res, next) => {
     newline: "\n",
   };
   //sms sent work block
-  function sendMessage() {}
   smsTempl = format(smsTempl, args);
+  function sendMessage() {}
   console.log(smsTempl);
   return res.status(201).json(smsTempl);
   //sms sent work block
