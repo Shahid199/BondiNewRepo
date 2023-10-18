@@ -124,7 +124,7 @@ const smsSendSingle = async (req, res, next) => {
       })
         .populate("freeStudentId examId")
         .sort({
-          rank: -1,
+          rank: 1,
         });
     } catch (err) {
       console.log(err);
