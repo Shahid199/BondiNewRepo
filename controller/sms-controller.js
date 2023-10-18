@@ -245,13 +245,13 @@ const smsSendSingle = async (req, res, next) => {
     } catch (err) {
       return res.status.json("1.Something went wrong.");
     }
+    console.log(courseName);
     courseName = courseName.name;
     mobileNo = studData.studentId.mobileNo;
     studentName = studData.studentId.name;
     totalObtainedMarks = studData.totalObtainedMarks;
     rank = studData.rank;
     totalStudent = studData.length;
-    courseName = studData.examId;
     examName = studData.examId.name;
     totalMarks = studData.examId.totalMarks;
     topScore = allData[0].totalObtainedMarks;
