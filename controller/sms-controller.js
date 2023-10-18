@@ -254,7 +254,7 @@ const smsSendSingle = async (req, res, next) => {
     totalStudent = studData.length;
     courseName = studData.examId;
     examName = studData.examId.name;
-    totalMarks = totalMarks;
+    totalMarks = studData.examId.totalMarks;
     topScore = allData[0].totalObtainedMarks;
     totalRank = allData.length;
   }
