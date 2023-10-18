@@ -120,7 +120,7 @@ const smsSendSingle = async (req, res, next) => {
     console.log(examType);
     try {
       allData = await FreeMcqRank.find({
-        $and: [{ examId: examId }, { freeStudentId: studentId }],
+        $and: [{ examId: examId }],
       })
         .populate("freeStudentId examId")
         .sort({
