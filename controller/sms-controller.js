@@ -276,6 +276,7 @@ const smsSendSingle = async (req, res, next) => {
     totalMarks: totalMarks,
     topScore: topScore,
     examName: examName,
+    totalStudent: totalRank,
     newline: "\n",
   };
   //sms sent work block
