@@ -115,18 +115,17 @@ const smsSendSingle = async (req, res, next) => {
     totalMarks,
     examName,
     topScore;
-  let allData = null;
+  let allData = [];
   if (examType == 1) {
     console.log(examType);
     try {
-      let new1 = await FreeMcqRank.find({
-        //$and: [{ examId: examId }, { freeStudentId: studentId }],
-      });
-      console.log(new1);
-      //   .populate("freestudentId examId")
-      //   .sort({
-      //     rank: -1,
-      //   });
+      allData = await FreeMcqRank.find({
+        $and: [{ examId: examId }, { freeStudentId: studentId }],
+      })
+        .populate("freestudentId examId")
+        .sort({
+          rank: -1,
+        });
     } catch (err) {
       console.log(err);
       return res.status(500).json("2.Something went wrong.");
