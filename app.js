@@ -57,6 +57,7 @@ const freeStudentRouter = require("./routes/freeStudent-routes");
 const specialRouter = require("./routes/special-routes");
 const teacherRouter = require("./routes/teacher-routes");
 const bothRouter = require("./routes/both-routes");
+const smsRouter = require("./routes/sms-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
@@ -72,6 +73,7 @@ app.use("/api/freestudent", freeStudentRouter);
 app.use("/api/special", specialRouter);
 app.use("/api/teacher", teacherRouter);
 app.use("/api/both", bothRouter);
+app.use("/api/sms", smsRouter);
 mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
@@ -81,5 +83,16 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
+    const args = {
+      im: "imran",
+    };
+
+    function format(str, args) {
+      return str.replace(/%(\w+)/g, (_, key) => args[key]);
+    }
+    //template = "`" + template + "`";
+    template = "imran %im";
+    template = format(template, args);
+    console.log(template);
   })
   .catch((err) => console.log(err));
