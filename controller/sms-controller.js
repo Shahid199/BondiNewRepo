@@ -209,7 +209,7 @@ const smsSendSingle = async (req, res, next) => {
     } catch (err) {
       return res.status.json("1.Something went wrong.");
     }
-    courseName = courseId.name;
+    courseName = courseName.name;
     mobileNo = studData.studentId.mobileNo;
     studentName = studData.studentId.name;
     totalObtainedMarks = studData.totalObtainedMarks;
