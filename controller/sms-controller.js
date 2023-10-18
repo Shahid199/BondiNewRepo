@@ -138,6 +138,8 @@ const smsSendSingle = async (req, res, next) => {
         break;
       }
     }
+    console.log("allData", allData);
+    console.log(allData[0].totalObtainedMarks);
     mobileNo = studData.freeStudentId.mobileNo;
     studentName = studData.freeStudentId.name;
     totalObtainedMarks = studData.totalObtainedMarks;
@@ -145,7 +147,7 @@ const smsSendSingle = async (req, res, next) => {
     totalStudent = studData.length;
     courseName = "Free Exam";
     examName = studData.examId.name;
-    totalMarks = totalMarks;
+    totalMarks = studData.examId.totalMarks;
     topScore = allData[0].totalObtainedMarks;
     totalRank = allData.length;
   } else if (examType == 2) {
