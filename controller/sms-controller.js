@@ -275,9 +275,11 @@ const smsSendSingle = async (req, res, next) => {
   };
   //sms sent work block
   smsTempl = format(smsTempl, args);
+  let newObj = {};
+  newObj["mobileNo"] = mobileNo;
+  newObj["smsTempl"] = smsTempl;
   function sendMessage() {}
-  console.log(smsTempl);
-  return res.status(201).json(smsTempl);
+  return res.status(201).json(newObj);
   //sms sent work block
 };
 const smsSendMultiple = async (req, res, next) => {
