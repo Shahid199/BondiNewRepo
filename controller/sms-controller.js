@@ -324,8 +324,8 @@ const smsSendMultiple = async (req, res, next) => {
       studentName[i] = allData[i].freeStudentId.name;
       totalObtainedMarks[i] = allData[i].totalObtainedMarks;
       rank[i] = allData[i].rank;
-      totalMarks[i] = allData[i].examId.totalMarksMcq;
     }
+    totalMarks = allData[0].examId.totalMarksMcq;
     examName = allData[0].examId.name;
     courseName = "Free Exam";
     topScore = allData[0].totalObtainedMarks;
@@ -355,8 +355,8 @@ const smsSendMultiple = async (req, res, next) => {
       studentName[i] = allData[i].studentId.name;
       totalObtainedMarks[i] = allData[i].totalObtainedMarks;
       rank[i] = allData[i].rank;
-      totalMarks[i] = allData[i].examId.totalMarksMcq;
     }
+    totalMarks = allData[0].examId.totalMarksMcq;
     examName = allData[0].examId.name;
     courseName = courseName.name;
     topScore = allData[0].totalObtainedMarks;
@@ -386,8 +386,8 @@ const smsSendMultiple = async (req, res, next) => {
       studentName[i] = allData[i].studentId.name;
       totalObtainedMarks[i] = allData[i].totalObtainedMarks;
       rank[i] = allData[i].rank;
-      totalMarks = allData[i].examId.totalMarksMcq;
     }
+    totalMarks = allData[0].examId.totalMarks;
     examName = allData[0].examId.name;
     courseName = courseName.name;
     topScore = allData[0].totalObtainedMarks;
@@ -417,12 +417,12 @@ const smsSendMultiple = async (req, res, next) => {
       studentName[i] = allData[i].studentId.name;
       totalObtainedMarks[i] = allData[i].totalObtainedMarks;
       rank[i] = allData[i].rank;
-      totalMarks[i] = allData[i].examId.totalMarksMcq;
     }
     examName = allData[0].examId.name;
     courseName = courseName.name;
     topScore = allData[0].totalObtainedMarks;
     totalRank = allData.length;
+    totalMarks = allData[0].examId.totalMarks;
   }
   function format(str, args) {
     return str.replace(/%(\w+)%/g, (_, key) => args[key]);
@@ -438,7 +438,7 @@ const smsSendMultiple = async (req, res, next) => {
       totalObtainedMarks: totalObtainedMarks[i],
       rank: rank[i],
       courseName: courseName,
-      totalMarks: totalMarks[i],
+      totalMarks: totalMarks,
       topScore: topScore,
       examName: examName,
       totalStudent: totalRank,
