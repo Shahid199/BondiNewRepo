@@ -320,11 +320,11 @@ const smsSendMultiple = async (req, res, next) => {
     if (allData.length <= 0)
       return res.status(404).json("No Student Found in exam.");
     for (let i = 0; i < allData.length; i++) {
-      mobileNo = allData[i].freeStudentId.mobileNo;
-      studentName = allData[i].freeStudentId.name;
-      totalObtainedMarks = allData[i].totalObtainedMarks;
-      rank = allData[i].rank;
-      totalMarks = allData[i].examId.totalMarksMcq;
+      mobileNo[i] = allData[i].freeStudentId.mobileNo;
+      studentName[i] = allData[i].freeStudentId.name;
+      totalObtainedMarks[i] = allData[i].totalObtainedMarks;
+      rank[i] = allData[i].rank;
+      totalMarks[i] = allData[i].examId.totalMarksMcq;
     }
     examName = allData[0].examId.name;
     courseName = "Free Exam";
@@ -351,11 +351,11 @@ const smsSendMultiple = async (req, res, next) => {
       return res.status.json("1.Something went wrong.");
     }
     for (let i = 0; i < allData.length; i++) {
-      mobileNo = allData[i].studentId.mobileNo;
-      studentName = allData[i].studentId.name;
-      totalObtainedMarks = allData[i].totalObtainedMarks;
-      rank = allData[i].rank;
-      totalMarks = allData[i].examId.totalMarksMcq;
+      mobileNo[i] = allData[i].studentId.mobileNo;
+      studentName[i] = allData[i].studentId.name;
+      totalObtainedMarks[i] = allData[i].totalObtainedMarks;
+      rank[i] = allData[i].rank;
+      totalMarks[i] = allData[i].examId.totalMarksMcq;
     }
     examName = allData[0].examId.name;
     courseName = courseName.name;
@@ -382,10 +382,10 @@ const smsSendMultiple = async (req, res, next) => {
       return res.status.json("1.Something went wrong.");
     }
     for (let i = 0; i < allData.length; i++) {
-      mobileNo = allData[i].studentId.mobileNo;
-      studentName = allData[i].studentId.name;
-      totalObtainedMarks = allData[i].totalObtainedMarks;
-      rank = allData[i].rank;
+      mobileNo[i] = allData[i].studentId.mobileNo;
+      studentName[i] = allData[i].studentId.name;
+      totalObtainedMarks[i] = allData[i].totalObtainedMarks;
+      rank[i] = allData[i].rank;
       totalMarks = allData[i].examId.totalMarksMcq;
     }
     examName = allData[0].examId.name;
@@ -413,11 +413,11 @@ const smsSendMultiple = async (req, res, next) => {
       return res.status.json("1.Something went wrong.");
     }
     for (let i = 0; i < allData.length; i++) {
-      mobileNo = allData[i].studentId.mobileNo;
-      studentName = allData[i].studentId.name;
-      totalObtainedMarks = allData[i].totalObtainedMarks;
-      rank = allData[i].rank;
-      totalMarks = allData[i].examId.totalMarksMcq;
+      mobileNo[i] = allData[i].studentId.mobileNo;
+      studentName[i] = allData[i].studentId.name;
+      totalObtainedMarks[i] = allData[i].totalObtainedMarks;
+      rank[i] = allData[i].rank;
+      totalMarks[i] = allData[i].examId.totalMarksMcq;
     }
     examName = allData[0].examId.name;
     courseName = courseName.name;
