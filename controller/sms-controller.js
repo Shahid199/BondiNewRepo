@@ -314,7 +314,6 @@ const smsSendMultiple = async (req, res, next) => {
           rank: 1,
         });
     } catch (err) {
-      console.log(err);
       return res.status(500).json("2.Something went wrong.");
     }
     if (allData.length <= 0)
@@ -427,9 +426,6 @@ const smsSendMultiple = async (req, res, next) => {
   function format(str, args) {
     return str.replace(/%(\w+)%/g, (_, key) => args[key]);
   }
-
-  //mobileNo:"01677732635",
-
   //sms sent work block
   let allSms = [];
   for (let i = 0; i < allData.length; i++) {
@@ -452,7 +448,6 @@ const smsSendMultiple = async (req, res, next) => {
     allSms.push(newObj);
   }
   function sendMessage() {}
-  console.log(allSms);
   return res.status(201).json(allSms);
   //sms sent work block
 };
