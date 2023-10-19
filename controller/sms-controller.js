@@ -280,9 +280,186 @@ const smsSendSingle = async (req, res, next) => {
   return res.status(201).json(smsTempl);
   //sms sent work block
 };
+const smsSendMultiple = async (req, res, next) => {
+  let examId = req.body.examId;
+  let examType = req.body.examType;
+  if (!ObjectId.isValid(examId) || !examType)
+    return res.status(404).json("examId or studentId is not valid.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let smsTempl = null;
+  try {
+    smsTempl = await SmsTemp.findOne({ status: true });
+  } catch (err) {
+    return res.status(404).json("1.Something went wrong.");
+  }
+  if (!smsTempl) return res.status(404).json("No template selected.");
+  smsTempl = smsTempl.template;
+  let mobileNo = [],
+    studentName = [],
+    totalObtainedMarks = [],
+    rank = [],
+    totalStudent = [],
+    courseName,
+    totalMarks = [],
+    examName,
+    topScore;
+  let allData = [];
+  if (examType == 1) {
+    try {
+      allData = await FreeMcqRank.find({
+        $and: [{ examId: examId }],
+      })
+        .populate("freeStudentId examId")
+        .sort({
+          rank: 1,
+        });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json("2.Something went wrong.");
+    }
+    if (allData.length <= 0)
+      return res.status(404).json("No Student Found in exam.");
+    for (let i = 0; i < allData.length; i++) {
+      mobileNo = allData[i].freeStudentId.mobileNo;
+      studentName = allData[i].freeStudentId.name;
+      totalObtainedMarks = allData[i].totalObtainedMarks;
+      rank = allData[i].rank;
+      totalMarks = allData[i].examId.totalMarksMcq;
+    }
+    examName = allData[0].examId.name;
+    courseName = "Free Exam";
+    topScore = allData[0].totalObtainedMarks;
+    totalRank = allData.length;
+  } else if (examType == 2) {
+    try {
+      allData = await McqRank.find({
+        $and: [{ examId: examId }],
+      })
+        .populate("studentId examId")
+        .sort({
+          rank: 1,
+        });
+    } catch (err) {
+      return res.status(404).json("2.Something went wrong.");
+    }
+    if (allData.length <= 0)
+      return res.status(404).json("No Student Found in exam.");
+    let courseId = allData[0].examId.courseId;
+    try {
+      courseName = await Course.findById(courseId);
+    } catch (err) {
+      return res.status.json("1.Something went wrong.");
+    }
+    for (let i = 0; i < allData.length; i++) {
+      mobileNo = allData[i].studentId.mobileNo;
+      studentName = allData[i].studentId.name;
+      totalObtainedMarks = allData[i].totalObtainedMarks;
+      rank = allData[i].rank;
+      totalMarks = allData[i].examId.totalMarksMcq;
+    }
+    examName = allData[0].examId.name;
+    courseName = courseName.name;
+    topScore = allData[0].totalObtainedMarks;
+    totalRank = allData.length;
+  } else if (examType == 3) {
+    try {
+      allData = await BothRank.find({
+        $and: [{ examId: examId }],
+      })
+        .populate("studentId examId")
+        .sort({
+          rank: 1,
+        });
+    } catch (err) {
+      return res.status(404).json("2.Something went wrong.");
+    }
+    if (allData.length <= 0)
+      return res.status(404).json("No Student Found in exam.");
+    let courseId = allData[0].examId.courseId;
+    try {
+      courseName = await Course.findById(courseId);
+    } catch (err) {
+      return res.status.json("1.Something went wrong.");
+    }
+    for (let i = 0; i < allData.length; i++) {
+      mobileNo = allData[i].studentId.mobileNo;
+      studentName = allData[i].studentId.name;
+      totalObtainedMarks = allData[i].totalObtainedMarks;
+      rank = allData[i].rank;
+      totalMarks = allData[i].examId.totalMarksMcq;
+    }
+    examName = allData[0].examId.name;
+    courseName = courseName.name;
+    topScore = allData[0].totalObtainedMarks;
+    totalRank = allData.length;
+  } else {
+    try {
+      allData = await SpecialRank.find({
+        $and: [{ examId: examId }],
+      })
+        .populate("studentId examId")
+        .sort({
+          rank: 1,
+        });
+    } catch (err) {
+      return res.status(404).json("2.Something went wrong.");
+    }
+    if (allData.length <= 0)
+      return res.status(404).json("No Student Found in exam.");
+    let courseId = allData[0].examId.courseId;
+    try {
+      courseName = await Course.findById(courseId);
+    } catch (err) {
+      return res.status.json("1.Something went wrong.");
+    }
+    for (let i = 0; i < allData.length; i++) {
+      mobileNo = allData[i].studentId.mobileNo;
+      studentName = allData[i].studentId.name;
+      totalObtainedMarks = allData[i].totalObtainedMarks;
+      rank = allData[i].rank;
+      totalMarks = allData[i].examId.totalMarksMcq;
+    }
+    examName = allData[0].examId.name;
+    courseName = courseName.name;
+    topScore = allData[0].totalObtainedMarks;
+    totalRank = allData.length;
+  }
+  function format(str, args) {
+    return str.replace(/%(\w+)%/g, (_, key) => args[key]);
+  }
+
+  //mobileNo:"01677732635",
+
+  //sms sent work block
+  let allSms = [];
+  for (let i = 0; i < allData.length; i++) {
+    const args = {
+      studentName: studentName[i],
+      totalObtainedMarks: totalObtainedMarks[i],
+      rank: rank[i],
+      courseName: courseName,
+      totalMarks: totalMarks[i],
+      topScore: topScore,
+      examName: examName,
+      totalStudent: totalRank,
+      newline: "\n",
+    };
+    let smsText = format(smsTempl, args);
+
+    let newObj = {};
+    newObj["mobileNo"] = mobileNo[i];
+    newObj["smsTempl"] = smsText;
+    allSms.push(newObj);
+  }
+  function sendMessage() {}
+  console.log(allSms);
+  return res.status(201).json(allSms);
+  //sms sent work block
+};
 exports.tempCreate = tempCreate;
 exports.tempUpdate = tempUpdate;
 exports.tempShow = tempShow;
 exports.tempStatusChange = tempStatusChange;
 exports.tempShowById = tempShowById;
 exports.smsSendSingle = smsSendSingle;
+exports.smsSendMultiple = smsSendMultiple;

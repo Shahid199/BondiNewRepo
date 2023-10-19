@@ -8,6 +8,7 @@ const {
   tempUpdate,
   tempStatusChange,
   smsSendSingle,
+  smsSendMultiple,
 } = require("../controller/sms-controller");
 const router = express.Router();
 
@@ -58,6 +59,14 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   smsSendSingle
+);
+router.post(
+  "/smssendmultiple",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  smsSendMultiple
 );
 
 module.exports = router;
