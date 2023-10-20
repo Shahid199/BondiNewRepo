@@ -1926,10 +1926,10 @@ const updateRank = async (req, res, next) => {
   let ranks = null;
   try {
     ranks = await SpecialVsStudent.find({ examId: examIdObj })
-      .select("examId totalObtainedMarks studentId -_id")
       .sort({
         totalObtainedMarks: -1,
-      });
+      })
+      .populate("studentId");
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
