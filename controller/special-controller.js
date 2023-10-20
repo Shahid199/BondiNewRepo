@@ -1653,10 +1653,10 @@ const historyData = async (req, res, next) => {
     let rank = null;
     examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     if (String(examIdObj) == String(examIdObTest)) {
-      examIdObTest = examIdObj;
       console.log(" examIdObTest:", examIdObTest);
       continue;
     }
+    examIdObTest = examIdObj;
     let resultRank = null;
     try {
       resultRank = await SpecialRank.findOne({
