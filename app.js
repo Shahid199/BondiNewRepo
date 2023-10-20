@@ -83,8 +83,25 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
-    let studentIds=[1,1,2,2,2,2,3,4,5];
-    studentIds = Array.from(new Set(studentIds));
-   // console.log(studentIds);
+    let studentIds = [
+      { id: 1, name: "ww" },
+      { id: 1, name: "wws" },
+      { id: 2, name: "ww" },
+    ];
+    let uniqueIds = [];
+    const unique = studentIds.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element.id);
+
+      if (!isDuplicate) {
+        uniqueIds.push(element.id);
+
+        return true;
+      }
+
+      return false;
+    });
+
+    // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
+    console.log(unique);
   })
   .catch((err) => console.log(err));

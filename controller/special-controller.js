@@ -1061,11 +1061,19 @@ const specialGetHistory = async (req, res, next) => {
   if (count.length == 0) {
     return res.status(404).json("No data found.");
   }
-  let studentIds = [];
-  for (let i = 0; i < count.length; i++) {
-    studentIds.push(count[i].studentId._id);
-  }
-  studentIds = Array.from(new Set(studentIds));
+  let uniqueIds = [];
+  let studentIds = count.filter((element) => {
+    const isDuplicate = uniqueIds.includes(element.studentId._id);
+
+    if (!isDuplicate) {
+      uniqueIds.push(element.id);
+
+      return true;
+    }
+
+    return false;
+  });
+  console.log("studentIds", studentIds);
   let paginateData = pagination(studentIds.length, page);
   let data = [],
     rank;
@@ -1086,12 +1094,14 @@ const specialGetHistory = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log("studentIds.length", studentIds.length);
   for (let i = 0; i < studentIds.length; i++) {
     let mcqRank = null;
     try {
       mcqRank = await SpecialRank.findOne({
-        $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
+        $and: [
+          { examId: examIdObj },
+          { studentId: studentIds[i].studentId._id },
+        ],
       });
     } catch (err) {
       return res.status(500).json("3.Something went wrong.");
@@ -1111,9 +1121,13 @@ const specialGetHistory = async (req, res, next) => {
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
-    data1["examStartTime"] = moment(rank[i].examStartTimeMcq).format("LLL");
-    data1["examEndTime"] = moment(rank[i].examEndTimeWritten).format("LLL");
-    data1["duration"] = rank[i].totalDuration;
+    data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
+      "LLL"
+    );
+    data1["examEndTime"] = moment(studentIds[i].examEndTimeWritten).format(
+      "LLL"
+    );
+    data1["duration"] = studentIds[i].totalDuration;
     data1["totalObtainedMarksMcq"] = examStud.totalMarksMcq;
     data1["totalObtainedMarksWritten"] = examStud.totalMarksWritten;
     data.push(data1);
