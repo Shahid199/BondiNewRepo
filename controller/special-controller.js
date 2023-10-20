@@ -1943,7 +1943,7 @@ const updateRank = async (req, res, next) => {
     }
     return false;
   });
-  //console.log("ranks:", ranks);
+  console.log("ranks:", ranks);
   let dataLength = ranks.length;
   let dataIns = [];
   for (let i = 0; i < dataLength; i++) {
