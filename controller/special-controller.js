@@ -1093,13 +1093,6 @@ const specialGetHistory = async (req, res, next) => {
     data.push(data1);
   }
   examDetails = studentIds[0].examId;
-  // try {
-  //   examDetails = await SpecialExam.findById(String(examIdObj)).populate(
-  //     "courseId"
-  //   );
-  // } catch (err) {
-  //   return res.status(500).json("5.Something went wrong.");
-  // }
   let paginateData = pagination(studentIds.length, page);
 
   let examInfo = {
@@ -1859,6 +1852,57 @@ const updateStudentExamInfo = async (req, res, next) => {
   }
   return res.status(201).json("Updated successfully.");
 };
+
+const updateRank1 = async (req, res, next) => {
+  let examId = req.body.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid exam Id.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let delData = null;
+  try {
+    delData = await SpecialRank.find({ examId: examIdObj });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (delData.length > 0) {
+    let deleteData = null;
+    try {
+      deleteData = await SpecialRank.deleteMany({ examId: examIdObj });
+    } catch (err) {
+      return res.status(500).json("2.Something went wrong.");
+    }
+  }
+  let ranks = null;
+  try {
+    ranks = await SpecialVsStudent.find({ examId: examIdObj })
+      .select("examId totalObtainedMarks studentId -_id")
+      .sort({
+        totalObtainedMarks: -1,
+      });
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  //console.log("ranks:", ranks);
+  let dataLength = ranks.length;
+  let dataIns = [];
+  for (let i = 0; i < dataLength; i++) {
+    let dataFree = {};
+    dataFree["examId"] = ranks[i].examId;
+    dataFree["studentId"] = ranks[i].studentId;
+    dataFree["totalObtainedMarks"] = ranks[i].totalObtainedMarks;
+    dataFree["rank"] = i + 1;
+    dataIns.push(dataFree);
+  }
+  //console.log("dataIns:", dataIns);
+  let sav = null;
+  try {
+    sav = await SpecialRank.insertMany(dataIns, { ordered: false });
+  } catch (err) {
+    return res.status(500).json("4.Something went wrong.");
+  }
+  return res.status(201).json("Success!");
+};
 const updateRank = async (req, res, next) => {
   let examId = req.body.examId;
   if (!ObjectId.isValid(examId))
@@ -1889,6 +1933,16 @@ const updateRank = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
+  let uniqueIds = [];
+  ranks = ranks.filter((element) => {
+    const isDuplicate = uniqueIds.includes(element.studentId._id);
+
+    if (!isDuplicate) {
+      uniqueIds.push(element.studentId._id);
+      return true;
+    }
+    return false;
+  });
   //console.log("ranks:", ranks);
   let dataLength = ranks.length;
   let dataIns = [];
