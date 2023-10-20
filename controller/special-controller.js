@@ -1074,6 +1074,9 @@ const specialGetHistory = async (req, res, next) => {
     return false;
   });
 
+  studentIds.forEach(function (element) {
+    element.meritPosition = -1;
+  });
   for (let i = 0; i < studentIds.length; i++) {
     studentIds[i].meritPosition = i + 1;
   }
