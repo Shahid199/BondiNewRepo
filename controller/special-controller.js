@@ -1073,51 +1073,13 @@ const specialGetHistory = async (req, res, next) => {
     }
     return false;
   });
-
-  studentIds.forEach(function (element) {
-    element.meritPosition = -1;
-  });
-  console.log("studentIds[0]:", studentIds[0]);
-  for (let i = 0; i < studentIds.length; i++) {
-    studentIds[i].rank = i + 1;
-  }
-  return res.status(200).json(studentIds);
-  let paginateData = pagination(studentIds.length, page);
   let data = [];
-  let qWritten = null;
-  try {
-    qWritten = await SpecialVsStudent.findOne({ examId: examIdObj });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
   for (let i = 0; i < studentIds.length; i++) {
-    let mcqRank = null;
-    try {
-      mcqRank = await SpecialRank.findOne({
-        $and: [
-          { examId: examIdObj },
-          { studentId: studentIds[i].studentId._id },
-        ],
-      });
-    } catch (err) {
-      return res.status(500).json("3.Something went wrong.");
-    }
-    if (mcqRank == null) mcqRank = "-1";
-    else mcqRank = mcqRank.rank;
-    let data1 = {},
-      examStud = null;
-    data1["studentId"] = studentIds[i].studentId._id;
-    try {
-      examStud = await SpecialVsStudent.findOne({
-        $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
-      }).populate("studentId");
-    } catch (err) {
-      return res.status(500).json("4.Something went wrong.");
-    }
-    if (examStud == null) console.log(i, examStud);
-    data1["examStud"] = examStud;
-    data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
-    data1["meritPosition"] = mcqRank;
+    let data1 = {};
+    studentIds[i].rank = i + 1;
+    data1["examStud"] = studentIds[i];
+    data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks;
+    data1["meritPosition"] = studentIds[i].rank;
     data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
       "LLL"
     );
@@ -1125,8 +1087,8 @@ const specialGetHistory = async (req, res, next) => {
       "LLL"
     );
     data1["duration"] = studentIds[i].totalDuration;
-    data1["totalObtainedMarksMcq"] = examStud.totalMarksMcq;
-    data1["totalObtainedMarksWritten"] = examStud.totalMarksWritten;
+    data1["totalObtainedMarksMcq"] = studentIds[i].totalMarksMcq;
+    data1["totalObtainedMarksWritten"] = studentIds[i].totalMarksWritten;
     data.push(data1);
   }
   examDetails = null;
@@ -1137,6 +1099,34 @@ const specialGetHistory = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("5.Something went wrong.");
   }
+  //return res.status(200).json(studentIds);
+  let paginateData = pagination(studentIds.length, page);
+  // for (let i = 0; i < studentIds.length; i++) {
+  //   let data1 = {},
+  //     examStud = null;
+  //   data1["studentId"] = studentIds[i].studentId._id;
+  //   try {
+  //     examStud = await SpecialVsStudent.findOne({
+  //       $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
+  //     }).populate("studentId");
+  //   } catch (err) {
+  //     return res.status(500).json("4.Something went wrong.");
+  //   }
+  //   data1["examStud"] = examStud;
+  //   data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
+  //   data1["meritPosition"] = mcqRank;
+  //   data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
+  //     "LLL"
+  //   );
+  //   data1["examEndTime"] = moment(studentIds[i].examEndTimeWritten).format(
+  //     "LLL"
+  //   );
+  //   data1["duration"] = studentIds[i].totalDuration;
+  //   data1["totalObtainedMarksMcq"] = examStud.totalMarksMcq;
+  //   data1["totalObtainedMarksWritten"] = examStud.totalMarksWritten;
+  //   data.push(data1);
+  // }
+
   // console.log(examDetails.totalMarksMcq);
   // console.log(examDetails.totalMarksWritten);
   let examInfo = {
@@ -1145,7 +1135,7 @@ const specialGetHistory = async (req, res, next) => {
     courseName: examDetails.courseId.name,
     startTime: moment(examDetails.examStartTime).format("LLL"),
     endTime: moment(examDetails.examEndTime).format("LLL"),
-    totalQuestion: qWritten.totalQuestions,
+    //totalQuestion: qWritten.totalQuestions,
     totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
   };
   return res.status(200).json({ data, examInfo, paginateData });
