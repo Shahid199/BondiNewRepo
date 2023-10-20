@@ -1043,6 +1043,101 @@ const specialGetHistory = async (req, res, next) => {
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
+const specialGetHistory1 = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let count = [];
+  try {
+    count = await SpecialVsStudent.find({
+      $and: [{ examId: examIdObj }],
+    }).populate("studentId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (count.length == 0) {
+    return res.status(404).json("No data found.");
+  }
+  let studentIds = [];
+  for (let i = 0; i < count.length; i++) {
+    studentIds.push(count[i].studentId._id);
+  }
+  studentIds = Array.from(new Set(studentIds));
+  let paginateData = pagination(studentIds.length, page);
+  let data = [],
+    rank;
+  // try {
+  //   rank = await SpecialVsStudent.find({
+  //     $and: [{ examId: examIdObj }],
+  //   });
+  //   // .populate("studentId")
+  //   // .skip(paginateData.skippedIndex)
+  //   // .limit(paginateData.perPage);
+  // } catch (err) {
+  //   //console.log(err);
+  //   return res.status(500).json("2.Something went wrong.");
+  // }
+  let qWritten = null;
+  try {
+    qWritten = await SpecialVsStudent.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  for (let i = 0; i < studentIds.length; i++) {
+    let mcqRank = null;
+    try {
+      mcqRank = await SpecialRank.findOne({
+        $and: [{ examId: examIdObj }, { studentId: studentIds[i] }],
+      });
+    } catch (err) {
+      return res.status(500).json("3.Something went wrong.");
+    }
+    if (mcqRank == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
+    let data1 = {},
+      examStud = null;
+    data1["studentId"] = studentIds[i];
+    try {
+      examStud = await SpecialVsStudent.findOne({
+        $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
+      }).populate("studentId");
+    } catch (err) {
+      return res.status(500).json("4.Something went wrong.");
+    }
+    data1["examStud"] = examStud;
+    data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
+    data1["meritPosition"] = mcqRank;
+    data1["examStartTime"] = moment(rank[i].examStartTimeMcq).format("LLL");
+    data1["examEndTime"] = moment(rank[i].examEndTimeWritten).format("LLL");
+    data1["duration"] = rank[i].totalDuration;
+    data1["totalObtainedMarksMcq"] = examStud.totalMarksMcq;
+    data1["totalObtainedMarksWritten"] = examStud.totalMarksWritten;
+    data.push(data1);
+  }
+  examDetails = null;
+  try {
+    examDetails = await SpecialExam.findById(String(examIdObj)).populate(
+      "courseId"
+    );
+  } catch (err) {
+    return res.status(500).json("5.Something went wrong.");
+  }
+  console.log(examDetails.totalMarksMcq);
+  console.log(examDetails.totalMarksWritten);
+  let examInfo = {
+    id: String(examDetails._id),
+    name: examDetails.name,
+    courseName: examDetails.courseId.name,
+    startTime: moment(examDetails.examStartTime).format("LLL"),
+    endTime: moment(examDetails.examEndTime).format("LLL"),
+    totalQuestion: qWritten.totalQuestions,
+    totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
+  };
+  return res.status(200).json({ data, examInfo, paginateData });
+};
 const specialGetHistoryAdmin = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
@@ -3847,6 +3942,19 @@ const statusUpdate = async (req, res, next) => {
     return res.status(500).json("problem!");
   }
 };
+
+const updateWrittenMinus = async (req, res, next) => {
+  let examId = "652bc1f1370db18e26399ad9";
+  examId = new mongoose.Types.ObjectId(examId);
+  let studData = [];
+  try {
+    studData = await SpecialVsStudent.find({ examId: examId });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  // for(let i=0;i<studData)
+};
+exports.updateWrittenMinus = updateWrittenMinus;
 exports.specialGetHistoryAdmin = specialGetHistoryAdmin;
 exports.specialGetHistory = specialGetHistory;
 exports.studentSubmittedExamDetail = studentSubmittedExamDetail;

@@ -57,6 +57,7 @@ const {
   specialGetHistoryAdmin,
   specialGetHistoryAdminFilter,
   showSpecialExamByIdStudentAdmin,
+  updateWrittenMinus,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -511,5 +512,14 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   specialGetHistoryAdminFilter
+);
+
+router.post(
+  "/updatewrittenminus",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin"]),
+  ],
+  updateWrittenMinus
 );
 module.exports = router;

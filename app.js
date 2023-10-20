@@ -83,16 +83,8 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
-    const args = {
-      im: "imran",
-    };
-
-    function format(str, args) {
-      return str.replace(/%(\w+)/g, (_, key) => args[key]);
-    }
-    //template = "`" + template + "`";
-    template = "imran %im";
-    template = format(template, args);
-    console.log(template);
+    let studentIds=[1,1,2,2,2,2,3,4,5];
+    studentIds = Array.from(new Set(studentIds));
+   // console.log(studentIds);
   })
   .catch((err) => console.log(err));
