@@ -1105,7 +1105,7 @@ const specialGetHistory = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("4.Something went wrong.");
     }
-    if (examStud == null) console.log(examStud);
+    if (examStud == null) console.log(i, examStud);
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
