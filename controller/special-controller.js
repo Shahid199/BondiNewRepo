@@ -1075,7 +1075,7 @@ const specialGetHistory = async (req, res, next) => {
   });
 
   for (let i = 0; i < studentIds.length; i++) {
-    studentIds[i].rank = i + 1;
+    studentIds[i].meritPosition = i + 1;
   }
   return res.status(200).json(studentIds);
   let paginateData = pagination(studentIds.length, page);
