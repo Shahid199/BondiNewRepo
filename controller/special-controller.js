@@ -1056,7 +1056,8 @@ const specialGetHistory = async (req, res, next) => {
       $and: [{ examId: examIdObj }],
     })
       .sort({ totalObtainedMarks: -1 })
-      .populate("studentId");
+      .populate("studentId")
+      .populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
@@ -1091,51 +1092,22 @@ const specialGetHistory = async (req, res, next) => {
     data1["totalObtainedMarksWritten"] = studentIds[i].totalMarksWritten;
     data.push(data1);
   }
-  examDetails = null;
-  try {
-    examDetails = await SpecialExam.findById(String(examIdObj)).populate(
-      "courseId"
-    );
-  } catch (err) {
-    return res.status(500).json("5.Something went wrong.");
-  }
-  //return res.status(200).json(studentIds);
-  let paginateData = pagination(studentIds.length, page);
-  // for (let i = 0; i < studentIds.length; i++) {
-  //   let data1 = {},
-  //     examStud = null;
-  //   data1["studentId"] = studentIds[i].studentId._id;
-  //   try {
-  //     examStud = await SpecialVsStudent.findOne({
-  //       $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
-  //     }).populate("studentId");
-  //   } catch (err) {
-  //     return res.status(500).json("4.Something went wrong.");
-  //   }
-  //   data1["examStud"] = examStud;
-  //   data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
-  //   data1["meritPosition"] = mcqRank;
-  //   data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
-  //     "LLL"
+  examDetails = studentIds[0].examId;
+  // try {
+  //   examDetails = await SpecialExam.findById(String(examIdObj)).populate(
+  //     "courseId"
   //   );
-  //   data1["examEndTime"] = moment(studentIds[i].examEndTimeWritten).format(
-  //     "LLL"
-  //   );
-  //   data1["duration"] = studentIds[i].totalDuration;
-  //   data1["totalObtainedMarksMcq"] = examStud.totalMarksMcq;
-  //   data1["totalObtainedMarksWritten"] = examStud.totalMarksWritten;
-  //   data.push(data1);
+  // } catch (err) {
+  //   return res.status(500).json("5.Something went wrong.");
   // }
+  let paginateData = pagination(studentIds.length, page);
 
-  // console.log(examDetails.totalMarksMcq);
-  // console.log(examDetails.totalMarksWritten);
   let examInfo = {
     id: String(examDetails._id),
     name: examDetails.name,
     courseName: examDetails.courseId.name,
     startTime: moment(examDetails.examStartTime).format("LLL"),
     endTime: moment(examDetails.examEndTime).format("LLL"),
-    //totalQuestion: qWritten.totalQuestions,
     totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
   };
   return res.status(200).json({ data, examInfo, paginateData });
