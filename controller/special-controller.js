@@ -1073,21 +1073,8 @@ const specialGetHistory = async (req, res, next) => {
 
     return false;
   });
-  console.log("studentIds", studentIds);
   let paginateData = pagination(studentIds.length, page);
-  let data = [],
-    rank;
-  // try {
-  //   rank = await SpecialVsStudent.find({
-  //     $and: [{ examId: examIdObj }],
-  //   });
-  //   // .populate("studentId")
-  //   // .skip(paginateData.skippedIndex)
-  //   // .limit(paginateData.perPage);
-  // } catch (err) {
-  //   //console.log(err);
-  //   return res.status(500).json("2.Something went wrong.");
-  // }
+  let data = [];
   let qWritten = null;
   try {
     qWritten = await SpecialVsStudent.findOne({ examId: examIdObj });
@@ -1118,6 +1105,7 @@ const specialGetHistory = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("4.Something went wrong.");
     }
+    if (examStud == null) console.log(examStud);
     data1["examStud"] = examStud;
     data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
     data1["meritPosition"] = mcqRank;
@@ -1140,8 +1128,8 @@ const specialGetHistory = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("5.Something went wrong.");
   }
-  console.log(examDetails.totalMarksMcq);
-  console.log(examDetails.totalMarksWritten);
+  // console.log(examDetails.totalMarksMcq);
+  // console.log(examDetails.totalMarksWritten);
   let examInfo = {
     id: String(examDetails._id),
     name: examDetails.name,
