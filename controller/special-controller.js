@@ -1609,7 +1609,6 @@ const historyData1 = async (req, res, next) => {
   return res.status(200).json({ resultData, paginateData });
 };
 const historyData = async (req, res, next) => {
-  console.log(req.user);
   const studentId = req.user.studentId;
   if (!ObjectId.isValid(studentId))
     return res.status(404).json("Student ID not valid.");
@@ -1644,7 +1643,7 @@ const historyData = async (req, res, next) => {
     return res.status(500).json("1.SOmething went wrong.");
   }
   //return res.status(200).json(data);
-  console.log(data);
+ // console.log(data);
   let resultData = [];
   let flag = false;
   //console.log(data.length);
@@ -1666,7 +1665,7 @@ const historyData = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    console.log("res", resultRank);
+    //console.log("res", resultRank);
     if (resultRank == null) resultRank = "-1";
     else resultRank = resultRank.rank;
     data1["examId"] = data[i].examId._id;
