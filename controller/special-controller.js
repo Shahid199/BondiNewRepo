@@ -1097,7 +1097,7 @@ const specialGetHistory = async (req, res, next) => {
     else mcqRank = mcqRank.rank;
     let data1 = {},
       examStud = null;
-    data1["studentId"] = studentIds[i];
+    data1["studentId"] = studentIds[i].studentId._id;
     try {
       examStud = await SpecialVsStudent.findOne({
         $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
