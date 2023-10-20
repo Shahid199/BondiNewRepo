@@ -953,7 +953,7 @@ const viewSollutionWritten = async (req, res, next) => {
   }
   return res.status(200).json(dataNew);
 };
-const specialGetHistory = async (req, res, next) => {
+const specialGetHistory1 = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Student ID not valid.");
@@ -1043,7 +1043,7 @@ const specialGetHistory = async (req, res, next) => {
   };
   return res.status(200).json({ data, examInfo, paginateData });
 };
-const specialGetHistory1 = async (req, res, next) => {
+const specialGetHistory = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Student ID not valid.");
@@ -1086,6 +1086,7 @@ const specialGetHistory1 = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("studentIds.length", studentIds.length);
   for (let i = 0; i < studentIds.length; i++) {
     let mcqRank = null;
     try {
