@@ -1066,14 +1066,12 @@ const specialGetHistory = async (req, res, next) => {
     const isDuplicate = uniqueIds.includes(element.studentId._id);
 
     if (!isDuplicate) {
-      uniqueIds.push(element);
-
+      uniqueIds.push(element.studentId._id);
       return true;
     }
-
     return false;
   });
-  studentIds = uniqueIds;
+  console.log(studentIds);
   let paginateData = pagination(studentIds.length, page);
   let data = [];
   let qWritten = null;
