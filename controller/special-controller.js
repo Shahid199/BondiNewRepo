@@ -1054,7 +1054,9 @@ const specialGetHistory = async (req, res, next) => {
   try {
     count = await SpecialVsStudent.find({
       $and: [{ examId: examIdObj }],
-    }).populate("studentId");
+    })
+      .sort({ totalObtainedMarks: -1 })
+      .populate("studentId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
@@ -1071,7 +1073,11 @@ const specialGetHistory = async (req, res, next) => {
     }
     return false;
   });
-  console.log(studentIds);
+
+  for (let i = 0; i < studentIds.length; i++) {
+    students[i].meritPosition = i + 1;
+  }
+  return res.status(200).json(studentIds);
   let paginateData = pagination(studentIds.length, page);
   let data = [];
   let qWritten = null;
@@ -1097,6 +1103,102 @@ const specialGetHistory = async (req, res, next) => {
     let data1 = {},
       examStud = null;
     data1["studentId"] = studentIds[i].studentId._id;
+    try {
+      examStud = await SpecialVsStudent.findOne({
+        $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],
+      }).populate("studentId");
+    } catch (err) {
+      return res.status(500).json("4.Something went wrong.");
+    }
+    if (examStud == null) console.log(i, examStud);
+    data1["examStud"] = examStud;
+    data1["totalObtainedMarks"] = examStud.totalObtainedMarks;
+    data1["meritPosition"] = mcqRank;
+    data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
+      "LLL"
+    );
+    data1["examEndTime"] = moment(studentIds[i].examEndTimeWritten).format(
+      "LLL"
+    );
+    data1["duration"] = studentIds[i].totalDuration;
+    data1["totalObtainedMarksMcq"] = examStud.totalMarksMcq;
+    data1["totalObtainedMarksWritten"] = examStud.totalMarksWritten;
+    data.push(data1);
+  }
+  examDetails = null;
+  try {
+    examDetails = await SpecialExam.findById(String(examIdObj)).populate(
+      "courseId"
+    );
+  } catch (err) {
+    return res.status(500).json("5.Something went wrong.");
+  }
+  // console.log(examDetails.totalMarksMcq);
+  // console.log(examDetails.totalMarksWritten);
+  let examInfo = {
+    id: String(examDetails._id),
+    name: examDetails.name,
+    courseName: examDetails.courseId.name,
+    startTime: moment(examDetails.examStartTime).format("LLL"),
+    endTime: moment(examDetails.examEndTime).format("LLL"),
+    totalQuestion: qWritten.totalQuestions,
+    totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
+  };
+  return res.status(200).json({ data, examInfo, paginateData });
+};
+const specialGetHistory2 = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let count = [];
+  try {
+    count = await SpecialVsStudent.find({
+      $and: [{ examId: examIdObj }],
+    })
+      .sort({ totalObtainedMarks })
+      .populate("studentId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (count.length == 0) {
+    return res.status(404).json("No data found.");
+  }
+  let uniqueIds = [];
+  let studentIds = count.filter((element) => {
+    const isDuplicate = uniqueIds.includes(element.studentId._id);
+
+    if (!isDuplicate) {
+      uniqueIds.push(element.studentId._id);
+      return true;
+    }
+    return false;
+  });
+  console.log(studentIds);
+  let paginateData = pagination(studentIds.length, page);
+  let data = [];
+  let qWritten = null;
+  try {
+    qWritten = await SpecialVsStudent.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let mcqRank = [];
+  try {
+    mcqRank = await SpecialRank.find({
+      $and: [{ examId: examIdObj }, { studentId: { $in: uniqueIds } }],
+    });
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  for (let i = 0; i < uniqueIds.length; i++) {
+    if (mcqRank[i] == null) mcqRank = "-1";
+    else mcqRank = mcqRank.rank;
+    let data1 = {},
+      examStud = null;
+    data1["studentId"] = uniqueIds[i];
     try {
       examStud = await SpecialVsStudent.findOne({
         $and: [{ examId: examIdObj }, { studentId: data1["studentId"] }],

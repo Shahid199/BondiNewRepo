@@ -88,20 +88,11 @@ mongoose
       { id: 1, name: "wws" },
       { id: 2, name: "ww" },
     ];
-    let uniqueIds = [];
-    const unique = studentIds.filter((element) => {
-      const isDuplicate = uniqueIds.includes(element.id);
-
-      if (!isDuplicate) {
-        uniqueIds.push(element.id);
-
-        return true;
-      }
-
-      return false;
-    });
+    for (let i = 0; i < studentIds.length; i++) {
+      studentIds[i].age = i + 1;
+    }
 
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
-    console.log(unique);
+    console.log(studentIds);
   })
   .catch((err) => console.log(err));
