@@ -1156,7 +1156,7 @@ const specialGetHistory = async (req, res, next) => {
   for (let i = 0; i < studentIds.length; i++) {
     let data1 = {};
     studentIds[i].rank = i + 1;
-    data1["srudentId"] = studentIds[i].studentId._id;
+    data1["studentId"] = studentIds[i].studentId._id;
     data1["examStud"] = studentIds[i];
     data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks;
     data1["meritPosition"] = studentIds[i].rank;
