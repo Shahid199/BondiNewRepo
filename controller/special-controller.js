@@ -1643,7 +1643,7 @@ const historyData = async (req, res, next) => {
     return res.status(500).json("1.SOmething went wrong.");
   }
   //return res.status(200).json(data);
- // console.log(data);
+  // console.log(data);
   let resultData = [];
   let flag = false;
   //console.log(data.length);
@@ -2621,7 +2621,7 @@ const assignQuestionWritten = async (req, res, next) => {
     subObj["submittedScriptILink"] = [];
     subObj["answerScriptILink"] = [];
     subObj["obtainedMarks"] = [];
-    subObj["totalObtainedMarksWritten"] = -1;
+    subObj["totalObtainedMarksWritten"] = 0;
     questionWrittenArr.push(subObj);
   }
   let studExamStartTime = moment(new Date());
