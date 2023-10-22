@@ -473,6 +473,84 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataEx.push({ examName: data.examId.name });
   return res.status(200).json(dataEx);
 };
+const studentSubmittedExamDetail1 = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("Student Id is not valid.");
+  const studentIdObj = new mongoose.Types.ObjectId(studentId);
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.find({
+      $and: [
+        { studentId: studentIdObj },
+        { examId: examIdObj },
+        { questionWritten: { $ne: null } },
+      ],
+    })
+      .populate("examId")
+      .populate({ path: "questionMcq", populate: { path: "subjectId" } })
+      .populate({ path: "questionWritten", populate: { path: "subjectId" } });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null) return res.status(404).json("No data found.");
+  //star rank
+  let mcqRank = null;
+  try {
+    mcqRank = await SpecialRank.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (mcqRank != null) mcqRank = mcqRank.rank;
+  else mcqRank = "-1";
+  //end rank
+  let dataEx = [];
+  for (let i = 0; i < 4; i++) {
+    let dataObject = {};
+    dataObject["subjectId"] = data.questionMcq[i].subjectId._id;
+    dataObject["subjectName"] = data.questionMcq[i].subjectId.name;
+    dataObject["marksMcqPerSub"] =
+      data.questionMcq[i].mcqMarksPerSub.toFixed(2);
+    dataObject["marksWrittenPerSub"] =
+      data.questionWritten[i].totalObtainedMarksWritten.toFixed(2);
+    dataObject["totalMarksMcqPerSub"] = data.examId.totalMarksMcq / 4;
+    dataObject["totalMarksWrittenPerSub"] = (
+      data.examId.totalMarksWritten / 4
+    ).toFixed(2);
+    dataEx.push(dataObject);
+  }
+  dataEx.push({
+    totalMarks: data.examId.totalMarksMcq + data.examId.totalMarksWritten,
+  });
+  dataEx.push({ totalObtainedMarks: data.totalObtainedMarks });
+  dataEx.push({ rank: mcqRank });
+  dataEx.push({ studDuration: data.mcqDuration + data.writtenDuration });
+  dataEx.push({
+    studExamStartTimeMcq: moment(data.startTimeMcq).format("LLLL"),
+  });
+  dataEx.push({
+    studExamEndTimeMcq: moment(data.endTimeMcq).format("LLLL"),
+  });
+  dataEx.push({
+    studExamStartTimeWritten: moment(data.startTimeWritten).format("LLLL"),
+  });
+  dataEx.push({
+    studExamEndTimeWritten: moment(data.endTimeWritten).format("LLLL"),
+  });
+  dataEx.push({
+    startTime: moment(data.examId.tartTime).format("LLLL"),
+  });
+  dataEx.push({
+    endTime: moment(data.examId.endTime).format("LLLL"),
+  });
+  dataEx.push({ examVariation: "Special Exam" });
+  dataEx.push({ examName: data.examId.name });
+  return res.status(200).json(dataEx);
+};
 //rule api
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -1560,6 +1638,12 @@ const historyData1 = async (req, res, next) => {
   let flag = false;
   //console.log(data.length);
   for (let i = 0; i < data.length; i++) {
+    // if (
+    //   data[i].questionWritten == null ||
+    //   data[i].questionWritten.length <= 0
+    // ) {
+    //   continue;
+    // }
     let data1 = {};
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
@@ -2234,6 +2318,15 @@ const assignQuestionMcq = async (req, res, next) => {
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
+  let existData = [];
+  try {
+    existData = await SpecialVsStudent.find({
+      $and: [{ examId: eId1 }, { studentId: sId }],
+    });
+  } catch (err) {
+    return res.status(500).json("1.something went wrong.");
+  }
+  if (existData.length > 0) return res.status(200).json("Mcq running");
   subjects = subjects.map((e) => new mongoose.Types.ObjectId(e));
   let examData = null,
     rand;
@@ -2505,7 +2598,7 @@ const submitAnswerMcq = async (req, res, next) => {
     let lengthMcq = studentCheck.questionMcq[i].mcqId.length;
     for (let j = 0; j < lengthMcq; j++) {
       let questions = studentCheck.questionMcq[i].mcqId[j];
-      console.log("questions:", questions);
+      //console.log("questions:", questions);
       if (studentCheck.questionMcq[i].mcqAnswer[j] == -1) {
         totalNotAnswered++;
       } else if (
