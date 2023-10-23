@@ -1240,6 +1240,7 @@ const specialGetHistoryFilter = async (req, res, next) => {
     let data1 = {};
     studentIds[i].rank = i + 1;
     data1["studentId"] = studentIds[i].studentId._id;
+    data1["regNo"] = studentIds[i].studentId.regNo;
     data1["examStud"] = studentIds[i];
     data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks;
     data1["meritPosition"] = studentIds[i].rank;
@@ -1255,7 +1256,7 @@ const specialGetHistoryFilter = async (req, res, next) => {
     data.push(data1);
   }
   const regex = new RegExp(".*" + regNo.toLowerCase() + ".*", "i");
-  data = data.filter(({ regNo }) => href.match(regex));
+  data = data.filter(({ regNo }) => regNo.match(regex));
   examDetails = studentIds[0].examId;
   //let paginateData = pagination(studentIds.length, page);
 
