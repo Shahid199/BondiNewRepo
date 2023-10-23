@@ -1190,15 +1190,15 @@ const specialGetHistory = async (req, res, next) => {
   // console.log(paginateData);
   // console.log(start);
   // console.log(end);
-  let data1 = [];
+  let data2 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
       if (i == data.length) break;
-      data1.push(data[i]);
+      data1.push(data2[i]);
     }
   }
-  console.log("data1",data1);
-  data = data1;
+  console.log("data1", data2);
+  data = data2;
   return res.status(200).json({ data, examInfo, paginateData });
 };
 const specialGetHistory2 = async (req, res, next) => {
