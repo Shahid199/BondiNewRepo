@@ -1158,7 +1158,7 @@ const specialGetHistory = async (req, res, next) => {
     studentIds[i].rank = i + 1;
     data1["studentId"] = studentIds[i].studentId._id;
     data1["examStud"] = studentIds[i];
-    data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks;
+    data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks.toFixed(2);
     data1["meritPosition"] = studentIds[i].rank;
     data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
       "LLL"
@@ -1242,7 +1242,7 @@ const specialGetHistoryFilter = async (req, res, next) => {
     data1["studentId"] = studentIds[i].studentId._id;
     data1["regNo"] = studentIds[i].studentId.regNo;
     data1["examStud"] = studentIds[i];
-    data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks;
+    data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks.toFixed(2);
     data1["meritPosition"] = studentIds[i].rank;
     data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
       "LLL"
