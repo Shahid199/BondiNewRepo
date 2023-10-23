@@ -3217,7 +3217,7 @@ const getStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   //console.log(students);
-  if (students.length == 0) return res.status(404).json("No student assigned.");
+  if (!students) return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   // console.log(studentData);
   let studId = [];
