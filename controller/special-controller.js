@@ -1192,7 +1192,7 @@ const specialGetHistory = async (req, res, next) => {
   // console.log(end);
   // console.log(data.length);
   let data2 = [];
-  if (count > 0) {
+  if (count1 > 0) {
     for (let i = start; i < end; i++) {
       if (i == data.length) break;
       console.log("i value:", i, data[i]);
