@@ -1203,6 +1203,92 @@ const specialGetHistory = async (req, res, next) => {
   data = data2;
   return res.status(200).json({ data, examInfo, paginateData });
 };
+const specialGetHistoryFilter = async (req, res, next) => {
+  const examId = req.query.examId;
+  const regNo = req.query.regNo;
+  if (!ObjectId.isValid(examId) || !regNo)
+    return res.status(404).json("Student ID not valid.");
+  let page = req.query.page || 1;
+
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let count = [];
+  try {
+    count = await SpecialVsStudent.find({
+      $and: [{ examId: examIdObj }],
+    })
+      .sort({ totalObtainedMarks: -1 })
+      .populate("studentId")
+      .populate("examId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (count.length == 0) {
+    return res.status(404).json("No data found.");
+  }
+  let uniqueIds = [];
+  let studentIds = count.filter((element) => {
+    const isDuplicate = uniqueIds.includes(element.studentId._id);
+
+    if (!isDuplicate) {
+      uniqueIds.push(element.studentId._id);
+      return true;
+    }
+    return false;
+  });
+  let data = [];
+  for (let i = 0; i < studentIds.length; i++) {
+    let data1 = {};
+    studentIds[i].rank = i + 1;
+    data1["studentId"] = studentIds[i].studentId._id;
+    data1["examStud"] = studentIds[i];
+    data1["totalObtainedMarks"] = studentIds[i].totalObtainedMarks;
+    data1["meritPosition"] = studentIds[i].rank;
+    data1["examStartTime"] = moment(studentIds[i].examStartTimeMcq).format(
+      "LLL"
+    );
+    data1["examEndTime"] = moment(studentIds[i].examEndTimeWritten).format(
+      "LLL"
+    );
+    data1["duration"] = studentIds[i].totalDuration;
+    data1["totalObtainedMarksMcq"] = studentIds[i].totalMarksMcq;
+    data1["totalObtainedMarksWritten"] = studentIds[i].totalMarksWritten;
+    data.push(data1);
+  }
+  const regex = new RegExp(".*" + regNo.toLowerCase() + ".*", "i");
+  data = data.filter(({ regNo }) => href.match(regex));
+  examDetails = studentIds[0].examId;
+  //let paginateData = pagination(studentIds.length, page);
+
+  let examInfo = {
+    id: String(examDetails._id),
+    name: examDetails.name,
+    courseName: examDetails.courseId.name,
+    startTime: moment(examDetails.examStartTime).format("LLL"),
+    endTime: moment(examDetails.examEndTime).format("LLL"),
+    totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
+  };
+  let count1 = data.length;
+  let paginateData = pagination(count1, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  // console.log(paginateData);
+  // console.log(start);
+  // console.log(end);
+  // console.log(data.length);
+  let data2 = [];
+  if (count1 > 0) {
+    for (let i = start; i < end; i++) {
+      if (i == data.length) break;
+      console.log("i value:", i, data[i]);
+      data2.push(data[i]);
+    }
+  }
+  //console.log("data1", data2);
+  data = data2;
+
+  return res.status(200).json({ data, examInfo, paginateData });
+};
 const specialGetHistory2 = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
@@ -4285,6 +4371,7 @@ const updateWrittenMinus = async (req, res, next) => {
   }
   // for(let i=0;i<studData)
 };
+exports.specialGetHistoryFilter = specialGetHistoryFilter;
 exports.updateWrittenMinus = updateWrittenMinus;
 exports.specialGetHistoryAdmin = specialGetHistoryAdmin;
 exports.specialGetHistory = specialGetHistory;
