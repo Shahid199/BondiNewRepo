@@ -78,7 +78,7 @@ router.get(
   getTeacher
 );
 router.get(
-  "/teacherlistbycourse",
+  "/getuserbycourse",
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator"]),
