@@ -448,7 +448,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataEx.push({
     totalMarks: data.examId.totalMarksMcq + data.examId.totalMarksWritten,
   });
-  dataEx.push({ totalObtainedMarks: data.totalObtainedMarks });
+  dataEx.push({ totalObtainedMarks: data.totalObtainedMarks.toFixed(2) });
   dataEx.push({ rank: mcqRank });
   dataEx.push({ studDuration: data.mcqDuration + data.writtenDuration });
   dataEx.push({
@@ -1866,8 +1866,9 @@ const historyData = async (req, res, next) => {
       .format("LLL");
     data1["variation"] = "Special Exam";
     data1["examType"] = "no";
-    data1["totalObtainedMarks"] =
-      (data[i].totalMarksMcq + data[i].totalMarksWritten).toFixed(2);
+    data1["totalObtainedMarks"] = (
+      data[i].totalMarksMcq + data[i].totalMarksWritten
+    ).toFixed(2);
     data1["totalMarksMcqExam"] = data[i].totalMarksMcq;
     data1["totalMarksWrittenExam"] = data[i].totalMarksWritten;
     data1["totalMarksMcq"] =
