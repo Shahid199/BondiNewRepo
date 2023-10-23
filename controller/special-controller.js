@@ -1187,9 +1187,10 @@ const specialGetHistory = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  // console.log(paginateData);
-  // console.log(start);
-  // console.log(end);
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
+  console.log(data.length);
   let data2 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
