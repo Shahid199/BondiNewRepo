@@ -3342,7 +3342,7 @@ const getRecheckStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   ////console.log(students);
-  if (students.studentId.length == 0)
+  if (!students)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   ////console.log("studentData.length:", studentData.length);
