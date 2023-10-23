@@ -1172,7 +1172,7 @@ const specialGetHistory = async (req, res, next) => {
     data.push(data1);
   }
   examDetails = studentIds[0].examId;
-  let paginateData = pagination(studentIds.length, page);
+  //let paginateData = pagination(studentIds.length, page);
 
   let examInfo = {
     id: String(examDetails._id),
@@ -1182,6 +1182,22 @@ const specialGetHistory = async (req, res, next) => {
     endTime: moment(examDetails.examEndTime).format("LLL"),
     totalMarks: examDetails.totalMarksMcq + examDetails.totalMarksWritten,
   };
+  let count1 = data.length;
+  let paginateData = pagination(count1, page);
+  let start, end;
+  start = (page - 1) * paginateData.perPage;
+  end = page * paginateData.perPage;
+  console.log(paginateData);
+  console.log(start);
+  console.log(end);
+  let data1 = [];
+  if (count > 0) {
+    for (let i = start; i < end; i++) {
+      if (i == data.length) break;
+      data1.push(data[i]);
+    }
+  }
+  data = data1;
   return res.status(200).json({ data, examInfo, paginateData });
 };
 const specialGetHistory2 = async (req, res, next) => {
