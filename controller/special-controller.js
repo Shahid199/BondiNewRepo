@@ -1887,7 +1887,7 @@ const historyData = async (req, res, next) => {
     for (let j = 0; j < 4; j++) {
       subObj.push(data[i].questionMcq[j].subjectId.name);
     }
-    data1["subjectName"] = subObj.join(" ");
+    data1["subjectName"] = subObj.join("+ ");
     resultData.push(data1);
   }
 
