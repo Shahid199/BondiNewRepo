@@ -60,7 +60,7 @@ const addStudentToCourse1 = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("err");
     }
-    //console.log(existData);
+    ////console.log(existData);
     if (existData != null) {
       existStudent.push(regNo);
       continue;
@@ -96,10 +96,10 @@ const addStudentToCourse = async (req, res, next) => {
   let excelFilePath = null;
   excelFilePath = "uploads/".concat(file.filename);
   const data1 = await fsp.readFile(excelFilePath, "utf8");
-  // console.log(data1);
+  // //console.log(data1);
   const linesExceptFirst = data1.split(",");
   const linesArr = linesExceptFirst;
-  //console.log(linesArr);
+  ////console.log(linesArr);
   // return res.status(200).json("ok");
   //end file work
   let students = [];
@@ -115,36 +115,36 @@ const addStudentToCourse = async (req, res, next) => {
   } catch (err) {
     return res.statu(500).json("Something went wrong.");
   }
-  //console.log(studentIds);
+  ////console.log(studentIds);
   let sIds = [];
   //studentIds = [... studentIdsa["studentId"]];
   for (let i = 0; i < studentIds.length; i++) {
     sIds.push(String(studentIds[i].studentId));
   }
-  //console.log(sIds);
+  ////console.log(sIds);
 
   //let studentIdsMap = studentIds.map((e) => String(e));
 
-  //console.log(studentIds);
-  //console.log(studentIdsMap);
+  ////console.log(studentIds);
+  ////console.log(studentIdsMap);
   // for(let i =0;i<linesArr;i++){
 
   // }
-  //console.log(linesArr);
+  ////console.log(linesArr);
   for (let i = 0; i < linesArr.length; i++) {
     let regNo;
-    //console.log(i);
+    ////console.log(i);
     regNo = String(linesArr[i].replace(/[\r"]/g, ""));
-    //console.log(regNo);
+    ////console.log(regNo);
     regNo = regNo.trim();
     if (i == 0) regNo = regNo.substring(1);
     if (i == linesArr.length - 1) regNo = regNo.substring(0, regNo.length - 1);
-    //console.log(regNo);
+    ////console.log(regNo);
     if (regNo == "undefined") {
       continue;
     }
     if (sIds.includes(regNo)) {
-      //console.log("k");
+      ////console.log("k");
       continue;
     }
     const users = {};
@@ -189,7 +189,7 @@ const getStudentByCourse = async (req, res, next) => {
       .skip(paginateData.skippedIndex)
       .limit(paginateData.perPage);
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (data != null) return res.status(200).json({ data, paginateData });
@@ -206,7 +206,7 @@ const getCourseByStudent = async (req, res, next) => {
       "courseId"
     );
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
 
@@ -220,7 +220,7 @@ const getCourseByReg = async (req, res, next) => {
   try {
     studentId = await Student.findOne({ regNo: regNo }).select("_id");
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (studentId) {

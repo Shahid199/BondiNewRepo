@@ -28,8 +28,8 @@ const getHomePage = async (req, res, next) => {
   //Top
   if (section == "top") {
     let currentTime = moment(new Date()).add(6, "h");
-    //console.log(currentTime);
-    //console.log(courseId);
+    ////console.log(currentTime);
+    ////console.log(courseId);
     try {
       coming1 = await Exam.find(
         {
@@ -46,7 +46,7 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
-    //console.log(coming1);
+    ////console.log(coming1);
     try {
       coming2 = await BothExam.find(
         {
@@ -75,12 +75,12 @@ const getHomePage = async (req, res, next) => {
     )
       .sort("startTime")
       .limit(2);
-    // console.log(coming1);
-    // console.log(coming2);
-    // console.log(coming3);
+    // //console.log(coming1);
+    // //console.log(coming2);
+    // //console.log(coming3);
     comingAll = coming1.concat(coming2);
     comingAll = comingAll.concat(coming3);
-    //console.log(comingAll);
+    ////console.log(comingAll);
     try {
       running1 = await Exam.find(
         {
@@ -116,7 +116,7 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
-    //   //console.log(running);
+    //   ////console.log(running);
 
     try {
       running3 = await SpecialExam.find(
@@ -140,13 +140,13 @@ const getHomePage = async (req, res, next) => {
 
     runningAll = runningAll.sort((a, b) => a.startTime - b.startTime);
     comingAll = comingAll.sort((a, b) => a.startTime - b.startTime);
-    // console.log("running");
-    // console.log(running1);
-    // console.log(running2);
-    // console.log(running3);
-    // console.log(runningAll);
-    // console.log(comingAll.length);
-    // console.log(comingAll);
+    // //console.log("running");
+    // //console.log(running1);
+    // //console.log(running2);
+    // //console.log(running3);
+    // //console.log(runningAll);
+    // //console.log(comingAll.length);
+    // //console.log(comingAll);
     let running = [];
     for (let i = 0; i < runningAll.length; i++) {
       running[i] = runningAll[i];
@@ -166,10 +166,10 @@ const getHomePage = async (req, res, next) => {
       courseId = await Course.findById(courseId).select("_id");
       studentId = await Student.findById(studentId).select("_id");
     } catch (err) {
-      //console.log(err);
+      ////console.log(err);
       return res.status(500).json("Something went wrong!");
     }
-    //console.log(courseId);
+    ////console.log(courseId);
     if (courseId == null || studentId == null)
       return res.status(404).json({ message: "course or student not found." });
     try {
@@ -178,10 +178,10 @@ const getHomePage = async (req, res, next) => {
         "_id name iLink descr"
       );
     } catch (err) {
-      //console.log(err);
+      ////console.log(err);
       return res.status(500).json("Something went wrong!");
     }
-    //console.log(subjectDataDaily);
+    ////console.log(subjectDataDaily);
     subjectDataMonthly = subjectDataDaily;
     subjectDataweekly = subjectDataDaily;
     homeDataBottom["daily"] = subjectDataDaily;

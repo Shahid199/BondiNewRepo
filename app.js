@@ -93,6 +93,6 @@ mongoose
     }
 
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
-    console.log(studentIds);
+    //console.log(studentIds);
   })
   .catch((err) => console.log(err));

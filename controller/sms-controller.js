@@ -45,7 +45,7 @@ const tempUpdate = async (req, res, next) => {
 const tempStatusChange = async (req, res, next) => {
   let smsId = req.body.smsId;
   let status = JSON.parse(req.body.status);
-  console.log(status);
+  //console.log(status);
   if (!ObjectId.isValid(smsId))
     return res.status(404).json("smsId is not valid.");
   smsId = new mongoose.Types.ObjectId(smsId);
@@ -126,7 +126,7 @@ const smsSendSingle = async (req, res, next) => {
           rank: 1,
         });
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(500).json("2.Something went wrong.");
     }
     if (allData.length <= 0)

@@ -91,7 +91,7 @@ const createBothExam = async (req, res, next) => {
   try {
     doc = await saveExam.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(doc);
@@ -129,8 +129,8 @@ const updateBothExam = async (req, res, next) => {
   }
   let startTime1 = startTime;
   let endTime1 = endTime;
-  console.log(startTime1);
-  console.log(endTime1);
+  //console.log(startTime1);
+  //console.log(endTime1);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let saveExamUpd = {
     courseId: new mongoose.Types.ObjectId(courseId),
@@ -197,7 +197,7 @@ const getBothExamBySubject = async (req, res, next) => {
   exams1 = await BothExam.find({
     $and: [{ status: true }, { subjectId: subjectId }],
   });
-  console.log(exams1);
+  //console.log(exams1);
   let exams = [];
   for (let i = 0; i < exams1.length; i++) {
     let dataRule = null;
@@ -247,7 +247,7 @@ const getBothExamById = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(examData);
+  //console.log(examData);
   return res.status(200).json(examData);
 };
 const bothQuestionByExamId = async (req, res, next) => {
@@ -311,7 +311,7 @@ const bothExamRuleSet = async (req, res, next) => {
     return res.status(404).jsoon("Exam rule file not uploaded.");
   }
   ruleILinkPath = "uploads/".concat(file.filename);
-  //console.log(ruleILinkPath);
+  ////console.log(ruleILinkPath);
   const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id is not valid.");
@@ -427,7 +427,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
   try {
     doc = await questions.save();
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json(err);
   }
   //end of insert question
@@ -480,7 +480,7 @@ const bothAddQuestionMcqBulk = async (req, res, next) => {
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
     else continue;
   }
-  //console.log(finalIds);
+  ////console.log(finalIds);
   if (finalIds.length == 0)
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
@@ -505,7 +505,7 @@ const bothAddQuestionMcqBulk = async (req, res, next) => {
     }
     return res.status(201).json("Success.");
   }
-  //console.log(mIdArray);
+  ////console.log(mIdArray);
   mIdArray = mIdArray.mId;
   let finalIdsString = [];
   finalIdsString = finalIds.map((e) => String(e));
@@ -515,7 +515,7 @@ const bothAddQuestionMcqBulk = async (req, res, next) => {
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
-  //console.log(withoutDuplicate);
+  ////console.log(withoutDuplicate);
   try {
     sav = await BothMcqQuestionVsExam.updateOne(
       { eId: examId },
@@ -566,13 +566,13 @@ const bothAddQuestionWritten = async (req, res, next) => {
   //   marksPerQuestion[i] = parseInt(marksPerQuestion[i]);
   // }
   marksPerQuestion = marksPerQuestion.split(",");
-  //console.log(marksPerQuestion);
+  ////console.log(marksPerQuestion);
   const totalMarks = req.body.totalMarks;
   //file upload handle
   const file = req.files;
-  //console.log(file);
+  ////console.log(file);
   let questionILinkPath = null;
-  // console.log(file.questionILink[0].filename);
+  // //console.log(file.questionILink[0].filename);
   // return res.status(201).json("Ok");
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
@@ -590,7 +590,7 @@ const bothAddQuestionWritten = async (req, res, next) => {
   try {
     doc = await question.save();
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("2.Something went wrong!");
   }
 

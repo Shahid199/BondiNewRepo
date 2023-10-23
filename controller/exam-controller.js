@@ -88,7 +88,7 @@ const createExam = async (req, res, next) => {
   try {
     doc = await saveExam.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(doc);
@@ -125,7 +125,7 @@ const getAllExam = async (req, res, next) => {
         .skip(paginateData.skippedIndex)
         .limit(paginateData.perPage);
     } catch (err) {
-      //console.log(err);
+      ////console.log(err);
       return res.status(500).json("Something went wrong!");
     }
   } else {
@@ -191,9 +191,9 @@ const updateExam = async (req, res, next) => {
       .status(404)
       .json("exam Id or course Id or subject Id is not valid.");
   }
-  console.log("CT", moment(new Date()));
-  console.log("ST", moment(new Date(startTime)));
-  console.log("ET", moment(new Date(endTime)));
+  //console.log("CT", moment(new Date()));
+  //console.log("ST", moment(new Date(startTime)));
+  //console.log("ET", moment(new Date(endTime)));
 
   let saveExamUpd = {
     courseId: new mongoose.Types.ObjectId(courseId),
@@ -691,7 +691,7 @@ const getExamBySubject = async (req, res, next) => {
   let subjectId = req.query.subjectId;
   let variation = req.query.variation;
   let type = req.query.type || null;
-  //console.log(subjectId);
+  ////console.log(subjectId);
   //let studentId = req.user.studentId;
   if (!ObjectId.isValid(subjectId) || !variation || !type)
     return res.status(404).json("subject Id is not valid.");
@@ -975,7 +975,7 @@ const addQuestionMcq = async (req, res, next) => {
   try {
     doc = await questions.save();
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json(err);
   }
   //end of insert question
@@ -1028,7 +1028,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
     else continue;
   }
-  //console.log(finalIds);
+  ////console.log(finalIds);
   if (finalIds.length == 0)
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
@@ -1053,7 +1053,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
     }
     return res.status(201).json("Success.");
   }
-  //console.log(mIdArray);
+  ////console.log(mIdArray);
   mIdArray = mIdArray.mId;
   let finalIdsString = [];
   finalIdsString = finalIds.map((e) => String(e));
@@ -1063,7 +1063,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
-  //console.log(withoutDuplicate);
+  ////console.log(withoutDuplicate);
   try {
     sav = await McqQuestionVsExam.updateOne(
       { eId: examId },
@@ -1084,7 +1084,7 @@ const examRuleSet = async (req, res, next) => {
     return res.status(404).jsoon("Exam rule file not uploaded.");
   }
   ruleILinkPath = "uploads/".concat(file.filename);
-  //console.log(ruleILinkPath);
+  ////console.log(ruleILinkPath);
   const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id is not valid.");
@@ -1177,13 +1177,13 @@ const addQuestionWritten = async (req, res, next) => {
   //   marksPerQuestion[i] = parseInt(marksPerQuestion[i]);
   // }
   marksPerQuestion = marksPerQuestion.split(",");
-  //console.log(marksPerQuestion);
+  ////console.log(marksPerQuestion);
   const totalMarks = req.body.totalMarks;
   //file upload handle
   const file = req.files;
-  //console.log(file);
+  ////console.log(file);
   let questionILinkPath = null;
-  // console.log(file.questionILink[0].filename);
+  // //console.log(file.questionILink[0].filename);
   // return res.status(201).json("Ok");
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
@@ -1201,7 +1201,7 @@ const addQuestionWritten = async (req, res, next) => {
   try {
     doc = await question.save();
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("2.Something went wrong!");
   }
   return res.status(200).json("Question save correctly.");
@@ -1213,7 +1213,7 @@ const removeQuestionWritten = async (req, res, next) => {
   examId = new mongoose.Types.ObjectId(examId);
   // let currentTime = new Date(moment(new Date()).add(6, "hours")).toISOString();
   // let examTime = null;
-  // console.log(currentTime);
+  // //console.log(currentTime);
   // try {
   //   examTime = await Exam.findOne({
   //     $and: [{ examId: examId }, { startTime: { $gt: currentTime } }],
@@ -1221,7 +1221,7 @@ const removeQuestionWritten = async (req, res, next) => {
   // } catch (err) {
   //   return res.status(500).json("SOmething went wrong.");
   // }
-  // console.log(examTime);
+  // //console.log(examTime);
   // if (!examTime)
   //   return res.status(404).json("Cannot remove question.Exam Already started.");
   let remove = null;
@@ -1250,9 +1250,9 @@ const assignStudentToTeacher = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
-  console.log(req.body);
-  console.log(examId);
-  console.log(examId);
+  //console.log(req.body);
+  //console.log(examId);
+  //console.log(examId);
   if (!ObjectId.isValid(examId) || teacherId.length == 0)
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
@@ -1264,8 +1264,8 @@ const assignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Somethhing went wrong.");
   }
-  console.log(assignedTeacher.length);
-  console.log("aaa:", assignedTeacher);
+  //console.log(assignedTeacher.length);
+  //console.log("aaa:", assignedTeacher);
   if (assignedTeacher.length > 0) {
     let del = null;
     try {
@@ -1274,7 +1274,7 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
-  console.log("teache", teacherId.length);
+  //console.log("teache", teacherId.length);
   let count = 0;
   try {
     count = await StudentExamVsQuestionsWritten.find({
@@ -1294,20 +1294,20 @@ const assignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   let studData = [];
   for (let i = 0; i < students.length; i++) {
     studData[i] = students[i].studentId;
   }
-  console.log(studData);
+  //console.log(studData);
   students = studData;
-  console.log(students);
+  //console.log(students);
 
   let range = parseInt(students.length / teacherId.length);
   let start = 0;
   let end = range;
-  console.log(start);
-  console.log(end);
+  //console.log(start);
+  //console.log(end);
   let teacherStudentArr = [];
   for (let i = 0; i < teacherId.length; i++) {
     if (i == 0) {
@@ -1327,11 +1327,11 @@ const assignStudentToTeacher = async (req, res, next) => {
     for (let j = start; j < end; j++) {
       std.push(students[j]);
     }
-    console.log(std);
+    //console.log(std);
     teacherStudent["studentId"] = std;
     teacherStudentArr.push(teacherStudent);
-    console.log("s", start);
-    console.log("e", end);
+    //console.log("s", start);
+    //console.log("e", end);
   }
   let doc = null;
   try {
@@ -1347,9 +1347,9 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
-  console.log(req.body);
-  console.log(examId);
-  console.log(examId);
+  //console.log(req.body);
+  //console.log(examId);
+  //console.log(examId);
   if (!ObjectId.isValid(examId) || teacherId.length == 0)
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
@@ -1361,8 +1361,8 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Somethhing went wrong.");
   }
-  console.log(assignedTeacher.length);
-  console.log("aaa:", assignedTeacher);
+  //console.log(assignedTeacher.length);
+  //console.log("aaa:", assignedTeacher);
   if (assignedTeacher.length > 0) {
     let del = null;
     try {
@@ -1371,7 +1371,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
-  console.log("teache", teacherId.length);
+  //console.log("teache", teacherId.length);
   let count = 0;
   try {
     count = await BothStudentExamVsQuestions.find({
@@ -1391,20 +1391,20 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   let studData = [];
   for (let i = 0; i < students.length; i++) {
     studData[i] = students[i].studentId;
   }
-  console.log(studData);
+  //console.log(studData);
   students = studData;
-  console.log(students);
+  //console.log(students);
 
   let range = parseInt(students.length / teacherId.length);
   let start = 0;
   let end = range;
-  console.log(start);
-  console.log(end);
+  //console.log(start);
+  //console.log(end);
   let teacherStudentArr = [];
   for (let i = 0; i < teacherId.length; i++) {
     if (i == 0) {
@@ -1424,11 +1424,11 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
     for (let j = start; j < end; j++) {
       std.push(students[j]);
     }
-    console.log(std);
+    //console.log(std);
     teacherStudent["studentId"] = std;
     teacherStudentArr.push(teacherStudent);
-    console.log("s", start);
-    console.log("e", end);
+    //console.log("s", start);
+    //console.log("e", end);
   }
   let doc = null;
   try {
@@ -1445,9 +1445,9 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
 const assignTeacher = async (req, res, next) => {
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
-  console.log(req.body);
-  console.log(examId);
-  console.log(examId);
+  //console.log(req.body);
+  //console.log(examId);
+  //console.log(examId);
   if (!ObjectId.isValid(examId) || teacherId.length == 0)
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);

@@ -20,18 +20,18 @@ const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
-  console.log(req.user);
+  //console.log(req.user);
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
-  console.log(teacherId);
-  console.log(examId);
+  //console.log(teacherId);
+  //console.log(examId);
   let students = [];
   let questionData = null;
   try {
     questionData = await QuestionsWritten.findOne({ examId: examId });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   try {
@@ -39,19 +39,19 @@ const getStudentData = async (req, res, next) => {
       $and: [{ teacherId: teacherId }, { examId: examId }],
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  console.log(studentData);
+  //console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  console.log(studId);
+  //console.log(studId);
   let checkStatus = null;
   try {
     checkStatus = await StudentExamVsQuestionsWritten.find(
@@ -65,10 +65,10 @@ const getStudentData = async (req, res, next) => {
       "studentId checkStatus -_id"
     ).populate("studentId examId");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("check status", checkStatus);
+  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
@@ -89,9 +89,9 @@ const getStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  console.log(paginateData);
-  console.log(start);
-  console.log(end);
+  //console.log(paginateData);
+  //console.log(start);
+  //console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
@@ -104,18 +104,18 @@ const getStudentData = async (req, res, next) => {
 const getRecheckStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
-  console.log(req.user);
+  //console.log(req.user);
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
-  console.log(teacherId);
-  console.log(examId);
+  //console.log(teacherId);
+  //console.log(examId);
   let students = [];
   let questionData = null;
   try {
     questionData = await QuestionsWritten.findOne({ examId: examId });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   try {
@@ -123,19 +123,19 @@ const getRecheckStudentData = async (req, res, next) => {
       $and: [{ teacherId: teacherId }, { examId: examId }],
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  console.log(studentData);
+  //console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  console.log(studId);
+  //console.log(studId);
   let checkStatus = null;
   try {
     checkStatus = await StudentExamVsQuestionsWritten.find(
@@ -149,10 +149,10 @@ const getRecheckStudentData = async (req, res, next) => {
       "studentId checkStatus -_id"
     ).populate("studentId examId");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("check status", checkStatus);
+  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
@@ -173,9 +173,9 @@ const getRecheckStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  console.log(paginateData);
-  console.log(start);
-  console.log(end);
+  //console.log(paginateData);
+  //console.log(start);
+  //console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
@@ -191,9 +191,9 @@ const checkScriptSingle = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
   let images = req.body.uploadImages;
-  console.log(req.body.obtainedMarks);
-  console.log(obtainedMarks);
-  console.log(req.body.uploadImages);
+  //console.log(req.body.obtainedMarks);
+  //console.log(obtainedMarks);
+  //console.log(req.body.uploadImages);
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
@@ -235,7 +235,7 @@ const checkScriptSingle = async (req, res, next) => {
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       return res.status(500).json(e);
     }
     uploadImages[i] = "uploads/answers/" + fileNameDis;
@@ -264,7 +264,7 @@ const checkScriptSingle = async (req, res, next) => {
   try {
     doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json("Updated Successfully.");
@@ -296,7 +296,7 @@ const checkStatusUpdate = async (req, res, next) => {
   try {
     doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json("Status Change Successfully.");
@@ -304,7 +304,7 @@ const checkStatusUpdate = async (req, res, next) => {
 const marksCalculation = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
-  console.log(req.body);
+  //console.log(req.body);
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
     return res
       .status(404)
@@ -312,7 +312,7 @@ const marksCalculation = async (req, res, next) => {
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  console.log(studentIdObj);
+  //console.log(studentIdObj);
   let getData;
   try {
     getData = await StudentExamVsQuestionsWritten.findOne({
@@ -326,13 +326,13 @@ const marksCalculation = async (req, res, next) => {
   }
   let totalMarks = 0;
   let marks = getData.obtainedMarks;
-  // console.log(getData);
-  // console.log(marks);
-  // console.log(marks);
+  // //console.log(getData);
+  // //console.log(marks);
+  // //console.log(marks);
   marks.forEach((value) => {
     totalMarks = totalMarks + value;
   });
-  // console.log(totalMarks);
+  // //console.log(totalMarks);
   let insertId = getData._id;
   let upd = {
     totalObtainedMarks: totalMarks,
@@ -341,7 +341,7 @@ const marksCalculation = async (req, res, next) => {
   try {
     doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   // try {
@@ -349,10 +349,10 @@ const marksCalculation = async (req, res, next) => {
   //     $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
   //   });
   // } catch (err) {
-  //   //console.log(err);
+  //   ////console.log(err);
   //   return res.status(500).json("Something went wrong!");
   // }
-  // console.log(getData);
+  // //console.log(getData);
   return res.status(201).json("Status Change Successfully.");
 };
 const getCheckStatus = async (req, res, next) => {
@@ -392,7 +392,7 @@ const getWrittenScriptSingle = async (req, res, next) => {
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   // if (getData.checkStatus != true)
@@ -418,7 +418,7 @@ const getWrittenScriptSingle = async (req, res, next) => {
   data["totalQuestions"] = getQuestion.totalQuestions;
   data["marksPerQuestion"] = getQuestion.marksPerQuestion;
   data["totalMarks"] = getQuestion.totalMarks;
-  console.log(getQuestion);
+  //console.log(getQuestion);
   return res.status(200).json(data);
 };
 const updateRank = async (req, res, next) => {
@@ -430,7 +430,7 @@ const updateRank = async (req, res, next) => {
   try {
     delData = await McqRank.find({ examId: examIdObj });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("1.Something went wrong.");
   }
   if (delData.length > 0) {
@@ -451,7 +451,7 @@ const updateRank = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  //console.log("ranks:", ranks);
+  ////console.log("ranks:", ranks);
   let dataLength = ranks.length;
   let dataIns = [];
   for (let i = 0; i < dataLength; i++) {
@@ -462,7 +462,7 @@ const updateRank = async (req, res, next) => {
     dataFree["rank"] = i + 1;
     dataIns.push(dataFree);
   }
-  //console.log("dataIns:", dataIns);
+  ////console.log("dataIns:", dataIns);
   let sav = null;
   try {
     sav = await McqRank.insertMany(dataIns, { ordered: false });
@@ -487,7 +487,7 @@ const getRank = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
-  //console.log(resultRank.rank);
+  ////console.log(resultRank.rank);
   resultRank = Number(resultRank.rank);
   let data1 = {},
     getResult = null;
@@ -548,7 +548,7 @@ const getAllRank = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
-  //console.log(resultRank);
+  ////console.log(resultRank);
   //eturn res.status(200).json(resultRank);
   let allData = [];
   let totalStudent = null;
@@ -575,18 +575,18 @@ const getAllRank = async (req, res, next) => {
 const bothGetStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
-  console.log(req.user);
+  //console.log(req.user);
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
-  console.log(teacherId);
-  console.log(examId);
+  //console.log(teacherId);
+  //console.log(examId);
   let students = [];
   let questionData = null;
   try {
     questionData = await BothQuestionsWritten.findOne({ examId: examId });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   try {
@@ -594,19 +594,19 @@ const bothGetStudentData = async (req, res, next) => {
       $and: [{ teacherId: teacherId }, { examId: examId }],
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  console.log(studentData);
+  //console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  console.log(studId);
+  //console.log(studId);
   let checkStatus = null;
   try {
     checkStatus = await BothStudentExamVsQuestions.find(
@@ -620,10 +620,10 @@ const bothGetStudentData = async (req, res, next) => {
       "studentId checkStatus -_id"
     ).populate("studentId examId");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("check status", checkStatus);
+  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
@@ -644,9 +644,9 @@ const bothGetStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  console.log(paginateData);
-  console.log(start);
-  console.log(end);
+  //console.log(paginateData);
+  //console.log(start);
+  //console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
@@ -659,18 +659,18 @@ const bothGetStudentData = async (req, res, next) => {
 const bothGetRecheckStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
-  console.log(req.user);
+  //console.log(req.user);
   let examId = req.query.examId;
   examId = new mongoose.Types.ObjectId(examId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
-  console.log(teacherId);
-  console.log(examId);
+  //console.log(teacherId);
+  //console.log(examId);
   let students = [];
   let questionData = null;
   try {
     questionData = await BothQuestionsWritten.findOne({ examId: examId });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   try {
@@ -678,19 +678,19 @@ const bothGetRecheckStudentData = async (req, res, next) => {
       $and: [{ teacherId: teacherId }, { examId: examId }],
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log(students);
+  //console.log(students);
   if (students.studentId.length == 0)
     return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  console.log(studentData);
+  //console.log(studentData);
   let studId = [];
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  console.log(studId);
+  //console.log(studId);
   let checkStatus = null;
   try {
     checkStatus = await BothStudentExamVsQuestions.find(
@@ -704,10 +704,10 @@ const bothGetRecheckStudentData = async (req, res, next) => {
       "studentId checkStatus -_id"
     ).populate("studentId examId");
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  console.log("check status", checkStatus);
+  //console.log("check status", checkStatus);
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let dataObj = {};
@@ -728,9 +728,9 @@ const bothGetRecheckStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  console.log(paginateData);
-  console.log(start);
-  console.log(end);
+  //console.log(paginateData);
+  //console.log(start);
+  //console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
@@ -746,9 +746,9 @@ const bothCheckScriptSingle = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
   let images = req.body.uploadImages;
-  console.log(req.body.obtainedMarks);
-  console.log(obtainedMarks);
-  console.log(req.body.uploadImages);
+  //console.log(req.body.obtainedMarks);
+  //console.log(obtainedMarks);
+  //console.log(req.body.uploadImages);
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
@@ -790,7 +790,7 @@ const bothCheckScriptSingle = async (req, res, next) => {
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       return res.status(500).json(e);
     }
     uploadImages[i] = "uploads/answers/" + fileNameDis;
@@ -819,7 +819,7 @@ const bothCheckScriptSingle = async (req, res, next) => {
   try {
     doc = await BothStudentExamVsQuestions.findByIdAndUpdate(insertId, upd);
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json("Updated Successfully.");
@@ -827,7 +827,7 @@ const bothCheckScriptSingle = async (req, res, next) => {
 const bothMarksCalculation = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
-  console.log(req.body);
+  //console.log(req.body);
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId)) {
     return res
       .status(404)
@@ -835,7 +835,7 @@ const bothMarksCalculation = async (req, res, next) => {
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
-  console.log(studentIdObj);
+  //console.log(studentIdObj);
   let getData;
   try {
     getData = await BothStudentExamVsQuestions.findOne({
@@ -849,15 +849,15 @@ const bothMarksCalculation = async (req, res, next) => {
   }
   let totalMarks = 0;
   let marks = getData.obtainedMarks;
-  // console.log(getData);
-  // console.log(marks);
-  // console.log(marks);
+  // //console.log(getData);
+  // //console.log(marks);
+  // //console.log(marks);
   marks.forEach((value) => {
     totalMarks = totalMarks + value;
   });
   let totalObtainedMarksWritten = totalMarks;
   totalMarks = totalMarks + getData.totalObtainedMarksMcq;
-  // console.log(totalMarks);
+  // //console.log(totalMarks);
   let insertId = getData._id;
   let upd = {
     totalObtainedMarks: totalMarks,
@@ -868,7 +868,7 @@ const bothMarksCalculation = async (req, res, next) => {
   try {
     doc = await BothStudentExamVsQuestions.findByIdAndUpdate(insertId, upd);
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
 
@@ -916,7 +916,7 @@ const bothUpdateRank = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  //console.log("ranks:", ranks);
+  ////console.log("ranks:", ranks);
   let dataLength = ranks.length;
   let dataIns = [];
   for (let i = 0; i < dataLength; i++) {
@@ -927,7 +927,7 @@ const bothUpdateRank = async (req, res, next) => {
     dataFree["rank"] = i + 1;
     dataIns.push(dataFree);
   }
-  //console.log("dataIns:", dataIns);
+  ////console.log("dataIns:", dataIns);
   let sav = null;
   try {
     sav = await BothRank.insertMany(dataIns, { ordered: false });
@@ -949,7 +949,7 @@ const bothGetAllRank = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
-  //console.log(resultRank);
+  ////console.log(resultRank);
   //eturn res.status(200).json(resultRank);
   let allData = [];
   let totalStudent = null;
@@ -987,7 +987,7 @@ const bothGetWrittenScriptSingle = async (req, res, next) => {
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   // if (getData.checkStatus != true)
@@ -1013,7 +1013,7 @@ const bothGetWrittenScriptSingle = async (req, res, next) => {
   data["totalQuestions"] = getQuestion.totalQuestions;
   data["marksPerQuestion"] = getQuestion.marksPerQuestion;
   data["totalMarks"] = getQuestion.totalMarks;
-  console.log(getQuestion);
+  //console.log(getQuestion);
   return res.status(200).json(data);
 };
 exports.bothGetRecheckStudentData = bothGetRecheckStudentData;

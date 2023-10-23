@@ -16,7 +16,7 @@ const createCourse = async (req, res, next) => {
   try {
     existingCourse = await Course.findOne({ name: name });
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   if (existingCourse) {
@@ -31,7 +31,7 @@ const createCourse = async (req, res, next) => {
   try {
     const doc = await course.save();
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json(course);
@@ -128,7 +128,7 @@ const updateStatusCourse = async (req, res, next) => {
   const courseId = req.body.courseId;
   if (!ObjectId.isValid(courseId))
     return res.status(404).json("courseId is invalid.");
-  //console.log(courseId);
+  ////console.log(courseId);
   let status = req.body.status;
   let status1 = JSON.parse(status);
   const courseIdObj = new mongoose.Types.ObjectId(courseId);
@@ -179,7 +179,7 @@ const getAllCourseAdmin = async (req, res, next) => {
 const updateSingle = async (req, res, next) => {
   const id = req.query.id;
   const singleCourse = req.body;
-  //console.log(singleCourse);
+  ////console.log(singleCourse);
   const filter = { _id: new ObjectId(id) };
   const result = await Course.findByIdAndUpdate(filter, singleCourse);
   return res.status(200).json(result);
@@ -204,7 +204,7 @@ const deactivateCourse = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
   }
-  //console.log(result2);
+  ////console.log(result2);
   return res.status(200).json(result);
 };
 
@@ -228,7 +228,7 @@ const deactivateStudent = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  //console.log(result2);
+  ////console.log(result2);
   return res.status(200).json(result);
 };
 exports.createCourse = createCourse;
