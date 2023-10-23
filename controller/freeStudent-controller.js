@@ -1207,10 +1207,10 @@ const submitAnswerFree = async (req, res, next) => {
   findId = String(findId[0]._id);
   let saveStudentExamEnd;
   let du = examEndTime - moment(dataTimeStart).subtract(6, "h") / 60000;
-  //console.log(
-    "du",
-    examEndTime - moment(dataTimeStart).subtract(6, "h") / 60000
-  );
+  // //console.log(
+  //   "du",
+  //   examEndTime - moment(dataTimeStart).subtract(6, "h") / 60000
+  // );
   //console.log("du", examEndTime);
   //console.log("du", dataTimeStart);
   let update = {

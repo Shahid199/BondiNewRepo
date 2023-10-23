@@ -3269,10 +3269,10 @@ const getStudentData = async (req, res, next) => {
     }
     if (indexValue == null || questionData.subStatus == true) continue;
     //console.log(i);
-    //console.log(
-      "check status",
-      checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
-    );
+    // //console.log(
+    //   "check status",
+    //   checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
+    // );
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
@@ -3373,10 +3373,10 @@ const getRecheckStudentData = async (req, res, next) => {
       }
     }
   }
-  for (let i = 0; i < checkStatus1.length; i++) {
-    if (checkStatus1[i].questionWritten.length == 0)
-      //console.log(i, checkStatus1[i]);
-  }
+  // for (let i = 0; i < checkStatus1.length; i++) {
+  //   if (checkStatus1[i].questionWritten.length == 0)
+  //     //console.log(i, checkStatus1[i]);
+  // }
   ////console.log("checkStatus1:", checkStatus1);
   checkStatus = checkStatus1;
   ////console.log("C S L:", checkStatus1.length);
