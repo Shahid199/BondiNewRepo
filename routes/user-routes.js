@@ -14,6 +14,7 @@ const {
   logoutStudent,
   getTeacher,
   teacherListByCourse,
+  getUserByCourse,
 } = require("../controller/user-controller");
 const authorize = require("../utilities/authorizationMiddleware");
 const router = express.Router();
@@ -78,12 +79,20 @@ router.get(
   getTeacher
 );
 router.get(
-  "/getuserbycourse",
+  "/teacherlistbycourse",
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator"]),
   ],
   teacherListByCourse
+);
+router.get(
+  "/getuserbycourse",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  getUserByCourse
 );
 
 module.exports = router;

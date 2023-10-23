@@ -38,27 +38,27 @@ const getUserByRole = async (req, res, next) => {
   }
   return res.status(200).json({ user, paginaeData });
 };
-// const getUserByCourse = async (req, res, next) => {
-//   const role = Number(req.query.role);
-//   let courseId = req.query.courseId;
-//   if (role == null || !ObjectId.isValid(courseId))
-//     return res.status(404).json("Role not found.");
-//   courseId = new mongoose.Types.ObjectId(courseId);
-//   //console.log(role);
-//   let user;
-//   try {
-//     user = await User.find(
-//       { role: role, status: true, courseId: courseId },
-//       "-password"
-//     ).populate("courseId subjectId");
-//   } catch (err) {
-//     return res.status(404).json("Something went wrong.");
-//   }
-//   if (!user) {
-//     return res.status(404).json({ message: "user Not Found" });
-//   }
-//   return res.status(200).json({ user });
-// };
+const getUserByCourse = async (req, res, next) => {
+  const role = Number(req.query.role);
+  let courseId = req.query.courseId;
+  if (role == null || !ObjectId.isValid(courseId))
+    return res.status(404).json("Role not found.");
+  courseId = new mongoose.Types.ObjectId(courseId);
+  //console.log(role);
+  let user;
+  try {
+    user = await User.find(
+      { role: role, status: true, courseId: courseId },
+      "-password"
+    ).populate("courseId subjectId");
+  } catch (err) {
+    return res.status(404).json("Something went wrong.");
+  }
+  if (!user) {
+    return res.status(404).json({ message: "user Not Found" });
+  }
+  return res.status(200).json({ user });
+};
 const getTeacher = async (req, res, next) => {
   let teacher;
   try {
@@ -343,7 +343,7 @@ exports.createSuperAdmin = async (req, res) => {
   return res.status(201).json("OK");
 };
 
-//exports.getUserByCourse = getUserByCourse;
+exports.getUserByCourse = getUserByCourse;
 exports.createOfficeUser = createOfficeUser;
 exports.getUserByRole = getUserByRole;
 exports.getUserRole = getUserRole;
