@@ -3141,9 +3141,13 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
     console.log("teachersFirst:", teachers);
-    teachers = teachers.map((e) => String(e));
+    let teach = [];
+    for (let i = 0; i < teachers.length; i++) {
+      teach[i] = String(teachers[i]._id);
+    }
+    teachers = teach;
     console.log("teachers:", teachers);
-    let intersection = teacherId.filter((x) => teachers._id.includes(x));
+    let intersection = teacherId.filter((x) => teachers.includes(x));
     teachers = intersection;
     console.log("teachersNext:", teachers);
     let range = parseInt(studentNo / teachers.length);
