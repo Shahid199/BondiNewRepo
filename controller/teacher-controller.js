@@ -596,8 +596,7 @@ const bothGetStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   //console.log(students);
-  if (students.studentId.length == 0)
-    return res.status(404).json("No student assigned.");
+  if (!students) return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   //console.log(studentData);
   let studId = [];
@@ -680,8 +679,7 @@ const bothGetRecheckStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   //console.log(students);
-  if (students.studentId.length == 0)
-    return res.status(404).json("No student assigned.");
+  if (!students) return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   //console.log(studentData);
   let studId = [];
