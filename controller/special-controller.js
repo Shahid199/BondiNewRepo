@@ -2652,6 +2652,12 @@ const updateAssignQuestion = async (req, res, next) => {
       break;
     }
   }
+  if (data[sIndex].mcqAnswer[questionIndexNumber] != -1)
+    return res
+      .status(200)
+      .json(
+        "Already rewrite the answer from another device.Please reload the page."
+      );
   data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
   let upd = { questionMcq: data };
   try {
@@ -3039,7 +3045,7 @@ const submitWritten = async (req, res, next) => {
       .json("Student Id or Exam Id or subject Id is not valid.");
   }
   let studentIdObj1 = new mongoose.Types.ObjectId(studentId);
-  let examIdObj = new mongoose.Types.ObjectId(eId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
   let status = null;
   try {
     status = await SpecialVsStudent.findOne({
