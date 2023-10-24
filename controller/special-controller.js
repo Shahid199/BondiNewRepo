@@ -2661,6 +2661,15 @@ const submitAnswerMcq = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
+  let status = null;
+  try {
+    status = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (status.finishStatus == true) return res.status(200).json("ended");
   const examEndTime = new Date();
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
@@ -3021,6 +3030,15 @@ const submitWritten = async (req, res, next) => {
       .status(404)
       .json("Student Id or Exam Id or subject Id is not valid.");
   }
+  let status = null;
+  try {
+    status = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (status.uploadStatus == true) return res.status(200).json("ended");
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   let startTime = null;
@@ -3342,8 +3360,7 @@ const getRecheckStudentData = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   ////console.log(students);
-  if (!students)
-    return res.status(404).json("No student assigned.");
+  if (!students) return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   ////console.log("studentData.length:", studentData.length);
   let studId = [];
