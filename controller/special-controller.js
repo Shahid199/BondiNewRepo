@@ -2667,6 +2667,8 @@ const submitAnswerMcq = async (req, res, next) => {
   const sId = req.user.studentId;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId))
     return res.status(404).json("Invalid studnet Id or Exam Id");
+  let studentIdObj = new mongoose.Types.ObjectId(sId);
+  let examIdObj = new mongoose.Types.ObjectId(eId);
   let status = null;
   try {
     status = await SpecialVsStudent.findOne({
@@ -3036,10 +3038,12 @@ const submitWritten = async (req, res, next) => {
       .status(404)
       .json("Student Id or Exam Id or subject Id is not valid.");
   }
+  let studentIdObj1 = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(eId);
   let status = null;
   try {
     status = await SpecialVsStudent.findOne({
-      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      $and: [{ studentId: studentIdObj1 }, { examId: examIdObj }],
     });
   } catch (err) {
     return res.status(500).json("2.Something went wrong.");
