@@ -2635,6 +2635,12 @@ const updateAssignQuestion = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  if (studentCheck.finishStatus == true)
+    return res
+      .status(200)
+      .json(
+        "Already Submitted from another device.You will be redirected to written exam within 5 seconds."
+      );
   let data = [],
     insertId,
     sIndex = 0;
