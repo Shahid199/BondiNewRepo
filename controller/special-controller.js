@@ -817,7 +817,7 @@ const questionByExamSub = async (req, res, next) => {
   let quesData = [];
   try {
     quesData = await QuestionsMcq.find({
-      $and: [{ _id: { $in: mcqId } }],
+      $and: [{ _id: { $in: mcqId } }, { status: true }],
     });
   } catch (err) {
     return res.status(500).json(err);
