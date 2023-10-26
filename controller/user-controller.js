@@ -326,7 +326,7 @@ const loginSuperAdmin = async (req, res) => {
 };
 //create superAdmin use only once
 exports.createSuperAdmin = async (req, res) => {
-  const hashedPassword = bcrypt.hashSync("qwerty");
+  const hashedPassword = bcrypt.hashSync("BP018324##!lkj");
   const user = new User({
     name: "Super Admin Test",
     userName: "superadmintest",
