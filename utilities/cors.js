@@ -7,6 +7,7 @@ let options = {
     "https://admin.bpexam.live",
     "https://bpexam.live",
     "https://free.bpexam.live",
+    "https://www.bpexam.live",
   ],
   "Access-Control-Allow-Origin": [
     "http://localhost:3001",
@@ -15,6 +16,7 @@ let options = {
     "https://admin.bpexam.live",
     "https://bpexam.live",
     "https://free.bpexam.live",
+    "https://www.bpexam.live",
   ],
   "Access-Control-Request-Methods": "GET,PUT,POST,DELETE,OPTIONS",
   "X-Requested-With": "XMLHttpRequest",
