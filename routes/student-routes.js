@@ -88,8 +88,14 @@ router.post("/login", loginStudent);
 router.get(
   "/validate-login",
   [passport.authenticate("jwt", { session: false })],
-  validateToken
+  { successRedirect: validateToken }
 );
+
+// router.get(
+//   "/validate-login",
+//   [passport.authenticate("jwt", { session: false })],
+//   validateToken
+// );
 //need query parameter eid(examid).
 
 router.get(
