@@ -3285,7 +3285,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     //console.log("teachersFirst:", teachers);
     let teach = [];
     for (let i = 0; i < teachers.length; i++) {
-      //teach[i] = String(teachers[i]._id);
+      teach[i] = String(teachers[i]._id);
     }
     teachers = teach;
     //console.log("teachers:", teachers);
