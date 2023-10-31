@@ -3335,6 +3335,7 @@ const assignStudentToTeacher = async (req, res, next) => {
 const getStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
+  console.log("teacherId",teacherId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
   let subjectRole = null;
   try {
