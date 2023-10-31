@@ -3290,6 +3290,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     teachers = teach;
     //console.log("teachers:", teachers);
     let intersection = teacherId.filter((x) => teachers.includes(x));
+    console.log(intersection);
     teachers = intersection;
     ////console.log("teachersNext:", teachers);
     let range = parseInt(studentNo / teachers.length);
@@ -3325,6 +3326,7 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("1.Something went wrong.");
     }
   }
+  console.log(doc.length);
   return res
     .status(201)
     .json("Successfully assign all student to the teacher.");
