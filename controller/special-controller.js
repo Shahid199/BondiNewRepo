@@ -3325,8 +3325,9 @@ const assignStudentToTeacher = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("1.Something went wrong.");
     }
+    console.log(doc.length);
   }
-  console.log(doc.length);
+
   return res
     .status(201)
     .json("Successfully assign all student to the teacher.");
