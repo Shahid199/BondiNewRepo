@@ -3363,7 +3363,7 @@ const getStudentData = async (req, res, next) => {
     // //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  ////console.log(students);
+  console.log(students);
   if (!students) return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
   // //console.log(studentData);
