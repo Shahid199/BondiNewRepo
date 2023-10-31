@@ -3197,6 +3197,8 @@ const assignStudentToTeacher = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
+  console.log(teacherId);
+  console.log(examId);
   if (!ObjectId.isValid(examId) || teacherId.length == 0)
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
