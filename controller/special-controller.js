@@ -2422,6 +2422,17 @@ const getAllRank = async (req, res, next) => {
   let allData = [];
   let totalStudent = null;
   for (let i = 0; i < resultRank.length; i++) {
+    let markData = null;
+    try {
+      markData = await SpecialVsStudent.findOne({
+        $and: [
+          { examId: resultRank.examId._id },
+          { studentId: resultRank.studentId._id },
+        ],
+      });
+    } catch (err) {
+      return res.status(500).json("something went wrong.");
+    }
     let data1 = {};
     let conData = "*******";
     data1["examName"] = resultRank[i].examId.name;
@@ -2437,8 +2448,10 @@ const getAllRank = async (req, res, next) => {
     data1["totalMarks"] =
       resultRank[i].examId.totalMarksMcq +
       resultRank[i].examId.totalMarksWritten;
-    data1["totalObtainedMcqMarks"] = resultRank[i].examId.totalMarksMcq;
-    data1["totalObtainedWrittenMarks"] = resultRank[i].examId.totalMarksWritten;
+    data1["totalMcqMarks"] = resultRank[i].examId.totalMarksMcq;
+    data1["totalWrittenMarks"] = resultRank[i].examId.totalMarksWritten;
+    data1["totalObtaineMarksMcq"] = markData.totalMarksMcq;
+    data1["totalObtaineMarksWritten"] = markData.totalMarksWritten;
     allData.push(data1);
   }
   return res.status(200).json(allData);
