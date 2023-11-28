@@ -2426,8 +2426,8 @@ const getAllRank = async (req, res, next) => {
     try {
       markData = await SpecialVsStudent.findOne({
         $and: [
-          { examId: resultRank.examId._id },
-          { studentId: resultRank.studentId._id },
+          { examId: resultRank[i].examId._id },
+          { studentId: resultRank[i].studentId._id },
         ],
       });
     } catch (err) {
