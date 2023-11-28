@@ -2437,6 +2437,8 @@ const getAllRank = async (req, res, next) => {
     data1["totalMarks"] =
       resultRank[i].examId.totalMarksMcq +
       resultRank[i].examId.totalMarksWritten;
+    data1["totalObtainedMcqMarks"] = resultRank[i].examId.totalMarksMcq;
+    data1["totalObtainedWrittenMarks"] = resultRank[i].examId.totalMarksWritten;
     allData.push(data1);
   }
   return res.status(200).json(allData);
@@ -3335,7 +3337,7 @@ const assignStudentToTeacher = async (req, res, next) => {
 const getStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
-  console.log("teacherId",teacherId);
+  console.log("teacherId", teacherId);
   teacherId = new mongoose.Types.ObjectId(teacherId);
   let subjectRole = null;
   try {
