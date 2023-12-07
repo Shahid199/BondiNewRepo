@@ -864,10 +864,10 @@ const assignQuestionFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.something went wrong");
   }
-  console.log(totalQuestionCount.mId, "totalQuesCountMid");
+  // console.log(totalQuestionCount.mId, "totalQuesCountMid");
   totalQuestionCount = totalQuestionCount.mId.length;
   ////console.log(totalQues, "totalQues");
-  console.log(totalQuestionCount, "totalQuesCount");
+  // console.log(totalQuestionCount, "totalQuesCount");
   //count question:end
   max = size - 1;
   let countDown = 0;
@@ -937,7 +937,7 @@ const assignQuestionFree = async (req, res, next) => {
     resultQuestion.push(data);
   }
   // //console.log(totalQues,'totalQues')
-  console.log(resultQuestion, "resultQuestion");
+  // console.log(resultQuestion, "resultQuestion");
   let questions = [];
   try {
     questions = await QuestionsMcq.find(
