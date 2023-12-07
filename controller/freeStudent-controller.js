@@ -917,7 +917,7 @@ const assignQuestionFree = async (req, res, next) => {
       stat = stat.status;
     } catch (err) {
       console.log(err);
-      return res.status(500).json("Something went wrong.");
+      return res.status(500).json("Line 920 Something went wrong.");
     }
     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
   }
@@ -942,7 +942,7 @@ const assignQuestionFree = async (req, res, next) => {
     );
   } catch (err) {
     console.log(err);
-    return res.status(500).json("Something went wrong.");
+    return res.status(500).json("Line 945 Something went wrong.");
   }
   // //console.log(questions);
   if (sId == null)
