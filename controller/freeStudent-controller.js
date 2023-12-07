@@ -835,10 +835,7 @@ const assignQuestionFree = async (req, res, next) => {
     max = 0,
     rand;
   try {
-    size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate({
-      path: "mId",
-      match: { status: true }
-    });
+    size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
     size = size.mId.length;
     //size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
   } catch (err) {
@@ -860,7 +857,10 @@ const assignQuestionFree = async (req, res, next) => {
   let totalQuestionCount = null;
   let eIdObj = new mongoose.Types.ObjectId(eId);
   try {
-    totalQuestionCount = await McqQuestionVsExam.findOne({ eId: eIdObj });
+    totalQuestionCount = await McqQuestionVsExam.findOne({ eId: eIdObj }).populate({
+      path: "mId",
+      match: { status: true }
+    });
   } catch (err) {
     return res.status(500).json("2.something went wrong");
   }
