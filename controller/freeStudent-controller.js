@@ -863,7 +863,7 @@ const assignQuestionFree = async (req, res, next) => {
   }
   totalQuestionCount = totalQuestionCount.mId.length;
   ////console.log(totalQues, "totalQues");
-  ////console.log(totalQuestionCount, "totalQuesCount");
+  console.log(totalQuestionCount, "totalQuesCount");
   //count question:end
   max = size - 1;
   let countDown = 0;
@@ -917,7 +917,7 @@ const assignQuestionFree = async (req, res, next) => {
       stat = stat.status;
     } catch (err) {
       console.log(err);
-      return res.status(500).json("Line 920 Something went wrong.");
+      return res.status(500).json("11.Something went wrong.");
     }
     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
   }
@@ -930,7 +930,8 @@ const assignQuestionFree = async (req, res, next) => {
   let resultQuestion = [];
   for (let i = 0; i < totalQues; i++) {
     let data = String(doc2[doc[i]]);
-    resultQuestion.push(data);
+    console.log(data);
+    if(data !== 'undefined') resultQuestion.push(data);
   }
   // //console.log(totalQues,'totalQues')
   console.log(resultQuestion, "resultQuestion");
@@ -942,7 +943,7 @@ const assignQuestionFree = async (req, res, next) => {
     );
   } catch (err) {
     console.log(err);
-    return res.status(500).json("Line 945 Something went wrong.");
+    return res.status(500).json("12. Something went wrong.");
   }
   // //console.log(questions);
   if (sId == null)
