@@ -861,6 +861,7 @@ const assignQuestionFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("2.something went wrong");
   }
+  console.log(totalQuestionCount.mId, "totalQuesCountMid");
   totalQuestionCount = totalQuestionCount.mId.length;
   ////console.log(totalQues, "totalQues");
   console.log(totalQuestionCount, "totalQuesCount");
@@ -930,8 +931,7 @@ const assignQuestionFree = async (req, res, next) => {
   let resultQuestion = [];
   for (let i = 0; i < totalQues; i++) {
     let data = String(doc2[doc[i]]);
-    console.log(data);
-    if(data !== 'undefined') resultQuestion.push(data);
+    resultQuestion.push(data);
   }
   // //console.log(totalQues,'totalQues')
   console.log(resultQuestion, "resultQuestion");
