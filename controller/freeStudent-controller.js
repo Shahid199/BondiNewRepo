@@ -916,6 +916,7 @@ const assignQuestionFree = async (req, res, next) => {
       stat = await QuestionsMcq.findById(quesId).select("status");
       stat = stat.status;
     } catch (err) {
+      console.log(err);
       return res.status(500).json("Something went wrong.");
     }
     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
@@ -940,6 +941,7 @@ const assignQuestionFree = async (req, res, next) => {
       "question type options"
     );
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   // //console.log(questions);
@@ -982,7 +984,7 @@ const assignQuestionFree = async (req, res, next) => {
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
-    ////console.log(err);
+    console.log(err);
     return res.status(500).json("4.Something went wrong.");
   }
   try {
