@@ -933,7 +933,7 @@ const assignQuestionFree = async (req, res, next) => {
     resultQuestion.push(data);
   }
   // //console.log(totalQues,'totalQues')
-  ////console.log(resultQuestion, "resultQuestion");
+  console.log(resultQuestion, "resultQuestion");
   let questions = [];
   try {
     questions = await QuestionsMcq.find(
