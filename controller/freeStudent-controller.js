@@ -835,7 +835,10 @@ const assignQuestionFree = async (req, res, next) => {
     max = 0,
     rand;
   try {
-    size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate("mId");
+    size = await McqQuestionVsExam.findOne({ eId: eId1 }).populate({
+      path: "mId",
+      match: { status: true }
+    });
     size = size.mId.length;
     //size = await McqQuestionVsExam.findOne({ eId: eId }).select("sizeMid");
   } catch (err) {
