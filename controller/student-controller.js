@@ -4594,7 +4594,7 @@ const bothExamCheckMiddleware = async (req, res, next) => {
 };
 const bothHistoryData = async (req, res, next) => {
   const studentId = req.user.studentId;
-  const courseId = re.query.courseId;
+  const courseId = req.query.courseId;
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(courseId))
     return res.status(404).json("Student or course ID not valid.");
   let page = req.query.page || 1;
