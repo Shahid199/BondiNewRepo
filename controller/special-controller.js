@@ -195,7 +195,7 @@ const createSpecialExam = async (req, res, next) => {
 };
 const showSpecialExamById = async (req, res, next) => {
   let examId = req.query.examId;
-  if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
+  if (!ObjectId.isValid(examId)) return res.status(404).json("Invalid Exam Id.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null;
   try {
@@ -211,7 +211,7 @@ const showSpecialExamById = async (req, res, next) => {
 const showSpecialExamByIdStudent = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
-  if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
+  if (!ObjectId.isValid(examId)) return res.status(404).json("Invalid Exam Id.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null;
   try {
@@ -256,7 +256,7 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
 const showSpecialExamByIdStudentAdmin = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
-  if (!ObjectId.isValid(examId)) return res.staus(404).json("Invalid Exam Id.");
+  if (!ObjectId.isValid(examId)) return res.status(404).json("Invalid Exam Id.");
   examId = new mongoose.Types.ObjectId(examId);
   let data = null;
   try {
@@ -301,7 +301,7 @@ const showSpecialExamByIdStudentAdmin = async (req, res, next) => {
 const showSpecialExamByCourse = async (req, res, next) => {
   let courseId = req.query.courseId;
   if (!ObjectId.isValid(courseId))
-    return res.staus(404).json("Invalid Course Id.");
+    return res.status(404).json("Invalid Course Id.");
   courseId = new mongoose.Types.ObjectId(courseId);
   let data = null;
   try {

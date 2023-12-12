@@ -857,13 +857,17 @@ const assignQuestionFree = async (req, res, next) => {
   let totalQuestionCount = null;
   let eIdObj = new mongoose.Types.ObjectId(eId);
   try {
-    totalQuestionCount = await McqQuestionVsExam.findOne({ eId: eIdObj });
+    totalQuestionCount = await McqQuestionVsExam.findOne({ eId: eIdObj }).populate({
+      path: "mId",
+      match: { status: true }
+    });
   } catch (err) {
     return res.status(500).json("2.something went wrong");
   }
+  // console.log(totalQuestionCount.mId, "totalQuesCountMid");
   totalQuestionCount = totalQuestionCount.mId.length;
   ////console.log(totalQues, "totalQues");
-  ////console.log(totalQuestionCount, "totalQuesCount");
+  // console.log(totalQuestionCount, "totalQuesCount");
   //count question:end
   max = size - 1;
   let countDown = 0;
@@ -916,7 +920,8 @@ const assignQuestionFree = async (req, res, next) => {
       stat = await QuestionsMcq.findById(quesId).select("status");
       stat = stat.status;
     } catch (err) {
-      return res.status(500).json("Something went wrong.");
+      console.log(err);
+      return res.status(500).json("11.Something went wrong.");
     }
     if (stat == true) statQues.push(new mongoose.Types.ObjectId(quesId));
   }
@@ -932,7 +937,7 @@ const assignQuestionFree = async (req, res, next) => {
     resultQuestion.push(data);
   }
   // //console.log(totalQues,'totalQues')
-  ////console.log(resultQuestion, "resultQuestion");
+  // console.log(resultQuestion, "resultQuestion");
   let questions = [];
   try {
     questions = await QuestionsMcq.find(
@@ -940,7 +945,8 @@ const assignQuestionFree = async (req, res, next) => {
       "question type options"
     );
   } catch (err) {
-    return res.status(500).json("Something went wrong.");
+    console.log(err);
+    return res.status(500).json("12. Something went wrong.");
   }
   // //console.log(questions);
   if (sId == null)
@@ -982,7 +988,7 @@ const assignQuestionFree = async (req, res, next) => {
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();
   } catch (err) {
-    ////console.log(err);
+    console.log(err);
     return res.status(500).json("4.Something went wrong.");
   }
   try {
