@@ -469,6 +469,17 @@ const assignQuestion = async (req, res, next) => {
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
+
+  let existData = [];
+  try {
+    existData = await StudentExamVsQuestionsMcq.find({
+      $and: [{ examId: eId1 }, { studentId: sId }],
+    });
+  } catch (err) {
+    return res.status(500).json("10.something went wrong.");
+  }
+  if (existData.length > 0) return res.status(200).json("running");
+
   let doc = [],
     size,
     min = 0,
@@ -654,6 +665,13 @@ const updateAssignQuestion = async (req, res, next) => {
   answered = result[0].answeredOption;
   ////console.log(questionIndexNumber);
   ////console.log(optionIndexNumber);
+  if (answered[questionIndexNumber] != -1)
+    return res
+      .status(200)
+      .json(
+        "Already rewrite the answer from another device.Please reload the page."
+      );
+
   answered[questionIndexNumber] = String(optionIndexNumber);
   try {
     updateAnswer = await StudentExamVsQuestionsMcq.findByIdAndUpdate(docId1, {
@@ -1828,11 +1846,14 @@ const retakeExam = async (req, res, next) => {
     min = 0,
     max = 0,
     questionData = [],
-    rand;
+    rand,
+    examQuestion = null;
   try {
     examData = await McqQuestionVsExam.findOne({ eId: examIdObj })
       .select("_id mId eId")
       .populate("eId mId");
+
+    examQuestion = await Exam.findOne({ examId: examIdObj });
   } catch (err) {
     ////console.log(err);
     return res.status(500).json("1.Something went wrong.");
@@ -1866,8 +1887,26 @@ const retakeExam = async (req, res, next) => {
   rand = parseInt(Date.now() % questDataFull.length);
   if (rand == 0) rand = 1;
   if (rand == questDataFull.length - 1) rand = rand - 1;
-  for (let j = rand; j >= 0; j--) doc.push(j);
-  for (let j = rand + 1; j < questDataFull.length; j++) doc.push(j);
+  let flag = 0;
+  for (let j = rand; j >= 0; j--) {
+    if (doc.length == examQuestion.totalQuestionMcq) {
+      flag = 1;
+      break;
+    }
+    doc.push(mcqIds[j]);
+  }
+  if (flag == 0) {
+    for (let j = rand + 1; j < mcqIds.length; j++) {
+      if (doc.length == examQuestion.totalQuestionMcq) {
+        flag = 1;
+        break;
+      }
+      doc.push(mcqIds[j]);
+    }
+  }
+
+  // for (let j = rand; j >= 0; j--) doc.push(j);
+  // for (let j = rand + 1; j < examQuestion.totalQuestionMcq; j++) doc.push(j);
   // for (let i = 0; ; i++) {
   //   rand = Math.random();
   //   rand = rand * Number(max);
@@ -3531,6 +3570,17 @@ const assignWrittenQuestion = async (req, res, next) => {
   let studentId = req.user.studentId;
   examId = new mongoose.Types.ObjectId(examId);
   studentId = new mongoose.Types.ObjectId(studentId);
+
+  let existData = [];
+  try {
+    existData = await StudentExamVsQuestionsWritten.find({
+      $and: [{ studentId: studentId }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("10.Something went wrong.");
+  }
+  if (existData.length > 0) return res.status(200).json("running");
+
   let examData = null;
   let sav = null;
   let dataArr = [];
@@ -3570,7 +3620,7 @@ const assignWrittenQuestion = async (req, res, next) => {
     return res.status(500).json("something went wrong.");
   }
   if (questionData == null || examData.endTime < moment(new Date()))
-    return res.status(404).josn("no question found or time expired.");
+    return res.status(404).json("no question found or time expired.");
 
   data1["questionILink"] = questionData.questionILink;
   data1["status"] = questionData.status;
@@ -3724,6 +3774,17 @@ const submitWritten = async (req, res, next) => {
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
+
+  let status = null;
+  try {
+    status = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("10.Something went wrong.");
+  }
+  if (status.uploadStatus == true) return res.status(200).json("ended");
+
   let startTime = null;
   let endTime = moment(new Date());
   try {
@@ -5035,6 +5096,17 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
+
+  let existData = [];
+  try {
+    existData = await BothStudentExamVsQuestions.find({
+      $and: [{ examId: eId1 }, { studentId: sId }],
+    });
+  } catch (err) {
+    return res.status(500).json("10.something went wrong.");
+  }
+  if (existData.length > 0) return res.status(200).json("Mcq running");
+
   let doc = [],
     size,
     min = 0,
@@ -5270,7 +5342,11 @@ const bothUpdateAssignQuestionMcq = async (req, res, next) => {
     studentCheck.finishedStatus == true ||
     studentCheck.examEndTimeMcq <= moment(new Date())
   )
-    return res.status(409).json("Exam End.");
+    return res
+      .status(409)
+      .json(
+        "Already Submitted from another device.You will be redirected to written exam within 5 seconds."
+      );
   //exam status Check:end
   try {
     result = await BothStudentExamVsQuestions.find(
@@ -5286,6 +5362,13 @@ const bothUpdateAssignQuestionMcq = async (req, res, next) => {
   docId = result[0]._id;
   docId1 = String(docId);
   answered = result[0].answeredOption;
+
+  if (answered[questionIndexNumber] != -1)
+    return res
+      .status(200)
+      .json(
+        "Already rewrite the answer from another device.Please reload the page."
+      );
   ////console.log(questionIndexNumber);
   ////console.log(optionIndexNumber);
   answered[questionIndexNumber] = String(optionIndexNumber);
@@ -5308,6 +5391,17 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   let eId1, sId1;
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
+
+  let status = null;
+  try {
+    status = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: sId1 }, { examId: eId1 }],
+    });
+  } catch (err) {
+    return res.status(500).json("10.Something went wrong.");
+  }
+  if (status.finishedStatus == true) return res.status(200).json("ended");
+
   //exam status Check:start
   let studentCheck = null;
   try {
@@ -5705,6 +5799,16 @@ const bothSubmitWritten = async (req, res, next) => {
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
+  let status = null;
+  try {
+    status = await BothStudentExamVsQuestions.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  if (status.uploadStatus == true) return res.status(200).json("ended");
+
   let startTime = null;
   let endTime = moment(new Date());
   try {
