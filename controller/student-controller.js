@@ -1853,7 +1853,7 @@ const retakeExam = async (req, res, next) => {
       .select("_id mId eId")
       .populate("eId mId");
 
-    examQuestion = await Exam.findOne({ examId: examIdObj });
+    examQuestion = await Exam.findById(examIdObj);
   } catch (err) {
     ////console.log(examQuestion);
     return res.status(500).json("1.Something went wrong.");
