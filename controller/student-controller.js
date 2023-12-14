@@ -1897,7 +1897,7 @@ const retakeExam = async (req, res, next) => {
     doc.push(j);
   }
   if (flag == 0) {
-    for (let j = rand + 1; j < mcqIds.length; j++) {
+    for (let j = rand + 1; j < examQuestion.totalQuestionMcq; j++) {
       if (doc.length == examQuestion.totalQuestionMcq) {
         flag = 1;
         break;
