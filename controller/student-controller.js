@@ -1855,11 +1855,12 @@ const retakeExam = async (req, res, next) => {
 
     examQuestion = await Exam.findOne({ examId: examIdObj });
   } catch (err) {
-    ////console.log(err);
+    ////console.log(examQuestion);
     return res.status(500).json("1.Something went wrong.");
   }
   if (examData == null)
     return res.status(404).json("No data found against this exam.");
+  console.log(examQuestion);
   let examDataNew = examData;
   examData = examData.mId;
   let questData = [];
