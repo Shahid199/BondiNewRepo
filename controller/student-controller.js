@@ -1894,7 +1894,7 @@ const retakeExam = async (req, res, next) => {
       flag = 1;
       break;
     }
-    doc.push(mcqIds[j]);
+    doc.push(j);
   }
   if (flag == 0) {
     for (let j = rand + 1; j < mcqIds.length; j++) {
@@ -1902,7 +1902,7 @@ const retakeExam = async (req, res, next) => {
         flag = 1;
         break;
       }
-      doc.push(mcqIds[j]);
+      doc.push(j);
     }
   }
 
