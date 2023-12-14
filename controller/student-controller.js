@@ -1860,7 +1860,7 @@ const retakeExam = async (req, res, next) => {
   }
   if (examData == null)
     return res.status(404).json("No data found against this exam.");
-  console.log(examQuestion);
+  //console.log(examQuestion);
   let examDataNew = examData;
   examData = examData.mId;
   let questData = [];
