@@ -470,15 +470,15 @@ const assignQuestion = async (req, res, next) => {
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
 
-  let existData = [];
-  try {
-    existData = await StudentExamVsQuestionsMcq.find({
-      $and: [{ examId: eId1 }, { studentId: sId }],
-    });
-  } catch (err) {
-    return res.status(500).json("10.something went wrong.");
-  }
-  if (existData.length > 0) return res.status(200).json("running");
+  // let existData = [];
+  // try {
+  //   existData = await StudentExamVsQuestionsMcq.find({
+  //     $and: [{ examId: eId1 }, { studentId: sId }],
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("10.something went wrong.");
+  // }
+  // if (existData.length > 0) return res.status(200).json("running");
 
   let doc = [],
     size,
@@ -665,12 +665,12 @@ const updateAssignQuestion = async (req, res, next) => {
   answered = result[0].answeredOption;
   ////console.log(questionIndexNumber);
   ////console.log(optionIndexNumber);
-  if (answered[questionIndexNumber] != -1)
-    return res
-      .status(200)
-      .json(
-        "Already rewrite the answer from another device.Please reload the page."
-      );
+  // if (answered[questionIndexNumber] != -1)
+  //   return res
+  //     .status(200)
+  //     .json(
+  //       "Already rewrite the answer from another device.Please reload the page."
+  //     );
 
   answered[questionIndexNumber] = String(optionIndexNumber);
   try {
