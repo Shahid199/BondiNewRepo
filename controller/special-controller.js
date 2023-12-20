@@ -30,7 +30,7 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksMcq,
     totalMarks,
   } = req.body;
-  //console.log(req.body);
+console.log(negativeMarks);
   if (!ObjectId.isValid(examId)) {
     return res.status(404).json("exam Id is not valid.");
   }
