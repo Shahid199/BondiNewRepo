@@ -2445,7 +2445,7 @@ const getAllRank = async (req, res, next) => {
       resultRank[i].studentId.mobileNo.slice(7)
     );
     data1["institution"] = resultRank[i].studentId.institution;
-    data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks;
+    data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks.toFixed(2);
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] =
@@ -2453,7 +2453,7 @@ const getAllRank = async (req, res, next) => {
       resultRank[i].examId.totalMarksWritten;
     data1["totalMcqMarks"] = resultRank[i].examId.totalMarksMcq;
     data1["totalWrittenMarks"] = resultRank[i].examId.totalMarksWritten;
-    data1["totalObtaineMarksMcq"] = markData.totalMarksMcq;
+    data1["totalObtaineMarksMcq"] = markData.totalMarksMcq.toFixed(2);
     data1["totalObtaineMarksWritten"] = markData.totalMarksWritten;
     allData.push(data1);
   }
