@@ -236,10 +236,6 @@ router.get(
   ],
   showPublishFree
 );
-router.get(
-  "/testapi",
-  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
-  testApi
-);
+router.get("/testapi", testApi);
 
 module.exports = router;
