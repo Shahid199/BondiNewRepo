@@ -857,9 +857,11 @@ const assignQuestionFree = async (req, res, next) => {
   let totalQuestionCount = null;
   let eIdObj = new mongoose.Types.ObjectId(eId);
   try {
-    totalQuestionCount = await McqQuestionVsExam.findOne({ eId: eIdObj }).populate({
+    totalQuestionCount = await McqQuestionVsExam.findOne({
+      eId: eIdObj,
+    }).populate({
       path: "mId",
-      match: { status: true }
+      match: { status: true },
     });
   } catch (err) {
     return res.status(500).json("2.something went wrong");
@@ -1891,6 +1893,33 @@ const statusUpdatePublishFree = async (req, res, next) => {
   }
   return res.status(201).json("Status Updated Succesfully.");
 };
+
+const testApi = async (req, res, next) => {
+  const getExamData = [];
+  try {
+    getExamData = await FreestudentMarksRank.find({})
+      .populate({
+        path: "examId",
+        populate: {
+          path: "subjectId",
+          select: "name",
+          model: "Subject",
+        },
+      })
+      .populate({
+        path: "examId",
+        populate: {
+          path: "courseId",
+          select: "name",
+          model: "Course",
+        },
+      });
+  } catch (err) {
+    return res.status(500).json("Can't get exam info.");
+  }
+  return res.status(200).json(getExamData);
+};
+exports.testApi = testApi;
 exports.addPublishFree = addPublishFree;
 exports.showPublishFree = showPublishFree;
 exports.statusUpdatePublishFree = statusUpdatePublishFree;

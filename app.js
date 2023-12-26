@@ -58,6 +58,7 @@ const specialRouter = require("./routes/special-routes");
 const teacherRouter = require("./routes/teacher-routes");
 const bothRouter = require("./routes/both-routes");
 const smsRouter = require("./routes/sms-routes");
+const { assignQuestion } = require("./controller/student-controller");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
@@ -88,8 +89,8 @@ mongoose
       { id: 1, name: "wws" },
       { id: 2, name: "ww" },
     ];
-    for (let i = 0; i < studentIds.length; i++) {
-      studentIds[i].age = i + 1;
+    for (let i = 0; i < 5000; i++) {
+      
     }
 
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]

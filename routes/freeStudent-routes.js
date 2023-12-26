@@ -31,6 +31,7 @@ const {
   addPublishFree,
   statusUpdatePublishFree,
   showPublishFree,
+  testApi,
 } = require("../controller/freeStudent-controller");
 const { freeExamStatus } = require("../controller/exam-controller");
 
@@ -234,6 +235,11 @@ router.get(
     authorize(["superadmin", "moderator"]),
   ],
   showPublishFree
+);
+router.get(
+  "/testapi",
+  [passport.authenticate("jwt", { session: false }), authorize(["superadmin"])],
+  testApi
 );
 
 module.exports = router;
