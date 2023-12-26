@@ -1896,7 +1896,7 @@ const statusUpdatePublishFree = async (req, res, next) => {
 
 const testApi = async (req, res, next) => {
   let getExamData = [];
-  for (let i = 0; i < 50000; i++) {
+  for (let i = 0; i < 50; i++) {
     try {
       getExamData = await FreestudentMarksRank.find({})
         .populate({
