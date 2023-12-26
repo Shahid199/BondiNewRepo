@@ -1913,7 +1913,7 @@ const testApi = async (req, res, next) => {
             select: "name",
             model: "Course",
           },
-        });
+        }).limit(5);
     } catch (err) {
       console.log(err);
       return res.status(500).json("Can't get exam info.");
