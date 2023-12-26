@@ -1896,29 +1896,31 @@ const statusUpdatePublishFree = async (req, res, next) => {
 
 const testApi = async (req, res, next) => {
   let getExamData = [];
-  try {
-    getExamData = await FreestudentMarksRank.find({})
-      .populate({
-        path: "examId",
-        populate: {
-          path: "subjectId",
-          select: "name",
-          model: "Subject",
-        },
-      })
-      .populate({
-        path: "examId",
-        populate: {
-          path: "courseId",
-          select: "name",
-          model: "Course",
-        },
-      });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Can't get exam info.");
+  for (let i = 0; i < 50000; i++) {
+    try {
+      getExamData = await FreestudentMarksRank.find({})
+        .populate({
+          path: "examId",
+          populate: {
+            path: "subjectId",
+            select: "name",
+            model: "Subject",
+          },
+        })
+        .populate({
+          path: "examId",
+          populate: {
+            path: "courseId",
+            select: "name",
+            model: "Course",
+          },
+        });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json("Can't get exam info.");
+    }
   }
-  return res.status(200).json(getExamData);
+  return res.status(200).json("nice data");
 };
 exports.testApi = testApi;
 exports.addPublishFree = addPublishFree;
