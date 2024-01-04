@@ -80,6 +80,37 @@ const getFreeStudenInfoByMobile = async (req, res, next) => {
   }
   return res.status(200).json(data);
 };
+const freeStudentViewSollutionAdmin1 = async (req, res, next) => {
+  const studentId = req.query.freeStudentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await FreeStudentExamVsQuestionsMcq.find({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate("mcqQuestionId");
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let resultData = [];
+  for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
+    let data1 = {};
+    data1["id"] = data[0].mcqQuestionId[i]._id;
+    data1["question"] = data[0].mcqQuestionId[i].question;
+    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
+    data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
+    data1["type"] = data[0].mcqQuestionId[i].type;
+    data1["answeredOption"] = data[0].answeredOption[i];
+    resultData.push(data1);
+  }
+  return res.status(200).json(resultData);
+};
 const freeStudentViewSollutionAdmin = async (req, res, next) => {
   const studentId = req.query.freeStudentId;
   const examId = req.query.examId;
@@ -98,6 +129,7 @@ const freeStudentViewSollutionAdmin = async (req, res, next) => {
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
+  console.log(data);
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
     let data1 = {};
     data1["id"] = data[0].mcqQuestionId[i]._id;
@@ -1896,28 +1928,29 @@ const statusUpdatePublishFree = async (req, res, next) => {
 
 const testApi = async (req, res, next) => {
   let getExamData = [];
-    try {
-      getExamData = await FreestudentMarksRank.find({})
-        .populate({
-          path: "examId",
-          populate: {
-            path: "subjectId",
-            select: "name",
-            model: "Subject",
-          },
-        })
-        .populate({
-          path: "examId",
-          populate: {
-            path: "courseId",
-            select: "name",
-            model: "Course",
-          },
-        }).limit(5);
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json("Can't get exam info.");
-    }
+  try {
+    getExamData = await FreestudentMarksRank.find({})
+      .populate({
+        path: "examId",
+        populate: {
+          path: "subjectId",
+          select: "name",
+          model: "Subject",
+        },
+      })
+      .populate({
+        path: "examId",
+        populate: {
+          path: "courseId",
+          select: "name",
+          model: "Course",
+        },
+      })
+      .limit(5);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Can't get exam info.");
+  }
   return res.status(200).json(getExamData);
 };
 exports.testApi = testApi;
