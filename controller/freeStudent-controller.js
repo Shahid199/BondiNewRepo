@@ -129,7 +129,7 @@ const freeStudentViewSollutionAdmin = async (req, res, next) => {
   if (data == null)
     return res.status(404).json("No exam found under this student.");
   let resultData = [];
-  console.log(data);
+  console.log(data.mcqQuestionId);
   for (let i = 0; i < data[0].mcqQuestionId.length; i++) {
     let data1 = {};
     data1["id"] = data[0].mcqQuestionId[i]._id;
