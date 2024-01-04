@@ -134,7 +134,7 @@ const freeStudentViewSollutionAdmin = async (req, res, next) => {
     let data1 = {};
     data1["id"] = data[0].mcqQuestionId[i]._id;
     data1["question"] = data[0].mcqQuestionId[i].question;
-    data1["options"] = data[0].mcqQuestionId[i].options;
+    data1["optionCount"] = data[0].mcqQuestionId[i].optionCount;
     data1["correctOptions"] = Number(data[0].mcqQuestionId[i].correctOption);
     data1["explanationILink"] = data[0].mcqQuestionId[i].explanationILink;
     data1["type"] = data[0].mcqQuestionId[i].type;
