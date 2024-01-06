@@ -5322,20 +5322,14 @@ const bothGetRunningDataMcq = async (req, res, next) => {
       getQuestionMcq.mcqQuestionId[i].optionCount;
     runningResponseLast.push(runningResponse);
   }
-  //timeData["examDuration"] = getExamData.examId.duration;
+  timeData["examDuration"] =
+    moment(getExamData.examEndTimeMcq).subtract(new Date()) / 60000;
   let examStartTime = getExamData.examStartTimeMcq;
   let examEndTime = getExamData.examEndTimeMcq;
   timeData["startTime"] = examStartTime;
   timeData["endTine"] = examEndTime;
   questionData = runningResponseLast;
   examData = getExamData.examId;
-
-  let timeS = moment(new Date());
-  //console.log(timeS);
-  //console.log(examData.endTimeMcq);
-  timeData["examDuration"] =
-    (moment(timeData.endTime) - moment(timeS)) / 60000;
-  console.log(timeData);
   return res.status(200).json({ timeData, questionData, examData });
 };
 const bothUpdateAssignQuestionMcq = async (req, res, next) => {
