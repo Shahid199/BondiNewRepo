@@ -5327,7 +5327,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   timeData["endTine"] = examEndTime;
   questionData = runningResponseLast;
   examData = getExamData.examId;
-
+  console.log(timeData);
   return res.status(200).json({ timeData, questionData, examData });
 };
 const bothUpdateAssignQuestionMcq = async (req, res, next) => {
