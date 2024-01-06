@@ -5201,10 +5201,20 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     return res.status(500).json("6.Something went wrong.");
   }
   let duration = Number(totalQuesData.mcqDuration);
+  console.log("duration:", duration);
   let examStartTime = moment(new Date());
   let examEndTime = moment(examStartTime).add(duration, "m");
-  if (examEndTime > examEndTimeActual.endTime)
+
+  if (
+    Number(
+      moment(examEndTime).add(6, "h") - moment(examEndTimeActual.endTime)
+    ) > 0
+  )
     examEndTime = examEndTimeActual.endTime;
+  else examEndTime = moment(examEndTime).add(6, "h");
+
+  // if (examEndTime > examEndTimeActual.endTime)
+  //   examEndTime = examEndTimeActual.endTime;
   let writtenQuestion = null;
   try {
     writtenQuestion = await BothQuestionsWritten.findOne(
@@ -5225,7 +5235,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     checkStatus: false,
     uploadStatus: false,
     examStartTimeMcq: moment(examStartTime).add(6, "h"),
-    examEndTimeMcq: moment(examEndTime).add(6, "h"),
+    examEndTimeMcq: moment(examEndTime),
     mcqDuration: duration,
     writtenQuestionId: writtenQuestion,
   });
@@ -5236,7 +5246,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     return res.status(500).json("8.Something went wrong.");
   }
   questions.push({ studStartTime: moment(examStartTime).add(6, "h") });
-  questions.push({ studEndTime: moment(examEndTime).add(6, "h") });
+  questions.push({ studEndTime: moment(examEndTime) });
   questions.push({ examEndTime: examFinishTime });
   questions.push({ answeredOption: answered });
   if (saveStudentQuestion == null) {
@@ -5317,6 +5327,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   timeData["endTine"] = examEndTime;
   questionData = runningResponseLast;
   examData = getExamData.examId;
+  console.log(object);
   return res.status(200).json({ timeData, questionData, examData });
 };
 const bothUpdateAssignQuestionMcq = async (req, res, next) => {
