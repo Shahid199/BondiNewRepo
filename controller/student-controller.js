@@ -5333,7 +5333,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   let timeS = moment(new Date());
   //console.log(timeS);
   //console.log(examData.endTimeMcq);
-  timeDat["examDuration"] =
+  timeData["examDuration"] =
     (moment(timeData.endTime) - moment(timeS).add(12, "h")) / 60000;
   console.log(timeData);
   return res.status(200).json({ timeData, questionData, examData });
