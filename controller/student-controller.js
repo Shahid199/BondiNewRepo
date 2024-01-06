@@ -5249,7 +5249,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   console.log(examStartTime);
   console.log(examEndTime);
   questions.push({ studStartTime: moment(examStartTime).add(6, "h") });
-  questions.push({ studEndTime: moment(examEndTime) });
+  questions.push({ studEndTime: moment(examEndTime).subtract(6, "h") });
   questions.push({ examEndTime: examFinishTime });
   questions.push({ answeredOption: answered });
   if (saveStudentQuestion == null) {
