@@ -4776,6 +4776,7 @@ const bothExamDetail = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  console.log(examData);
   let writtenData = null;
   try {
     writtenData = await BothQuestionsWritten.findOne({
