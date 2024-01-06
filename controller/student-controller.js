@@ -4700,6 +4700,7 @@ const bothHistoryData = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("3.Something went wrong.");
     }
+    if (data[i].examId.status == false) continue;
     subjectName = subjectName.name;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
