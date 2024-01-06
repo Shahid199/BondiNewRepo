@@ -30,7 +30,6 @@ const questionMcqSchema = new Schema(
     explanationILink: {
       type: String,
       required: true,
-      unique: true,
     },
     status: {
       type: Boolean,
