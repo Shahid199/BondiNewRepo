@@ -427,7 +427,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
   try {
     doc = await questions.save();
   } catch (err) {
-    ////console.log(err);
+    console.log("save time error:", err);
     return res.status(500).json(err);
   }
   //end of insert question
@@ -443,6 +443,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
       "mId"
     );
   } catch (err) {
+    console.log("get error.");
     return res.status(500).json(err);
   }
   if (mcqQData == null) {
@@ -454,6 +455,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
     try {
       doc1 = await questionExam.save();
     } catch (err) {
+      console.log("save to both exam", err);
       return res.status(500).json(err);
     }
   } else {
@@ -466,6 +468,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
         { $set: { mId: mIdNew } }
       );
     } catch (err) {
+      console.log("last error",err);
       return res.status(500).json(err);
     }
   }
