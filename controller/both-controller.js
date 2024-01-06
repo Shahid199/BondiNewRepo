@@ -412,6 +412,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
     question = iLinkPath;
     options = [];
   }
+  console.log(question);
   examIdObj = new mongoose.Types.ObjectId(examId);
   //insert question
   let questions = new QuestionsMcq({
@@ -468,7 +469,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
         { $set: { mId: mIdNew } }
       );
     } catch (err) {
-      console.log("last error",err);
+      console.log("last error", err);
       return res.status(500).json(err);
     }
   }
