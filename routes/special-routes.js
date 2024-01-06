@@ -82,8 +82,8 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     authorize(),
     upload.fields([
-      { name: "iLink", maxCount: 1 },
-      { name: "explanationILink", maxCount: 1 },
+      { name: "iLink", maxCount: 8 },
+      { name: "explanationILink", maxCount: 8 },
     ]),
   ],
   addQuestionMcq
@@ -175,7 +175,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([{ name: "iLink", maxCount: 1 }]),
+    upload.fields([{ name: "iLink", maxCount: 8 }]),
   ],
   addQuestionWritten
 );
@@ -272,7 +272,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "student"]),
-    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+    upload.fields([{ name: "questionILink", maxCount: 8 }]),
   ],
   submitStudentScript
 );

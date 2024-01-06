@@ -425,7 +425,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "student"]),
-    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+    upload.fields([{ name: "questionILink", maxCount: 8 }]),
   ],
   submitStudentScript
 );
@@ -595,7 +595,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "student"]),
-    upload.fields([{ name: "questionILink", maxCount: 5 }]),
+    upload.fields([{ name: "questionILink", maxCount: 8 }]),
   ],
   bothSubmitStudentScript
 );
