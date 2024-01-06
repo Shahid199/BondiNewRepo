@@ -5245,6 +5245,8 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     //console.log(err);
     return res.status(500).json("8.Something went wrong.");
   }
+  console.log(examStartTime);
+  console.log(examEndTime);
   questions.push({ studStartTime: moment(examStartTime).add(6, "h") });
   questions.push({ studEndTime: moment(examEndTime) });
   questions.push({ examEndTime: examFinishTime });
@@ -5320,13 +5322,19 @@ const bothGetRunningDataMcq = async (req, res, next) => {
       getQuestionMcq.mcqQuestionId[i].optionCount;
     runningResponseLast.push(runningResponse);
   }
-  timeData["examDuration"] = getExamData.examId.duration;
+  //timeData["examDuration"] = getExamData.examId.duration;
   let examStartTime = getExamData.examStartTimeMcq;
   let examEndTime = getExamData.examEndTimeMcq;
   timeData["startTime"] = examStartTime;
   timeData["endTine"] = examEndTime;
   questionData = runningResponseLast;
   examData = getExamData.examId;
+
+  let timeS = moment(new Date());
+  //console.log(timeS);
+  //console.log(examData.endTimeMcq);
+  timeDat["examDuration"] =
+    (moment(timeData.endTime) - moment(timeS).add(12, "h")) / 60000;
   console.log(timeData);
   return res.status(200).json({ timeData, questionData, examData });
 };
