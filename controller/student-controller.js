@@ -5323,7 +5323,9 @@ const bothGetRunningDataMcq = async (req, res, next) => {
     runningResponseLast.push(runningResponse);
   }
   timeData["examDuration"] =
-    moment(getExamData.examEndTimeMcq).subtract(new Date()) / 60000;
+    moment(getExamData.examEndTimeMcq).subtract(
+      moment(new Date()).add(6, "h")
+    ) / 60000;
   let examStartTime = getExamData.examStartTimeMcq;
   let examEndTime = getExamData.examEndTimeMcq;
   timeData["startTime"] = examStartTime;
