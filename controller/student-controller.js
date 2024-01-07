@@ -5084,7 +5084,7 @@ const bothGetAllRank = async (req, res, next) => {
     data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks;
     data1["rank"] = resultRank[i].rank;
     data1["totalStudent"] = resultRank.length;
-    data1["totalMarks"] = resultRank[i].examId.totalMarksMcq;
+    data1["totalMarks"] = resultRank[i].examId.totalMarks;
     allData.push(data1);
   }
   return res.status(200).json(allData);
