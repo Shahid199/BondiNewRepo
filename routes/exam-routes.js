@@ -32,6 +32,7 @@ const {
   getExamBySubQuestion,
   getExamBySubWritten,
   getExamBySubAdmin,
+  resetExam,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -263,6 +264,14 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   bothAssignStudentToTeacher
+);
+router.post(
+  "/resetexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  resetExam
 );
 
 module.exports = router;

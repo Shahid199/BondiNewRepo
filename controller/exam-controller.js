@@ -21,6 +21,9 @@ const TeacherVsExam = require("../model/TeacherVsExam");
 const BothTeacherVsExam = require("../model/BothTeacherVsExam");
 const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
 const BothExam = require("../model/BothExam");
+const StudentMarksRank = require("../model/StudentMarksRank");
+const SpecialVsStudent = require("../model/SpecialVsStudent");
+const Student = require("../model/Student");
 
 const Limit = 100;
 //create Exam
@@ -1566,7 +1569,67 @@ const freeCourseSub = async (req, res, next) => {
   if (data.length < 1) return res.status(404).json("No Data.");
   return res.status(200).json(data);
 };
+const resetExam = async (req, res, next) => {
+  let regNo = req.body.regNo;
+  let examId = req.body.examId;
+  let type = req.body.type;
+  let studentIdObj = null;
+  if (!regNo || !ObjectId.isValid(examId) || !type)
+    return res.status(404).json("student Id or examId is not valid.");
+  try {
+    studentIdObj = await Student.findOne({ regNo: regNo });
+  } catch (err) {
+    return res.status(500).json("DBError.");
+  }
+  studentIdObj = studentIdObj._id;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let delObj = null;
+  let delObj1 = null;
+  if (type == 0) {
+    try {
+      delObj = await StudentExamVsQuestionsMcq.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+      delObj1 = await StudentMarksRank.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem MCQ delete.");
+    }
+  } else if (type == 1) {
+    try {
+      delObj = await StudentExamVsQuestionsWritten.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+      delObj1 = await StudentMarksRank.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem Written delete.");
+    }
+  } else if (type == 2) {
+    try {
+      delObj = await BothStudentExamVsQuestions.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem Both delete.");
+    }
+  } else {
+    try {
+      delObj = await SpecialVsStudent.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem Special delete.");
+    }
+  }
+  return res
+    .status(200)
+    .json("Successfully reset exam for student:" + studentId);
+};
 //export functions
+exports.resetExam = resetExam;
 exports.getExamBySubAdmin = getExamBySubAdmin;
 exports.getExamBySubWritten = getExamBySubWritten;
 exports.getExamBySubQuestion = getExamBySubQuestion;
