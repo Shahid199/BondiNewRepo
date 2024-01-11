@@ -1575,7 +1575,7 @@ const resetExam = async (req, res, next) => {
   let type = req.body.type;
   let studentIdObj = null;
   if (!regNo || !ObjectId.isValid(examId) || !type)
-    return res.status(404).json("student Id or examId is not valid.");
+    return res.status(404).json("regNo or examId is not valid.");
   try {
     studentIdObj = await Student.findOne({ regNo: regNo });
   } catch (err) {
