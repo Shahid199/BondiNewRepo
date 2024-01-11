@@ -1581,6 +1581,7 @@ const resetExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("DBError.");
   }
+  if (!studentIdObj) return res.status(200).json("regNo not correct.");
   studentIdObj = studentIdObj._id;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let delObj = null;
