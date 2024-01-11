@@ -1624,9 +1624,7 @@ const resetExam = async (req, res, next) => {
       return res.status(500).json("Problem Special delete.");
     }
   }
-  return res
-    .status(200)
-    .json("Successfully reset exam for student:" + studentId);
+  return res.status(200).json("Successfully reset exam for student.");
 };
 //export functions
 exports.resetExam = resetExam;
