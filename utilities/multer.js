@@ -8,7 +8,7 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 const maxSize = 12 * 1000 * 1000;
-const maxCount = 8;
+const maxCount = 15;
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
