@@ -7,7 +7,7 @@ const dir = path.resolve(path.join(__dirname, "../uploads"));
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
-const maxSize = 12 * 1000 * 1000;
+const maxSize = 64 * 1000 * 1000;
 const maxCount = 15;
 
 const storage = multer.diskStorage({
