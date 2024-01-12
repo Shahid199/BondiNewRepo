@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
     let extension = arr.pop();
     let arrData = String(arr).replace(/[" "-.\r]/g, "");
     arrData = arrData.replace(extension, "");
-    const newName = arrData + "." + extension;
+    const newName = arrData + +Date.now().toString() + "." + extension;
     callback(null, newName);
   },
 });
