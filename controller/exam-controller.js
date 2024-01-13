@@ -1587,7 +1587,7 @@ const resetExam = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let delObj = null;
   let delObj1 = null;
-  if (type == 0) {
+  if (type == "0") {
     try {
       delObj = await StudentExamVsQuestionsMcq.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -1598,7 +1598,7 @@ const resetExam = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Problem MCQ delete.");
     }
-  } else if (type == 1) {
+  } else if (type == "1") {
     try {
       delObj = await StudentExamVsQuestionsWritten.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -1609,7 +1609,7 @@ const resetExam = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Problem Written delete.");
     }
-  } else if (type == 2) {
+  } else if (type == "2") {
     try {
       delObj = await BothStudentExamVsQuestions.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
