@@ -525,14 +525,18 @@ const assignQuestion = async (req, res, next) => {
   //end:generating random index of questions
   let doc1;
   try {
-    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 }).select("mId");
+    doc1 = await McqQuestionVsExam.findOne({ eId: eId1 }).populate({
+      path: "mId",
+      match: { status: true },
+    });
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
   let statQues = [];
-  // //console.log(doc1.mId,'doc1.mId');
+  console.log(doc1, "doc1");
   for (let i = 0; i < doc1.mId.length; i++) {
-    let quesId = String(doc1.mId[i]);
+    let quesId = String(doc1.mId[i]._id);
+
     let stat;
     try {
       stat = await QuestionsMcq.findById(quesId).select("status");
@@ -6020,6 +6024,29 @@ const bothViewSollutionWrittenAdmin = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+const bothGetExamDataForTest = async (req, res, next) => {
+  let examId = new mongoose.Types.ObjectId("659d1522d02face3f17e08ed");
+  let data = [];
+  let result = [];
+  try {
+    data = await BothStudentExamVsQuestions.find({ examId: examId });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  for (i = 0; i < data.length; i++) {
+    let reOb = {};
+    try {
+      reOb["regNo"] = await Student.findById(data[i].studentId.toString());
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (!data[i].submittedScriptILink.length) reOb["answeredQuestion"] = 0;
+    else reOb["answeredQuestion"] = data[i].submittedScriptILink.length;
+    result.push(reOb);
+  }
+  return res.status(200).json(result);
+};
+exports.bothGetExamDataForTest = bothGetExamDataForTest;
 exports.bothGetHistoryFilter = bothGetHistoryFilter;
 exports.getHistoryByWrittenIdFilter = getHistoryByWrittenIdFilter;
 exports.getHistoryByExamIdFilter = getHistoryByExamIdFilter;

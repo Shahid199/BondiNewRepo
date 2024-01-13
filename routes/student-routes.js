@@ -81,6 +81,7 @@ const {
   getHistoryByWrittenIdFilter,
   bothGetHistoryFilter,
   bothGetAllRank,
+  bothGetExamDataForTest,
 } = require("../controller/student-controller");
 const router = express.Router();
 //student frontend routes
@@ -715,5 +716,6 @@ router.get(
   ],
   bothGetHistoryFilter
 );
+router.get("/bothgetexamdatafortest", bothGetExamDataForTest);
 module.exports = router;
 //new node
