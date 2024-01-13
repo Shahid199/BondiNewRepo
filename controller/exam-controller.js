@@ -1572,7 +1572,7 @@ const freeCourseSub = async (req, res, next) => {
 const resetExam = async (req, res, next) => {
   let regNo = req.body.regNo;
   let examId = req.body.examId;
-  let type = req.body.type;
+  let type = String(req.body.type);
   let studentIdObj = null;
   console.log(req.body);
   if (!regNo || !ObjectId.isValid(examId) || !type)
