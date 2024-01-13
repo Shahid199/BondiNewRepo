@@ -6036,7 +6036,7 @@ const bothGetExamDataForTest = async (req, res, next) => {
   for (i = 0; i < data.length; i++) {
     let reOb = {};
     try {
-      reOb["regNo"] = await Student.findById(data[i].studentId.toString());
+      reOb["regNo"] = await Student.findById(data[i].studentId.toString(),"regNo -_id");
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
