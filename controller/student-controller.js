@@ -694,14 +694,14 @@ const getRunningData = async (req, res, next) => {
   sId1 = new mongoose.Types.ObjectId(sId);
   eId1 = new mongoose.Types.ObjectId(eId);
   //exam status Check:start
-  let studentCheck = null;
-  try {
-    studentCheck = await StudentMarksRank.findOne({
-      $and: [{ examId: eId1 }, { studentId: sId1 }],
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
+  // let studentCheck = null;
+  // try {
+  //   studentCheck = await StudentMarksRank.findOne({
+  //     $and: [{ examId: eId1 }, { studentId: sId1 }],
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
   // if (
   //   studentCheck.finishedStatus == true ||
   //   studentCheck.examEndTime <= moment(new Date())
@@ -713,10 +713,6 @@ const getRunningData = async (req, res, next) => {
     getQuestionMcq = await StudentExamVsQuestionsMcq.findOne({
       $and: [{ studentId: sId1 }, { examId: eId1 }],
     }).populate("mcqQuestionId");
-  } catch (err) {
-    return res.status(500).json("can't get question.Problem Occur.");
-  }
-  try {
     getExamData = await StudentMarksRank.findOne(
       { $and: [{ examId: eId1 }, { studentId: sId1 }] },
       "examStartTime examEndTime examId"
@@ -738,7 +734,7 @@ const getRunningData = async (req, res, next) => {
         },
       });
   } catch (err) {
-    return res.status(500).json("Can't get exam info.");
+    return res.status(500).json("can't get question.Problem Occur.");
   }
   let runningResponseLast = [];
   let examData = new Object();
