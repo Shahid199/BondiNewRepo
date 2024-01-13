@@ -6045,6 +6045,7 @@ const bothGetExamDataForTest = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
+    reOb["examId"] = String(examId);
     if (!data[i].submittedScriptILink.length) reOb["answeredQuestion"] = 0;
     else reOb["answeredQuestion"] = data[i].submittedScriptILink.length;
     result.push(reOb);
