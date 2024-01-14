@@ -89,10 +89,8 @@ mongoose
       { id: 1, name: "wws" },
       { id: 2, name: "ww" },
     ];
-    for (let i = 0; i < 5000; i++) {
-      
-    }
-
+    console.log(Date.now());
+    console.log(new Date(moment(new Date())));
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
     //console.log(studentIds);
   })
