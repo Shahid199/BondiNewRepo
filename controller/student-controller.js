@@ -659,7 +659,7 @@ const assignQuestion = async (req, res, next) => {
   let examFinishTime = totalQuesData.endTime;
   //start:generating random index of questions
   let totalQues = Number(totalQuesData.totalQuestionMcq);
-  console.log(totalQues, "totalQues");
+  //console.log(totalQues, "totalQues");
   max = size - 1;
   rand = parseInt(Date.now() % size);
   //console.log("rand", rand);
