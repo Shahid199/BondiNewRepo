@@ -1880,7 +1880,7 @@ const missedExam = async (req, res, next) => {
           { courseId: courseIdObj },
           { status: true },
           { examVariation: examVariation },
-          { endTime: { $lt: new Date() } },
+          { endTime: { $lt: moment(new Date()).add(6, "h") } },
         ],
       }).select("_id");
     } catch (err) {
@@ -1968,7 +1968,7 @@ const missedExam = async (req, res, next) => {
           { courseId: courseIdObj },
           { status: true },
           { examVariation: 4 },
-          { endTime: { $lt: new Date() } },
+          { endTime: { $lt: moment(new Date()).add(6, "h") } },
         ],
       }).select("_id");
     } catch (err) {
