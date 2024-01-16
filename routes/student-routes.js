@@ -1,7 +1,9 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
 const passport = require("passport");
+const mongoose = require("mongoose");
 const authorize = require("../utilities/authorizationMiddleware");
+const moment = require("moment");
 const {
   loginStudent,
   validateToken,
@@ -83,6 +85,8 @@ const {
   bothGetAllRank,
   bothGetExamDataForTest,
 } = require("../controller/student-controller");
+const StudentMarksRank = require("../model/StudentMarksRank");
+const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
@@ -717,5 +721,43 @@ router.get(
   bothGetHistoryFilter
 );
 router.get("/bothgetexamdatafortest", bothGetExamDataForTest);
+router.post(
+  "/testsubmit",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher", "student"]),
+  ],
+  async (req, res, next) => {
+    const eId = req.query.eId;
+    const sId = req.user.studentId;
+    const examEndTime = moment(new Date());
+    let eId1, sId1;
+    sId1 = new mongoose.Types.ObjectId(sId);
+    eId1 = new mongoose.Types.ObjectId(eId);
+    //exam status Check:start
+    let studentCheck = null;
+    let examData = null;
+    let time = null;
+    try {
+      studentCheck = await StudentMarksRank.findOne({
+        $and: [{ examId: eId1 }, { studentId: sId1 }],
+      });
+      examData = await StudentExamVsQuestionsMcq.findOne({
+        $and: [{ examId: eId1 }, { studentId: sId1 }],
+      }).populate("mcqQuestionId examId");
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json("1.Something went wrong.");
+    }
+    let curDate = moment(new Date());
+    let flagSt = false;
+    if (moment(studentCheck.endTime).isAfter(curDate)) {
+      flagSt = true;
+    }
+
+    return res.status(200).json(flagSt);
+  }
+);
 module.exports = router;
+
 //new node

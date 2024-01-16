@@ -1179,16 +1179,14 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
-  // let curDate = moment(new Date());
-  // let submitTime1 = moment(new Date()).subtract(studentCheck.duration, "m");
-  // let diff1 = curDate - submitTime1;
-  // diff1 = moment.duration(curDate.diff(submitTime1));
-  // let min = diff1.asMinutes();
-  // console.log("new Date:", moment(new Date()));
-  // console.log("end:", studentCheck.examEndTime);
-  // console.log(studentCheck.duration);
+  let curDate = moment(new Date());
+  let flagSt = false;
+  if (moment(studentCheck.endTime).isAfter(curDate)) {
+    flagSt = true;
+  }
   if (studentCheck.finishedStatus == true)
     return res.status(409).json("Exam End.");
+
   //exam status Check:end
   let timeStudent = [];
   let findId = studentCheck;
@@ -1218,25 +1216,57 @@ const submitAnswer = async (req, res, next) => {
   totalCorrectMarks = totalCorrectAnswer * correctMarks;
   totalWrongMarks = totalWrongAnswer * negativeMarksValue;
   totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
-  const update1 = {
-    totalCorrectAnswer: totalCorrectAnswer,
-    totalWrongAnswer: totalWrongAnswer,
-    totalNotAnswered: notAnswered,
-    totalCorrectMarks: totalCorrectMarks,
-    totalWrongMarks: totalWrongMarks,
-    totalObtainedMarks: totalObtainedMarks,
-    answeredOption: answeredOptions,
-  };
+  let update1;
   let result = null,
     saveStudentExamEnd = null;
-  let update = {
-    finishedStatus: true,
-    runningStatus: false,
-    examEndTime: moment(submitTime).add(6, "h"),
-    duration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
-    totalObtainedMarks: totalObtainedMarks,
-    rank: -1,
-  };
+  let update;
+  if (flagSt == true) {
+    update1 = {
+      totalCorrectAnswer: totalCorrectAnswer,
+      totalWrongAnswer: totalWrongAnswer,
+      totalNotAnswered: notAnswered,
+      totalCorrectMarks: totalCorrectMarks,
+      totalWrongMarks: totalWrongMarks,
+      totalObtainedMarks: totalObtainedMarks,
+      answeredOption: answeredOptions,
+    };
+    update = {
+      finishedStatus: true,
+      runningStatus: false,
+      examEndTime: moment(submitTime).add(6, "h"),
+      duration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
+      totalObtainedMarks: totalObtainedMarks,
+      rank: -1,
+    };
+  } else {
+    update1 = {
+      totalCorrectAnswer: 0,
+      totalWrongAnswer: 0,
+      totalNotAnswered: 0,
+      totalCorrectMarks: 0,
+      totalWrongMarks: (
+        examData.examId.totalMarksMcq * negativeMarksValue
+      ).toFixed(2),
+      totalObtainedMarks: (
+        examData.examId.totalMarksMcq *
+        negativeMarksValue *
+        -1
+      ).toFixed(2),
+      answeredOption: answeredOptions,
+    };
+    update = {
+      finishedStatus: true,
+      runningStatus: false,
+      examEndTime: moment(curDate).add(6, "h"),
+      duration: 0,
+      totalObtainedMarks: (
+        examData.examId.totalMarksMcq *
+        negativeMarksValue *
+        -1
+      ).toFixed(2),
+      rank: -1,
+    };
+  }
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
