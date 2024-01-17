@@ -1239,9 +1239,12 @@ const submitAnswer = async (req, res, next) => {
       rank: -1,
     };
   } else {
+    for (let i = 0; i < answeredOptions.length; i++) {
+      answeredOptions[i] = "-1";
+    }
     update1 = {
       totalCorrectAnswer: 0,
-      totalWrongAnswer: 0,
+      totalWrongAnswer: answeredOptions.length,
       totalNotAnswered: 0,
       totalCorrectMarks: 0,
       totalWrongMarks: (
