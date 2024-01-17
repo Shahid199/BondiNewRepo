@@ -771,12 +771,21 @@ router.get("/updatemarksmcq", [
         $and: [
           { examId: examId },
           { totalObtainedMarks: -6.25 },
-          { totalWrongAnswer: 25 },
+          { totalWrongAnswer: 0 },
         ],
-      });
+      }).populate("studentId");
+      let data1 = [];
+      for (let i = 0; i < data.length; i++) {
+        let obData = {};
+        obData["name"] = data.studentId.name;
+        obData["mobileNo"] = data.studentId.mobileNo;
+        obData["regNo"] = data.studentId.regNo;
+        obData["totalWrongMarks"] = data.totalWrongMarks;
+        data1.push(obData);
+      }
       console.log("data:", data);
       console.log("count:", data.length);
-      return res.status(200).json(data);
+      return res.status(200).json(data1);
     } catch (err) {
       return res.status(500).json(err);
     }
