@@ -817,7 +817,7 @@ router.get("/updatemarksmcq191", [
       try {
         examData = await StudentExamVsQuestionsMcq.findOne({
           $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
-        }).populate("mcqQuestionId examId");
+        }).populate("mcqQuestionId examId studentId");
       } catch (err) {
         console.log(err);
         return res.statu(500).json("DB error");
