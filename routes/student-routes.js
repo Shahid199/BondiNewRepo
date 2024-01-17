@@ -771,7 +771,7 @@ router.get("/updatemarksmcq", [
         $and: [
           { examId: examId },
           { totalObtainedMarks: -6.25 },
-          { totalWrongAnswer: 25 },
+          { totalWrongAnswer: 0 },
         ],
       }).populate("studentId");
     } catch (err) {
