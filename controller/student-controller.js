@@ -1404,7 +1404,7 @@ const submitAnswer = async (req, res, next) => {
     studentCheck = await StudentMarksRank.findOne({
       $and: [{ examId: eId1 }, { studentId: sId1 }],
     });
-    console.log(studentCheck);
+    // console.log(studentCheck);
     examData = await StudentExamVsQuestionsMcq.findOne({
       $and: [{ examId: eId1 }, { studentId: sId1 }],
     }).populate("mcqQuestionId examId");
@@ -1414,8 +1414,8 @@ const submitAnswer = async (req, res, next) => {
   let curDate = moment(new Date()).add(5, "s");
   let flagSt = false;
   let studEndTime = moment(studentCheck.examEndTime).subtract(6,"h");
-  console.log("StudentEndTime Curdate");
-  console.log(studEndTime, curDate);
+  // console.log("StudentEndTime Curdate");
+  // console.log(studEndTime, curDate);
   if (studEndTime > curDate) {
     flagSt = true;
   }
@@ -1466,7 +1466,7 @@ const submitAnswer = async (req, res, next) => {
       answeredOption: answeredOptions,
     };
     let x = moment(submitTime);
-    console.log("submit time", x);
+    // console.log("submit time", x);
     update = {
       finishedStatus: true,
       runningStatus: false,
@@ -1514,7 +1514,7 @@ const submitAnswer = async (req, res, next) => {
       update
     );
     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
-    console.log(update, update1, flagSt);
+    // console.log(update, update1, flagSt);
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
