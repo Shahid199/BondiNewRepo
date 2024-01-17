@@ -1692,7 +1692,7 @@ const historyData = async (req, res, next) => {
             { finishedStatus: true },
           ],
         },
-        "totalObtainedMarks examStartTime examEndtime"
+        "totalObtainedMarks examStartTime examEndTime"
       );
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
@@ -1729,8 +1729,8 @@ const historyData = async (req, res, next) => {
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks.toFixed(2);
     data1["meritPosition"] = resultRank;
-    data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
-    data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
+    data1["examStartTime"] = moment(rank.examStartTime).subtract(6,"h").format("LLL");
+    data1["examEndTime"] = moment(rank.examEndTime).subtract(6,"h").format("LLL");
     data1["subjectName"] = subjectName;
     resultData.push(data1);
   }
