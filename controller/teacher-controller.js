@@ -15,6 +15,7 @@ const examVariation = require("../utilities/exam-variation");
 const examType = require("../utilities/exam-type");
 const pagination = require("../utilities/pagination");
 const BothTeacherVsExam = require("../model/BothTeacherVsExam");
+const sharp = require("sharp");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {
@@ -211,6 +212,7 @@ const checkScriptSingle = async (req, res, next) => {
     );
 
     let fileNameDis =
+      "UPD_" +
       String(examId) +
       "-" +
       String(studentId) +
@@ -230,12 +232,27 @@ const checkScriptSingle = async (req, res, next) => {
       "-" +
       String(i + 1) +
       ".png";
+    let fileNameUpd =
+      dir +
+      "/" +
+      "UPD_" +
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".png";
+    let res = null;
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
+      res = await sharp(fileName).png({ quality: 20 }).toFile(fileNameUpd);
     } catch (e) {
       //console.log(e);
       return res.status(500).json(e);
     }
+    if (res) fs.unlinkSync(fileName);
     uploadImages[i] = "uploads/answers/" + fileNameDis;
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
