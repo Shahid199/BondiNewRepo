@@ -813,8 +813,12 @@ router.get("/updatemarksmcq191", [
     // console.log("data:", data);
     // console.log("count:", data.length);
     let data1 = [];
+    let studentCheck = null;
     for (let i = 0; i < data.length; i++) {
       try {
+        studentCheck = await StudentMarksRank.findOne({
+          $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
+        });
         examData = await StudentExamVsQuestionsMcq.findOne({
           $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
         }).populate("mcqQuestionId examId studentId");
@@ -822,6 +826,7 @@ router.get("/updatemarksmcq191", [
         console.log(err);
         return res.statu(500).json("DB error");
       }
+      let findId = String(studentCheck._id);
       let id = String(examData._id);
       let correctMarks = examData.examId.marksPerMcq;
       let negativeMarks = examData.examId.negativeMarks;
@@ -845,6 +850,32 @@ router.get("/updatemarksmcq191", [
       totalCorrectMarks = totalCorrectAnswer * correctMarks;
       totalWrongMarks = totalWrongAnswer * negativeMarksValue;
       totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+
+      let update1;
+      let result = null,
+        saveStudentExamEnd = null;
+      let update;
+      update1 = {
+        totalCorrectAnswer: totalCorrectAnswer,
+        totalWrongAnswer: totalWrongAnswer,
+        totalNotAnswered: notAnswered,
+        totalCorrectMarks: totalCorrectMarks,
+        totalWrongMarks: totalWrongMarks,
+        totalObtainedMarks: totalObtainedMarks,
+      };
+      update = {
+        totalObtainedMarks: totalObtainedMarks,
+        rank: -1,
+      };
+      try {
+        saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
+          findId,
+          update
+        );
+        result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+      } catch (err) {
+        return res.status(500).json("3.Something went wrong.");
+      }
       console.log(examData.studentId.name);
       console.log(totalCorrectMarks);
       console.log(totalWrongMarks);
