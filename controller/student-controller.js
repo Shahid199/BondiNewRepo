@@ -626,6 +626,98 @@ const assignQuestion1 = async (req, res, next) => {
   return res.status(201).json(questions);
 };
 
+const assignQuestion2 = async (req, res, next) => {
+  //data get from examcheck function req.body
+  const eId = req.query.eId;
+  const studentId = req.user.studentId;
+  //start:check student already complete the exam or not
+  let eId1, sId;
+  sId = new mongoose.Types.ObjectId(studentId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  let doc = [],
+    size,
+    min = 0,
+    max = 0,
+    rand,
+    mcqData = [];
+  try {
+    mcqData = await McqQuestionVsExam.findOne({ eId: eId1 }).populate({
+      path: "mId",
+      match: { status: true },
+    });
+    size = mcqData.mId.length;
+  } catch (err) {
+    return res.status(500).json("1.something went wrong.");
+  }
+  if (!size) return res.status(404).json("No question assigned in the exam.");
+  let totalQuesData;
+  try {
+    totalQuesData = await Exam.findById(eId);
+  } catch (err) {
+    return res.status(500).json("2.something went wrong");
+  }
+  let examFinishTime = totalQuesData.endTime;
+  //start:generating random index of questions
+  let totalQues = Number(totalQuesData.totalQuestionMcq);
+  //console.log(totalQues, "totalQues");
+  max = size - 1;
+  rand = parseInt(Date.now() % size);
+  //console.log("rand", rand);
+  let flag = 0;
+  let resultQuestion = [];
+  for (let j = rand; j >= 0; j--) {
+    if (resultQuestion.length == totalQues) {
+      flag = 1;
+      break;
+    }
+    //console.log("j:", j);
+    resultQuestion.push(new mongoose.Types.ObjectId(mcqData.mId[j]._id));
+  }
+  if (flag == 0) {
+    for (let j = rand + 1; j < size; j++) {
+      if (resultQuestion.length == totalQues) {
+        flag = 1;
+        break;
+      }
+      //console.log("j:", j);
+      resultQuestion.push(new mongoose.Types.ObjectId(mcqData.mId[j]._id));
+    }
+  }
+  let answered = [];
+  for (let i = 0; i < totalQues; i++) {
+    answered[i] = "-1";
+  }
+  let studentExamVsQuestionsMcq = new StudentExamVsQuestionsMcq({
+    studentId: sId,
+    examId: eId1,
+    mcqQuestionId: resultQuestion,
+    answeredOption: answered,
+  });
+  let saveStudentQuestion = null,
+    saveStudentExam = null,
+    examEndTimeActual = totalQuesData.endTime;
+  let duration = Number(totalQuesData.duration);
+  let examStartTime = moment(new Date());
+  let examEndTime = moment(examStartTime).add(duration, "m");
+  if (examEndTime > examEndTimeActual.endTime)
+    examEndTime = examEndTimeActual.endTime;
+  let studentMarksRank = new StudentMarksRank({
+    studentId: sId,
+    examId: eId1,
+    examStartTime: moment(examStartTime).add(6, "h"),
+    runningStatus: true,
+    examEndTime: moment(examEndTime).add(6, "h"),
+    duration: (examEndTime - examStartTime) / (1000 * 60),
+  });
+  try {
+    saveStudentQuestion = await studentExamVsQuestionsMcq.save();
+    saveStudentExam = await studentMarksRank.save();
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("4.Something went wrong.");
+  }
+  return res.status(201).json("Suceess!!");
+};
 const assignQuestion = async (req, res, next) => {
   //data get from examcheck function req.body
   const eId = req.query.eId;
@@ -634,6 +726,18 @@ const assignQuestion = async (req, res, next) => {
   let eId1, sId;
   sId = new mongoose.Types.ObjectId(studentId);
   eId1 = new mongoose.Types.ObjectId(eId);
+  let exist = null;
+  try {
+    exist = await StudentExamVsQuestionsMcq.findOne({
+      $and: [{ examId: eId1 }, { studentId: sId }],
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  console.log("exist", exist);
+  if (exist) {
+    return res.status(200).json("runnning");
+  }
   let doc = [],
     size,
     min = 0,
@@ -1283,74 +1387,74 @@ const submitAnswer2 = async (req, res, next) => {
   }
 };
 const submitAnswer = async (req, res, next) => {
-  const eId = req.query.eId
-  const sId = req.user.studentId
-  let answeredOptions = req.body.answeredOptions
+  const eId = req.query.eId;
+  const sId = req.user.studentId;
+  let answeredOptions = req.body.answeredOptions;
   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId) || !answeredOptions)
-    return res.status(404).json('Invalid studnet Id or Exam Id')
-  const examEndTime = moment(new Date())
-  let eId1, sId1
-  sId1 = new mongoose.Types.ObjectId(sId)
-  eId1 = new mongoose.Types.ObjectId(eId)
+    return res.status(404).json("Invalid studnet Id or Exam Id");
+  const examEndTime = moment(new Date());
+  let eId1, sId1;
+  sId1 = new mongoose.Types.ObjectId(sId);
+  eId1 = new mongoose.Types.ObjectId(eId);
   //exam status Check:start
-  let studentCheck = null
-  let examData = null
-  let time = null
+  let studentCheck = null;
+  let examData = null;
+  let time = null;
   try {
     studentCheck = await StudentMarksRank.findOne({
       $and: [{ examId: eId1 }, { studentId: sId1 }],
-    })
+    });
     console.log(studentCheck);
     examData = await StudentExamVsQuestionsMcq.findOne({
       $and: [{ examId: eId1 }, { studentId: sId1 }],
-    }).populate('mcqQuestionId examId')
+    }).populate("mcqQuestionId examId");
   } catch (err) {
-    return res.status(500).json('1.Something went wrong.')
+    return res.status(500).json("1.Something went wrong.");
   }
-  let curDate = moment(new Date()).add(5, 's')
-  let flagSt = false
+  let curDate = moment(new Date()).add(5, "s");
+  let flagSt = false;
   let studEndTime = moment(studentCheck.examEndTime);
-  console.log('StudentEndTime Curdate')
-  console.log(studEndTime, curDate)
+  console.log("StudentEndTime Curdate");
+  console.log(studEndTime, curDate);
   if (studEndTime < curDate) {
-    flagSt = true
+    flagSt = true;
   }
   if (studentCheck.finishedStatus == true)
-    return res.status(409).json('Exam End.')
+    return res.status(409).json("Exam End.");
 
   //exam status Check:e
-  let timeStudent = []
-  let findId = studentCheck
-  if (findId == null) return res.status(404).json('data not found.')
-  findId = String(findId._id)
-  timeStudent[0] = findId.examStartTime
-  timeStudent[1] = findId.examEndTime
-  let submitTime = moment(new Date())
-  let id = String(examData._id)
-  let correctMarks = examData.examId.marksPerMcq
-  let negativeMarks = examData.examId.negativeMarks
-  let negativeMarksValue = (correctMarks * negativeMarks) / 100
-  let examDataMcq = examData.mcqQuestionId
-  let notAnswered = 0
-  let totalCorrectAnswer = 0
-  let totalWrongAnswer = 0
-  let totalObtainedMarks = 0
-  let totalCorrectMarks = 0
-  let totalWrongMarks = 0
+  let timeStudent = [];
+  let findId = studentCheck;
+  if (findId == null) return res.status(404).json("data not found.");
+  findId = String(findId._id);
+  timeStudent[0] = findId.examStartTime;
+  timeStudent[1] = findId.examEndTime;
+  let submitTime = moment(new Date());
+  let id = String(examData._id);
+  let correctMarks = examData.examId.marksPerMcq;
+  let negativeMarks = examData.examId.negativeMarks;
+  let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+  let examDataMcq = examData.mcqQuestionId;
+  let notAnswered = 0;
+  let totalCorrectAnswer = 0;
+  let totalWrongAnswer = 0;
+  let totalObtainedMarks = 0;
+  let totalCorrectMarks = 0;
+  let totalWrongMarks = 0;
   for (let i = 0; i < examDataMcq.length; i++) {
-    if (answeredOptions[i] == '-1') {
-      notAnswered = notAnswered + 1
+    if (answeredOptions[i] == "-1") {
+      notAnswered = notAnswered + 1;
     } else if (answeredOptions[i] == examDataMcq[i].correctOption) {
-      totalCorrectAnswer = totalCorrectAnswer + 1
-    } else totalWrongAnswer = totalWrongAnswer + 1
+      totalCorrectAnswer = totalCorrectAnswer + 1;
+    } else totalWrongAnswer = totalWrongAnswer + 1;
   }
-  totalCorrectMarks = totalCorrectAnswer * correctMarks
-  totalWrongMarks = totalWrongAnswer * negativeMarksValue
-  totalObtainedMarks = totalCorrectMarks - totalWrongMarks
-  let update1
+  totalCorrectMarks = totalCorrectAnswer * correctMarks;
+  totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+  totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+  let update1;
   let result = null,
-    saveStudentExamEnd = null
-  let update
+    saveStudentExamEnd = null;
+  let update;
   if (flagSt == true) {
     update1 = {
       totalCorrectAnswer: totalCorrectAnswer,
@@ -1360,21 +1464,21 @@ const submitAnswer = async (req, res, next) => {
       totalWrongMarks: totalWrongMarks,
       totalObtainedMarks: totalObtainedMarks,
       answeredOption: answeredOptions,
-    }
-    let x = moment(submitTime)
-    console.log('submit time', x)
+    };
+    let x = moment(submitTime);
+    console.log("submit time", x);
     update = {
       finishedStatus: true,
       runningStatus: false,
-      examEndTime: moment(submitTime).add(6, 'h'),
+      examEndTime: moment(submitTime).add(6, "h"),
       duration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
       totalObtainedMarks: totalObtainedMarks,
       rank: -1,
-    }
+    };
   } else {
-    let answerArray = []
+    let answerArray = [];
     for (let i = 0; i < examData.examId.totalQuestionMcq; i++) {
-      answerArray[i] = '-1'
+      answerArray[i] = "-1";
     }
     update1 = {
       totalCorrectAnswer: 0,
@@ -1390,11 +1494,11 @@ const submitAnswer = async (req, res, next) => {
         -1
       ).toFixed(2),
       answeredOption: answerArray,
-    }
+    };
     update = {
       finishedStatus: true,
       runningStatus: false,
-      examEndTime: moment(curDate).add(6, 'h'),
+      examEndTime: moment(curDate).add(6, "h"),
       duration: 0,
       totalObtainedMarks: (
         examData.examId.totalMarksMcq *
@@ -1402,23 +1506,20 @@ const submitAnswer = async (req, res, next) => {
         -1
       ).toFixed(2),
       rank: -1,
-    }
+    };
   }
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
       update
-    )
-    result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1)
-    console.log(update, update1, flagSt)
+    );
+    result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+    console.log(update, update1, flagSt);
   } catch (err) {
-    return res.status(500).json('3.Something went wrong.')
+    return res.status(500).json("3.Something went wrong.");
   }
-  return res.status(200).json('Successfully Submitted!!')
-}
-
-
-
+  return res.status(200).json("Successfully Submitted!!");
+};
 
 // const setAllRank = async (req, res, next) => {
 //   let examId = req.query.examId;
