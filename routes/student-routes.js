@@ -760,7 +760,7 @@ router.post(
   }
 );
 
-router.post("/updatemarksmcq", [
+router.get("/updatemarksmcq", [
   passport.authenticate("jwt", { session: false }),
   authorize(["superadmin"]),
   async (req, res, next) => {
