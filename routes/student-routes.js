@@ -792,6 +792,38 @@ router.get("/updatemarksmcq", [
   },
 ]);
 
+router.get("/updatemarksmcq191", [
+  passport.authenticate("jwt", { session: false }),
+  authorize(["superadmin"]),
+  async (req, res, next) => {
+    let examId = new mongoose.Types.ObjectId("65a64ad1f6822bdeb4585e20");
+    let data = [];
+    try {
+      data = await StudentExamVsQuestionsMcq.find({
+        $and: [
+          { examId: examId },
+          { totalObtainedMarks: -6.25 },
+          { totalWrongAnswer: 0 },
+        ],
+      }).populate("studentId");
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    console.log("data:", data);
+    console.log("count:", data.length);
+    let data1 = [];
+    for (let i = 0; i < data.length; i++) {
+      let obData = {};
+      obData["name"] = data[i].studentId.name;
+      obData["mobileNo"] = data[i].studentId.mobileNo;
+      obData["regNo"] = data[i].studentId.regNo;
+      obData["totalWrongMarks"] = data[i].totalWrongMarks;
+      data1.push(obData);
+    }
+    return res.status(200).json(data1);
+  },
+]);
+
 module.exports = router;
 
 //new node
