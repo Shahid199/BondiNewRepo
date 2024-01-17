@@ -1220,7 +1220,7 @@ const submitAnswer = async (req, res, next) => {
   let result = null,
     saveStudentExamEnd = null;
   let update;
-  if (flagSt == true) {
+  //if (flagSt == true) {
     update1 = {
       totalCorrectAnswer: totalCorrectAnswer,
       totalWrongAnswer: totalWrongAnswer,
@@ -1238,38 +1238,38 @@ const submitAnswer = async (req, res, next) => {
       totalObtainedMarks: totalObtainedMarks,
       rank: -1,
     };
-  } else {
-    for (let i = 0; i < answeredOptions.length; i++) {
-      answeredOptions[i] = "-1";
-    }
-    update1 = {
-      totalCorrectAnswer: 0,
-      totalWrongAnswer: answeredOptions.length,
-      totalNotAnswered: 0,
-      totalCorrectMarks: 0,
-      totalWrongMarks: (
-        examData.examId.totalMarksMcq * negativeMarksValue
-      ).toFixed(2),
-      totalObtainedMarks: (
-        examData.examId.totalMarksMcq *
-        negativeMarksValue *
-        -1
-      ).toFixed(2),
-      answeredOption: answeredOptions,
-    };
-    update = {
-      finishedStatus: true,
-      runningStatus: false,
-      examEndTime: moment(curDate).add(6, "h"),
-      duration: 0,
-      totalObtainedMarks: (
-        examData.examId.totalMarksMcq *
-        negativeMarksValue *
-        -1
-      ).toFixed(2),
-      rank: -1,
-    };
-  }
+  // } else {
+  //   for (let i = 0; i < answeredOptions.length; i++) {
+  //     answeredOptions[i] = "-1";
+  //   }
+  //   update1 = {
+  //     totalCorrectAnswer: 0,
+  //     totalWrongAnswer: answeredOptions.length,
+  //     totalNotAnswered: 0,
+  //     totalCorrectMarks: 0,
+  //     totalWrongMarks: (
+  //       examData.examId.totalMarksMcq * negativeMarksValue
+  //     ).toFixed(2),
+  //     totalObtainedMarks: (
+  //       examData.examId.totalMarksMcq *
+  //       negativeMarksValue *
+  //       -1
+  //     ).toFixed(2),
+  //     answeredOption: answeredOptions,
+  //   };
+  //   update = {
+  //     finishedStatus: true,
+  //     runningStatus: false,
+  //     examEndTime: moment(curDate).add(6, "h"),
+  //     duration: 0,
+  //     totalObtainedMarks: (
+  //       examData.examId.totalMarksMcq *
+  //       negativeMarksValue *
+  //       -1
+  //     ).toFixed(2),
+  //     rank: -1,
+  //   };
+  // }
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
@@ -3514,6 +3514,139 @@ const updateStudentExamInfo = async (req, res, next) => {
 
   return res.status(201).json("Updated successfully.");
 };
+const updateStudentExamInfo3 = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Exam Id is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let getEndTime = null;
+  ////console.log(examIdObj, "examIdObj");
+  try {
+    getEndTime = await Exam.findById(examId).select("endTime -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let nullArr = [];
+  getEndTime = moment(getEndTime.endTime);
+  let currentTime = moment(Date.now()).add(6, "hours");
+  ////console.log(currentTime);
+  ////console.log(getEndTime);
+  if (currentTime < getEndTime) {
+    return res.status(200).json(nullArr);
+  }
+  let examUncheckStudent = null;
+  try {
+    examUncheckStudent = await StudentMarksRank.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishedStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //get student id dont submit:start
+  let studentIds = [];
+  try {
+    studentIds = await StudentMarksRank.find(
+      {
+        $and: [
+          { examId: examIdObj },
+          { finishedStatus: false },
+          { runningStatus: true },
+        ],
+      },
+      "studentId -_id"
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //get student id dont submit:end
+  ////console.log(examUncheckStudent, "examUncheckStudent");
+  if (examUncheckStudent.length == 0)
+    return res.status(200).json("All student submit the exam.");
+  let updateStatus = null;
+  try {
+    updateStatus = await StudentMarksRank.updateMany(
+      {
+        _id: { $in: examUncheckStudent },
+      },
+      { $set: { runningStatus: false, finishedStatus: true } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  ////console.log(updateStatus, "updateStatus");
+  if (updateStatus.modifiedCount == 0)
+    return res.status(404).json("Not updated.");
+
+  //result calculation:start
+  ////console.log("studentIds", studentIds);
+  for (let i = 0; i < studentIds.length; i++) {
+    let examData = null;
+    try {
+      examData = await StudentExamVsQuestionsMcq.findOne({
+        $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
+      }).populate("mcqQuestionId examId");
+    } catch (err) {
+      return res.status(500).json("Problem when get exam data.");
+    }
+    ////console.log(examData);
+    let id = String(examData._id);
+    let correctMarks = examData.examId.marksPerMcq;
+    let negativeMarks = examData.examId.negativeMarks;
+    let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+    let examDataMcq = examData.mcqQuestionId;
+    let answered = examData.answeredOption;
+    let notAnswered = 0;
+    let totalCorrectAnswer = 0;
+    let totalWrongAnswer = 0;
+    let totalObtainedMarks = 0;
+    let totalCorrectMarks = 0;
+    let totalWrongMarks = 0;
+    for (let i = 0; i < examDataMcq.length; i++) {
+      if (answered[i] == "-1") {
+        notAnswered = notAnswered + 1;
+      } else if (answered[i] == examDataMcq[i].correctOption) {
+        totalCorrectAnswer = totalCorrectAnswer + 1;
+      } else totalWrongAnswer = totalWrongAnswer + 1;
+    }
+    totalCorrectMarks = totalCorrectAnswer * correctMarks;
+    totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+    totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+    const update1 = {
+      totalCorrectAnswer: totalCorrectAnswer,
+      totalWrongAnswer: totalWrongAnswer,
+      totalNotAnswered: notAnswered,
+      totalCorrectMarks: totalCorrectMarks,
+      totalWrongMarks: totalWrongMarks,
+      totalObtainedMarks: totalObtainedMarks,
+    };
+    let result = null,
+      upd = null;
+    try {
+      result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+      ////console.log("result", result.modifiedCount);
+      upd = await StudentMarksRank.updateOne(
+        {
+          $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
+        },
+        { totalObtainedMarks: totalObtainedMarks }
+      );
+      ////console.log("upd", upd.modifiedCount);
+    } catch (err) {
+      return res.status(500).json("Problem when update total obtained marks.");
+    }
+  }
+  //result calculation:end
+
+  return res.status(201).json("Updated successfully.");
+};
+
 const updateRank1 = async (req, res, next) => {
   let examId = req.query.examId;
   if (!ObjectId.isValid(examId))
