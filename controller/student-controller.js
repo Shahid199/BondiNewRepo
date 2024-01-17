@@ -1514,7 +1514,7 @@ const submitAnswer = async (req, res, next) => {
       update
     );
     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
-    console.log(update, update1, flagSt);
+    // console.log(update, update1, flagSt);
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
