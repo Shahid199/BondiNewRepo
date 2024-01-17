@@ -782,7 +782,7 @@ router.get("/updatemarksmcq", [
     let data1 = [];
     for (let i = 0; i < data.length; i++) {
       let obData = {};
-      obData["name"] = data.studentId.name;
+      //obData["name"] = data.studentId.name;
       obData["mobileNo"] = data.studentId.mobileNo;
       obData["regNo"] = data.studentId.regNo;
       obData["totalWrongMarks"] = data.totalWrongMarks;
