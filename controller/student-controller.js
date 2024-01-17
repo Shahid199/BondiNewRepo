@@ -1413,10 +1413,10 @@ const submitAnswer = async (req, res, next) => {
   }
   let curDate = moment(new Date()).add(5, "s");
   let flagSt = false;
-  let studEndTime = moment(studentCheck.examEndTime);
+  let studEndTime = moment(studentCheck.examEndTime).subtract(6,"h");
   console.log("StudentEndTime Curdate");
   console.log(studEndTime, curDate);
-  if (studEndTime < curDate) {
+  if (studEndTime > curDate) {
     flagSt = true;
   }
   if (studentCheck.finishedStatus == true)
