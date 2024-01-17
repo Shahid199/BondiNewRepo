@@ -797,6 +797,7 @@ router.get("/updatemarksmcq191", [
   authorize(["superadmin"]),
   async (req, res, next) => {
     let examId = new mongoose.Types.ObjectId("65a64ad1f6822bdeb4585e20");
+    let examData = null;
     let data = [];
     try {
       data = await StudentExamVsQuestionsMcq.find({
@@ -809,18 +810,47 @@ router.get("/updatemarksmcq191", [
     } catch (err) {
       return res.status(500).json(err);
     }
-    console.log("data:", data);
-    console.log("count:", data.length);
+    // console.log("data:", data);
+    // console.log("count:", data.length);
     let data1 = [];
     for (let i = 0; i < data.length; i++) {
-      let obData = {};
-      obData["name"] = data[i].studentId.name;
-      obData["mobileNo"] = data[i].studentId.mobileNo;
-      obData["regNo"] = data[i].studentId.regNo;
-      obData["totalWrongMarks"] = data[i].totalWrongMarks;
-      data1.push(obData);
+      try {
+        examData = await StudentExamVsQuestionsMcq.findOne({
+          $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
+        }).populate("mcqQuestionId examId");
+      } catch (err) {
+        console.log(err);
+        return res.statu(500).json("DB error");
+      }
+      let id = String(examData._id);
+      let correctMarks = examData.examId.marksPerMcq;
+      let negativeMarks = examData.examId.negativeMarks;
+      let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+      let examDataMcq = examData.mcqQuestionId;
+      let notAnswered = 0;
+      let totalCorrectAnswer = 0;
+      let totalWrongAnswer = 0;
+      let totalObtainedMarks = 0;
+      let totalCorrectMarks = 0;
+      let totalWrongMarks = 0;
+      let answeredOptions = examData.answeredOption;
+
+      for (let i = 0; i < examDataMcq.length; i++) {
+        if (answeredOptions[i] == "-1") {
+          notAnswered = notAnswered + 1;
+        } else if (answeredOptions[i] == examDataMcq[i].correctOption) {
+          totalCorrectAnswer = totalCorrectAnswer + 1;
+        } else totalWrongAnswer = totalWrongAnswer + 1;
+      }
+      totalCorrectMarks = totalCorrectAnswer * correctMarks;
+      totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+      totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+      console.log(examData.studentId.name);
+      console.log(totalCorrectMarks);
+      console.log(totalWrongMarks);
+      console.log(totalObtainedMarks);
     }
-    return res.status(200).json(data1);
+    return res.status(200).json("ss");
   },
 ]);
 
