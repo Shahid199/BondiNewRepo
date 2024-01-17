@@ -754,10 +754,31 @@ router.post(
     if (moment(studentCheck.endTime).isAfter(curDate)) {
       flagSt = true;
     }
-
+    console.log(studentCheck.endTime);
+    console.log(curDate);
     return res.status(200).json(flagSt);
   }
 );
+
+router.post("/updatemarksmcq", [
+  passport.authenticate("jwt", { session: false }),
+  authorize(["superadmin"]),
+  async (req, res, next) => {
+    let examId = new mongoose.Types.ObjectId("65a64ad1f6822bdeb4585e20");
+    let data = [];
+    try {
+      data = await StudentExamVsQuestionsMcq.find({
+        $and: [{ examId: examId }, { totalObtainedMarks: -6.25 }],
+      });
+      console.log("data:", data);
+      console.log("count:", data.length);
+      return res.status(200).json(data);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  },
+]);
+
 module.exports = router;
 
 //new node
