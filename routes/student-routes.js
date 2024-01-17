@@ -785,10 +785,10 @@ router.get("/updatemarksmcq", [
       }
       console.log("data:", data);
       console.log("count:", data.length);
-      return res.status(200).json(data1);
     } catch (err) {
       return res.status(500).json(err);
     }
+    return res.status(200).json(data1);
   },
 ]);
 
