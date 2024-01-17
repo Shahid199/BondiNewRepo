@@ -768,7 +768,11 @@ router.get("/updatemarksmcq", [
     let data = [];
     try {
       data = await StudentExamVsQuestionsMcq.find({
-        $and: [{ examId: examId }, { totalObtainedMarks: -6.25 }],
+        $and: [
+          { examId: examId },
+          { totalObtainedMarks: -6.25 },
+          { totalWrongAnswer: 25 },
+        ],
       });
       console.log("data:", data);
       console.log("count:", data.length);
