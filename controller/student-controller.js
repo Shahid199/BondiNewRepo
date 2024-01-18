@@ -36,6 +36,7 @@ const BothRank = require("../model/BothRank");
 const SpecialRank = require("../model/SpecialRank");
 const SpecialExam = require("../model/SpecialExam");
 const { options } = require("pdfkit");
+const sharp = require("sharp");
 
 const Limit = 100;
 
@@ -1413,7 +1414,7 @@ const submitAnswer = async (req, res, next) => {
   }
   let curDate = moment(new Date()).add(5, "s");
   let flagSt = false;
-  let studEndTime = moment(studentCheck.examEndTime).subtract(6,"h");
+  let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
   // console.log("StudentEndTime Curdate");
   // console.log(studEndTime, curDate);
   if (studEndTime > curDate) {
@@ -1729,8 +1730,12 @@ const historyData = async (req, res, next) => {
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
     data1["totalObtainedMarks"] = rank.totalObtainedMarks.toFixed(2);
     data1["meritPosition"] = resultRank;
-    data1["examStartTime"] = moment(rank.examStartTime).subtract(6,"h").format("LLL");
-    data1["examEndTime"] = moment(rank.examEndTime).subtract(6,"h").format("LLL");
+    data1["examStartTime"] = moment(rank.examStartTime)
+      .subtract(6, "h")
+      .format("LLL");
+    data1["examEndTime"] = moment(rank.examEndTime)
+      .subtract(6, "h")
+      .format("LLL");
     data1["subjectName"] = subjectName;
     resultData.push(data1);
   }
@@ -4249,6 +4254,76 @@ const assignWrittenQuestion = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+const submitStudentScript1 = async (req, res, next) => {
+  const files = req.files;
+  //file upload handle:start
+  const file = req.files;
+  ////console.log(file);
+  let questionILinkPath = [];
+  if (!file.questionILink) return res.status(400).json("Files not uploaded.");
+  for (let i = 0; i < file.questionILink.length; i++) {
+    console.log(file.questionILink[i]);
+    questionILinkPath[i] = "uploads/".concat(file.questionILink[i].filename);
+    let fileNameUpd =
+      "uploads/" + "UPD_" + file.questionILink[i].filename + ".png";
+    await sharp(questionILinkPath[i]).png({ quality: 5 }).toFile(fileNameUpd);
+    questionILinkPath[i] = fileNameUpd;
+    //console.log(questionILinkPath[i]);
+    fs.unlinkSync("uploads/".concat(file.questionILink[i].filename));
+  }
+  //file upload handle:end
+  let examId = req.body.examId;
+  let studentId = req.user.studentId;
+  let questionNo = Number(req.body.questionNo);
+  ////console.log(questionNo);
+  ////console.log(examId);
+  ////console.log(studentId);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !questionNo
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  questionNo = questionNo - 1;
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  let getQuestionScript = null;
+  try {
+    getQuestionScript = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getQuestionScript._id;
+  let uploadStatus = getQuestionScript.uploadStatus;
+  let checkStatus = getQuestionScript.checkStatus;
+  if (uploadStatus == true || checkStatus == true)
+    return res.status(404).json("Can not upload file.");
+  getQuestionScript = getQuestionScript.submittedScriptILink;
+  if (getQuestionScript[questionNo]) {
+    for (let i = 0; i < getQuestionScript[questionNo].length; i++) {
+      fs.unlinkSync(getQuestionScript[questionNo][i]);
+    }
+  }
+
+  getQuestionScript[questionNo] = questionILinkPath;
+  ////console.log(getQuestionScript[questionNo]);
+  let upd = {
+    submittedScriptILink: getQuestionScript,
+  };
+  let doc;
+  try {
+    doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Submitted Successfully.");
+};
 const submitStudentScript = async (req, res, next) => {
   const files = req.files;
   //file upload handle:start
@@ -4312,6 +4387,7 @@ const submitStudentScript = async (req, res, next) => {
   }
   return res.status(201).json("Submitted Successfully.");
 };
+
 const runningWritten = async (req, res, next) => {
   let questionData = null;
   let examData = null;

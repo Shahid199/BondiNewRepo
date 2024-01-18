@@ -212,6 +212,90 @@ const checkScriptSingle = async (req, res, next) => {
     );
 
     let fileNameDis =
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".png";
+    let fileName =
+      dir +
+      "/" +
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".png";
+    try {
+      fs.writeFileSync(fileName, matches, { encoding: "base64" });
+    } catch (e) {
+      //console.log(e);
+      return res.status(500).json(e);
+    }
+    uploadImages[i] = "uploads/answers/" + fileNameDis;
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let getData = null;
+  try {
+    getData = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getData._id;
+  let checkScript = getData.ansewerScriptILink;
+  let obtainedMarksArr = [];
+  checkScript[questionNo] = uploadImages;
+  obtainedMarksArr = getData.obtainedMarks;
+  obtainedMarksArr[questionNo] = obtainedMarks;
+  let upd = {
+    ansewerScriptILink: checkScript,
+    obtainedMarks: obtainedMarksArr,
+  };
+  let doc;
+  try {
+    doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Updated Successfully.");
+};
+const checkScriptSingle1 = async (req, res, next) => {
+  let questionNo = Number(req.body.questionNo);
+  let obtainedMarks = Number(req.body.obtainedMarks);
+  let studentId = req.body.studentId;
+  let examId = req.body.examId;
+  let images = req.body.uploadImages;
+  //console.log(req.body.obtainedMarks);
+  //console.log(obtainedMarks);
+  //console.log(req.body.uploadImages);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    questionNo < 0 ||
+    obtainedMarks < 0
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  questionNo = questionNo - 1;
+  let uploadImages = [];
+  for (let i = 0; i < images.length; i++) {
+    const matches = String(images[i]).replace(
+      /^data:([A-Za-z-+/]+);base64,/,
+      ""
+    );
+
+    let fileNameDis =
       "UPD_" +
       String(examId) +
       "-" +
@@ -244,15 +328,16 @@ const checkScriptSingle = async (req, res, next) => {
       "-" +
       String(i + 1) +
       ".png";
-    let res = null;
+    let res1 = null;
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
-      res = await sharp(fileName).png({ quality: 20 }).toFile(fileNameUpd);
+      res1 = await sharp(fileName).png({ quality: 10 }).toFile(fileNameUpd);
     } catch (e) {
-      //console.log(e);
+      console.log(e);
+      console.log("cccd");
       return res.status(500).json(e);
     }
-    if (res) fs.unlinkSync(fileName);
+    if (res1) fs.unlinkSync(fileName);
     uploadImages[i] = "uploads/answers/" + fileNameDis;
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);

@@ -46,7 +46,7 @@ const getSubjectByCourse = async (req, res, next) => {
   const ObjectId = mongoose.Types.ObjectId;
   let data = [];
   const courseId = req.query.courseId;
-  if (!ObjectId.isValid(courseId)) return res.status(404).json(subjects);
+  if (!ObjectId.isValid(courseId)) return res.status(404).json("subjects invalid.");
   let courseIdOb = new mongoose.Types.ObjectId(courseId);
   let page = Number(req.query.page) || 1;
   let count = 0;
