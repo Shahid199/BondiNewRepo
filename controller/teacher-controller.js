@@ -15,7 +15,7 @@ const examVariation = require("../utilities/exam-variation");
 const examType = require("../utilities/exam-type");
 const pagination = require("../utilities/pagination");
 const BothTeacherVsExam = require("../model/BothTeacherVsExam");
-const sharp = require("sharp");
+//const sharp = require("sharp");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const getStudentData = async (req, res, next) => {

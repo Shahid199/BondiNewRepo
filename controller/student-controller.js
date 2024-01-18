@@ -36,7 +36,7 @@ const BothRank = require("../model/BothRank");
 const SpecialRank = require("../model/SpecialRank");
 const SpecialExam = require("../model/SpecialExam");
 const { options } = require("pdfkit");
-const sharp = require("sharp");
+//const sharp = require("sharp");
 
 const Limit = 100;
 
