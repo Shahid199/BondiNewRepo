@@ -764,7 +764,7 @@ router.get("/updatemarksmcq", [
   passport.authenticate("jwt", { session: false }),
   authorize(["superadmin"]),
   async (req, res, next) => {
-    let examId = new mongoose.Types.ObjectId("65a64ad1f6822bdeb4585e20");
+    let examId = new mongoose.Types.ObjectId("65aa365bfe7ce9df83a910a7");
     let data = [];
     try {
       data = await StudentExamVsQuestionsMcq.find({
@@ -792,98 +792,98 @@ router.get("/updatemarksmcq", [
   },
 ]);
 
-router.get("/updatemarksmcq191", [
-  passport.authenticate("jwt", { session: false }),
-  authorize(["superadmin"]),
-  async (req, res, next) => {
-    let examId = new mongoose.Types.ObjectId("65a64ad1f6822bdeb4585e20");
-    let examData = null;
-    let data = [];
-    try {
-      data = await StudentExamVsQuestionsMcq.find({
-        $and: [
-          { examId: examId },
-          { totalObtainedMarks: -6.25 },
-          { totalWrongAnswer: 0 },
-        ],
-      }).populate("studentId");
-    } catch (err) {
-      return res.status(500).json(err);
-    }
-    // console.log("data:", data);
-    // console.log("count:", data.length);
-    let data1 = [];
-    let studentCheck = null;
-    for (let i = 0; i < data.length; i++) {
-      try {
-        studentCheck = await StudentMarksRank.findOne({
-          $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
-        });
-        examData = await StudentExamVsQuestionsMcq.findOne({
-          $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
-        }).populate("mcqQuestionId examId studentId");
-      } catch (err) {
-        console.log(err);
-        return res.statu(500).json("DB error");
-      }
-      let findId = String(studentCheck._id);
-      let id = String(examData._id);
-      let correctMarks = examData.examId.marksPerMcq;
-      let negativeMarks = examData.examId.negativeMarks;
-      let negativeMarksValue = (correctMarks * negativeMarks) / 100;
-      let examDataMcq = examData.mcqQuestionId;
-      let notAnswered = 0;
-      let totalCorrectAnswer = 0;
-      let totalWrongAnswer = 0;
-      let totalObtainedMarks = 0;
-      let totalCorrectMarks = 0;
-      let totalWrongMarks = 0;
-      let answeredOptions = examData.answeredOption;
+// router.get("/updatemarksmcq191", [
+//   passport.authenticate("jwt", { session: false }),
+//   authorize(["superadmin"]),
+//   async (req, res, next) => {
+//     let examId = new mongoose.Types.ObjectId("65a64ad1f6822bdeb4585e20");
+//     let examData = null;
+//     let data = [];
+//     try {
+//       data = await StudentExamVsQuestionsMcq.find({
+//         $and: [
+//           { examId: examId },
+//           { totalObtainedMarks: -6.25 },
+//           { totalWrongAnswer: 0 },
+//         ],
+//       }).populate("studentId");
+//     } catch (err) {
+//       return res.status(500).json(err);
+//     }
+//     // console.log("data:", data);
+//     // console.log("count:", data.length);
+//     let data1 = [];
+//     let studentCheck = null;
+//     for (let i = 0; i < data.length; i++) {
+//       try {
+//         studentCheck = await StudentMarksRank.findOne({
+//           $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
+//         });
+//         examData = await StudentExamVsQuestionsMcq.findOne({
+//           $and: [{ examId: examId }, { studentId: data[i].studentId._id }],
+//         }).populate("mcqQuestionId examId studentId");
+//       } catch (err) {
+//         console.log(err);
+//         return res.statu(500).json("DB error");
+//       }
+//       let findId = String(studentCheck._id);
+//       let id = String(examData._id);
+//       let correctMarks = examData.examId.marksPerMcq;
+//       let negativeMarks = examData.examId.negativeMarks;
+//       let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+//       let examDataMcq = examData.mcqQuestionId;
+//       let notAnswered = 0;
+//       let totalCorrectAnswer = 0;
+//       let totalWrongAnswer = 0;
+//       let totalObtainedMarks = 0;
+//       let totalCorrectMarks = 0;
+//       let totalWrongMarks = 0;
+//       let answeredOptions = examData.answeredOption;
 
-      for (let i = 0; i < examDataMcq.length; i++) {
-        if (answeredOptions[i] == "-1") {
-          notAnswered = notAnswered + 1;
-        } else if (answeredOptions[i] == examDataMcq[i].correctOption) {
-          totalCorrectAnswer = totalCorrectAnswer + 1;
-        } else totalWrongAnswer = totalWrongAnswer + 1;
-      }
-      totalCorrectMarks = totalCorrectAnswer * correctMarks;
-      totalWrongMarks = totalWrongAnswer * negativeMarksValue;
-      totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+//       for (let i = 0; i < examDataMcq.length; i++) {
+//         if (answeredOptions[i] == "-1") {
+//           notAnswered = notAnswered + 1;
+//         } else if (answeredOptions[i] == examDataMcq[i].correctOption) {
+//           totalCorrectAnswer = totalCorrectAnswer + 1;
+//         } else totalWrongAnswer = totalWrongAnswer + 1;
+//       }
+//       totalCorrectMarks = totalCorrectAnswer * correctMarks;
+//       totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+//       totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
 
-      let update1;
-      let result = null,
-        saveStudentExamEnd = null;
-      let update;
-      update1 = {
-        totalCorrectAnswer: totalCorrectAnswer,
-        totalWrongAnswer: totalWrongAnswer,
-        totalNotAnswered: notAnswered,
-        totalCorrectMarks: totalCorrectMarks,
-        totalWrongMarks: totalWrongMarks,
-        totalObtainedMarks: totalObtainedMarks,
-      };
-      update = {
-        totalObtainedMarks: totalObtainedMarks,
-        rank: -1,
-      };
-      try {
-        saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
-          findId,
-          update
-        );
-        result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
-      } catch (err) {
-        return res.status(500).json("3.Something went wrong.");
-      }
-      console.log(examData.studentId.name);
-      console.log(totalCorrectMarks);
-      console.log(totalWrongMarks);
-      console.log(totalObtainedMarks);
-    }
-    return res.status(200).json("ss");
-  },
-]);
+//       let update1;
+//       let result = null,
+//         saveStudentExamEnd = null;
+//       let update;
+//       update1 = {
+//         totalCorrectAnswer: totalCorrectAnswer,
+//         totalWrongAnswer: totalWrongAnswer,
+//         totalNotAnswered: notAnswered,
+//         totalCorrectMarks: totalCorrectMarks,
+//         totalWrongMarks: totalWrongMarks,
+//         totalObtainedMarks: totalObtainedMarks,
+//       };
+//       update = {
+//         totalObtainedMarks: totalObtainedMarks,
+//         rank: -1,
+//       };
+//       try {
+//         saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
+//           findId,
+//           update
+//         );
+//         result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+//       } catch (err) {
+//         return res.status(500).json("3.Something went wrong.");
+//       }
+//       console.log(examData.studentId.name);
+//       console.log(totalCorrectMarks);
+//       console.log(totalWrongMarks);
+//       console.log(totalObtainedMarks);
+//     }
+//     return res.status(200).json("ss");
+//   },
+// ]);
 
 module.exports = router;
 
