@@ -1633,7 +1633,7 @@ const submitAnswer = async (req, res, next) => {
     update = {
       finishedStatus: true,
       runningStatus: false,
-      examEndTime: moment(curDate).add(6, "h"),
+      examEndTime: moment(submitTime).add(6, "h"),
       duration: 0,
       totalObtainedMarks: (
         examData.examId.totalMarksMcq *
