@@ -1622,14 +1622,8 @@ const submitAnswer = async (req, res, next) => {
       totalWrongAnswer: 0,
       totalNotAnswered: 0,
       totalCorrectMarks: 0,
-      totalWrongMarks: (
-        examData.examId.totalMarksMcq * negativeMarksValue
-      ).toFixed(2),
-      totalObtainedMarks: (
-        examData.examId.totalMarksMcq *
-        negativeMarksValue *
-        -1
-      ).toFixed(2),
+      totalWrongMarks: -5000,
+      totalObtainedMarks: -5000,
       answeredOption: answerArray,
     };
     update = {
@@ -1637,11 +1631,7 @@ const submitAnswer = async (req, res, next) => {
       runningStatus: false,
       examEndTime: moment(submitTime).add(6, "h"),
       duration: 0,
-      totalObtainedMarks: (
-        examData.examId.totalMarksMcq *
-        negativeMarksValue *
-        -1
-      ).toFixed(2),
+      totalObtainedMarks: -5000,
       rank: -1,
     };
   }
