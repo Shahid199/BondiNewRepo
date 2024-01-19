@@ -1541,12 +1541,19 @@ const submitAnswer = async (req, res, next) => {
   let curDate = moment(new Date()).add(180, "s");
   let flagSt = false;
   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
-  // console.log("StudentEndTime Curdate");
-  // console.log(studEndTime, curDate);
+  console.log("StudentEndTime Curdate");
+  console.log(studEndTime, curDate);
+  console.log(studEndTime.valueOf(), ":studEndTime.valueOf()");
+  console.log(curDate.valueOf(), ":curDate.valueOf()");
+  console.log(
+    studEndTime.valueOf() > curDate.valueOf(),
+    "studEndTime.valueOf() > curDate.valueOf()"
+  );
   if (studEndTime.valueOf() > curDate.valueOf()) {
     flagSt = true;
     console.log("check timer");
   }
+  console.log("flagSt", flagSt);
   if (studentCheck.finishedStatus == true)
     return res.status(409).json("Exam End.");
 
