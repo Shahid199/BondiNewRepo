@@ -1539,7 +1539,7 @@ const submitAnswer = async (req, res, next) => {
     return res.status(500).json("1.Something went wrong.");
   }
   let curDate = moment(new Date()).add(180, "s");
-  let flagSt = false;
+  let flagSt = true;
   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
   console.log("StudentEndTime Curdate");
   console.log(studEndTime, curDate);
@@ -1550,7 +1550,7 @@ const submitAnswer = async (req, res, next) => {
     "studEndTime.valueOf() > curDate.valueOf()"
   );
   if (studEndTime.valueOf() > curDate.valueOf()) {
-    flagSt = true;
+    flagSt = false;
     console.log("check timer");
   }
   console.log("flagSt", flagSt);
