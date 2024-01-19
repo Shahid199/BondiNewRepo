@@ -1543,7 +1543,7 @@ const submitAnswer = async (req, res, next) => {
   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
   // console.log("StudentEndTime Curdate");
   // console.log(studEndTime, curDate);
-  if (studEndTime > curDate) {
+  if (studEndTime.valueOf() > curDate.valueOf()) {
     flagSt = true;
     console.log("check timer");
   }
