@@ -1387,6 +1387,132 @@ const submitAnswer2 = async (req, res, next) => {
     return res.status(200).json("Successfully Submitted!!");
   }
 };
+// const submitAnswer = async (req, res, next) => {
+//   const eId = req.query.eId;
+//   const sId = req.user.studentId;
+//   let answeredOptions = req.body.answeredOptions;
+//   if (!ObjectId.isValid(eId) || !ObjectId.isValid(sId) || !answeredOptions)
+//     return res.status(404).json("Invalid studnet Id or Exam Id");
+//   const examEndTime = moment(new Date());
+//   let eId1, sId1;
+//   sId1 = new mongoose.Types.ObjectId(sId);
+//   eId1 = new mongoose.Types.ObjectId(eId);
+//   //exam status Check:start
+//   let studentCheck = null;
+//   let examData = null;
+//   let time = null;
+//   try {
+//     studentCheck = await StudentMarksRank.findOne({
+//       $and: [{ examId: eId1 }, { studentId: sId1 }],
+//     });
+//     // console.log(studentCheck);
+//     examData = await StudentExamVsQuestionsMcq.findOne({
+//       $and: [{ examId: eId1 }, { studentId: sId1 }],
+//     }).populate("mcqQuestionId examId");
+//   } catch (err) {
+//     return res.status(500).json("1.Something went wrong.");
+//   }
+//   let curDate = moment(new Date()).add(3, "m");
+//   let flagSt = false;
+//   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
+//   console.log("StudentEndTime Curdate");
+//   console.log(studEndTime, curDate);
+//   if (studEndTime.valueOf() > curDate.valueOf()) {
+//     flagSt = true;
+//   }
+//   if (studentCheck.finishedStatus == true)
+//     return res.status(409).json("Exam End.");
+
+//   //exam status Check:e
+//   let timeStudent = [];
+//   let findId = studentCheck;
+//   if (findId == null) return res.status(404).json("data not found.");
+//   findId = String(findId._id);
+//   timeStudent[0] = findId.examStartTime;
+//   timeStudent[1] = findId.examEndTime;
+//   let submitTime = moment(new Date());
+//   let id = String(examData._id);
+//   let correctMarks = examData.examId.marksPerMcq;
+//   let negativeMarks = examData.examId.negativeMarks;
+//   let negativeMarksValue = (correctMarks * negativeMarks) / 100;
+//   let examDataMcq = examData.mcqQuestionId;
+//   let notAnswered = 0;
+//   let totalCorrectAnswer = 0;
+//   let totalWrongAnswer = 0;
+//   let totalObtainedMarks = 0;
+//   let totalCorrectMarks = 0;
+//   let totalWrongMarks = 0;
+//   for (let i = 0; i < examDataMcq.length; i++) {
+//     if (answeredOptions[i] == "-1") {
+//       notAnswered = notAnswered + 1;
+//     } else if (answeredOptions[i] == examDataMcq[i].correctOption) {
+//       totalCorrectAnswer = totalCorrectAnswer + 1;
+//     } else totalWrongAnswer = totalWrongAnswer + 1;
+//   }
+//   totalCorrectMarks = totalCorrectAnswer * correctMarks;
+//   totalWrongMarks = totalWrongAnswer * negativeMarksValue;
+//   totalObtainedMarks = totalCorrectMarks - totalWrongMarks;
+//   let update1;
+//   let result = null,
+//     saveStudentExamEnd = null;
+//   let update;
+//   if (flagSt == true) {
+//     update1 = {
+//       totalCorrectAnswer: totalCorrectAnswer,
+//       totalWrongAnswer: totalWrongAnswer,
+//       totalNotAnswered: notAnswered,
+//       totalCorrectMarks: totalCorrectMarks,
+//       totalWrongMarks: totalWrongMarks,
+//       totalObtainedMarks: totalObtainedMarks,
+//       answeredOption: answeredOptions,
+//     };
+//     let x = moment(submitTime);
+//     // console.log("submit time", x);
+//     update = {
+//       finishedStatus: true,
+//       runningStatus: false,
+//       examEndTime: moment(submitTime).add(6, "h"),
+//       duration: (moment(submitTime) - moment(timeStudent[0])) / 60000,
+//       totalObtainedMarks: totalObtainedMarks,
+//       rank: -1,
+//     };
+//   } else {
+//     let answerArray = [];
+//     for (let i = 0; i < examData.examId.totalQuestionMcq; i++) {
+//       answerArray[i] = "-1";
+//     }
+//     update1 = {
+//       totalCorrectAnswer: 0,
+//       totalWrongAnswer: 0,
+//       totalNotAnswered: 0,
+//       totalCorrectMarks: 0,
+//       totalWrongMarks: 5000,
+//       totalObtainedMarks: -5000,
+//       answeredOption: answerArray,
+//     };
+//     update = {
+//       finishedStatus: true,
+//       runningStatus: false,
+//       examEndTime: moment(submitTime).add(6, "h"),
+//       duration: 0,
+//       totalObtainedMarks: -5000,
+//       rank: -1,
+//     };
+//   }
+//   try {
+//     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
+//       findId,
+//       update
+//     );
+//     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
+//     // console.log(update, update1, flagSt);
+//   } catch (err) {
+//     return res.status(500).json("3.Something went wrong.");
+//   }
+//   if (flagSt == false) return res.status(201).json("late submission.");
+//   return res.status(200).json("Successfully Submitted!!");
+// };
+
 const submitAnswer = async (req, res, next) => {
   const eId = req.query.eId;
   const sId = req.user.studentId;
@@ -1412,12 +1538,12 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
-  let curDate = moment(new Date()).add(3, "m");
+  let curDate = moment(new Date()).add(5, "s");
   let flagSt = false;
-  let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
-  console.log("StudentEndTime Curdate");
-  console.log(studEndTime, curDate);
-  if (studEndTime.valueOf() > curDate.valueOf()) {
+  let studEndTime = moment(studentCheck.examEndTime).subtract(6,"h");
+  // console.log("StudentEndTime Curdate");
+  // console.log(studEndTime, curDate);
+  if (studEndTime > curDate) {
     flagSt = true;
   }
   if (studentCheck.finishedStatus == true)
@@ -1486,16 +1612,26 @@ const submitAnswer = async (req, res, next) => {
       totalWrongAnswer: 0,
       totalNotAnswered: 0,
       totalCorrectMarks: 0,
-      totalWrongMarks: 5000,
-      totalObtainedMarks: -5000,
+      totalWrongMarks: (
+        examData.examId.totalMarksMcq * negativeMarksValue
+      ).toFixed(2),
+      totalObtainedMarks: (
+        examData.examId.totalMarksMcq *
+        negativeMarksValue *
+        -1
+      ).toFixed(2),
       answeredOption: answerArray,
     };
     update = {
       finishedStatus: true,
       runningStatus: false,
-      examEndTime: moment(submitTime).add(6, "h"),
+      examEndTime: moment(curDate).add(6, "h"),
       duration: 0,
-      totalObtainedMarks: -5000,
+      totalObtainedMarks: (
+        examData.examId.totalMarksMcq *
+        negativeMarksValue *
+        -1
+      ).toFixed(2),
       rank: -1,
     };
   }
@@ -1509,7 +1645,6 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  if (flagSt == false) return res.status(201).json("late submission.");
   return res.status(200).json("Successfully Submitted!!");
 };
 
