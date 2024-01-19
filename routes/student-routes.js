@@ -760,55 +760,56 @@ router.post(
   }
 );
 
-router.get("/updatemarksmcq", [
-  passport.authenticate("jwt", { session: false }),
-  authorize(["superadmin"]),
-  async (req, res, next) => {
-    let examId = new mongoose.Types.ObjectId("65aa365bfe7ce9df83a910a7");
-    let data = [];
-    try {
-      data = await StudentExamVsQuestionsMcq.find({
-        $and: [
-          { examId: examId },
-          { totalObtainedMarks: -6.25 },
-          { totalWrongAnswer: 0 },
-        ],
-      }).populate("studentId");
-    } catch (err) {
-      return res.status(500).json(err);
-    }
-    console.log("data:", data);
-    console.log("count:", data.length);
-    let data1 = [];
-    let count = 0;
-    for (let i = 0; i < data.length; i++) {
-      let obData = {};
-      obData["name"] = data[i].studentId.name;
-      obData["mobileNo"] = data[i].studentId.mobileNo;
-      obData["regNo"] = data[i].studentId.regNo;
-      obData["totalWrongMarks"] = data[i].totalWrongMarks;
-      obData["studentId"] = data[i].studentId._id;
-      let sId = new mongoose.Types.ObjectId(data[i].studentId._id);
-      let type = "0";
-      if (type == "0") {
-        try {
-          delObj = await StudentExamVsQuestionsMcq.deleteOne({
-            $and: [{ studentId: sId }, { examId: examId }],
-          });
-          delObj1 = await StudentMarksRank.deleteOne({
-            $and: [{ studentId: sId }, { examId: examId }],
-          });
-          count++;
-        } catch (err) {
-          return res.status(500).json("Problem MCQ delete.");
-        }
-      }
-      data1.push(obData);
-    }
-    data1.push(data.length);
-    return res.status(200).json({ data1, count });
-  },
-]);
+//multiple student reset option with examId
+// router.get("/updatemarksmcq", [
+//   passport.authenticate("jwt", { session: false }),
+//   authorize(["superadmin"]),
+//   async (req, res, next) => {
+//     let examId = new mongoose.Types.ObjectId("65aa365bfe7ce9df83a910a7");
+//     let data = [];
+//     try {
+//       data = await StudentExamVsQuestionsMcq.find({
+//         $and: [
+//           { examId: examId },
+//           { totalObtainedMarks: -6.25 },
+//           { totalWrongAnswer: 0 },
+//         ],
+//       }).populate("studentId");
+//     } catch (err) {
+//       return res.status(500).json(err);
+//     }
+//     console.log("data:", data);
+//     console.log("count:", data.length);
+//     let data1 = [];
+//     let count = 0;
+//     for (let i = 0; i < data.length; i++) {
+//       let obData = {};
+//       obData["name"] = data[i].studentId.name;
+//       obData["mobileNo"] = data[i].studentId.mobileNo;
+//       obData["regNo"] = data[i].studentId.regNo;
+//       obData["totalWrongMarks"] = data[i].totalWrongMarks;
+//       obData["studentId"] = data[i].studentId._id;
+//       let sId = new mongoose.Types.ObjectId(data[i].studentId._id);
+//       let type = "0";
+//       if (type == "0") {
+//         try {
+//           delObj = await StudentExamVsQuestionsMcq.deleteOne({
+//             $and: [{ studentId: sId }, { examId: examId }],
+//           });
+//           delObj1 = await StudentMarksRank.deleteOne({
+//             $and: [{ studentId: sId }, { examId: examId }],
+//           });
+//           count++;
+//         } catch (err) {
+//           return res.status(500).json("Problem MCQ delete.");
+//         }
+//       }
+//       data1.push(obData);
+//     }
+//     data1.push(data.length);
+//     return res.status(200).json({ data1, count });
+//   },
+// ]);
 
 // router.get("/updatemarksmcq191", [
 //   passport.authenticate("jwt", { session: false }),
