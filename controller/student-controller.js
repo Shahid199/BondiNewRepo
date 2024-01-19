@@ -1486,9 +1486,7 @@ const submitAnswer = async (req, res, next) => {
       totalWrongAnswer: 0,
       totalNotAnswered: 0,
       totalCorrectMarks: 0,
-      totalWrongMarks: (
-        examData.examId.totalMarksMcq * negativeMarksValue
-      ).toFixed(2),
+      totalWrongMarks: 5000,
       totalObtainedMarks: -5000,
       answeredOption: answerArray,
     };
