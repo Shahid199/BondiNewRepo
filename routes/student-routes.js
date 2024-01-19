@@ -788,6 +788,7 @@ router.get("/updatemarksmcq", [
       obData["totalWrongMarks"] = data[i].totalWrongMarks;
       data1.push(obData);
     }
+    data1.push(data.length);
     return res.status(200).json(data1);
   },
 ]);
