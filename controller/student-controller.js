@@ -1538,7 +1538,7 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
-  let curDate = moment(new Date()).add(5, "s");
+  let curDate = moment(new Date()).add(180, "s");
   let flagSt = false;
   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
   // console.log("StudentEndTime Curdate");
