@@ -1415,9 +1415,9 @@ const submitAnswer = async (req, res, next) => {
   let curDate = moment(new Date()).add(3, "m");
   let flagSt = false;
   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
-  // console.log("StudentEndTime Curdate");
-  // console.log(studEndTime, curDate);
-  if (studEndTime > curDate) {
+  console.log("StudentEndTime Curdate");
+  console.log(studEndTime, curDate);
+  if (studEndTime.valueOf() > curDate.valueOf()) {
     flagSt = true;
   }
   if (studentCheck.finishedStatus == true)
