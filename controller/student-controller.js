@@ -1489,23 +1489,15 @@ const submitAnswer = async (req, res, next) => {
       totalWrongMarks: (
         examData.examId.totalMarksMcq * negativeMarksValue
       ).toFixed(2),
-      totalObtainedMarks: (
-        examData.examId.totalMarksMcq *
-        negativeMarksValue *
-        -1
-      ).toFixed(2),
+      totalObtainedMarks: -5000,
       answeredOption: answerArray,
     };
     update = {
       finishedStatus: true,
       runningStatus: false,
-      examEndTime: moment(curDate).add(6, "h"),
+      examEndTime: moment(submitTime).add(6, "h"),
       duration: 0,
-      totalObtainedMarks: (
-        examData.examId.totalMarksMcq *
-        negativeMarksValue *
-        -1
-      ).toFixed(2),
+      totalObtainedMarks: -5000,
       rank: -1,
     };
   }
@@ -1519,6 +1511,7 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
+  if (flagSt == false) return res.status(201).json("late submission.");
   return res.status(200).json("Successfully Submitted!!");
 };
 

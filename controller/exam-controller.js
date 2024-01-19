@@ -1627,6 +1627,65 @@ const resetExam = async (req, res, next) => {
   }
   return res.status(200).json("Successfully reset exam for student.");
 };
+
+const resetExam1 = async (req, res, next) => {
+  let regNo = req.body.regNo;
+  let examId = req.body.examId;
+  let type = String(req.body.type);
+  let studentIdObj = null;
+  if (!regNo || !ObjectId.isValid(examId) || !type)
+    return res.status(404).json("regNo or examId is not valid.");
+  try {
+    studentIdObj = await Student.findOne({ regNo: regNo });
+  } catch (err) {
+    return res.status(500).json("DBError.");
+  }
+  if (!studentIdObj) return res.status(200).json("regNo not correct.");
+  studentIdObj = studentIdObj._id;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let delObj = null;
+  let delObj1 = null;
+  if (type == "0") {
+    try {
+      delObj = await StudentExamVsQuestionsMcq.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+      delObj1 = await StudentMarksRank.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem MCQ delete.");
+    }
+  } else if (type == "1") {
+    try {
+      delObj = await StudentExamVsQuestionsWritten.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+      delObj1 = await StudentMarksRank.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem Written delete.");
+    }
+  } else if (type == "2") {
+    try {
+      delObj = await BothStudentExamVsQuestions.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem Both delete.");
+    }
+  } else {
+    try {
+      delObj = await SpecialVsStudent.deleteOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+      });
+    } catch (err) {
+      return res.status(500).json("Problem Special delete.");
+    }
+  }
+  return res.status(200).json("Successfully reset exam for student.");
+};
 //export functions
 exports.resetExam = resetExam;
 exports.getExamBySubAdmin = getExamBySubAdmin;
