@@ -786,6 +786,20 @@ router.get("/updatemarksmcq", [
       obData["mobileNo"] = data[i].studentId.mobileNo;
       obData["regNo"] = data[i].studentId.regNo;
       obData["totalWrongMarks"] = data[i].totalWrongMarks;
+      obData["studentId"] = data[i].studentId._id;
+      // let type = "0";
+      // if (type == "0") {
+      //   try {
+      //     delObj = await StudentExamVsQuestionsMcq.deleteOne({
+      //       $and: [{ studentId: studentIdObj }, { examId: examId }],
+      //     });
+      //     delObj1 = await StudentMarksRank.deleteOne({
+      //       $and: [{ studentId: studentIdObj }, { examId: examId }],
+      //     });
+      //   } catch (err) {
+      //     return res.status(500).json("Problem MCQ delete.");
+      //   }
+      // }
       data1.push(obData);
     }
     data1.push(data.length);
