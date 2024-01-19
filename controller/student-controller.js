@@ -1540,11 +1540,12 @@ const submitAnswer = async (req, res, next) => {
   }
   let curDate = moment(new Date()).add(5, "s");
   let flagSt = false;
-  let studEndTime = moment(studentCheck.examEndTime).subtract(6,"h");
+  let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
   // console.log("StudentEndTime Curdate");
   // console.log(studEndTime, curDate);
   if (studEndTime > curDate) {
     flagSt = true;
+    console.log("check timer");
   }
   if (studentCheck.finishedStatus == true)
     return res.status(409).json("Exam End.");
