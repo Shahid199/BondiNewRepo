@@ -89,8 +89,7 @@ mongoose
       { id: 1, name: "wws" },
       { id: 2, name: "ww" },
     ];
-    console.log(Date.now());
-    console.log(new Date(moment(new Date())));
+   //console.log(moment(Date.now()).subtract(6, "h").format("YYYY-MM-DD h:m:s A"));
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
     //console.log(studentIds);
   })

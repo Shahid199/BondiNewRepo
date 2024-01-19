@@ -1732,10 +1732,10 @@ const historyData = async (req, res, next) => {
     data1["meritPosition"] = resultRank;
     data1["examStartTime"] = moment(rank.examStartTime)
       .subtract(6, "h")
-      .format("LLL");
+      .format("YYYY-MM-DD h:m:s A");
     data1["examEndTime"] = moment(rank.examEndTime)
       .subtract(6, "h")
-      .format("LLL");
+      .format("YYYY-MM-DD h:m:s A");
     data1["subjectName"] = subjectName;
     resultData.push(data1);
   }
