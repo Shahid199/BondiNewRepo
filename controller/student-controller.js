@@ -5489,7 +5489,7 @@ const bothHistoryData = async (req, res, next) => {
       resultRank = await BothRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
       }).select("rank -_id");
-      totalStudent = await BothRank.findOne({
+      totalStudent = await BothRank.find({
         examId: examIdObj,
       }).count();
     } catch (err) {
