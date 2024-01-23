@@ -1808,6 +1808,7 @@ const historyData = async (req, res, next) => {
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     let rank = null;
+    let totalStudent = 0;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     ////console.log(examIdObj);
     ////console.log(studentIdObj);
@@ -1822,6 +1823,9 @@ const historyData = async (req, res, next) => {
         },
         "totalObtainedMarks examStartTime examEndTime"
       );
+      totalStudent = await StudentMarksRank.findOne({
+        $and: [{ examId: examIdObj }, { finishedStatus: true }],
+      }).count();
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
@@ -1864,6 +1868,7 @@ const historyData = async (req, res, next) => {
       .subtract(6, "h")
       .format("YYYY-MM-DD hh:mm:ss A");
     data1["subjectName"] = subjectName;
+    data1["totalStudent"] = totalStudent;
     resultData.push(data1);
   }
   return res.status(200).json({ resultData, paginateData });
