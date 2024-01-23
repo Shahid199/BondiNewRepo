@@ -30,7 +30,7 @@ app.use(passport.initialize());
 
 cors(app);
 
-app.use(bodyParser.json({ limit: "100mb" }));
+app.use(bodyParser.json({ limit: "500mb" }));
 
 app.use(
   bodyParser.urlencoded({
