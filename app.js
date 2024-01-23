@@ -4,7 +4,7 @@ const cookies = require("cookie-parser");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const path = require("path");
-var bodyParser = require("body-parser");
+//var bodyParser = require("body-parser");
 const app = express();
 const session = require("express-session");
 
@@ -30,18 +30,20 @@ app.use(passport.initialize());
 
 cors(app);
 
-app.use(bodyParser.json({ limit: "100mb" }));
+// app.use(bodyParser.json({ limit: "100mb" }));
 
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-    parameterLimit: 100000,
-    limit: "500mb",
-  })
-);
+// app.use(
+//   bodyParser.urlencoded({
+//     extended: true,
+//     limit: "500000mb",
+//     parameterLimit: 100000,
+//   })
+// );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ limit: "500mb", extended: true }));
+app.use(express.json({ limit: "500mb" }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "/public")));
 
