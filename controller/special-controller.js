@@ -1851,10 +1851,14 @@ const historyData = async (req, res, next) => {
     }
     examIdObTest = examIdObj;
     let resultRank = null;
+    let totalStudent = 0;
     try {
       resultRank = await SpecialRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
       });
+      totalStudent = await SpecialRank.find({
+        examId: examIdObj,
+      }).count();
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
@@ -1891,6 +1895,7 @@ const historyData = async (req, res, next) => {
       subObj.push(data[i].questionMcq[j].subjectId.name);
     }
     data1["subjectName"] = subObj.join("+ ");
+    data1["totalStudent"] = totalStudent;
     resultData.push(data1);
   }
 
