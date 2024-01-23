@@ -5484,10 +5484,14 @@ const bothHistoryData = async (req, res, next) => {
     let rank = null;
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     let resultRank = null;
+    let totalStudent = 0;
     try {
       resultRank = await BothRank.findOne({
         $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
       }).select("rank -_id");
+      totalStudent = await BothRank.findOne({
+        examId: examIdObj,
+      }).count();
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
@@ -5527,6 +5531,7 @@ const bothHistoryData = async (req, res, next) => {
     data1["examStartTime"] = moment(data[i].examId.startTime)
       .subtract(6, "h")
       .format("LLL");
+    data1["totalStudent"] = totalStudent;
     resultData.push(data1);
   }
   let count = resultData.length;
