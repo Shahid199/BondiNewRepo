@@ -4880,6 +4880,7 @@ const historyDataWritten = async (req, res, next) => {
     let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     ////console.log(examIdObj);
     ////console.log(studentIdObj);
+    let totalStudent = 0;
     try {
       rank = await StudentMarksRank.findOne(
         {
@@ -4887,6 +4888,9 @@ const historyDataWritten = async (req, res, next) => {
         },
         "examStartTime examEndtime"
       );
+      totalStudent = await StudentMarksRank.find({
+        examId: examIdObj,
+      }).count();
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
@@ -4934,6 +4938,7 @@ const historyDataWritten = async (req, res, next) => {
     data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
     data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
     data1["subjectName"] = subjectName;
+    data1["totalStudent"] = totalStudent;
     resultData.push(data1);
   }
   return res.status(200).json({ resultData, paginateData });
