@@ -20,7 +20,7 @@ app.use(cookies());
 app.use((req, res, next) => {
   let authHeader = req.cookies.token;
   if (authHeader) {
-    req.headers.authorization = Bearer ${authHeader};
+    req.headers.authorization = `Bearer ${authHeader}`;
   }
   next();
 });
