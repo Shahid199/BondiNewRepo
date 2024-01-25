@@ -219,7 +219,7 @@ const checkScriptSingle = async (req, res, next) => {
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
-      ".png";
+      ".jpeg";
     let fileName =
       dir +
       "/" +
@@ -230,7 +230,7 @@ const checkScriptSingle = async (req, res, next) => {
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
-      ".png";
+      ".jpeg";
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
     } catch (e) {
@@ -873,7 +873,7 @@ const bothCheckScriptSingle = async (req, res, next) => {
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
-      ".png";
+      ".jpeg";
     let fileName =
       dir +
       "/" +
@@ -884,7 +884,7 @@ const bothCheckScriptSingle = async (req, res, next) => {
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
-      ".png";
+      ".jpeg";
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
     } catch (e) {
