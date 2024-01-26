@@ -731,6 +731,7 @@ const bothGetStudentData = async (req, res, next) => {
       examVariation[checkStatus[i].examId.examVariation];
     dataObj["examType"] = examType[checkStatus[i].examId.examType];
     dataObj["studentName"] = checkStatus[i].studentId.name;
+    dataObj["regNo"] = checkStatus[i].studentId.regNo;
     dataObj["studentId"] = checkStatus[i].studentId._id;
     dataObj["checkStatus"] = checkStatus[i].checkStatus;
     dataObj["totalQuestions"] = questionData.totalQuestions;
