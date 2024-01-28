@@ -4535,7 +4535,7 @@ const submitStudentScript2 = async (req, res, next) => {
   if (
     !ObjectId.isValid(studentId) ||
     !ObjectId.isValid(examId) ||
-    images.length == 0
+    !images
   ) {
     return res
       .status(404)
