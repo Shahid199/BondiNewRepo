@@ -36,6 +36,7 @@ const BothRank = require("../model/BothRank");
 const SpecialRank = require("../model/SpecialRank");
 const SpecialExam = require("../model/SpecialExam");
 const { options } = require("pdfkit");
+
 //const sharp = require("sharp");
 
 const Limit = 100;
@@ -4482,6 +4483,111 @@ const submitStudentScript = async (req, res, next) => {
       .status(404)
       .json("Student Id or Exam Id or question Id is not valid.");
   }
+  questionNo = questionNo - 1;
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  let getQuestionScript = null;
+  try {
+    getQuestionScript = await StudentExamVsQuestionsWritten.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getQuestionScript._id;
+  let uploadStatus = getQuestionScript.uploadStatus;
+  let checkStatus = getQuestionScript.checkStatus;
+  if (uploadStatus == true || checkStatus == true)
+    return res.status(404).json("Can not upload file.");
+  getQuestionScript = getQuestionScript.submittedScriptILink;
+  if (getQuestionScript[questionNo]) {
+    for (let i = 0; i < getQuestionScript[questionNo].length; i++) {
+      fs.unlinkSync(getQuestionScript[questionNo][i]);
+    }
+  }
+
+  getQuestionScript[questionNo] = questionILinkPath;
+  ////console.log(getQuestionScript[questionNo]);
+  let upd = {
+    submittedScriptILink: getQuestionScript,
+  };
+  let doc;
+  try {
+    doc = await StudentExamVsQuestionsWritten.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Submitted Successfully.");
+};
+const submitStudentScript2 = async (req, res, next) => {
+  //file upload handle:start
+  const images = req.body.questionILink;
+  ////console.log(file);
+  let questionILinkPath = [];
+  //file upload handle:end
+  let examId = req.body.examId;
+  let studentId = req.user.studentId;
+  let questionNo = Number(req.body.questionNo);
+  ////console.log(questionNo);
+  ////console.log(examId);
+  ////console.log(studentId);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    images.length == 0
+  ) {
+    return res
+      .status(404)
+      .json(
+        "Student Id or Exam Id or question Id is not valid or no image uploaded."
+      );
+  }
+  const dir = path.resolve(
+    path.join(__dirname, "../uploads/" + String(examId) + "/")
+  );
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  //new implement
+  for (let i = 0; i < images.length; i++) {
+    const matches = String(images[i]).replace(
+      /^data:([A-Za-z-+/]+);base64,/,
+      ""
+    );
+    let timeData = Date.now();
+    let fileNameDis =
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      timeData +
+      ".jpeg";
+    let fileName =
+      dir +
+      "/" +
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      timeData +
+      ".jpeg";
+    try {
+      fs.writeFileSync(fileName, matches, { encoding: "base64" });
+    } catch (err) {
+      //console.log(e);
+      return res.status(500).json(err);
+    }
+    questionILinkPath[i] = "uploads/" + String(examId) + "/" + fileNameDis;
+    console.log("questionILinkPath[i]:", questionILinkPath[i]);
+  }
+  //new implement
   questionNo = questionNo - 1;
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
