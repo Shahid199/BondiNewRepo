@@ -3089,7 +3089,7 @@ const ruunningWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
-const submitStudentScript = async (req, res, next) => {
+const submitStudentScript10 = async (req, res, next) => {
   const files = req.files;
   //file upload handle:start
   const file = req.files;
@@ -3118,6 +3118,160 @@ const submitStudentScript = async (req, res, next) => {
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
   subjectId = new mongoose.Types.ObjectId(subjectId);
+  let getQuestionScript = null;
+  try {
+    getQuestionScript = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examId }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getQuestionScript._id;
+  let uploadStatus = getQuestionScript.uploadStatus;
+  let checkStatus = getQuestionScript.checkStatus;
+  if (uploadStatus == true || checkStatus == true)
+    return res.status(404).json("Can not upload file.");
+  let submittedScript = [];
+  let sIndex = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(subjectId) == getQuestionScript.questionWritten[i].subjectId) {
+      submittedScript = getQuestionScript.questionWritten;
+      sIndex = i;
+      break;
+    }
+  }
+  if (submittedScript[sIndex].submittedScriptILink[questionNo]) {
+    for (
+      let i = 0;
+      i < submittedScript[sIndex].submittedScriptILink[questionNo].length;
+      i++
+    ) {
+      fs.unlinkSync(
+        submittedScript[sIndex].submittedScriptILink[questionNo][i]
+      );
+    }
+  }
+
+  submittedScript[sIndex].submittedScriptILink[questionNo] = questionILinkPath;
+  ////console.log(getQuestionScript[questionNo]);
+  let upd = {
+    questionWritten: submittedScript,
+  };
+  let doc;
+  try {
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Submitted Successfully.");
+};
+const submitStudentScript = async (req, res, next) => {
+  const images = req.body.questionILink;
+  let examId = req.body.examId;
+  let studentId = req.user.studentId;
+  let subjectId = req.body.subjectId;
+  let questionNo = Number(req.body.questionNo);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(subjectId) ||
+    questionNo <= 0 ||
+    !images
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  questionNo = questionNo - 1;
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  examId = new mongoose.Types.ObjectId(examId);
+  subjectId = new mongoose.Types.ObjectId(subjectId);
+  //file upload handle:start
+  ////console.log(file);
+  let questionILinkPath = [];
+  const dir = path.resolve(
+    path.join(__dirname, "../uploads/" + String(examId) + "/")
+  );
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  const dir1 = path.resolve(
+    path.join(
+      __dirname,
+      "../uploads/" + String(examId) + "/" + String(studentId) + "/"
+    )
+  );
+  if (!fs.existsSync(dir1)) {
+    fs.mkdirSync(dir1);
+  }
+  const dir2 = path.resolve(
+    path.join(
+      __dirname,
+      "../uploads/" +
+        String(examId) +
+        "/" +
+        String(studentId) +
+        "/" +
+        String(subjectId) +
+        "/"
+    )
+  );
+  if (!fs.existsSync(dir2)) {
+    fs.mkdirSync(dir2);
+  }
+
+  for (let i = 0; i < images.length; i++) {
+    const matches = String(images[i]).replace(
+      /^data:([A-Za-z-+/]+);base64,/,
+      ""
+    );
+    let timeData = Date.now();
+    let fileNameDis =
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(subjectId) +
+      "-" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      timeData +
+      ".jpeg";
+    let fileName =
+      dir2 +
+      "/" +
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(subjectId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      timeData +
+      ".jpeg";
+    try {
+      fs.writeFileSync(fileName, matches, { encoding: "base64" });
+    } catch (err) {
+      //console.log(e);
+      return res.status(500).json(err);
+    }
+    questionILinkPath[i] =
+      "uploads/" +
+      String(examId) +
+      "/" +
+      String(studentId) +
+      "/" +
+      String(subjectId) +
+      "/" +
+      fileNameDis;
+    //console.log("questionILinkPath[i]:", questionILinkPath[i]);
+  }
+  //file upload handle:end
+
   let getQuestionScript = null;
   try {
     getQuestionScript = await SpecialVsStudent.findOne({

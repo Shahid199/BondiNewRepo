@@ -24,6 +24,7 @@ const BothExam = require("../model/BothExam");
 const StudentMarksRank = require("../model/StudentMarksRank");
 const SpecialVsStudent = require("../model/SpecialVsStudent");
 const Student = require("../model/Student");
+const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 
 const Limit = 100;
 //create Exam
@@ -1249,7 +1250,7 @@ const getWrittenQuestionByexam = async (req, res, next) => {
   if (writtenQuestion == null) return res.status(404).json("No data found.");
   return res.status(200).json(writtenQuestion);
 };
-const assignStudentToTeacher = async (req, res, next) => {
+const assignStudentToTeacher10 = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -1346,7 +1347,132 @@ const assignStudentToTeacher = async (req, res, next) => {
     .status(201)
     .json("Successfully assign all student to the teacher.");
 };
-const bothAssignStudentToTeacher = async (req, res, next) => {
+const assignStudentToTeacher = async (req, res, next) => {
+  //new code
+  let examId = req.body.examId;
+  let teacherId = req.body.teacherId;
+  //console.log(req.body);
+  //console.log(examId);
+  //console.log(examId);
+  if (!ObjectId.isValid(examId) || teacherId.length == 0)
+    return res.status(404).json("Exam Id or Teacher Id is not valid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let assignedTeacher = null;
+  try {
+    assignedTeacher = await TeacherVsExam.find({
+      $and: [{ examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  //console.log(assignedTeacher.length);
+  //console.log("aaa:", assignedTeacher);
+  if (assignedTeacher.length > 0) {
+    let del = null;
+    try {
+      del = await TeacherVsExam.deleteMany({ examId: examIdObj });
+    } catch (err) {
+      return res.status(500).json("Somethhing went wrong.");
+    }
+  }
+  //console.log("teache", teacherId.length);
+  let count = 0;
+  let dataAll = [];
+  let questionNo = null;
+  try {
+    dataAll = await StudentExamVsQuestionsWritten.find({
+      examId: examId,
+    });
+    questionNo = await QuestionsWritten.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  questionNo = questionNo.totalQuestions;
+  let nullStudentId = [];
+  for (let i = 0; i < dataAll.length; i++) {
+    if (dataAll[i].submittedScriptILink.length == 0) {
+      nullStudentId.push(dataAll[i].studentId);
+    }else{
+      count++;
+    }
+  }
+  console.log("asdasdasda",count, dataAll.length);
+  if (count == 0)
+    return res
+      .status(404)
+      .json("No Student participate in the exam or all Scripts are empty.");
+
+  let students = [],
+    studData = [];
+  for (let i = 0; i < dataAll.length; i++) {
+    if (dataAll[i].submittedScriptILink.length == 0) continue;
+    studData.push(dataAll[i].studentId);
+  }
+  if (nullStudentId.length != 0) {
+    let obtainedMarksPerQuestion = [];
+    for (let j = 0; j < questionNo; j++) {
+      obtainedMarksPerQuestion[j] = 0;
+    }
+    let upd = null;
+    try {
+      upd = await StudentExamVsQuestionsWritten.updateMany(
+        { studentId: { $in: nullStudentId } },
+        {
+          $set: {
+            obtainedMarks: obtainedMarksPerQuestion,
+            totalObtainedMarks: 0,
+          },
+        }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+  }
+  //console.log(studData);
+  students = studData;
+  //console.log(students);
+
+  let range = parseInt(students.length / teacherId.length);
+  let start = 0;
+  let end = range;
+  //console.log(start);
+  //console.log(end);
+  let teacherStudentArr = [];
+  for (let i = 0; i < teacherId.length; i++) {
+    if (i == 0) {
+      start = 0;
+      end = range;
+    } else if (parseInt(teacherId.length - i) == 1) {
+      start = end;
+      end = end + range + parseInt(students.length % teacherId.length);
+    } else {
+      start = end;
+      end = end + range;
+    }
+    let teacherStudent = {};
+    teacherStudent["examId"] = examId;
+    teacherStudent["teacherId"] = new mongoose.Types.ObjectId(teacherId[i]);
+    let std = [];
+    for (let j = start; j < end; j++) {
+      std.push(students[j]);
+    }
+    //console.log(std);
+    teacherStudent["studentId"] = std;
+    teacherStudentArr.push(teacherStudent);
+    //console.log("s", start);
+    //console.log("e", end);
+  }
+  let doc = null;
+  try {
+    doc = await TeacherVsExam.insertMany(teacherStudentArr, { ordered: false });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  return res
+    .status(201)
+    .json("Successfully assign all student to the teacher.");
+};
+const bothAssignStudentToTeacher10 = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -1398,6 +1524,132 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   let studData = [];
   for (let i = 0; i < students.length; i++) {
     studData[i] = students[i].studentId;
+  }
+  //console.log(studData);
+  students = studData;
+  //console.log(students);
+
+  let range = parseInt(students.length / teacherId.length);
+  let start = 0;
+  let end = range;
+  //console.log(start);
+  //console.log(end);
+  let teacherStudentArr = [];
+  for (let i = 0; i < teacherId.length; i++) {
+    if (i == 0) {
+      start = 0;
+      end = range;
+    } else if (parseInt(teacherId.length - i) == 1) {
+      start = end;
+      end = end + range + parseInt(students.length % teacherId.length);
+    } else {
+      start = end;
+      end = end + range;
+    }
+    let teacherStudent = {};
+    teacherStudent["examId"] = examId;
+    teacherStudent["teacherId"] = new mongoose.Types.ObjectId(teacherId[i]);
+    let std = [];
+    for (let j = start; j < end; j++) {
+      std.push(students[j]);
+    }
+    //console.log(std);
+    teacherStudent["studentId"] = std;
+    teacherStudentArr.push(teacherStudent);
+    //console.log("s", start);
+    //console.log("e", end);
+  }
+  let doc = null;
+  try {
+    doc = await BothTeacherVsExam.insertMany(teacherStudentArr, {
+      ordered: false,
+    });
+  } catch (err) {
+    return res.status(500).json("1.Something went wrong.");
+  }
+  return res
+    .status(201)
+    .json("Successfully assign all student to the teacher.");
+};
+const bothAssignStudentToTeacher = async (req, res, next) => {
+  //new code
+  let examId = req.body.examId;
+  let teacherId = req.body.teacherId;
+  //console.log(req.body);
+  //console.log(examId);
+  //console.log(examId);
+  if (!ObjectId.isValid(examId) || teacherId.length == 0)
+    return res.status(404).json("Exam Id or Teacher Id is not valid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let assignedTeacher = null;
+  try {
+    assignedTeacher = await BothTeacherVsExam.find({
+      $and: [{ examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  //console.log(assignedTeacher.length);
+  //console.log("aaa:", assignedTeacher);
+  if (assignedTeacher.length > 0) {
+    let del = null;
+    try {
+      del = await BothTeacherVsExam.deleteMany({ examId: examIdObj });
+    } catch (err) {
+      return res.status(500).json("Somethhing went wrong.");
+    }
+  }
+  //console.log("teache", teacherId.length);
+  let count = 0;
+  let dataAll = [];
+  let questionNo=null;
+  try {
+    dataAll = await BothStudentExamVsQuestions.find({
+      examId: examId,
+    });
+    questionNo = await BothQuestionsWritten.findOne({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  questionNo = questionNo.totalQuestions;
+  let nullStudentId = [];
+  for (let i = 0; i < dataAll.length; i++) {
+    if (dataAll[i].submittedScriptILink.length == 0) {
+      nullStudentId.push(dataAll[i].studentId);
+      continue;
+    }
+    count++;
+  }
+  if (count == 0)
+    return res
+      .status(404)
+      .json("No Student participate in the exam or No students upload paper.");
+
+  let students = [],
+    studData = [];
+  for (let i = 0; i < dataAll.length; i++) {
+    if (dataAll[i].submittedScriptILink.length == 0) continue;
+    studData.push(dataAll[i].studentId);
+  }
+  if (nullStudentId.length != 0) {
+    let obtainedMarksPerQuestion = [];
+    for (let j = 0; j < questionNo; j++) {
+      obtainedMarksPerQuestion[j] = 0;
+    }
+    let upd = null;
+    try {
+      upd = await BothStudentExamVsQuestions.updateMany(
+        { studentId: { $in: nullStudentId } },
+        {
+          $set: {
+            obtainedMarks: obtainedMarksPerQuestion,
+            totalObtainedMarksWritten: 0,
+          },
+        }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
   }
   //console.log(studData);
   students = studData;
