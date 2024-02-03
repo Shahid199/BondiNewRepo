@@ -3229,11 +3229,7 @@ const submitStudentScript = async (req, res, next) => {
     );
     let timeData = Date.now();
     let fileNameDis =
-      String(questionNo + 1) +
-      "-" +
-      String(i + 1) +
-      timeData +
-      ".jpeg";
+      String(questionNo + 1) + "-" + String(i + 1) + timeData + ".jpeg";
     let fileName =
       dir2 +
       "/" +
@@ -3250,6 +3246,12 @@ const submitStudentScript = async (req, res, next) => {
     }
     questionILinkPath[i] =
       "uploads/" +
+      String(examId) +
+      "/" +
+      String(studentId) +
+      "/" +
+      String(subjectId) +
+      "/" +
       fileNameDis;
     //console.log("questionILinkPath[i]:", questionILinkPath[i]);
   }
@@ -3353,7 +3355,7 @@ const submitWritten = async (req, res, next) => {
   return res.status(201).json("Submitted Sccessfully.");
 };
 //assign teacher
-const assignStudentToTeacher1 = async (req, res, next) => {
+const assignStudentToTeacher = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -3492,7 +3494,7 @@ const assignStudentToTeacher1 = async (req, res, next) => {
     .status(201)
     .json("Successfully assign all student to the teacher.");
 };
-const assignStudentToTeacher = async (req, res, next) => {
+const assignStudentToTeacher1 = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -4064,7 +4066,7 @@ const getWrittenScriptSingle = async (req, res, next) => {
   //console.log(getQuestion);
   return res.status(200).json(data);
 };
-const checkScriptSingle = async (req, res, next) => {
+const checkScriptSingle1 = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
   let studentId = req.body.studentId;
@@ -4168,7 +4170,7 @@ const checkScriptSingle = async (req, res, next) => {
   }
   return res.status(201).json("Updated Successfully.");
 };
-const checkScriptSingle1 = async (req, res, next) => {
+const checkScriptSingle = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
   let studentId = req.body.studentId;
