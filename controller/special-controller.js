@@ -3355,7 +3355,7 @@ const submitWritten = async (req, res, next) => {
   return res.status(201).json("Submitted Sccessfully.");
 };
 //assign teacher
-const assignStudentToTeacher = async (req, res, next) => {
+const assignStudentToTeacher1 = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -3494,7 +3494,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     .status(201)
     .json("Successfully assign all student to the teacher.");
 };
-const assignStudentToTeacher1 = async (req, res, next) => {
+const assignStudentToTeacher = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -3504,6 +3504,14 @@ const assignStudentToTeacher1 = async (req, res, next) => {
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let assignedTeacher = null;
+  let delObj = null;
+  try {
+    delObj = await SpecialVsStudent.deleteMany({
+      $and: [{ examId: examIdObj }, { uploadStatus: false }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   try {
     assignedTeacher = await TeacherVsSpecialExam.find({
       $and: [{ examId: examIdObj }],
@@ -3516,40 +3524,40 @@ const assignStudentToTeacher1 = async (req, res, next) => {
     try {
       del = await TeacherVsSpecialExam.deleteMany({ examId: examIdObj });
     } catch (err) {
-      return res.status(500).json("Somethhing went wrong.");
+      return res.status(500).json("Something went wrong.");
     }
   }
-  let count = 0;
-  try {
-    count = await SpecialVsStudent.find({
-      examId: examIdObj,
-    }).count();
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
-  if (count == 0)
-    return res.status(404).json("No Student participate in the exam.");
+  // let count = 0;
+  // try {
+  //   count = await SpecialVsStudent.find({
+  //     examId: examIdObj,
+  //   }).count();
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
   let subjects = null;
   try {
     subjects = await SpecialExam.findById(examId);
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  let students = null;
+  let students = [];
   let studentCount = 0;
   try {
     students = await SpecialVsStudent.find({ examId: examIdObj });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-
-  try {
-    studentCount = await SpecialVsStudent.find({
-      examId: examIdObj,
-    }).count();
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
+  if (students.length == 0)
+    return res.status(404).json("No Student participate in the exam.");
+  studentCount = students.length;
+  // try {
+  //   studentCount = await SpecialVsStudent.find({
+  //     examId: examIdObj,
+  //   }).count();
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
   subjects = subjects.allSubject;
   let perSubSt = [];
   for (let i = 0; i < 6; i++) {
@@ -3571,7 +3579,6 @@ const assignStudentToTeacher1 = async (req, res, next) => {
             ) {
               data.push(students[j].studentId);
             }
-            break;
           }
         }
       }
