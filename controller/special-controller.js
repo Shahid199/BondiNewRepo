@@ -3170,6 +3170,7 @@ const submitStudentScript = async (req, res, next) => {
   const images = req.body.questionILink;
   let examId = req.body.examId;
   let studentId = req.user.studentId;
+  console.log(studentId);
   let subjectId = req.body.subjectId;
   let questionNo = Number(req.body.questionNo);
   if (
@@ -3228,12 +3229,6 @@ const submitStudentScript = async (req, res, next) => {
     );
     let timeData = Date.now();
     let fileNameDis =
-      String(examId) +
-      "-" +
-      String(studentId) +
-      "_" +
-      String(subjectId) +
-      "-" +
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
@@ -3242,12 +3237,6 @@ const submitStudentScript = async (req, res, next) => {
     let fileName =
       dir2 +
       "/" +
-      String(examId) +
-      "-" +
-      String(studentId) +
-      "_" +
-      String(subjectId) +
-      "_" +
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
@@ -3261,12 +3250,6 @@ const submitStudentScript = async (req, res, next) => {
     }
     questionILinkPath[i] =
       "uploads/" +
-      String(examId) +
-      "/" +
-      String(studentId) +
-      "/" +
-      String(subjectId) +
-      "/" +
       fileNameDis;
     //console.log("questionILinkPath[i]:", questionILinkPath[i]);
   }
@@ -3370,7 +3353,7 @@ const submitWritten = async (req, res, next) => {
   return res.status(201).json("Submitted Sccessfully.");
 };
 //assign teacher
-const assignStudentToTeacher = async (req, res, next) => {
+const assignStudentToTeacher1 = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
   let teacherId = req.body.teacherId;
@@ -3443,6 +3426,149 @@ const assignStudentToTeacher = async (req, res, next) => {
           ////console.log("STUDENTS:", students[j].questionWritten[p]);
           if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
             data.push(students[j].studentId);
+            break;
+          }
+        }
+      }
+    }
+    perSubSt.push(data);
+  }
+  for (let i = 0; i < 6; i++) {
+    let sub = subjects[i];
+    let studentNo = perSubSt[i].length;
+    let teachers = [];
+    try {
+      teachers = await User.find({ subjectId: sub }, "_id");
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    //console.log("teachersFirst:", teachers);
+    let teach = [];
+    for (let i = 0; i < teachers.length; i++) {
+      teach[i] = String(teachers[i]._id);
+    }
+    teachers = teach;
+    //console.log("teachers:", teachers);
+    let intersection = teacherId.filter((x) => teachers.includes(x));
+    console.log(intersection);
+    teachers = intersection;
+    ////console.log("teachersNext:", teachers);
+    let range = parseInt(studentNo / teachers.length);
+    let start = 0;
+    let teacherStudentArr = [];
+    for (let j = 0; j < teachers.length; j++) {
+      let std = [];
+      for (let p = start; p < range; p++) {
+        std.push(perSubSt[i][p]);
+      }
+      if (j == teachers.length - 2) {
+        start = range;
+        range =
+          range +
+          parseInt(studentNo / teachers.length) +
+          (studentNo % teachers.length);
+      } else {
+        start = range;
+        range = range + parseInt(studentNo / teachers.length);
+      }
+      let teacherStudent = {};
+      teacherStudent["examId"] = examIdObj;
+      teacherStudent["teacherId"] = new mongoose.Types.ObjectId(teachers[j]);
+      teacherStudent["studentId"] = std;
+      teacherStudentArr.push(teacherStudent);
+    }
+    let doc = null;
+    try {
+      doc = await TeacherVsSpecialExam.insertMany(teacherStudentArr, {
+        ordered: false,
+      });
+    } catch (err) {
+      return res.status(500).json("1.Something went wrong.");
+    }
+    console.log("eacherStudentArr", teacherStudentArr);
+  }
+
+  return res
+    .status(201)
+    .json("Successfully assign all student to the teacher.");
+};
+const assignStudentToTeacher = async (req, res, next) => {
+  //new code
+  let examId = req.body.examId;
+  let teacherId = req.body.teacherId;
+  console.log(teacherId);
+  console.log(examId);
+  if (!ObjectId.isValid(examId) || teacherId.length == 0)
+    return res.status(404).json("Exam Id or Teacher Id is not valid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let assignedTeacher = null;
+  try {
+    assignedTeacher = await TeacherVsSpecialExam.find({
+      $and: [{ examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Somethhing went wrong.");
+  }
+  if (assignedTeacher.length > 0) {
+    let del = null;
+    try {
+      del = await TeacherVsSpecialExam.deleteMany({ examId: examIdObj });
+    } catch (err) {
+      return res.status(500).json("Somethhing went wrong.");
+    }
+  }
+  let count = 0;
+  try {
+    count = await SpecialVsStudent.find({
+      examId: examIdObj,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (count == 0)
+    return res.status(404).json("No Student participate in the exam.");
+  let subjects = null;
+  try {
+    subjects = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let students = null;
+  let studentCount = 0;
+  try {
+    students = await SpecialVsStudent.find({ examId: examIdObj });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  try {
+    studentCount = await SpecialVsStudent.find({
+      examId: examIdObj,
+    }).count();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  subjects = subjects.allSubject;
+  let perSubSt = [];
+  for (let i = 0; i < 6; i++) {
+    let sub = subjects[i];
+    let data = [];
+    for (let j = 0; j < studentCount; j++) {
+      //console.log("length:", students[j].questionWritten.length);
+      if (
+        students[j].questionWritten != null &&
+        students[j].questionWritten.length > 0
+      ) {
+        ////console.log("students[j].questionWritten", students[j].questionWritten);
+        //console.log("students:", students[j]);
+        for (let p = 0; p < 4; p++) {
+          ////console.log("STUDENTS:", students[j].questionWritten[p]);
+          if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
+            if (
+              students[j].questionWritten[p].submittedScriptILink.length > 0
+            ) {
+              data.push(students[j].studentId);
+            }
             break;
           }
         }
@@ -3989,6 +4115,141 @@ const checkScriptSingle = async (req, res, next) => {
       ".jpeg";
     let fileName =
       dir +
+      "/" +
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(subjectId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".jpeg";
+    try {
+      fs.writeFileSync(fileName, matches, { encoding: "base64" });
+    } catch (e) {
+      //console.log(e);
+      return res.status(500).json(e);
+    }
+    uploadImages[i] = "uploads/answers/" + fileNameDis;
+  }
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  let getData = null;
+  try {
+    getData = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let insertId = getData._id;
+  let indexValue = null;
+  for (let i = 0; i < 4; i++) {
+    if (String(getData.questionWritten[i].subjectId) == String(subjectIdObj)) {
+      indexValue = i;
+      break;
+    }
+  }
+  getData.questionWritten[indexValue].answerScriptILink[questionNo] =
+    uploadImages;
+  getData.questionWritten[indexValue].obtainedMarks[questionNo] = obtainedMarks;
+  let upd = {
+    questionWritten: getData.questionWritten,
+  };
+  let doc;
+  try {
+    doc = await SpecialVsStudent.findByIdAndUpdate(insertId, upd);
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json("Updated Successfully.");
+};
+const checkScriptSingle1 = async (req, res, next) => {
+  let questionNo = Number(req.body.questionNo);
+  let obtainedMarks = Number(req.body.obtainedMarks);
+  let studentId = req.body.studentId;
+  let examId = req.body.examId;
+  let images = req.body.uploadImages;
+  let teacherId = req.user.id;
+  teacherId = new mongoose.Types.ObjectId(teacherId);
+  let subjectId = null;
+  try {
+    subjectId = await User.findOne({ _id: teacherId }, "subjectId -_id");
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
+  subjectId = subjectId.subjectId;
+  //console.log(req.body.obtainedMarks);
+  //console.log(obtainedMarks);
+  //console.log(req.body.uploadImages);
+  if (
+    !ObjectId.isValid(studentId) ||
+    !ObjectId.isValid(examId) ||
+    questionNo < 0 ||
+    obtainedMarks < 0 ||
+    !ObjectId.isValid(subjectId)
+  ) {
+    return res
+      .status(404)
+      .json("Student Id or Exam Id or question Id is not valid.");
+  }
+  questionNo = questionNo - 1;
+
+  const dir = path.resolve(
+    path.join(__dirname, "../uploads/answers/" + String(examId) + "/")
+  );
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  const dir1 = path.resolve(
+    path.join(
+      __dirname,
+      "../uploads/answers/" + String(examId) + "/" + String(studentId) + "/"
+    )
+  );
+  if (!fs.existsSync(dir1)) {
+    fs.mkdirSync(dir1);
+  }
+  const dir2 = path.resolve(
+    path.join(
+      __dirname,
+      "../uploads/answers/" +
+        String(examId) +
+        "/" +
+        String(studentId) +
+        "/" +
+        String(subjectId) +
+        "/"
+    )
+  );
+  if (!fs.existsSync(dir2)) {
+    fs.mkdirSync(dir2);
+  }
+  let uploadImages = [];
+  for (let i = 0; i < images.length; i++) {
+    const matches = String(images[i]).replace(
+      /^data:([A-Za-z-+/]+);base64,/,
+      ""
+    );
+
+    let fileNameDis =
+      String(examId) +
+      "-" +
+      String(studentId) +
+      "_" +
+      String(subjectId) +
+      "_" +
+      String(questionNo + 1) +
+      "-" +
+      String(i + 1) +
+      ".jpeg";
+    let fileName =
+      dir2 +
       "/" +
       String(examId) +
       "-" +

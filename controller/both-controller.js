@@ -92,7 +92,7 @@ const createBothExam = async (req, res, next) => {
     doc = await saveExam.save();
   } catch (err) {
     //console.log(err);
-    return res.status(500).json("Something went wrong!");
+    return res.status(500).json("This exam name already exists!");
   }
   return res.status(201).json(doc);
 };
