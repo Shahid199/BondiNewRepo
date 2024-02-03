@@ -6110,11 +6110,11 @@ const bothGetAllRank = async (req, res, next) => {
     let data1 = {};
     for (let j = 0; j < marksData.length; j++) {
       if (
-        String(resultRank[i].studentId._id) == String(marksData[i].studentId)
+        String(resultRank[i].studentId._id) == String(marksData[j].studentId)
       ) {
-        data1["totalObtainedMarksMcq"] = marksData[i].totalObtainedMarksMcq;
+        data1["totalObtainedMarksMcq"] = marksData[j].totalObtainedMarksMcq;
         data1["totalObtainedMarksWritten"] =
-          marksData[i].totalObtainedMarksWritten;
+          marksData[j].totalObtainedMarksWritten;
         break;
       }
     }
