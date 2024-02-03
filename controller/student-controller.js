@@ -6115,6 +6115,7 @@ const bothGetAllRank = async (req, res, next) => {
         data1["totalObtainedMarksMcq"] = marksData[i].totalObtainedMarksMcq;
         data1["totalObtainedMarksWritten"] =
           marksData[i].totalObtainedMarksWritten;
+        break;
       }
     }
     let conData = "*******";
