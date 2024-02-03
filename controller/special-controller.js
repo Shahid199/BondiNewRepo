@@ -4209,11 +4209,12 @@ const checkScriptSingle = async (req, res, next) => {
   }
   questionNo = questionNo - 1;
 
-  const dir = path.resolve(
+  let dir = path.resolve(
     path.join(__dirname, "../uploads/answers/" + String(examId) + "/")
   );
+  console.log(dir, fs.existsSync(dir));
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(dir, { recursive: true });
   }
   const dir1 = path.resolve(
     path.join(
@@ -4222,7 +4223,7 @@ const checkScriptSingle = async (req, res, next) => {
     )
   );
   if (!fs.existsSync(dir1)) {
-    fs.mkdirSync(dir1);
+    fs.mkdirSync(dir1, { recursive: true });
   }
   const dir2 = path.resolve(
     path.join(
@@ -4237,7 +4238,7 @@ const checkScriptSingle = async (req, res, next) => {
     )
   );
   if (!fs.existsSync(dir2)) {
-    fs.mkdirSync(dir2);
+    fs.mkdirSync(dir2, { recursive: true });
   }
   let uploadImages = [];
   for (let i = 0; i < images.length; i++) {
@@ -4245,7 +4246,7 @@ const checkScriptSingle = async (req, res, next) => {
       /^data:([A-Za-z-+/]+);base64,/,
       ""
     );
-
+    let timeData = Date.now().toString();
     let fileNameDis =
       String(examId) +
       "-" +
@@ -4256,6 +4257,7 @@ const checkScriptSingle = async (req, res, next) => {
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
+      timeData +
       ".jpeg";
     let fileName =
       dir2 +
@@ -4269,6 +4271,7 @@ const checkScriptSingle = async (req, res, next) => {
       String(questionNo + 1) +
       "-" +
       String(i + 1) +
+      timeData +
       ".jpeg";
     try {
       fs.writeFileSync(fileName, matches, { encoding: "base64" });
@@ -4276,7 +4279,15 @@ const checkScriptSingle = async (req, res, next) => {
       //console.log(e);
       return res.status(500).json(e);
     }
-    uploadImages[i] = "uploads/answers/" + fileNameDis;
+    uploadImages[i] =
+      "uploads/answers/" +
+      String(examId) +
+      "/" +
+      String(studentId) +
+      "/" +
+      String(subjectId) +
+      "/" +
+      fileNameDis;
   }
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
