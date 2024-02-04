@@ -1375,6 +1375,24 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
+  let unuploadedStudent = [];
+  let unuploadedStudent1 = [];
+  try {
+    unuploadedStudent = await StudentExamVsQuestionsWritten.find({
+      $and: [{ examId: examIdObj }, { uploadStatus: false }],
+    });
+    for (let i = 0; i < unuploadedStudent.length; i++) {
+      unuploadedStudent1.push(unuploadedStudent[i].studentId);
+    }
+    delObj = await StudentExamVsQuestionsWritten.deleteMany({
+      studentId: { $in: unuploadedStudent1 },
+    });
+    delObj1 = await StudentMarksRank.deleteMany({
+      studentId: { $in: unuploadedStudent1 },
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   //console.log("teache", teacherId.length);
   let count = 0;
   let dataAll = [];
@@ -1392,11 +1410,11 @@ const assignStudentToTeacher = async (req, res, next) => {
   for (let i = 0; i < dataAll.length; i++) {
     if (dataAll[i].submittedScriptILink.length == 0) {
       nullStudentId.push(dataAll[i].studentId);
-    }else{
+    } else {
       count++;
     }
   }
-  console.log("asdasdasda",count, dataAll.length);
+  console.log("asdasdasda", count, dataAll.length);
   if (count == 0)
     return res
       .status(404)
@@ -1593,16 +1611,24 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   //console.log("aaa:", assignedTeacher);
   if (assignedTeacher.length > 0) {
     let del = null;
+    let delObj = null;
     try {
       del = await BothTeacherVsExam.deleteMany({ examId: examIdObj });
     } catch (err) {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
+  try {
+    delObj = await BothStudentExamVsQuestions.deleteMany({
+      $and: [{ examId: examIdObj }, { uploadStatus: false }],
+    });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
   //console.log("teache", teacherId.length);
   let count = 0;
   let dataAll = [];
-  let questionNo=null;
+  let questionNo = null;
   try {
     dataAll = await BothStudentExamVsQuestions.find({
       examId: examId,
