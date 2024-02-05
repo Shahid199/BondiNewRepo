@@ -6426,12 +6426,12 @@ const bothUpdateAssignQuestionMcq = async (req, res, next) => {
   docId1 = String(docId);
   answered = result[0].answeredOption;
 
-  if (answered[questionIndexNumber] != -1)
-    return res
-      .status(200)
-      .json(
-        "Already rewrite the answer from another device.Please reload the page."
-      );
+  // if (answered[questionIndexNumber] != -1)
+  //   return res
+  //     .status(200)
+  //     .json(
+  //       "Already rewrite the answer from another device.Please reload the page."
+  //     );
   ////console.log(questionIndexNumber);
   ////console.log(optionIndexNumber);
   answered[questionIndexNumber] = String(optionIndexNumber);

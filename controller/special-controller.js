@@ -2782,12 +2782,12 @@ const updateAssignQuestion = async (req, res, next) => {
       break;
     }
   }
-  if (data[sIndex].mcqAnswer[questionIndexNumber] != -1)
-    return res
-      .status(200)
-      .json(
-        "Already rewrite the answer from another device.Please reload the page."
-      );
+  // if (data[sIndex].mcqAnswer[questionIndexNumber] != -1)
+  //   return res
+  //     .status(200)
+  //     .json(
+  //       "Already rewrite the answer from another device.Please reload the page."
+  //     );
   data[sIndex].mcqAnswer[questionIndexNumber] = optionIndexNumber;
   let upd = { questionMcq: data };
   try {
