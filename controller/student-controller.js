@@ -5895,8 +5895,8 @@ const bothGetWrittenStudentSingleByExam = async (req, res, next) => {
     if (data.submittedScriptILink[i])
       dataObj["answerScript"][i] = data.submittedScriptILink[i];
   }
-  dataObj["totalQuestions"] = data2.totalQuestions;
-  dataObj["totalMarks"] = data2.marksPerQuestion.length;
+  dataObj["totalQuestions"] = data2.marksPerQuestion.length;
+  dataObj["totalMarks"] = data2.totalMarks;
   dataObj["marksPerQuestion"] = data2.marksPerQuestion;
   //dataObj["checkStatus"] = data.checkStatus;
   ////console.log(data.checkStatus);
