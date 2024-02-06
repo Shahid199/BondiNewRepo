@@ -36,6 +36,21 @@ const freeStudentsSchema = new Schema(
       required: false,
       default: null,
     },
+    buetRoll: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    medicalRoll: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    universityRoll: {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

@@ -25,10 +25,11 @@ const StudentMarksRank = require("../model/StudentMarksRank");
 const SpecialVsStudent = require("../model/SpecialVsStudent");
 const Student = require("../model/Student");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
+const FreeStudent = require("../model/FreeStudent");
 
 const Limit = 100;
 //create Exam
-const createExam = async (req, res, next) => {
+const createExam1 = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
@@ -86,6 +87,81 @@ const createExam = async (req, res, next) => {
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
+    iLink: iLinkPath,
+  });
+  let doc;
+  try {
+    doc = await saveExam.save();
+  } catch (err) {
+    //console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  return res.status(201).json(doc);
+};
+const createExam = async (req, res, next) => {
+  const file = req.file;
+  let iLinkPath = null;
+  if (!file) {
+    return res.status(404).json("File not uploaded.");
+  }
+  iLinkPath = "uploads/".concat(file.filename);
+  //const examFromQuery = JSON.parse(req.query.exam);
+  const {
+    courseId,
+    subjectId,
+    name,
+    examType,
+    examVariation,
+    examFreeOrNot,
+    startTime,
+    endTime,
+    totalQuestionMcq,
+    marksPerMcq,
+    totalMarksMcq,
+    status,
+    duration,
+    sscStatus,
+    hscStatus,
+    buetStatus,
+    medicalStatus,
+    universityStatus,
+    negativeMarks,
+  } = req.body;
+
+  if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("course Id or subject Id is invalid.");
+  let startTime1, endTime1, tqm, tmm;
+  tqm = totalQuestionMcq;
+  tmm = marksPerMcq;
+  if (totalQuestionMcq == null || marksPerMcq == null) {
+    tqm = Number(0);
+    tmm = Number(0);
+  }
+  startTime1 = new Date(startTime);
+  endTime1 = new Date(endTime);
+  let courseIdObj, subjectIdObj, saveExam;
+  courseIdObj = new mongoose.Types.ObjectId(courseId);
+  subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  saveExam = new Exam({
+    courseId: courseIdObj,
+    subjectId: subjectIdObj,
+    name: name,
+    examType: Number(examType),
+    examVariation: Number(examVariation),
+    examFreeOrNot: JSON.parse(examFreeOrNot),
+    startTime: moment(startTime).add(6, "h"),
+    endTime: moment(endTime).add(6, "h"),
+    duration: Number(duration),
+    totalQuestionMcq: tqm,
+    marksPerMcq: tmm,
+    totalMarksMcq: Number(totalMarksMcq),
+    negativeMarks: Number(negativeMarks),
+    status: JSON.parse(status),
+    sscStatus: JSON.parse(sscStatus),
+    hscStatus: JSON.parse(hscStatus),
+    buetStatus: JSON.parse(buetStatus),
+    medicalStatus: JSON.parse(medicalStatus),
+    universityStatus: JSON.parse(universityStatus),
     iLink: iLinkPath,
   });
   let doc;
@@ -166,7 +242,7 @@ const getExamById = async (req, res, next) => {
   }
   return res.status(200).json(examData);
 };
-const updateExam = async (req, res, next) => {
+const updateExam1 = async (req, res, next) => {
   const {
     examId,
     courseId,
@@ -224,6 +300,73 @@ const updateExam = async (req, res, next) => {
     return res.status(500).json(err);
   }
   if (updStatus == null) return res.status(404).json("Prolem at update.");
+  else return res.status(201).json("Updated.");
+};
+
+const updateExam = async (req, res, next) => {
+  const {
+    examId,
+    courseId,
+    subjectId,
+    name,
+    examType,
+    examVariation,
+    examFreeOrNot,
+    startTime,
+    endTime,
+    totalQuestionMcq,
+    marksPerMcq,
+    totalMarksMcq,
+    status,
+    duration,
+    sscStatus,
+    hscStatus,
+    buetStatus,
+    medicalStatus,
+    universityStatus,
+    negativeMarks,
+  } = req.body;
+  if (
+    !ObjectId.isValid(examId) ||
+    !ObjectId.isValid(courseId) ||
+    !ObjectId.isValid(subjectId)
+  ) {
+    return res
+      .status(404)
+      .json("exam Id or course Id or subject Id is not valid.");
+  }
+  //console.log("CT", moment(new Date()));
+  //console.log("ST", moment(new Date(startTime)));
+  //console.log("ET", moment(new Date(endTime)));
+
+  let saveExamUpd = {
+    courseId: new mongoose.Types.ObjectId(courseId),
+    subjectId: new mongoose.Types.ObjectId(subjectId),
+    name: name,
+    examType: Number(examType),
+    examVariation: Number(examVariation),
+    examFreeOrNot: JSON.parse(examFreeOrNot),
+    startTime: moment(startTime).add(6, "h"),
+    endTime: moment(endTime).add(6, "h"),
+    duration: Number(duration),
+    totalQuestionMcq: Number(totalQuestionMcq),
+    marksPerMcq: Number(marksPerMcq),
+    totalMarksMcq: Number(totalMarksMcq),
+    negativeMarks: Number(negativeMarks),
+    status: JSON.parse(status),
+    sscStatus: JSON.parse(sscStatus),
+    hscStatus: JSON.parse(hscStatus),
+    buetStatus: JSON.parse(buetStatus),
+    medicalStatus: JSON.parse(medicalStatus),
+    universityStatus: JSON.parse(universityStatus),
+  };
+  let updStatus = null;
+  try {
+    updStatus = await Exam.updateOne({ _id: examId }, saveExamUpd);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (updStatus == null) return res.status(404).json("Problem at update.");
   else return res.status(201).json("Updated.");
 };
 
@@ -1973,7 +2116,8 @@ const downloadExamImage = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let data = [];
   let imageLink = [];
-  let path = "/Users/shahid/Desktop/node-project/BondiDb/BondiNewRepo";
+  let imagelink1 = [];
+  let path = "/Users/shahid/Desktop/node-project/BondiDb/BondiNewRepo/";
   if (Number(type) == 1) {
     try {
       data = await StudentExamVsQuestionsWritten.find({ examId: examIdObj });
@@ -1983,13 +2127,49 @@ const downloadExamImage = async (req, res, next) => {
     for (let i = 0; i < data.length; i++) {
       if (data[i].submittedScriptILink.length > 0) {
         for (let j = 0; j < data[i].submittedScriptILink.length; j++) {
-          
+          imageLink.push(path + data[i].submittedScriptILink[j]);
+        }
+      }
+      if (data[i].ansewerScriptILink.length > 0) {
+        for (let j = 0; j < data[i].ansewerScriptILink.length; j++) {
+          imagelink1.push(path + data[i].ansewerScriptILink[j]);
         }
       }
     }
   }
+  return res.status(200).json({ imageLink, imagelink1 });
+};
+const columnAdd = async (req, res, next) => {
+  let data = [];
+  let data1 = [];
+  let data2 = [];
+  let data3 = [];
+  let data4 = [];
+  let data5 = [];
+  try {
+    data = await Exam.updateMany({}, { $set: { buetStatus: false } });
+    data1 = await Exam.updateMany({}, { $set: { medicalStatus: false } });
+    data2 = await Exam.updateMany({}, { $set: { universityStatus: false } });
+
+    data3 = await FreeStudent.updateMany({}, { $set: { buetRoll: null } });
+    data4 = await FreeStudent.updateMany({}, { $set: { medicalRoll: null } });
+    data5 = await FreeStudent.updateMany(
+      {},
+      { $set: { universityRoll: null } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  try {
+    data3 = await Exam.find({});
+    data4 = await FreeStudent.find({});
+  } catch (err) {
+    return res.status(500).json("Something went wrong.1");
+  }
+  return res.status(200).json({ data3 });
 };
 //export functions
+exports.columnAdd = columnAdd;
 exports.resetExam = resetExam;
 exports.getExamBySubAdmin = getExamBySubAdmin;
 exports.getExamBySubWritten = getExamBySubWritten;

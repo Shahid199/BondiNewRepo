@@ -33,6 +33,7 @@ const {
   getExamBySubWritten,
   getExamBySubAdmin,
   resetExam,
+  columnAdd,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -273,5 +274,6 @@ router.post(
   ],
   resetExam
 );
+router.get("/columnadd", columnAdd);
 
 module.exports = router;

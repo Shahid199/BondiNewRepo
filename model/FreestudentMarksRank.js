@@ -33,12 +33,12 @@ const FreestudentMarkRanksSchema = new Schema(
     totalObtainedMarks: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     rank: {
       type: Number,
       required: false,
-      default: null,
+      default: -1,
     },
     finishedStatus: {
       type: Boolean,

@@ -84,6 +84,21 @@ const examSchema = new Schema(
       required: true,
       default: false,
     },
+    buetStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    medicalStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    universityStatus: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     negativeMarks: {
       type: Number,
       required: true,

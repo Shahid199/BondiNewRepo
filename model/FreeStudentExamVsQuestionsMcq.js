@@ -27,37 +27,38 @@ const FreeStudentExamVsQuestionsMcqSchema = new Schema(
       {
         type: String,
         required: false,
+        default: null,
       },
     ],
     totalCorrectAnswer: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     totalWrongAnswer: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     totalNotAnswered: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     totalCorrectMarks: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     totalWrongMarks: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
     totalObtainedMarks: {
       type: Number,
       required: false,
-      default: null,
+      default: 0,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
