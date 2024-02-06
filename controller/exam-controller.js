@@ -7,7 +7,7 @@ const Subject = require("../model/Subject");
 const WrittenQuestionVsExam = require("../model/WrittenQuestionVsExam");
 const CourseVsStudent = require("../model/CourseVsStudent");
 const fs = require("fs");
-const { default: mongoose, mongo } = require("mongoose");
+const { default: mongoose, mongo, isValidObjectId } = require("mongoose");
 const ExamRule = require("../model/ExamRule");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const ObjectId = mongoose.Types.ObjectId;
@@ -1963,6 +1963,31 @@ const resetExam1 = async (req, res, next) => {
     }
   }
   return res.status(200).json("Successfully reset exam for student.");
+};
+
+const downloadExamImage = async (req, res, next) => {
+  let examId = req.body.examId;
+  let type = req.body.type;
+  if (!ObjectId.isValid(examId) || !type)
+    return res.status(404).json("ExamId is not valid.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = [];
+  let imageLink = [];
+  let path = "/Users/shahid/Desktop/node-project/BondiDb/BondiNewRepo";
+  if (Number(type) == 1) {
+    try {
+      data = await StudentExamVsQuestionsWritten.find({ examId: examIdObj });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].submittedScriptILink.length > 0) {
+        for (let j = 0; j < data[i].submittedScriptILink.length; j++) {
+          
+        }
+      }
+    }
+  }
 };
 //export functions
 exports.resetExam = resetExam;
