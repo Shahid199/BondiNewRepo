@@ -2124,6 +2124,7 @@ const downloadExamImage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
+    //return res.status(200).json(data);
     for (let i = 0; i < data.length; i++) {
       if (data[i].submittedScriptILink.length > 0) {
         for (let j = 0; j < data[i].submittedScriptILink.length; j++) {
@@ -2169,6 +2170,7 @@ const columnAdd = async (req, res, next) => {
   return res.status(200).json({ data3 });
 };
 //export functions
+exports.downloadExamImage = downloadExamImage;
 exports.columnAdd = columnAdd;
 exports.resetExam = resetExam;
 exports.getExamBySubAdmin = getExamBySubAdmin;

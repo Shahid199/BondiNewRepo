@@ -34,6 +34,7 @@ const {
   getExamBySubAdmin,
   resetExam,
   columnAdd,
+  downloadExamImage,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -275,5 +276,7 @@ router.post(
   resetExam
 );
 router.get("/columnadd", columnAdd);
+
+router.post("/downloadimage", downloadExamImage);
 
 module.exports = router;
