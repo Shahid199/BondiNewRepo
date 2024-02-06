@@ -2030,6 +2030,11 @@ const getAllRankFree = async (req, res, next) => {
     data1["examName"] = resultRank[i].examId.name;
     data1["studentName"] = resultRank[i].freeStudentId.name;
     data1["mobileNoOrg"] = resultRank[i].freeStudentId.mobileNo;
+    data1["buetRoll"] = resultRank[i].freeStudentId.buetRoll;
+    data1["medicalRoll"] = resultRank[i].freeStudentId.medicalRoll;
+    data1["universityRoll"] = resultRank[i].freeStudentId.universityRoll;
+    data1["sscRoll"] = resultRank[i].freeStudentId.sscRoll;
+    data1["hscRoll"] = resultRank[i].freeStudentId.hscRoll;
     data1["mobileNo"] = conData.concat(
       resultRank[i].freeStudentId.mobileNo.slice(7)
     );

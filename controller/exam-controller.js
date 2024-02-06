@@ -2136,7 +2136,7 @@ const downloadExamImage = async (req, res, next) => {
       if (data[i].ansewerScriptILink.length > 0) {
         for (let j = 0; j < data[i].ansewerScriptILink.length; j++) {
           imagelink1.push(path + data[i].ansewerScriptILink[j]);
-          zipFile = zipFile + " " + (path + data[i].ansewerScriptILink[j]);
+          //zipFile = zipFile + " " +;
         }
       }
     }
