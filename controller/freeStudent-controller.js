@@ -2024,7 +2024,7 @@ const getAllRankFree = async (req, res, next) => {
   // }
   let allData = [];
   let totalStudent = null;
-  for (let i = 0; i < resultRank.length - 1; i++) {
+  for (let i = 0; i < resultRank.length; i++) {
     let data1 = {};
     let conData = "*******";
     data1["examName"] = resultRank[i].examId.name;

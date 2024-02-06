@@ -2117,6 +2117,8 @@ const downloadExamImage = async (req, res, next) => {
   let data = [];
   let imageLink = [];
   let imagelink1 = [];
+  let zipFile =
+    "zip /Users/shahid/Desktop/node-project/BondiDb/BondiNewRepo/utilities/arch.zip";
   let path = "/Users/shahid/Desktop/node-project/BondiDb/BondiNewRepo/";
   if (Number(type) == 1) {
     try {
@@ -2134,11 +2136,12 @@ const downloadExamImage = async (req, res, next) => {
       if (data[i].ansewerScriptILink.length > 0) {
         for (let j = 0; j < data[i].ansewerScriptILink.length; j++) {
           imagelink1.push(path + data[i].ansewerScriptILink[j]);
+          zipFile = zipFile + " " + (path + data[i].ansewerScriptILink[j]);
         }
       }
     }
   }
-  return res.status(200).json({ imageLink, imagelink1 });
+  return res.status(200).json({ imageLink, imagelink1, zipFile });
 };
 const columnAdd = async (req, res, next) => {
   let data = [];
