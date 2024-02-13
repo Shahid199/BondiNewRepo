@@ -5695,7 +5695,7 @@ const bothHistoryData = async (req, res, next) => {
   ////console.log(count);
   try {
     data = await BothStudentExamVsQuestions.find({
-      $and: [{ studentId: studentIdObj }, { checkStatus: true }],
+      $and: [{ studentId: studentIdObj }],
     }).populate("examId");
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
