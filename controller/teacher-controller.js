@@ -193,7 +193,7 @@ const checkScriptSingle10 = async (req, res, next) => {
   const dirNew = path.resolve(
     path.join(__dirname, "../uploads/answers/" + examId)
   );
-    console.log(dirNew);
+  console.log(dirNew);
   if (!fs.existsSync(dirNew)) {
     fs.mkdirSync(dirNew);
   }
@@ -1163,7 +1163,7 @@ const bothMarksCalculation = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  let totalMarks = 0;
+  let totalMarks = 0.0;
   let marks = getData.obtainedMarks;
   // //console.log(getData);
   // //console.log(marks);
@@ -1224,7 +1224,9 @@ const bothUpdateRank = async (req, res, next) => {
   }
   let ranks = null;
   try {
-    ranks = await BothStudentExamVsQuestions.find({ examId: examIdObj })
+    ranks = await BothStudentExamVsQuestions.find({
+      $and: [{ examId: examIdObj }, { checkStatus: true }],
+    })
       .select("examId totalObtainedMarks studentId -_id")
       .sort({
         totalObtainedMarks: -1,
