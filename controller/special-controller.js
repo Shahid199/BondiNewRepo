@@ -3504,14 +3504,14 @@ const assignStudentToTeacher = async (req, res, next) => {
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let assignedTeacher = null;
-  let delObj = null;
-  try {
-    delObj = await SpecialVsStudent.deleteMany({
-      $and: [{ examId: examIdObj }, { uploadStatus: false }],
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
+  // let delObj = null;
+  // try {
+  //   delObj = await SpecialVsStudent.deleteMany({
+  //     $and: [{ examId: examIdObj }, { uploadStatus: false }],
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
   try {
     assignedTeacher = await TeacherVsSpecialExam.find({
       $and: [{ examId: examIdObj }],
@@ -3527,14 +3527,6 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
   }
-  // let count = 0;
-  // try {
-  //   count = await SpecialVsStudent.find({
-  //     examId: examIdObj,
-  //   }).count();
-  // } catch (err) {
-  //   return res.status(500).json("Something went wrong.");
-  // }
   let subjects = null;
   try {
     subjects = await SpecialExam.findById(examId);
@@ -3579,6 +3571,7 @@ const assignStudentToTeacher = async (req, res, next) => {
             ) {
               data.push(students[j].studentId);
             }
+            break;
           }
         }
       }
