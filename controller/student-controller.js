@@ -6115,6 +6115,7 @@ const bothGetAllRank = async (req, res, next) => {
       if (
         String(resultRank[i].studentId._id) == String(marksData[j].studentId)
       ) {
+        console.log("marksData:", marksData[j]);
         data1["totalObtainedMarksMcq"] = marksData[j].totalObtainedMarksMcq;
         data1["totalObtainedMarksWritten"] =
           marksData[j].totalObtainedMarksWritten;
