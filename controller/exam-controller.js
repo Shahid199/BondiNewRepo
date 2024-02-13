@@ -1816,7 +1816,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
           $set: {
             obtainedMarks: obtainedMarksPerQuestion,
             totalObtainedMarksWritten: 0,
-            checkStatus: true,
+           // checkStatus: true,
           },
         }
       );
