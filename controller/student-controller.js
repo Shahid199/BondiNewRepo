@@ -6104,7 +6104,7 @@ const bothGetAllRank = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
-  console.log("marksData:", marksData);
+  //console.log("marksData:", marksData);
   ////console.log(resultRank);
   //eturn res.status(200).json(resultRank);
   let allData = [];
