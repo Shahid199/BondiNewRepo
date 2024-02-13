@@ -1743,6 +1743,15 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let assignedTeacher = null;
+  let del1 = null;
+  try {
+    del1 = await BothStudentExamVsQuestions.deleteMany({
+      $and: [{ examId: examIdObj }, { uploadStatus: false }],
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("Something went wrong.");
+  }
   try {
     assignedTeacher = await BothTeacherVsExam.find({
       $and: [{ examId: examIdObj }],
@@ -1761,13 +1770,6 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
-  try {
-    delObj = await BothStudentExamVsQuestions.deleteMany({
-      $and: [{ examId: examIdObj }, { uploadStatus: false }],
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
   //console.log("teache", teacherId.length);
   let count = 0;
   let dataAll = [];
@@ -1783,13 +1785,13 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   questionNo = questionNo.totalQuestions;
   let nullStudentId = [];
   for (let i = 0; i < dataAll.length; i++) {
-    if (dataAll[i].submittedScriptILink.length == 0) {
+    if (dataAll[i].submittedScriptILink.length > 0) {
+      count++;
+    } else {
       nullStudentId.push(dataAll[i].studentId);
-      continue;
     }
-    count++;
   }
-  if (count == 0)
+  if (count == 0 && nullStudentId.length == 0)
     return res
       .status(404)
       .json("No Student participate in the exam or No students upload paper.");
@@ -1797,10 +1799,11 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   let students = [],
     studData = [];
   for (let i = 0; i < dataAll.length; i++) {
-    if (dataAll[i].submittedScriptILink.length == 0) continue;
-    studData.push(dataAll[i].studentId);
+    if (dataAll[i].submittedScriptILink.length > 0) {
+      studData.push(dataAll[i].studentId);
+    }
   }
-  if (nullStudentId.length != 0) {
+  if (nullStudentId.length > 0) {
     let obtainedMarksPerQuestion = [];
     for (let j = 0; j < questionNo; j++) {
       obtainedMarksPerQuestion[j] = 0;
@@ -1813,6 +1816,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
           $set: {
             obtainedMarks: obtainedMarksPerQuestion,
             totalObtainedMarksWritten: 0,
+            checkStatus: true,
           },
         }
       );

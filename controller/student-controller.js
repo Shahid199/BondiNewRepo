@@ -3435,7 +3435,7 @@ const bothGetHistory = async (req, res, next) => {
     rank;
   try {
     rank = await BothStudentExamVsQuestions.find({
-      $and: [{ examId: examIdObj }],
+      $and: [{ examId: examIdObj }, { checkStatus: true }],
     })
       .populate("studentId")
       .skip(paginateData.skippedIndex)
@@ -5698,7 +5698,7 @@ const bothHistoryData = async (req, res, next) => {
       $and: [{ studentId: studentIdObj }, { checkStatus: true }],
     }).populate("examId");
   } catch (err) {
-    return res.status(500).json("1.SOmething went wrong.");
+    return res.status(500).json("1.Something went wrong.");
   }
   //console.log(data);
   if (data.length == 0)
@@ -5738,9 +5738,11 @@ const bothHistoryData = async (req, res, next) => {
     data1["title"] = data[i].examId.name;
     data1["variation"] = examType[Number(data[i].examId.examType)];
     //data1["type"] = examVariation[Number(data[i].examId.examVariation)];
-    data1["totalObtainedMarks"] = data[i].totalObtainedMarks.toFixed(2);
     data1["totalMarksMcq"] = data[i].totalObtainedMarksMcq.toFixed(2);
     data1["totalMarksWritten"] = data[i].totalObtainedMarksWritten.toFixed(2);
+    data1["totalObtainedMarks"] = (
+      data[i].totalObtainedMarksMcq + data[i].totalObtainedMarksWritten
+    ).toFixed(2);
     data1["meritPosition"] = resultRank;
     data1["examStartTimeMcq"] = moment(data[i].examStartTimeMcq).format("LLL");
     data1["examEndTimeMcq"] = moment(data[i].examEndTimeMcq).format("LLL");
@@ -6102,6 +6104,7 @@ const bothGetAllRank = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
+  console.log("marksData:", marksData);
   ////console.log(resultRank);
   //eturn res.status(200).json(resultRank);
   let allData = [];
