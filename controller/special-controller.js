@@ -3869,7 +3869,12 @@ const getRecheckStudentData = async (req, res, next) => {
         break;
       }
     }
-    if (indexValue == null || questionData.subStatus == false) continue;
+    if (
+      indexValue == null ||
+      questionData.subStatus == false ||
+      checkStatus[i].questionWritten[j].submittedScriptILink.length == 0
+    )
+      continue;
     ////console.log(i);
     // //console.log(
     //   "check status",
