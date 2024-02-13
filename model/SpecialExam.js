@@ -9,7 +9,7 @@ const SpecialExamSchema = new Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
+      //unique: true,
       max: 200,
     },
     examVariation: {
