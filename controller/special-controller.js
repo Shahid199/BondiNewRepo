@@ -3552,6 +3552,7 @@ const assignStudentToTeacher = async (req, res, next) => {
   // }
   subjects = subjects.allSubject;
   let perSubSt = [];
+  let nullId = [];
   for (let i = 0; i < 6; i++) {
     let sub = subjects[i];
     let data = [];
@@ -3565,12 +3566,9 @@ const assignStudentToTeacher = async (req, res, next) => {
         //console.log("students:", students[j]);
         for (let p = 0; p < 4; p++) {
           ////console.log("STUDENTS:", students[j].questionWritten[p]);
-          if (
-            String(students[j].questionWritten[p].subjectId) == String(sub) &&
-            students[j].questionWritten[p].submittedScriptILink.length > 0
-          ) {
-            data.push(students[j].studentId);
-            break;
+          if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
+            if (students[j].questionWritten[p].submittedScriptILink.length > 0)
+              data.push(students[j].studentId);
           }
         }
       }
