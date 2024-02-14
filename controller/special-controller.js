@@ -2125,6 +2125,8 @@ const getCombination1 = async (req, res, next) => {
 };
 const getCombination = async (req, res, next) => {
   let selectedId = req.query.optionalSubjectId;
+  let selectIdArr = [];
+  selectIdArr.push(selectedId);
   let examId = req.query.examId;
   let fixedId = null;
   try {
@@ -2166,6 +2168,9 @@ const getCombination = async (req, res, next) => {
   // }
   let result1 = allId.filter(
     (obj1) => !fixedIds.some((obj2) => String(obj1._id) === String(obj2._id))
+  );
+  let result2 = result1.filter(
+    (obj1) => !selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
   );
   console.log(result1);
   let data = [];
