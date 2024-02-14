@@ -2157,7 +2157,7 @@ const getCombination = async (req, res, next) => {
     (obj1) => !fixedIds.some((obj2) => String(obj1._id) === String(obj2._id))
   );
   let result3 = allId.filter((obj1) =>
-    selectIdArr.some((obj2) => String(obj1._id) === String(obj2._id))
+    selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
   );
   let result2 = result1.filter(
     (obj1) => !selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
@@ -2165,7 +2165,7 @@ const getCombination = async (req, res, next) => {
   console.log(result3);
   let data = [];
   //console.log(optionalId[sIndex]);
- // data.push([fixedIds[0], fixedIds[1], result2[0]]);
+  // data.push([fixedIds[0], fixedIds[1], result2[0]]);
   // data.push([fixedIds[0], fixedIds[1], selectedId, otherId[0]]);
   // data.push([fixedIds[0], fixedIds[1], selectedId, otherId[1]]);
   return res.status(200).json(data);
