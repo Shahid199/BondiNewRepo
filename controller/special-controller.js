@@ -3782,39 +3782,28 @@ const getRecheckStudentData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  ////console.log(questionData);
-  // //console.log(indexValue);
-  // //console.log("dataex:", dataEx.questionWritten[indexValue]);
   try {
     students = await TeacherVsSpecialExam.findOne({
       $and: [{ teacherId: teacherId }, { examId: examId }],
     });
   } catch (err) {
-    // //console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   ////console.log(students);
   if (!students) return res.status(404).json("No student assigned.");
   let studentData = students.studentId;
-  ////console.log("studentData.length:", studentData.length);
   let studId = [];
-  ////console.log("studentData:", studentData);
   for (let i = 0; i < studentData.length; i++) {
     studId[i] = studentData[i]._id;
   }
-  // //console.log(studId);
-  //console.log("studId.length", studId.length);
   let checkStatus = [];
-  //{ studentId: { $in: studId } },
   try {
     checkStatus = await SpecialVsStudent.find({
       $and: [{ examId: examId }],
     }).populate("studentId examId");
   } catch (err) {
-    ////console.log(err);
     return res.status(500).json("Something went wrong.");
   }
-  ////console.log("checkStatus", checkStatus);
   let checkStatus1 = [];
   for (let i = 0; i < studId.length; i++) {
     for (let j = 0; j < checkStatus.length; j++) {
@@ -3824,62 +3813,30 @@ const getRecheckStudentData = async (req, res, next) => {
       }
     }
   }
-  // for (let i = 0; i < checkStatus1.length; i++) {
-  //   if (checkStatus1[i].questionWritten.length == 0)
-  //     //console.log(i, checkStatus1[i]);
-  // }
-  ////console.log("checkStatus1:", checkStatus1);
   checkStatus = checkStatus1;
-  ////console.log("C S L:", checkStatus1.length);
   let indexValue1 = null;
   for (let j = 0; j < 6; j++) {
     if (String(dataEx.questionWritten[j].subjectId) == String(subjectRole)) {
       indexValue1 = j;
-      ////console.log(j);
       break;
     }
   }
-  // for (let i = 0; i < checkStatus.length; i++) {
-  //   ////console.log(i, checkStatus[i].questionWritten);
-  //   // if (
-  //   //   checkStatus[i].questionWritten &&
-  //   //   checkStatus[i].questionWritten.length > 0
-  //   // )
-  //   //   for (let j = 0; j < checkStatus[i].questionWritten.length; j++) {
-  //   //     //console.log("checkStatus:", checkStatus[i].questionWritten[j]);
-  //   //   }
-  // }
-
   let data = [];
   for (let i = 0; i < checkStatus.length; i++) {
     let questionData = null;
     let indexValue = null;
-    // if (checkStatus[i].questionWritten != undefined) {
-    //   //console.log("checkStatus", checkStatus[i].questionWritten);
-    // }
     for (let j = 0; j < 4; j++) {
-      ////console.log("j", j);
       if (
         String(checkStatus[i].questionWritten[j].subjectId) ==
-        String(subjectRole)
+          String(subjectRole) &&
+        checkStatus[i].questionWritten[j].submittedScriptILink.length > 0
       ) {
         questionData = checkStatus[i].questionWritten[j];
         indexValue = j;
-        ////console.log(j);
         break;
       }
     }
-    if (
-      indexValue == null ||
-      questionData.subStatus == false ||
-      checkStatus[i].questionWritten[j].submittedScriptILink.length == 0
-    )
-      continue;
-    ////console.log(i);
-    // //console.log(
-    //   "check status",
-    //   checkStatus[i].examId.questionWritten[indexValue1].marksPerQuestion
-    // );
+    if (indexValue == null || questionData.subStatus == false) continue;
     let dataObj = {};
     dataObj["examName"] = checkStatus[i].examId.name;
     dataObj["examVariation"] = "specialExam";
@@ -3900,9 +3857,6 @@ const getRecheckStudentData = async (req, res, next) => {
   let start, end;
   start = (page - 1) * paginateData.perPage;
   end = page * paginateData.perPage;
-  // //console.log(paginateData);
-  // //console.log(start);
-  // //console.log(end);
   let data1 = [];
   if (count > 0) {
     for (let i = start; i < end; i++) {
@@ -3910,7 +3864,6 @@ const getRecheckStudentData = async (req, res, next) => {
       data1.push(data[i]);
     }
   }
-  //console.log(data1.length);
   return res.status(200).json({ data1, paginateData });
 };
 const getRecheckStudentData1 = async (req, res, next) => {
