@@ -3565,12 +3565,11 @@ const assignStudentToTeacher = async (req, res, next) => {
         //console.log("students:", students[j]);
         for (let p = 0; p < 4; p++) {
           ////console.log("STUDENTS:", students[j].questionWritten[p]);
-          if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
-            if (
-              students[j].questionWritten[p].submittedScriptILink.length > 0
-            ) {
-              data.push(students[j].studentId);
-            }
+          if (
+            String(students[j].questionWritten[p].subjectId) == String(sub) &&
+            students[j].questionWritten[p].submittedScriptILink.length > 0
+          ) {
+            data.push(students[j].studentId);
             break;
           }
         }
