@@ -2165,9 +2165,10 @@ const getCombination = async (req, res, next) => {
   console.log(result3);
   let data = [];
   //console.log(optionalId[sIndex]);
-  // data.push([fixedIds[0], fixedIds[1], result2[0]]);
-  // data.push([fixedIds[0], fixedIds[1], selectedId, otherId[0]]);
-  // data.push([fixedIds[0], fixedIds[1], selectedId, otherId[1]]);
+  data.push([fixedIds[0], fixedIds[1], result2[0], result3[0]]);
+  data.push([fixedIds[0], fixedIds[1], result2[1], result3[0]]);
+  data.push([fixedIds[0], fixedIds[1], result2[2], result3[0]]);
+  console.log(data);
   return res.status(200).json(data);
 };
 
