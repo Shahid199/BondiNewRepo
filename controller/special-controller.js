@@ -2172,7 +2172,7 @@ const getCombination = async (req, res, next) => {
   let result2 = result1.filter(
     (obj1) => !selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
   );
-  console.log(result1);
+  console.log(result2);
   let data = [];
   let otherId = [],
     ind = 0,
