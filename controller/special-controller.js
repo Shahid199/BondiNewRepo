@@ -3619,17 +3619,6 @@ const assignStudentToTeacher = async (req, res, next) => {
             if (
               students[j].questionWritten[p].submittedScriptILink.length > 0
             ) {
-              for (
-                let k = 0;
-                k < students[j].questionWritten[p].submittedScriptILink.length;
-                k++
-              ) {
-                if (
-                  students[j].questionWritten[p].submittedScriptILink[k]
-                    .length == 0
-                ) {
-                }
-              }
               data.push(students[j].studentId);
             }
           }
