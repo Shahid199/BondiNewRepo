@@ -2153,59 +2153,18 @@ const getCombination = async (req, res, next) => {
   let fSubject = [];
   let k = 0;
   let flag = [];
-  // let d = allId.filter((val) => String(val._id) != selectedId);
-
-  // let c = d.filter(String(val) => {
-  //   return fixedIds.indexOf(String(val)) === -1;
-  // });
-  // for(let i=0;i<allId.length;i++){
-  //   for(let j=0;j<fixedIds.length;j++){
-  //     if(String(allId[i]._id)==String(fixedIds[j]._id)){
-  //       continue;
-  //     }
-  //     else
-  //   }
-  // }
   let result1 = allId.filter(
     (obj1) => !fixedIds.some((obj2) => String(obj1._id) === String(obj2._id))
+  );
+  let result3 = allId.filter((obj1) =>
+    selectIdArr.some((obj2) => String(obj1._id) === String(obj2._id))
   );
   let result2 = result1.filter(
     (obj1) => !selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
   );
-  console.log(result2);
-  let data = [];
-  let otherId = [],
-    ind = 0,
-    temp = null,
-    allIdsTemp = allId;
-  sIndex = null;
-  for (let i = 0; i < optionalId.length; i++) {
-    if (String(optionalId[i]._id) == selectedId) {
-      selectedId = optionalId[i];
-    } else sIndex = i;
-  }
-  for (let i = 0; i < allId.length; i++) {
-    temp = allIdsTemp.pop();
-    if (
-      String(temp._id) == String(optionalId[0]._id) ||
-      String(temp._id) == String(optionalId[1])
-    ) {
-      continue;
-    } else if (
-      String(temp._id) == String(fixedId[0]) ||
-      String(temp._id) == String(fixedId[1])
-    ) {
-      continue;
-    } else {
-      let others = {};
-      others["_id"] = temp._id;
-      others["name"] = temp.name;
-      otherId.push(others);
-      ind++;
-    }
-  }
+  console.log(result3);
   //console.log(optionalId[sIndex]);
-  data.push([fixedIds[0], fixedIds[1], selectedId, optionalId[sIndex]]);
+  data.push([fixedIds[0], fixedIds[1], result2[0]]);
   data.push([fixedIds[0], fixedIds[1], selectedId, otherId[0]]);
   data.push([fixedIds[0], fixedIds[1], selectedId, otherId[1]]);
   return res.status(200).json(data);
