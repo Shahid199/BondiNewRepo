@@ -2163,6 +2163,7 @@ const getCombination = async (req, res, next) => {
     (obj1) => !selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
   );
   console.log(result3);
+  let data = [];
   //console.log(optionalId[sIndex]);
   data.push([fixedIds[0], fixedIds[1], result2[0]]);
   data.push([fixedIds[0], fixedIds[1], selectedId, otherId[0]]);
