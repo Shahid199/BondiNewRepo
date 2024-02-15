@@ -3877,8 +3877,7 @@ const getRecheckStudentData = async (req, res, next) => {
     for (let j = 0; j < 4; j++) {
       if (
         String(checkStatus[i].questionWritten[j].subjectId) ==
-          String(subjectRole) &&
-        checkStatus[i].questionWritten[j].submittedScriptILink.length > 0
+        String(subjectRole)
       ) {
         questionData = checkStatus[i].questionWritten[j];
         indexValue = j;
