@@ -35,6 +35,8 @@ const {
   resetExam,
   columnAdd,
   downloadExamImage,
+  uploadSollution,
+  getSollution,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -278,5 +280,9 @@ router.post(
 //router.get("/columnadd", columnAdd);
 
 router.post("/downloadimage", downloadExamImage);
+
+router.post("/uploadsollution", uploadSollution);
+router.get("/getsollution", getSollution);
+
 
 module.exports = router;
