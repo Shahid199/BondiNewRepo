@@ -107,6 +107,11 @@ const examSchema = new Schema(
       type: String,
       required: true,
     },
+    sollutionSheet: {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

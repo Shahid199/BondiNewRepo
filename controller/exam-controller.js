@@ -28,6 +28,7 @@ const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const FreeStudent = require("../model/FreeStudent");
 const path = require("path");
 const SollutionSheet = require("../model/SollutionSheet");
+const SpecialExam = require("../model/SpecialExam");
 
 const Limit = 100;
 //create Exam
@@ -1520,24 +1521,24 @@ const assignStudentToTeacher = async (req, res, next) => {
       return res.status(500).json("Somethhing went wrong.");
     }
   }
-  let unuploadedStudent = [];
-  let unuploadedStudent1 = [];
-  try {
-    unuploadedStudent = await StudentExamVsQuestionsWritten.find({
-      $and: [{ examId: examIdObj }, { uploadStatus: false }],
-    });
-    for (let i = 0; i < unuploadedStudent.length; i++) {
-      unuploadedStudent1.push(unuploadedStudent[i].studentId);
-    }
-    delObj = await StudentExamVsQuestionsWritten.deleteMany({
-      studentId: { $in: unuploadedStudent1 },
-    });
-    delObj1 = await StudentMarksRank.deleteMany({
-      studentId: { $in: unuploadedStudent1 },
-    });
-  } catch (err) {
-    return res.status(500).json("Something went wrong.");
-  }
+  // let unuploadedStudent = [];
+  // let unuploadedStudent1 = [];
+  // try {
+  //   unuploadedStudent = await StudentExamVsQuestionsWritten.find({
+  //     $and: [{ examId: examIdObj }, { uploadStatus: false }],
+  //   });
+  //   for (let i = 0; i < unuploadedStudent.length; i++) {
+  //     unuploadedStudent1.push(unuploadedStudent[i].studentId);
+  //   }
+  //   delObj = await StudentExamVsQuestionsWritten.deleteMany({
+  //     studentId: { $in: unuploadedStudent1 },
+  //   });
+  //   delObj1 = await StudentMarksRank.deleteMany({
+  //     studentId: { $in: unuploadedStudent1 },
+  //   });
+  // } catch (err) {
+  //   return res.status(500).json("Something went wrong.");
+  // }
   //console.log("teache", teacherId.length);
   let count = 0;
   let dataAll = [];
@@ -2149,7 +2150,7 @@ const downloadExamImage = async (req, res, next) => {
   }
   return res.status(200).json({ imageLink, imagelink1, zipFile });
 };
-const columnAdd = async (req, res, next) => {
+const columnAdd1 = async (req, res, next) => {
   let data = [];
   let data1 = [];
   let data2 = [];
@@ -2179,86 +2180,73 @@ const columnAdd = async (req, res, next) => {
   return res.status(200).json({ data3 });
 };
 
+const columnAdd = async (req, res, next) => {
+  let data = [];
+  let data1 = [];
+  let data2 = [];
+  try {
+    data = await Exam.updateMany({}, { $set: { sollutionSheet: null } });
+    data1 = await BothExam.updateMany({}, { $set: { sollutionSheet: null } });
+    data2 = await SpecialExam.updateMany(
+      {},
+      { $set: { sollutionSheet: null } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+
+  return res.status(200).json("success!!");
+};
 //sollution sheets
 const uploadSollution = async (req, res, next) => {
   let examId = req.body.examId;
   let type = Number(req.body.type);
-  let images = req.body.questionILink;
+  let sollution = req.body.sollution;
   //console.log(req.body);
-  if (!ObjectId.isValid(examId) || type < 0 || !images)
+  if (!ObjectId.isValid(examId) || type < 0 || !sollution)
     return res.status(404).json("Data is not valid.");
-  let arr = [];
-  arr[0] = images;
-  images = arr;
-  let questionILinkPath = [];
-  const dir = path.resolve(
-    path.join(__dirname, "../uploads/sollution/" + String(type) + "/")
-  );
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
-  const dir1 = path.resolve(
-    path.join(
-      __dirname,
-      "../uploads/sollution/" + String(type) + "/" + String(examId) + "/"
-    )
-  );
-  if (!fs.existsSync(dir1)) {
-    fs.mkdirSync(dir1);
-  }
-  for (let i = 0; i < 1; i++) {
-    const matches = String(images[i]).replace(
-      /^data:([A-Za-z-+/]+);base64,/,
-      ""
-    );
-    let timeData = Date.now();
-    let fileNameDis = String(examId) + "-" + String(timeData) + ".pdf";
-    let fileName =
-      dir1 + "/" + String(examId) + "-" + String(timeData) + ".pdf";
-    try {
-      fs.writeFileSync(fileName, matches, { encoding: "base64" });
-    } catch (err) {
-      //console.log(e);
-      return res.status(500).json(err);
-    }
-    questionILinkPath[i] =
-      "uploads/sollution/" +
-      String(type) +
-      "/" +
-      String(examId) +
-      "/" +
-      fileNameDis;
-    //console.log("questionILinkPath[i]:", questionILinkPath[i]);
-  }
   let upd = null;
   let data = null;
+  examId = new mongoose.Types.ObjectId(examId);
   if (type == 0) {
-    data = new SollutionSheet({
-      examId: new mongoose.Types.ObjectId(examId),
-      sollutionLink: questionILinkPath[0],
-    });
+    data = {
+      SollutionSheet: sollution,
+    };
     try {
-      upd = await data.save();
+      upd = await Exam.updateOne(
+        {
+          _id: examId,
+        },
+        { $set: { sollutionSheet: sollution } }
+      );
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   } else if (type == 1) {
-    data = new SollutionSheet({
-      bothExamId: new mongoose.Types.ObjectId(examId),
-      sollutionLink: questionILinkPath[0],
-    });
+    data = {
+      SollutionSheet: sollution,
+    };
     try {
-      upd = await data.save();
+      upd = await BothExam.updateOne(
+        {
+          _id: examId,
+        },
+        { $set: { sollutionSheet: sollution } }
+      );
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   } else {
-    data = new SollutionSheet({
-      specialExamId: new mongoose.Types.ObjectId(examId),
-      sollutionLink: questionILinkPath[0],
-    });
+    data = {
+      SollutionSheet: sollution,
+    };
     try {
-      upd = await data.save();
+      upd = await SpecialExam.updateOne(
+        {
+          _id: examId,
+        },
+        { $set: { sollutionSheet: sollution } }
+      );
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
@@ -2274,30 +2262,30 @@ const getSollution = async (req, res, next) => {
   let data = null;
   if (type == 0) {
     try {
-      data = await SollutionSheet.findOne({
-        examId: new mongoose.Types.ObjectId(examId),
+      data = await Exam.findOne({
+        _id: new mongoose.Types.ObjectId(examId),
       });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   } else if (type == 1) {
     try {
-      data = await SollutionSheet.findOne({
-        bothExamId: new mongoose.Types.ObjectId(examId),
+      data = await BothExam.findOne({
+        _id: new mongoose.Types.ObjectId(examId),
       });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   } else {
     try {
-      data = await SollutionSheet.findOne({
-        specialExamId: new mongoose.Types.ObjectId(examId),
+      data = await SpecialExam.findOne({
+        _id: new mongoose.Types.ObjectId(examId),
       });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   }
-  data = data.sollutionLink;
+  data = data.sollutionSheet;
   return res.status(200).json(data);
 };
 //export functions

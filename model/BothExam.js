@@ -94,6 +94,11 @@ const bothExamSchema = new Schema(
       type: String,
       required: true,
     },
+    sollutionSheet: {
+      type: String,
+      required: false,
+      default: null,
+    },
     totalMarks: {
       type: Number,
       required: false,
