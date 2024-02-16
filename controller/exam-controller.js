@@ -1746,15 +1746,15 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
     return res.status(404).json("Exam Id or Teacher Id is not valid.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let assignedTeacher = null;
-  let del1 = null;
-  try {
-    del1 = await BothStudentExamVsQuestions.deleteMany({
-      $and: [{ examId: examIdObj }, { uploadStatus: false }],
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json("Something went wrong.");
-  }
+  // let del1 = null;
+  // try {
+  //   del1 = await BothStudentExamVsQuestions.deleteMany({
+  //     $and: [{ examId: examIdObj }, { uploadStatus: false }],
+  //   });
+  // } catch (err) {
+  //   console.log(err);
+  //   return res.status(500).json("Something went wrong.");
+  // }
   try {
     assignedTeacher = await BothTeacherVsExam.find({
       $and: [{ examId: examIdObj }],
