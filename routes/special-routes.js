@@ -73,7 +73,11 @@ router.post(
 );
 router.put(
   "/updatespecialexam",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
   updateSpecialExam
 );
 router.post(

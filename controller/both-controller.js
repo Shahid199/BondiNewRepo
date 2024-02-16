@@ -24,10 +24,10 @@ const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const createBothExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
-  if (!file) {
-    return res.status(404).json("File not uploaded.");
+  if (file) {
+    iLinkPath = "uploads/".concat(file.filename);
   }
-  iLinkPath = "uploads/".concat(file.filename);
+
   //const examFromQuery = JSON.parse(req.query.exam);
   const {
     courseId,
@@ -97,6 +97,12 @@ const createBothExam = async (req, res, next) => {
   return res.status(201).json(doc);
 };
 const updateBothExam = async (req, res, next) => {
+  const file = req.file;
+  let iLinkPath = null;
+  if (file) {
+    iLinkPath = "uploads/".concat(file.filename);
+  }
+
   const {
     examId,
     courseId,
@@ -152,6 +158,7 @@ const updateBothExam = async (req, res, next) => {
     status: JSON.parse(status),
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
+    iLink: iLinkPath,
   };
   let updStatus = null;
   try {
@@ -209,9 +216,12 @@ const getBothExamBySubject = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
     let inst = {};
-    if (dataRule == null) inst["RuleImage"] = "0";
-    else {
+    if (dataRule == null) {
+      inst["RuleImage"] = "0";
+      examObj["examImageAdded"] = false;
+    } else {
       inst["RuleImage"] = dataRule.ruleILink;
+      examObj["examImageAdded"] = true;
     }
     inst["name"] = exams1[i].name;
     inst["examVariation"] = examType[Number(exams1[i].examType)];
