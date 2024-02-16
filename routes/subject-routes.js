@@ -24,11 +24,7 @@ router.post(
 );
 router.put(
   "/updatesubject",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(),
-    upload.single("iLink"),
-  ],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   updateSubject
 );
 router.get(

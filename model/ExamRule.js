@@ -13,7 +13,7 @@ const examRuleSchema = new Schema(
 
     ruleILink: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   { timestamps: true }

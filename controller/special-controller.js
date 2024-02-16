@@ -16,11 +16,6 @@ const path = require("path");
 const Student = require("../model/Student");
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const updateSpecialExam = async (req, res, next) => {
-  const file = req.file;
-  let iLinkPath = null;
-  if (!file) {
-    iLinkPath = "uploads/".concat(file.filename);
-  }
   const {
     examId,
     name,
@@ -52,7 +47,6 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksWritten: totalMarksWritten,
     totalMarks: totalMarks,
     status: true,
-    iLink: iLinkPath,
   };
   let updStatus = null;
   try {
@@ -68,9 +62,9 @@ const createSpecialExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
-    iLinkPath = "uploads/".concat(file.filename);
+    return res.status(404).json("File not uploaded.");
   }
-
+  iLinkPath = "uploads/".concat(file.filename);
   const {
     courseId,
     name,
@@ -333,12 +327,9 @@ const showSpecialExamByCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    if (dataRule == null) {
-      data1["RuleImage"] = "0";
-      examObj["examImageAdded"] = false;
-    } else {
+    if (dataRule == null) data1["RuleImage"] = "0";
+    else {
       data1["RuleImage"] = dataRule.ruleILink;
-      examObj["examImageAdded"] = true;
     }
     data1["_id"] = data[i]._id;
     data1["name"] = data[i].name;

@@ -178,11 +178,7 @@ router.put(
 );
 router.put(
   "/updateexam",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(),
-    upload.single("iLink"),
-  ],
+  [passport.authenticate("jwt", { session: false }), authorize()],
   updateExam
 );
 router.put(
@@ -287,5 +283,6 @@ router.post("/downloadimage", downloadExamImage);
 
 router.post("/uploadsollution", uploadSollution);
 router.get("/getsollution", getSollution);
+
 
 module.exports = router;

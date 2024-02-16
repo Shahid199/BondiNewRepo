@@ -8,13 +8,11 @@ const pagination = require("../utilities/pagination");
 //Create Subject
 const createSubject = async (req, res) => {
   const { courseId, name, descr } = req.body;
-  let file = req.file;
+  const file = req.file;
+  if (!file) return res.status(404).json("please Provide valid filename.");
+  const courseId1 = courseId;
   let iLinkPath = null;
-  if (file) {
-    //return res.status(404).json("please Provide valid filename.");
-    const courseId1 = courseId;
-    iLinkPath = "uploads/".concat(file.filename);
-  }
+  iLinkPath = "uploads/".concat(file.filename);
   let existingSubject;
   try {
     existingSubject = await Subject.findOne({ name: name }).select("courseId");
@@ -32,7 +30,7 @@ const createSubject = async (req, res) => {
     name: name,
     descr: descr,
     iLink: iLinkPath,
-    courseId: courseId,
+    courseId: courseId1,
     status: true,
   });
   try {
@@ -48,8 +46,7 @@ const getSubjectByCourse = async (req, res, next) => {
   const ObjectId = mongoose.Types.ObjectId;
   let data = [];
   const courseId = req.query.courseId;
-  if (!ObjectId.isValid(courseId))
-    return res.status(404).json("subjects invalid.");
+  if (!ObjectId.isValid(courseId)) return res.status(404).json("subjects invalid.");
   let courseIdOb = new mongoose.Types.ObjectId(courseId);
   let page = Number(req.query.page) || 1;
   let count = 0;
@@ -121,20 +118,8 @@ const getSubjectById = async (req, res, next) => {
 };
 //update subject
 const updateSubject = async (req, res, next) => {
-  //const ObjectId = mongoose.Types.ObjectId;
-  let file = req.file;
-
-  let iLink = null;
-  if (file) {
-    iLink = "uploads/".concat(file.filename);
-  }
-  console.log(iLink);
-  //const { subjectId, name, descr, courseId } = req.body;
-  let subjectId = req.body.subjectId;
-  let courseId = req.body.courseId;
-  let name = req.body.name;
-  let descr = req.body.descr;
-  console.log(req.body);
+  const ObjectId = mongoose.Types.ObjectId;
+  const { subjectId, name, descr, iLink, courseId } = req.body;
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
     return res.status(404).json("subjectId or courseId is not valid.");
   let subjectExam = null;
@@ -143,7 +128,6 @@ const updateSubject = async (req, res, next) => {
       subjectId: new mongoose.Types.ObjectId(subjectId),
     }).count();
   } catch (err) {
-    console.log(err);
     return res.status(500).json(err);
   }
   if (subjectExam > 0)

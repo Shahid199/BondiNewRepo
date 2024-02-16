@@ -92,7 +92,7 @@ const bothExamSchema = new Schema(
     },
     iLink: {
       type: String,
-      required: false,
+      required: true,
     },
     sollutionSheet: {
       type: String,
@@ -102,26 +102,6 @@ const bothExamSchema = new Schema(
     totalMarks: {
       type: Number,
       required: false,
-    },
-    questionType: {
-      type: String,
-      required: false,
-      default: null,
-    },
-    numberOfRetakes: {
-      type: Number,
-      required: false,
-      default: 5,
-    },
-    numberOfOptions: {
-      type: Number,
-      required: false,
-      default: -1,
-    },
-    numberOfSet: {
-      type: Number,
-      required: false,
-      default: -1,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
