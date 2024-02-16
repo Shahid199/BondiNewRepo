@@ -277,7 +277,7 @@ router.post(
   ],
   resetExam
 );
-router.get("/columnadd", columnAdd);
+//router.get("/columnadd", columnAdd);
 
 router.post("/downloadimage", downloadExamImage);
 
