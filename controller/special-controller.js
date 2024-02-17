@@ -991,8 +991,34 @@ const viewSollutionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("10.Something went wrong.");
   }
-  if (dataNotFound.questionWritten.length == 0)
-    return res.status(200).json("Not entered the written exam.");
+  if (dataNotFound.questionWritten.length == 0) {
+    let sub = null;
+    let question = [];
+    try {
+      question = await SpecialExam.find({ _id: examIdObj }).populate({
+        path: "questionWritten",
+        populate: { path: "subjectId" },
+      });
+      console.log(question);
+      question = question.questionWritten;
+    } catch (err) {
+      return res.status(500).json("10.Something went wrong.");
+    }
+    sub = dataNotFound.questionMcq;
+
+    let data1 = [];
+    for (let i = 0; i < 4; i++) {
+      let obj = {};
+      for (let j = 0; j < 6; j++) {
+        if (String(sub[i].subjectId) == String(question[j].subjectId)) {
+          data1.push(question[j]);
+          break;
+        }
+      }
+    }
+
+    return res.status(200).json(data1);
+  }
   try {
     data = await SpecialVsStudent.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
