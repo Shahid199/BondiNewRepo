@@ -1001,7 +1001,6 @@ const viewSollutionWritten = async (req, res, next) => {
       });
 
       question = question[0].questionWritten;
-      console.log(question);
     } catch (err) {
       return res.status(500).json("10.Something went wrong.");
     }
@@ -1021,7 +1020,7 @@ const viewSollutionWritten = async (req, res, next) => {
       }
     }
 
-    return res.status(200).json(data1);
+    return res.status(202).json({ data1 });
   }
   try {
     data = await SpecialVsStudent.findOne({
