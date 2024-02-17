@@ -983,6 +983,16 @@ const viewSollutionWritten = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   ////console.log(studentIdObj, examIdObj);
   let data = null;
+  let dataNotFound = null;
+  try {
+    dataNotFound = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    });
+  } catch (err) {
+    return res.status(500).json("10.Something went wrong.");
+  }
+  if (dataNotFound.questionWritten.length == 0)
+    return res.status(200).json("Not entered the written exam.");
   try {
     data = await SpecialVsStudent.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
