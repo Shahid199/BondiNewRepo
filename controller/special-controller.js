@@ -1012,7 +1012,10 @@ const viewSollutionWritten = async (req, res, next) => {
       let obj = {};
       for (let j = 0; j < 6; j++) {
         if (String(sub[i].subjectId) == String(question[j].subjectId._id)) {
-          data1.push(question[j]);
+          obj["subjectId"] = String(question[j].subjectId._id);
+          obj["subjectName"] = question[j].subjectId.name;
+          obj["questionLink"] = question[j].writtenILink;
+          data1.push(obj);
           break;
         }
       }
