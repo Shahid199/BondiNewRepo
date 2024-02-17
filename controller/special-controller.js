@@ -999,7 +999,7 @@ const viewSollutionWritten = async (req, res, next) => {
         path: "questionWritten",
         populate: { path: "subjectId" },
       });
-      
+
       question = question[0].questionWritten;
       console.log(question);
     } catch (err) {
@@ -1011,7 +1011,7 @@ const viewSollutionWritten = async (req, res, next) => {
     for (let i = 0; i < 4; i++) {
       let obj = {};
       for (let j = 0; j < 6; j++) {
-        if (String(sub[i].subjectId) == String(question[j].subjectId)) {
+        if (String(sub[i].subjectId) == String(question[j].subjectId._id)) {
           data1.push(question[j]);
           break;
         }
