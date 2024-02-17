@@ -5064,7 +5064,7 @@ const historyDataWritten = async (req, res, next) => {
         {
           studentId: studentIdObj,
         },
-        //{ checkStatus: true },
+        { checkStatus: true },
       ],
     }).count();
   } catch (err) {
