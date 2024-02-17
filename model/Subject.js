@@ -15,7 +15,7 @@ const subjectSchema = new Schema(
     },
     iLink: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     courseId: {

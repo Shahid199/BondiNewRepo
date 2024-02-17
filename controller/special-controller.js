@@ -16,6 +16,11 @@ const path = require("path");
 const Student = require("../model/Student");
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 const updateSpecialExam = async (req, res, next) => {
+  const file = req.file;
+  let iLinkPath = null;
+  if (!file) {
+    iLinkPath = "uploads/".concat(file.filename);
+  }
   const {
     examId,
     name,
@@ -47,6 +52,7 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksWritten: totalMarksWritten,
     totalMarks: totalMarks,
     status: true,
+    iLink: iLinkPath,
   };
   let updStatus = null;
   try {
@@ -62,9 +68,9 @@ const createSpecialExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   if (!file) {
-    return res.status(404).json("File not uploaded.");
+    iLinkPath = "uploads/".concat(file.filename);
   }
-  iLinkPath = "uploads/".concat(file.filename);
+
   const {
     courseId,
     name,
@@ -327,9 +333,12 @@ const showSpecialExamByCourse = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    if (dataRule == null) data1["RuleImage"] = "0";
-    else {
+    if (dataRule == null) {
+      data1["RuleImage"] = "0";
+      examObj["examImageAdded"] = false;
+    } else {
       data1["RuleImage"] = dataRule.ruleILink;
+      examObj["examImageAdded"] = true;
     }
     data1["_id"] = data[i]._id;
     data1["name"] = data[i].name;
@@ -981,6 +990,66 @@ const viewSollutionMcq = async (req, res, next) => {
   resultData.push({ totalMarks: data.examId.totalMarksMcq });
   resultData.push({ totalObtainedMarks: data.totalObtainedMarks.toFixed(2) });
   return res.status(200).json(resultData);
+};
+const viewSollutionWritten1 = async (req, res, next) => {
+  const studentId = req.user.studentId;
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
+    return res.status(404).json("student Id or examId is not valid.");
+  let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  ////console.log(studentIdObj, examIdObj);
+  let data = null;
+  try {
+    data = await SpecialVsStudent.findOne({
+      $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
+    }).populate({
+      path: "questionWritten",
+      populate: { path: "subjectId" },
+    });
+  } catch (err) {
+    return res.status(500).json("2.Something went wrong.");
+  }
+  //console.log(data);
+  if (data == null)
+    return res.status(404).json("No exam found under this student.");
+  let subjects = [];
+  for (i = 0; i < 4; i++) {
+    let sObj = {};
+    sObj["id"] = data.questionWritten[i].subjectId._id;
+    sObj["name"] = data.questionWritten[i].subjectId.name;
+    sObj["iLink"] = null;
+    sObj["answerScript"] = null;
+    sObj["marksPerQuestion"] = null;
+    sObj["marksPerSub"] = 0;
+    subjects[i] = sObj;
+  }
+  let writtenQuestion = null;
+  try {
+    writtenQuestion = await SpecialExam.findById(examId);
+  } catch (err) {
+    return res.status(500).json("3.Something went wrong.");
+  }
+  let dataNew = [];
+  for (let i = 0; i < 4; i++) {
+    //console.log("subject i Id", subjects[i].id);
+    for (let j = 0; j < 6; j++) {
+      if (
+        String(subjects[i].id) ==
+        String(writtenQuestion.questionWritten[j].subjectId)
+      ) {
+        subjects[i].iLink = writtenQuestion.questionWritten[j].writtenILink;
+        subjects[i].answerScript = data.questionWritten[i].answerScriptILink;
+        subjects[i].marksPerSub =
+          data.questionWritten[i].totalObtainedMarksWritten;
+        subjects[i].marksPerQuestion = data.questionWritten[i].obtainedMarks;
+        //console.log("examQ", writtenQuestion.questionWritten[j].subjectId);
+        break;
+      }
+    }
+    dataNew.push(subjects[i]);
+  }
+  return res.status(200).json(dataNew);
 };
 const viewSollutionWritten = async (req, res, next) => {
   const studentId = req.user.studentId;
