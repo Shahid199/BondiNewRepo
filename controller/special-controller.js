@@ -440,7 +440,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
     dataObject["subjectName"] = data.questionMcq[i].subjectId.name;
     dataObject["marksMcqPerSub"] =
       data.questionMcq[i].mcqMarksPerSub.toFixed(2);
-    if (!data.endTimeWritten == null) {
+    if (data.endTimeWritten == null) {
       dataObject["marksWrittenPerSub"] = 0;
     } else {
       dataObject["marksWrittenPerSub"] =
