@@ -999,8 +999,9 @@ const viewSollutionWritten = async (req, res, next) => {
         path: "questionWritten",
         populate: { path: "subjectId" },
       });
-      console.log(question);
+      
       question = question.questionWritten;
+      console.log(question);
     } catch (err) {
       return res.status(500).json("10.Something went wrong.");
     }
