@@ -521,7 +521,7 @@ const updateExam = async (req, res, next) => {
     universityStatus: JSON.parse(universityStatus),
     numberOfRetakes,
     numberOfOptions,
-    numberOfSet
+    numberOfSet,
     iLink: iLinkPath,
   };
   let updStatus = null;
