@@ -218,10 +218,10 @@ const getBothExamBySubject = async (req, res, next) => {
     let inst = {};
     if (dataRule == null) {
       inst["RuleImage"] = "0";
-      examObj["examImageAdded"] = false;
+      // examObj["examImageAdded"] = false;
     } else {
       inst["RuleImage"] = dataRule.ruleILink;
-      examObj["examImageAdded"] = true;
+      // examObj["examImageAdded"] = true;
     }
     inst["name"] = exams1[i].name;
     inst["examVariation"] = examType[Number(exams1[i].examType)];

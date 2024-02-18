@@ -205,6 +205,9 @@ const createExam = async (req, res, next) => {
     medicalStatus,
     universityStatus,
     negativeMarks,
+    numberOfOptions,
+    numberOfRetakes,
+    numberOfSet
   } = req.body;
 
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
@@ -241,6 +244,9 @@ const createExam = async (req, res, next) => {
     buetStatus: JSON.parse(buetStatus),
     medicalStatus: JSON.parse(medicalStatus),
     universityStatus: JSON.parse(universityStatus),
+    numberOfRetakes,
+    numberOfOptions,
+    numberOfSet,
     iLink: iLinkPath,
   });
   let doc;
@@ -475,6 +481,9 @@ const updateExam = async (req, res, next) => {
     medicalStatus,
     universityStatus,
     negativeMarks,
+    numberOfRetakes,
+    numberOfOptions,
+    numberOfSet
   } = req.body;
   console.log(req.body);
   if (
@@ -510,6 +519,9 @@ const updateExam = async (req, res, next) => {
     buetStatus: JSON.parse(buetStatus),
     medicalStatus: JSON.parse(medicalStatus),
     universityStatus: JSON.parse(universityStatus),
+    numberOfRetakes,
+    numberOfOptions,
+    numberOfSet
     iLink: iLinkPath,
   };
   let updStatus = null;
@@ -726,16 +738,19 @@ const getExamBySubAdmin = async (req, res, next) => {
     examObj["hscStatus"] = examData1[i].hscStatus;
     examObj["negativeMarks"] = examData1[i].negativeMarks;
     examObj["iLink"] = examData1[i].iLink;
+    examObj["sollutionSheet"] = examData1[i].sollutionSheet;
+    examObj["numberOfRetakes"] = examData1[i].numberOfRetakes;
+    examObj["numberOfOptions"] = examData1[i].numberOfOptions;
+    examObj["numberOfSet"] = examData1[i].numberOfSet;
     examObj["createdAt"] = examData1[i].createdAt;
     examObj["updatedAt"] = examData1[i].updatedAt;
     examObj["__v"] = examData1[i].__v;
 
     if (dataRule == null) {
       examObj["RuleImage"] = "0";
-      examObj["examImageAdded"] = false;
+
     } else {
       examObj["RuleImage"] = dataRule.ruleILink;
-      examObj["examImageAdded"] = true;
     }
     examData.push(examObj);
   }
@@ -978,6 +993,7 @@ const getWrittenBySub = async (req, res, next) => {
     examObj["hscStatus"] = examData1[i].hscStatus;
     examObj["negativeMarks"] = examData1[i].negativeMarks;
     examObj["iLink"] = examData1[i].iLink;
+    // examObj["sollutionSheet"] = examData1[i].sollutionSheet;
     examObj["createdAt"] = examData1[i].createdAt;
     examObj["updatedAt"] = examData1[i].updatedAt;
     examObj["__v"] = examData1[i].__v;

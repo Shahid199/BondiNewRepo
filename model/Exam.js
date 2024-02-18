@@ -120,7 +120,7 @@ const examSchema = new Schema(
     numberOfRetakes: {
       type: Number,
       required: false,
-      default: 5,
+      default: 4,
     },
     numberOfOptions: {
       type: Number,
