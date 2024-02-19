@@ -38,6 +38,8 @@ const {
   uploadSollution,
   getSollution,
   updateExamPhoto,
+  questionByExamIdAndSet,
+  getAllData
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -57,6 +59,22 @@ router.get(
     authorize(["superadmin", "mdoerator", "student"]),
   ],
   getAllExam
+);
+router.get(
+  "/getAllData",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "mdoerator", "student"]),
+  ],
+  getAllData
+);
+router.get(
+  "/questionByExamIdAndSet",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "mdoerator", "student"]),
+  ],
+  questionByExamIdAndSet
 );
 router.post(
   "/addquestionmcq",

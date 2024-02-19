@@ -1266,7 +1266,8 @@ const addQuestionMcq = async (req, res, next) => {
   let question;
   const { questionText, optionCount, correctOption, status, examId, type,setName } =
     req.body;
-    console.log(req.body);
+    let setName1=parseInt(setName);
+    // console.log(req.body);
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
@@ -1310,7 +1311,7 @@ const addQuestionMcq = async (req, res, next) => {
     mId,
     mIdNew = [];
   try {
-    mcqQData = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName }).select(
+    mcqQData = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName1 }).select(
       "mId"
     );
   } catch (err) {
@@ -1335,7 +1336,7 @@ const addQuestionMcq = async (req, res, next) => {
     mIdNew.push(questionId);
     try {
       doc1 = await McqQuestionVsExam.updateOne(
-        { eId: examIdObj,setName:setName },
+        { eId: examIdObj,setName:setName1 },
         { $set: { mId: mIdNew } }
       );
     } catch (err) {
@@ -1402,6 +1403,12 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   return res.status(201).json("Inserted question to the exam.");
 };
+const getAllData= async(req,res,next) =>{
+  const examId = req.query.examId;
+  const setName = Number(req.query.setName);
+  const result = await McqQuestionVsExam.find({eId:examId,setName:setName});
+  res.status(200).json(result);
+}
 //exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -2121,14 +2128,14 @@ const questionByExamId = async (req, res, next) => {
 };
 const questionByExamIdAndSet = async (req, res, next) => {
   const examId = req.query.examId;
-  const setName = req.query.setName;
+  const setName = Number(req.query.setName);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("exam Id is not valid.");
   const examIdObj = new mongoose.Types.ObjectId(examId);
   let queryResult = null;
 
   try {
-    queryResult = await McqQuestionVsExam.findOne({ eId: examId },{setName:setName}).populate({
+    queryResult = await McqQuestionVsExam.findOne({ eId: examId,setName:setName }).populate({
       path: "mId",
       match: { status: { $eq: true } },
     });
@@ -2147,7 +2154,6 @@ const questionByExamIdAndSet = async (req, res, next) => {
     result["explanation"] = queryResult.mId[i].explanationILink;
     result["questionId"] = queryResult.mId[i]._id;
     result["status"] = queryResult.mId[i].status;
-    result["setName"] = queryResult.setName;
     resultAll.push(result);
   }
   // resultAll.push({ totalQuestion: queryResult.mId.length });
@@ -2557,6 +2563,8 @@ const updateExamPhoto = async(req,res,next)=>{
 }
 
 //export functions
+exports.getAllData = getAllData;
+exports.questionByExamIdAndSet= questionByExamIdAndSet;
 exports.updateExamPhoto = updateExamPhoto;
 exports.getSollution = getSollution;
 exports.uploadSollution = uploadSollution;
