@@ -1266,6 +1266,7 @@ const addQuestionMcq = async (req, res, next) => {
   let question;
   const { questionText, optionCount, correctOption, status, examId, type,setName } =
     req.body;
+    console.log(req.body);
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
