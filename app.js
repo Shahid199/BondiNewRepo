@@ -84,13 +84,13 @@ mongoose
   )
   .then(() => {
     app.listen(5011);
-    let studentIds = [
-      { id: 1, name: "ww" },
-      { id: 1, name: "wws" },
-      { id: 2, name: "ww" },
-    ];
-    let curDate = moment(new Date()).add(3, "m");
-    console.log(curDate.valueOf());
+    // let studentIds = [
+    //   { id: 1, name: "ww" },
+    //   { id: 1, name: "wws" },
+    //   { id: 2, name: "ww" },
+    // ];
+    // let curDate = moment(new Date()).add(3, "m");
+    // console.log(curDate.valueOf());
     //console.log(moment(Date.now()).subtract(6, "h").format("YYYY-MM-DD hh:mm:ss A"));
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
     //console.log(studentIds);

@@ -37,6 +37,7 @@ const {
   downloadExamImage,
   uploadSollution,
   getSollution,
+  updateExamPhoto,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -62,10 +63,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([
-      { name: "iLink", maxCount: 1 },
-      { name: "explanationILink", maxCount: 1 },
-    ]),
+    upload.single("iLink"),
   ],
   addQuestionMcq
 );
@@ -281,10 +279,19 @@ router.post(
   ],
   resetExam
 );
+router.post(
+  "/updateExamPhoto",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
+  updateExamPhoto
+);//afser
+
 //router.get("/columnadd", columnAdd);
 
 router.post("/downloadimage", downloadExamImage);
-
 router.post("/uploadsollution", uploadSollution);
 router.get("/getsollution", getSollution);
 

@@ -29,7 +29,7 @@ const questionMcqSchema = new Schema(
     },
     explanationILink: {
       type: String,
-      required: true,
+      required: false,
     },
     status: {
       type: Boolean,

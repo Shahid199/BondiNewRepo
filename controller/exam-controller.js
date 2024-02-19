@@ -179,6 +179,8 @@ const createExam2 = async (req, res, next) => {
 
 const createExam = async (req, res, next) => {
   const file = req.file;
+  console.log(file);
+  console.log(req.body);
   let iLinkPath = null;
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
@@ -207,7 +209,8 @@ const createExam = async (req, res, next) => {
     negativeMarks,
     numberOfOptions,
     numberOfRetakes,
-    numberOfSet
+    numberOfSet,
+    questionType
   } = req.body;
 
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
@@ -247,6 +250,7 @@ const createExam = async (req, res, next) => {
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
+    questionType,
     iLink: iLinkPath,
   });
   let doc;
@@ -483,7 +487,8 @@ const updateExam = async (req, res, next) => {
     negativeMarks,
     numberOfRetakes,
     numberOfOptions,
-    numberOfSet
+    numberOfSet,
+    questionType
   } = req.body;
   console.log(req.body);
   if (
@@ -522,6 +527,7 @@ const updateExam = async (req, res, next) => {
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
+    questionType,
     iLink: iLinkPath,
   };
   let updStatus = null;
@@ -742,6 +748,7 @@ const getExamBySubAdmin = async (req, res, next) => {
     examObj["numberOfRetakes"] = examData1[i].numberOfRetakes;
     examObj["numberOfOptions"] = examData1[i].numberOfOptions;
     examObj["numberOfSet"] = examData1[i].numberOfSet;
+    examObj["questionType"] = examData1[i].questionType;
     examObj["createdAt"] = examData1[i].createdAt;
     examObj["updatedAt"] = examData1[i].updatedAt;
     examObj["__v"] = examData1[i].__v;
@@ -1254,28 +1261,24 @@ const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
   let examIdObj;
+  // console.log(req.file);
   //let type = req.query.type;
   let question;
-  const { questionText, optionCount, correctOption, status, examId, type } =
+  const { questionText, optionCount, correctOption, status, examId, type,setName } =
     req.body;
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
-  const file = req.files;
+  const file = req.file;
   //question insert for text question(type=true)
   if (JSON.parse(type) == true) {
-    if (!file.explanationILink) {
-      return res.status(404).json("Expalnation File not uploaded.");
-    }
     question = questionText;
-    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
   } else {
-    if (!file.iLink) {
+    if (!file) {
       return res.status(404).json("Question File not uploaded.");
     }
 
-    iLinkPath = "uploads/".concat(file.iLink[0].filename);
-    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
+    iLinkPath = "uploads/".concat(file.filename);
     question = iLinkPath;
     options = [];
   }
@@ -1317,6 +1320,7 @@ const addQuestionMcq = async (req, res, next) => {
     let questionExam = new McqQuestionVsExam({
       eId: examId,
       mId: mIdNew,
+      setName:parseInt(setName)
     });
     try {
       doc1 = await questionExam.save();
@@ -1336,6 +1340,7 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(500).json(err);
     }
   }
+  // console.log(setName);
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
@@ -2105,6 +2110,7 @@ const questionByExamId = async (req, res, next) => {
     result["explanation"] = queryResult.mId[i].explanationILink;
     result["questionId"] = queryResult.mId[i]._id;
     result["status"] = queryResult.mId[i].status;
+    result["setName"] = queryResult.setName;
     resultAll.push(result);
   }
   // resultAll.push({ totalQuestion: queryResult.mId.length });
@@ -2486,7 +2492,35 @@ const getSollution = async (req, res, next) => {
   data = data.sollutionSheet;
   return res.status(200).json(data);
 };
+
+const updateExamPhoto = async(req,res,next)=>{
+  const file = req.file;
+  let iLinkPath = null;
+  console.log(file);
+  if (file) {
+    iLinkPath = "uploads/".concat(file.filename);
+  }
+  const {examId} = req.body;
+  const filter = {_id:examId};
+  console.log(filter);
+  let update;
+  try {
+     update= await Exam.findOneAndUpdate(filter,{
+      iLink:iLinkPath
+    },{new:true});
+    
+  } catch (error) {
+    res.status(404).json(error);
+  }
+  if(update){
+    res.status(202).json("Successfully Uploaded the photo");
+  }else{
+    res.status(404).json("could not update the photo!");
+  }
+}
+
 //export functions
+exports.updateExamPhoto = updateExamPhoto;
 exports.getSollution = getSollution;
 exports.uploadSollution = uploadSollution;
 exports.downloadExamImage = downloadExamImage;
