@@ -39,7 +39,8 @@ const {
   getSollution,
   updateExamPhoto,
   questionByExamIdAndSet,
-  getAllData
+  getAllData,
+  slotAvailable
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -51,6 +52,14 @@ router.post(
     upload.single("iLink"),
   ],
   createExam
+);
+router.get(
+  "/slotAvailable",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "mdoerator", "student"]),
+  ],
+  slotAvailable
 );
 router.get(
   "/getallexam",
