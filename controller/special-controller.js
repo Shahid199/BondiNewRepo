@@ -335,10 +335,10 @@ const showSpecialExamByCourse = async (req, res, next) => {
     }
     if (dataRule == null) {
       data1["RuleImage"] = "0";
-      examObj["examImageAdded"] = false;
+      // examObj["examImageAdded"] = false;
     } else {
       data1["RuleImage"] = dataRule.ruleILink;
-      examObj["examImageAdded"] = true;
+      // examObj["examImageAdded"] = true;
     }
     data1["_id"] = data[i]._id;
     data1["name"] = data[i].name;

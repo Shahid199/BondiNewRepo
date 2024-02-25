@@ -16,6 +16,9 @@ const {
   bothGetMcqQuestionByExamId,
   bothAddQuestionWritten,
   bothQuestionByExamId,
+  updateBothExamPhoto,
+  questionByExamIdAndSet,
+  slotAvailable
 } = require("../controller/both-controller");
 const router = express.Router();
 router.post(
@@ -26,6 +29,15 @@ router.post(
     upload.single("iLink"),
   ],
   createBothExam
+);
+router.post(
+  "/updateBothExamPhoto",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
+  updateBothExamPhoto
 );
 router.put(
   "/updatebothexam",
@@ -43,6 +55,15 @@ router.put(
 );
 
 router.get(
+  "/slotAvailable",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator","teacher"]),
+  ],
+  //authorize(["student"]),
+  slotAvailable
+);
+router.get(
   "/getbothexambysubject",
   [
     passport.authenticate("jwt", { session: false }),
@@ -50,6 +71,14 @@ router.get(
   ],
   //authorize(["student"]),
   getBothExamBySubject
+);
+router.get(
+  "/questionByExamIdAndSet",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  questionByExamIdAndSet
 );
 router.get(
   "/getbothexambyid",
@@ -93,10 +122,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([
-      { name: "iLink", maxCount: 1 },
-      { name: "explanationILink", maxCount: 1 },
-    ]),
+    upload.single("iLink"),
   ],
   bothAddQuestionMcq
 );

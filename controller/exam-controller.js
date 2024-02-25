@@ -29,6 +29,7 @@ const FreeStudent = require("../model/FreeStudent");
 const path = require("path");
 const SollutionSheet = require("../model/SollutionSheet");
 const SpecialExam = require("../model/SpecialExam");
+const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 
 const Limit = 100;
 //create Exam
@@ -1288,10 +1289,10 @@ const slotAvailable = async (req, res, next) =>{
     }
   }
   if(numberOfSlotAvailable===0){
-    return res.status(405).json("Question limit for this set has reached.")
+    return res.status(200).json({slots:numberOfSlotAvailable})
   }else if(numberOfSlotAvailable===1){
     
-    return res.status(405).json("Add Single Image from Show Exam")
+    return res.status(200).json({slots:numberOfSlotAvailable})
   }
   else{
     return res.status(200).json({slots:numberOfSlotAvailable});
@@ -1328,7 +1329,7 @@ const addQuestionMcq = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json(err);
     }
-    console.log(mcqQData);
+    // console.log(mcqQData);
    if(mcqQData!==null){
     if(mcqQData.mId.length>=examDetails.totalQuestionMcq){
       return res.status(405).json("Set of Question reached the limit");
@@ -1405,7 +1406,7 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
-  const { questionArray, examId } = req.body;
+  const { questionArray, examId,setName } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let finalIds = [];
   for (let i = 0; i < questionArray.length; i++) {
@@ -1418,7 +1419,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
   try {
-    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj }, "mId");
+    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName }, "mId");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -1427,6 +1428,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
     const newExamQuestinon = new McqQuestionVsExam({
       eId: examIdObj,
       mId: finalIds,
+      setName: Number(setName),
     });
     let sav = null;
     try {
@@ -1451,7 +1453,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   ////console.log(withoutDuplicate);
   try {
     sav = await McqQuestionVsExam.updateOne(
-      { eId: examId },
+      { eId: examId,setName:setName },
       {
         mId: withoutDuplicate,
       }
@@ -2502,7 +2504,22 @@ const columnAdd = async (req, res, next) => {
 
   return res.status(200).json("success!!");
 };
-//sollution sheets
+// sollution sheets
+
+// dropping collection
+// const columnAdd = async (req, res, next) => {
+//   let data = [];
+//   let data1 = [];
+//   let data2 = [];
+//   try {
+//     data = await BothMcqQuestionVsExam.collection.drop();
+//   } catch (err) {
+//     return res.status(500).json("Something went wrong.");
+//   }
+
+//   return res.status(200).json("success!!");
+// };
+
 const uploadSollution = async (req, res, next) => {
   let examId = req.body.examId;
   let type = Number(req.body.type);
@@ -2597,13 +2614,13 @@ const getSollution = async (req, res, next) => {
 const updateExamPhoto = async(req,res,next)=>{
   const file = req.file;
   let iLinkPath = null;
-  console.log(file);
+  // console.log(file);
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
   }
   const {examId} = req.body;
   const filter = {_id:examId};
-  console.log(filter);
+  // console.log(filter);
   let update;
   try {
      update= await Exam.findOneAndUpdate(filter,{
