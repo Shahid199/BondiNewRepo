@@ -39,7 +39,7 @@ const {
   getSollution,
   updateExamPhoto,
   questionByExamIdAndSet,
-  getAllData
+  getAllData,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -305,9 +305,9 @@ router.post(
     upload.single("iLink"),
   ],
   updateExamPhoto
-);//afser
+); //afser
 
-//router.get("/columnadd", columnAdd);
+router.get("/columnadd", columnAdd);
 
 router.post("/downloadimage", downloadExamImage);
 router.post("/uploadsollution", uploadSollution);

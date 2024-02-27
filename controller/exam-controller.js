@@ -210,7 +210,7 @@ const createExam = async (req, res, next) => {
     numberOfOptions,
     numberOfRetakes,
     numberOfSet,
-    questionType
+    questionType,
   } = req.body;
 
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
@@ -488,7 +488,7 @@ const updateExam = async (req, res, next) => {
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
-    questionType
+    questionType,
   } = req.body;
   console.log(req.body);
   if (
@@ -755,7 +755,6 @@ const getExamBySubAdmin = async (req, res, next) => {
 
     if (dataRule == null) {
       examObj["RuleImage"] = "0";
-
     } else {
       examObj["RuleImage"] = dataRule.ruleILink;
     }
@@ -1264,10 +1263,17 @@ const addQuestionMcq = async (req, res, next) => {
   // console.log(req.file);
   //let type = req.query.type;
   let question;
-  const { questionText, optionCount, correctOption, status, examId, type,setName } =
-    req.body;
-    let setName1=parseInt(setName);
-    // console.log(req.body);
+  const {
+    questionText,
+    optionCount,
+    correctOption,
+    status,
+    examId,
+    type,
+    setName,
+  } = req.body;
+  let setName1 = parseInt(setName);
+  // console.log(req.body);
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
@@ -1311,9 +1317,10 @@ const addQuestionMcq = async (req, res, next) => {
     mId,
     mIdNew = [];
   try {
-    mcqQData = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName1 }).select(
-      "mId"
-    );
+    mcqQData = await McqQuestionVsExam.findOne({
+      eId: examIdObj,
+      setName: setName1,
+    }).select("mId");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -1323,7 +1330,7 @@ const addQuestionMcq = async (req, res, next) => {
     let questionExam = new McqQuestionVsExam({
       eId: examId,
       mId: mIdNew,
-      setName:parseInt(setName)
+      setName: parseInt(setName),
     });
     try {
       doc1 = await questionExam.save();
@@ -1336,7 +1343,7 @@ const addQuestionMcq = async (req, res, next) => {
     mIdNew.push(questionId);
     try {
       doc1 = await McqQuestionVsExam.updateOne(
-        { eId: examIdObj,setName:setName1 },
+        { eId: examIdObj, setName: setName1 },
         { $set: { mId: mIdNew } }
       );
     } catch (err) {
@@ -1403,12 +1410,15 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   return res.status(201).json("Inserted question to the exam.");
 };
-const getAllData= async(req,res,next) =>{
+const getAllData = async (req, res, next) => {
   const examId = req.query.examId;
   const setName = Number(req.query.setName);
-  const result = await McqQuestionVsExam.find({eId:examId,setName:setName});
+  const result = await McqQuestionVsExam.find({
+    eId: examId,
+    setName: setName,
+  });
   res.status(200).json(result);
-}
+};
 //exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -2135,7 +2145,10 @@ const questionByExamIdAndSet = async (req, res, next) => {
   let queryResult = null;
 
   try {
-    queryResult = await McqQuestionVsExam.findOne({ eId: examId,setName:setName }).populate({
+    queryResult = await McqQuestionVsExam.findOne({
+      eId: examId,
+      setName: setName,
+    }).populate({
       path: "mId",
       match: { status: { $eq: true } },
     });
@@ -2405,32 +2418,36 @@ const columnAdd = async (req, res, next) => {
   let data1 = [];
   let data2 = [];
   try {
-    data = await Exam.updateMany(
-      {},
-      {
-        $set: {
-          questionType: null,
-          numberOfRetakes: 5,
-          numberOfOptions: -1,
-          numberOfSet: -1,
-        },
-      }
-    );
-    data1 = await BothExam.updateMany(
-      {},
-      {
-        $set: {
-          questionType: null,
-          numberOfRetakes: 5,
-          numberOfOptions: -1,
-          numberOfSet: -1,
-        },
-      }
-    );
+    // data = await Exam.updateMany(
+    //   {},
+    //   {
+    //     $set: {
+    //       questionType: null,
+    //       numberOfRetakes: 5,
+    //       numberOfOptions: -1,
+    //       numberOfSet: -1,
+    //     },
+    //   }
+    // );
+    // data1 = await BothExam.updateMany(
+    //   {},
+    //   {
+    //     $set: {
+    //       questionType: null,
+    //       numberOfRetakes: 5,
+    //       numberOfOptions: -1,
+    //       numberOfSet: -1,
+    //     },
+    //   }
+    // );
     data2 = await SpecialExam.updateMany(
       {},
       {
         $set: {
+          buetStatus: false,
+          medicalStatus: false,
+          universityStatus: false,
+          sollutionSheet: null,
           questionType: null,
           numberOfRetakes: 5,
           numberOfOptions: -1,
@@ -2441,8 +2458,7 @@ const columnAdd = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-
-  return res.status(200).json("success!!");
+  return res.status(200).json(data2);
 };
 //sollution sheets
 const uploadSollution = async (req, res, next) => {
@@ -2536,35 +2552,38 @@ const getSollution = async (req, res, next) => {
   return res.status(200).json(data);
 };
 
-const updateExamPhoto = async(req,res,next)=>{
+const updateExamPhoto = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   console.log(file);
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
   }
-  const {examId} = req.body;
-  const filter = {_id:examId};
+  const { examId } = req.body;
+  const filter = { _id: examId };
   console.log(filter);
   let update;
   try {
-     update= await Exam.findOneAndUpdate(filter,{
-      iLink:iLinkPath
-    },{new:true});
-    
+    update = await Exam.findOneAndUpdate(
+      filter,
+      {
+        iLink: iLinkPath,
+      },
+      { new: true }
+    );
   } catch (error) {
     res.status(404).json(error);
   }
-  if(update){
+  if (update) {
     res.status(202).json("Successfully Uploaded the photo");
-  }else{
+  } else {
     res.status(404).json("could not update the photo!");
   }
-}
+};
 
 //export functions
 exports.getAllData = getAllData;
-exports.questionByExamIdAndSet= questionByExamIdAndSet;
+exports.questionByExamIdAndSet = questionByExamIdAndSet;
 exports.updateExamPhoto = updateExamPhoto;
 exports.getSollution = getSollution;
 exports.uploadSollution = uploadSollution;

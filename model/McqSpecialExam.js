@@ -4,18 +4,14 @@ const courses = require("./Course");
 const questions = require("./QuestionsMcq");
 const Schema = mongoose.Schema;
 
-const SpecialExamSchema = new Schema(
+const McqSpecialExamSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
-      //unique: true,
       max: 200,
     },
-    examVariation: {
-      type: Number,
-      required: true,
-    },
+    examVariation: { type: Number, default: 5 },
     noOfTotalSubject: {
       type: Number,
       required: true,
@@ -65,11 +61,6 @@ const SpecialExamSchema = new Schema(
           required: false,
           default: 0,
         },
-        noOfQuestionsWritten: {
-          type: Number,
-          required: false,
-          default: 0,
-        },
       },
     ],
     questionMcq: [
@@ -88,25 +79,6 @@ const SpecialExamSchema = new Schema(
         ],
       },
     ],
-    questionWritten: [
-      {
-        subjectId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: subjects,
-          required: false,
-        },
-        marksPerQuestion: [
-          {
-            type: Number,
-            required: false,
-          },
-        ],
-        writtenILink: {
-          type: String,
-          required: false,
-        },
-      },
-    ],
     startTime: {
       type: Date,
       required: true,
@@ -116,11 +88,6 @@ const SpecialExamSchema = new Schema(
       required: true,
     },
     mcqDuration: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    writtenDuration: {
       type: Number,
       required: false,
       default: 0,
@@ -144,24 +111,6 @@ const SpecialExamSchema = new Schema(
       required: false,
       default: 0,
     },
-    totalQuestionsWritten: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    totalMarksWritten: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    totalMarks: {
-      type: Number,
-      required: true,
-    },
-    totalDuration: {
-      type: Number,
-      required: true,
-    },
     status: {
       type: Boolean,
       required: true,
@@ -178,21 +127,6 @@ const SpecialExamSchema = new Schema(
       default: false,
     },
     hscStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    buetStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    medicalStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    universityStatus: {
       type: Boolean,
       required: true,
       default: false,
@@ -235,4 +169,4 @@ const SpecialExamSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("SpecialExam", SpecialExamSchema);
+module.exports = mongoose.model("McqSpecialExam", McqSpecialExamSchema);

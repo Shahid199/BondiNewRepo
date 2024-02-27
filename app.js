@@ -58,6 +58,7 @@ const specialRouter = require("./routes/special-routes");
 const teacherRouter = require("./routes/teacher-routes");
 const bothRouter = require("./routes/both-routes");
 const smsRouter = require("./routes/sms-routes");
+constmcqSpecialRouter = require("./routes/mcqspecial-routes");
 const { assignQuestion } = require("./controller/student-controller");
 
 //serve files from uploads folder
