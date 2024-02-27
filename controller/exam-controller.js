@@ -29,6 +29,7 @@ const FreeStudent = require("../model/FreeStudent");
 const path = require("path");
 const SollutionSheet = require("../model/SollutionSheet");
 const SpecialExam = require("../model/SpecialExam");
+const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 
 const Limit = 100;
 //create Exam
@@ -1256,6 +1257,47 @@ const examByCourseSubject = async (req, res, next) => {
   result.push({ examCount: examData.length });
   return res.status(200).json({ result, paginateData });
 };
+const slotAvailable = async (req, res, next) =>{
+  
+ 
+  let numberOfSlotAvailable,mcqQData;
+
+  const {  examId,setName } =
+    req.query;
+    let setName1=parseInt(setName);
+
+    let examDetails ={};
+
+    try {
+      examDetails = await Exam.findOne({_id:new mongoose.Types.ObjectId(examId)})
+    } catch (error) {
+      return res.status(404).json("Problem with exam settings");
+    }
+  if(examDetails){
+    try {
+      mcqQData = await McqQuestionVsExam.findOne({ eId: examId,setName:setName1 }).select(
+        "mId"
+      );
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    if(mcqQData){
+      numberOfSlotAvailable = examDetails.totalQuestionMcq - mcqQData.mId.length;
+    }else{
+      numberOfSlotAvailable = examDetails.totalQuestionMcq ;
+    }
+  }
+  if(numberOfSlotAvailable===0){
+    return res.status(200).json({slots:numberOfSlotAvailable})
+  }else if(numberOfSlotAvailable===1){
+    
+    return res.status(200).json({slots:numberOfSlotAvailable})
+  }
+  else{
+    return res.status(200).json({slots:numberOfSlotAvailable});
+  }
+  
+}
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
@@ -1263,17 +1305,36 @@ const addQuestionMcq = async (req, res, next) => {
   // console.log(req.file);
   //let type = req.query.type;
   let question;
-  const {
-    questionText,
-    optionCount,
-    correctOption,
-    status,
-    examId,
-    type,
-    setName,
-  } = req.body;
-  let setName1 = parseInt(setName);
-  // console.log(req.body);
+  let mcqQData,
+    doc1,
+    mId,
+    mIdNew = [];
+  const { questionText, optionCount, correctOption, status, examId, type,setName } =
+    req.body;
+    let setName1=parseInt(setName);
+
+    let examDetails ={};
+
+    try {
+      examDetails = await Exam.findOne({_id:new mongoose.Types.ObjectId(examId)})
+    } catch (error) {
+      return res.status(404).json("Problem with exam settings");
+    }
+  if(examDetails){
+    try {
+      mcqQData = await McqQuestionVsExam.findOne({ eId: examId,setName:setName1 }).select(
+        "mId"
+      );
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    // console.log(mcqQData);
+   if(mcqQData!==null){
+    if(mcqQData.mId.length>=examDetails.totalQuestionMcq){
+      return res.status(405).json("Set of Question reached the limit");
+    }
+   }
+  }
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
     return res.status(404).json("examId Id is not valid.");
@@ -1312,19 +1373,9 @@ const addQuestionMcq = async (req, res, next) => {
   //insert question to reference mcqquestionexam table
   let questionId = doc._id;
   if (!questionId) return res.status(400).send("question not inserted");
-  let mcqQData,
-    doc1,
-    mId,
-    mIdNew = [];
-  try {
-    mcqQData = await McqQuestionVsExam.findOne({
-      eId: examIdObj,
-      setName: setName1,
-    }).select("mId");
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-  console.log(mcqQData);
+  
+ 
+  // console.log(mcqQData);
   if (mcqQData == null) {
     mIdNew.push(questionId);
     let questionExam = new McqQuestionVsExam({
@@ -1354,7 +1405,7 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
-  const { questionArray, examId } = req.body;
+  const { questionArray, examId,setName } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let finalIds = [];
   for (let i = 0; i < questionArray.length; i++) {
@@ -1367,7 +1418,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
   try {
-    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj }, "mId");
+    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName }, "mId");
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -1376,6 +1427,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
     const newExamQuestinon = new McqQuestionVsExam({
       eId: examIdObj,
       mId: finalIds,
+      setName: Number(setName),
     });
     let sav = null;
     try {
@@ -1400,7 +1452,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   ////console.log(withoutDuplicate);
   try {
     sav = await McqQuestionVsExam.updateOne(
-      { eId: examId },
+      { eId: examId,setName:setName },
       {
         mId: withoutDuplicate,
       }
@@ -2460,7 +2512,22 @@ const columnAdd = async (req, res, next) => {
   }
   return res.status(200).json(data2);
 };
-//sollution sheets
+// sollution sheets
+
+// dropping collection
+// const columnAdd = async (req, res, next) => {
+//   let data = [];
+//   let data1 = [];
+//   let data2 = [];
+//   try {
+//     data = await BothMcqQuestionVsExam.collection.drop();
+//   } catch (err) {
+//     return res.status(500).json("Something went wrong.");
+//   }
+
+//   return res.status(200).json("success!!");
+// };
+
 const uploadSollution = async (req, res, next) => {
   let examId = req.body.examId;
   let type = Number(req.body.type);
@@ -2555,12 +2622,12 @@ const getSollution = async (req, res, next) => {
 const updateExamPhoto = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
-  console.log(file);
+  // console.log(file);
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
   }
-  const { examId } = req.body;
-  const filter = { _id: examId };
+  const {examId} = req.body;
+  const filter = {_id:examId};
   console.log(filter);
   let update;
   try {
@@ -2582,6 +2649,7 @@ const updateExamPhoto = async (req, res, next) => {
 };
 
 //export functions
+exports.slotAvailable = slotAvailable;
 exports.getAllData = getAllData;
 exports.questionByExamIdAndSet = questionByExamIdAndSet;
 exports.updateExamPhoto = updateExamPhoto;

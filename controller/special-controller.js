@@ -97,6 +97,10 @@ const createSpecialExam = async (req, res, next) => {
     optionalSubject, //array of subject Id
     fixedSubject, //array of fixed subject
     subjectInfo, //array of subjectinfo
+    numberOfOptions,
+    numberOfRetakes,
+    numberOfSet,
+    questionType
   } = req.body;
   const negative = req.body.negativeMarks;
   if (!ObjectId.isValid(courseId)) {
@@ -184,6 +188,10 @@ const createSpecialExam = async (req, res, next) => {
     questionWritten: writtenQuestionSub,
     sscStatus: JSON.parse(sscStatus),
     hscStatus: JSON.parse(hscStatus),
+    numberOfOptions,
+    numberOfRetakes,
+    numberOfSet,
+    questionType,
     status: JSON.parse(status),
     publishStatus: false,
     iLink: iLinkPath,
@@ -335,10 +343,10 @@ const showSpecialExamByCourse = async (req, res, next) => {
     }
     if (dataRule == null) {
       data1["RuleImage"] = "0";
-      examObj["examImageAdded"] = false;
+      // examObj["examImageAdded"] = false;
     } else {
       data1["RuleImage"] = dataRule.ruleILink;
-      examObj["examImageAdded"] = true;
+      // examObj["examImageAdded"] = true;
     }
     data1["_id"] = data[i]._id;
     data1["name"] = data[i].name;

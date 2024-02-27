@@ -224,12 +224,12 @@ const SpecialExamSchema = new Schema(
     numberOfOptions: {
       type: Number,
       required: false,
-      default: -1,
+      default: 4,
     },
     numberOfSet: {
       type: Number,
       required: false,
-      default: -1,
+      default: 1,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
