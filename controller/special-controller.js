@@ -123,7 +123,11 @@ const createSpecialExam = async (req, res, next) => {
   for (let i = 0; i < allSubjects.length; i++) {
     let subObj = {};
     subObj["subjectId"] = allSubjects[i];
-    subObj["mcqId"] = [];
+    subObj["mcqQuestions"] = {};
+    for(let j = 0 ; j<numberOfSet;  j++){
+      subObj["mcqQuestions"]["setName"] = j ;
+      subObj["mcqQuestions"]["mcqIds"]=[];
+    }
     mcqQuestionSub.push(subObj);
   }
   let writtenQuestionSub = [];
@@ -197,6 +201,8 @@ const createSpecialExam = async (req, res, next) => {
     iLink: iLinkPath,
   });
   let updStatus = null;
+  console.log(saveExam);
+  return res.status(404).json("Check");
   //console.log("number of tota subhect:", req.query.noOfTotalSubject);
   try {
     updStatus = await saveExam.save();
@@ -2003,7 +2009,7 @@ const historyData = async (req, res, next) => {
     data1["totalMarksWrittenExam"] = data[i].totalMarksWritten;
     data1["totalMarksMcq"] =
       data[i].examId.totalMarksMcq + data[i].examId.totalMarksWritten;
-    data1["sollutionSheet"] = data[i].examId.sollutionSheet;
+    data1["solutionSheet"] = data[i].examId.solutionSheet;
     data1["meritPosition"] = resultRank;
     data1["examStartTimeMcq"] = moment(data[i].startTimeMcq).format("LLL");
     data1["examEndTimeMcq"] = moment(data[i].endTimeMcq).format("LLL");

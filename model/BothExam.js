@@ -75,12 +75,11 @@ const bothExamSchema = new Schema(
       ref: courses,
       required: true,
     },
-    sscStatus: {
-      type: Boolean,
+    curriculumName:{
+      type: String,
       required: true,
-      default: false,
     },
-    hscStatus: {
+    isAdmission:{
       type: Boolean,
       required: true,
       default: false,
@@ -94,7 +93,7 @@ const bothExamSchema = new Schema(
       type: String,
       required: false,
     },
-    sollutionSheet: {
+    solutionSheet: {
       type: String,
       required: false,
       default: null,

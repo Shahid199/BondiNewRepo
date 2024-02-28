@@ -27,9 +27,14 @@ const Student = require("../model/Student");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const FreeStudent = require("../model/FreeStudent");
 const path = require("path");
-const SollutionSheet = require("../model/SollutionSheet");
+// const solutionSheet = require("../model/solutionSheet");
 const SpecialExam = require("../model/SpecialExam");
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
+const BothExamRule = require("../model/BothExamRule");
+const BothRank = require("../model/BothRank");
+const FreeMcqRank = require("../model/FreeMcqRank");
+const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestionsMcq");
+const FreestudentMarksRank = require("../model/FreestudentMarksRank");
 
 const Limit = 100;
 //create Exam
@@ -194,24 +199,21 @@ const createExam = async (req, res, next) => {
     name,
     examType,
     examVariation,
-    examFreeOrNot,
     startTime,
     endTime,
+    examFreeOrNot,
     totalQuestionMcq,
     marksPerMcq,
     totalMarksMcq,
     status,
     duration,
-    sscStatus,
-    hscStatus,
-    buetStatus,
-    medicalStatus,
-    universityStatus,
+    curriculumName,
+    isAdmission,
     negativeMarks,
     numberOfOptions,
     numberOfRetakes,
     numberOfSet,
-    questionType,
+    questionType
   } = req.body;
 
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
@@ -242,12 +244,9 @@ const createExam = async (req, res, next) => {
     marksPerMcq: tmm,
     totalMarksMcq: Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
-    status: JSON.parse(status),
-    sscStatus: JSON.parse(sscStatus),
-    hscStatus: JSON.parse(hscStatus),
-    buetStatus: JSON.parse(buetStatus),
-    medicalStatus: JSON.parse(medicalStatus),
-    universityStatus: JSON.parse(universityStatus),
+    status: JSON.parse(status),    
+    isAdmission: JSON.parse(isAdmission),
+    curriculumName,
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
@@ -480,16 +479,13 @@ const updateExam = async (req, res, next) => {
     totalMarksMcq,
     status,
     duration,
-    sscStatus,
-    hscStatus,
-    buetStatus,
-    medicalStatus,
-    universityStatus,
+    curriculumName,
+    isAdmission,
     negativeMarks,
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
-    questionType,
+    questionType
   } = req.body;
   console.log(req.body);
   if (
@@ -520,11 +516,8 @@ const updateExam = async (req, res, next) => {
     totalMarksMcq: Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
-    sscStatus: JSON.parse(sscStatus),
-    hscStatus: JSON.parse(hscStatus),
-    buetStatus: JSON.parse(buetStatus),
-    medicalStatus: JSON.parse(medicalStatus),
-    universityStatus: JSON.parse(universityStatus),
+    curriculumName,
+    isAdmission: JSON.parse(isAdmission),
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
@@ -745,17 +738,19 @@ const getExamBySubAdmin = async (req, res, next) => {
     examObj["hscStatus"] = examData1[i].hscStatus;
     examObj["negativeMarks"] = examData1[i].negativeMarks;
     examObj["iLink"] = examData1[i].iLink;
-    examObj["sollutionSheet"] = examData1[i].sollutionSheet;
+    examObj["solutionSheet"] = examData1[i].solutionSheet;
     examObj["numberOfRetakes"] = examData1[i].numberOfRetakes;
     examObj["numberOfOptions"] = examData1[i].numberOfOptions;
     examObj["numberOfSet"] = examData1[i].numberOfSet;
     examObj["questionType"] = examData1[i].questionType;
+    examObj["curriculumName"] = examData1[i].curriculumName;
     examObj["createdAt"] = examData1[i].createdAt;
     examObj["updatedAt"] = examData1[i].updatedAt;
     examObj["__v"] = examData1[i].__v;
 
     if (dataRule == null) {
       examObj["RuleImage"] = "0";
+
     } else {
       examObj["RuleImage"] = dataRule.ruleILink;
     }
@@ -1000,7 +995,7 @@ const getWrittenBySub = async (req, res, next) => {
     examObj["hscStatus"] = examData1[i].hscStatus;
     examObj["negativeMarks"] = examData1[i].negativeMarks;
     examObj["iLink"] = examData1[i].iLink;
-    // examObj["sollutionSheet"] = examData1[i].sollutionSheet;
+    // examObj["solutionSheet"] = examData1[i].solutionSheet;
     examObj["createdAt"] = examData1[i].createdAt;
     examObj["updatedAt"] = examData1[i].updatedAt;
     examObj["__v"] = examData1[i].__v;
@@ -1381,7 +1376,7 @@ const addQuestionMcq = async (req, res, next) => {
     let questionExam = new McqQuestionVsExam({
       eId: examId,
       mId: mIdNew,
-      setName: parseInt(setName),
+      setName:parseInt(setName)
     });
     try {
       doc1 = await questionExam.save();
@@ -1394,7 +1389,7 @@ const addQuestionMcq = async (req, res, next) => {
     mIdNew.push(questionId);
     try {
       doc1 = await McqQuestionVsExam.updateOne(
-        { eId: examIdObj, setName: setName1 },
+        { eId: examIdObj,setName:setName1 },
         { $set: { mId: mIdNew } }
       );
     } catch (err) {
@@ -1462,15 +1457,12 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   return res.status(201).json("Inserted question to the exam.");
 };
-const getAllData = async (req, res, next) => {
+const getAllData= async(req,res,next) =>{
   const examId = req.query.examId;
   const setName = Number(req.query.setName);
-  const result = await McqQuestionVsExam.find({
-    eId: examId,
-    setName: setName,
-  });
+  const result = await McqQuestionVsExam.find({eId:examId,setName:setName});
   res.status(200).json(result);
-};
+}
 //exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -2197,10 +2189,7 @@ const questionByExamIdAndSet = async (req, res, next) => {
   let queryResult = null;
 
   try {
-    queryResult = await McqQuestionVsExam.findOne({
-      eId: examId,
-      setName: setName,
-    }).populate({
+    queryResult = await McqQuestionVsExam.findOne({ eId: examId,setName:setName }).populate({
       path: "mId",
       match: { status: { $eq: true } },
     });
@@ -2465,41 +2454,37 @@ const columnAdd1 = async (req, res, next) => {
   return res.status(200).json({ data3 });
 };
 
-const columnAdd = async (req, res, next) => {
+const columnAdd10 = async (req, res, next) => {
   let data = [];
   let data1 = [];
   let data2 = [];
   try {
-    // data = await Exam.updateMany(
-    //   {},
-    //   {
-    //     $set: {
-    //       questionType: null,
-    //       numberOfRetakes: 5,
-    //       numberOfOptions: -1,
-    //       numberOfSet: -1,
-    //     },
-    //   }
-    // );
-    // data1 = await BothExam.updateMany(
-    //   {},
-    //   {
-    //     $set: {
-    //       questionType: null,
-    //       numberOfRetakes: 5,
-    //       numberOfOptions: -1,
-    //       numberOfSet: -1,
-    //     },
-    //   }
-    // );
+    data = await Exam.updateMany(
+      {},
+      {
+        $set: {
+          questionType: null,
+          numberOfRetakes: 5,
+          numberOfOptions: -1,
+          numberOfSet: -1,
+        },
+      }
+    );
+    data1 = await BothExam.updateMany(
+      {},
+      {
+        $set: {
+          questionType: null,
+          numberOfRetakes: 5,
+          numberOfOptions: -1,
+          numberOfSet: -1,
+        },
+      }
+    );
     data2 = await SpecialExam.updateMany(
       {},
       {
         $set: {
-          buetStatus: false,
-          medicalStatus: false,
-          universityStatus: false,
-          sollutionSheet: null,
           questionType: null,
           numberOfRetakes: 5,
           numberOfOptions: -1,
@@ -2510,23 +2495,24 @@ const columnAdd = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  return res.status(200).json(data2);
+
+  return res.status(200).json("success!!");
 };
+
 // sollution sheets
-
 // dropping collection
-// const columnAdd = async (req, res, next) => {
-//   let data = [];
-//   let data1 = [];
-//   let data2 = [];
-//   try {
-//     data = await BothMcqQuestionVsExam.collection.drop();
-//   } catch (err) {
-//     return res.status(500).json("Something went wrong.");
-//   }
+const columnAdd = async (req, res, next) => {
+  let data = [];
+  let data1 = [];
+  let data2 = [];
+  try {
+    data = await SepcialExam.collection.drop();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
 
-//   return res.status(200).json("success!!");
-// };
+  return res.status(200).json("SepcialExam success!!");
+};
 
 const uploadSollution = async (req, res, next) => {
   let examId = req.body.examId;
@@ -2540,42 +2526,42 @@ const uploadSollution = async (req, res, next) => {
   examId = new mongoose.Types.ObjectId(examId);
   if (type == 0) {
     data = {
-      SollutionSheet: sollution,
+      solutionSheet: sollution,
     };
     try {
       upd = await Exam.updateOne(
         {
           _id: examId,
         },
-        { $set: { sollutionSheet: sollution } }
+        { $set: { solutionSheet: sollution } }
       );
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   } else if (type == 1) {
     data = {
-      SollutionSheet: sollution,
+      solutionSheet: sollution,
     };
     try {
       upd = await BothExam.updateOne(
         {
           _id: examId,
         },
-        { $set: { sollutionSheet: sollution } }
+        { $set: { solutionSheet: sollution } }
       );
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
   } else {
     data = {
-      SollutionSheet: sollution,
+      solutionSheet: sollution,
     };
     try {
       upd = await SpecialExam.updateOne(
         {
           _id: examId,
         },
-        { $set: { sollutionSheet: sollution } }
+        { $set: { solutionSheet: sollution } }
       );
     } catch (err) {
       return res.status(500).json("Something went wrong.");
@@ -2615,11 +2601,11 @@ const getSollution = async (req, res, next) => {
       return res.status(500).json("Something went wrong.");
     }
   }
-  data = data.sollutionSheet;
+  data = data.solutionSheet;
   return res.status(200).json(data);
 };
 
-const updateExamPhoto = async (req, res, next) => {
+const updateExamPhoto = async(req,res,next)=>{
   const file = req.file;
   let iLinkPath = null;
   // console.log(file);
@@ -2628,30 +2614,27 @@ const updateExamPhoto = async (req, res, next) => {
   }
   const {examId} = req.body;
   const filter = {_id:examId};
-  console.log(filter);
+  // console.log(filter);
   let update;
   try {
-    update = await Exam.findOneAndUpdate(
-      filter,
-      {
-        iLink: iLinkPath,
-      },
-      { new: true }
-    );
+     update= await Exam.findOneAndUpdate(filter,{
+      iLink:iLinkPath
+    },{new:true});
+    
   } catch (error) {
     res.status(404).json(error);
   }
-  if (update) {
+  if(update){
     res.status(202).json("Successfully Uploaded the photo");
-  } else {
+  }else{
     res.status(404).json("could not update the photo!");
   }
-};
+}
 
 //export functions
 exports.slotAvailable = slotAvailable;
 exports.getAllData = getAllData;
-exports.questionByExamIdAndSet = questionByExamIdAndSet;
+exports.questionByExamIdAndSet= questionByExamIdAndSet;
 exports.updateExamPhoto = updateExamPhoto;
 exports.getSollution = getSollution;
 exports.uploadSollution = uploadSollution;

@@ -32,7 +32,7 @@ const createSpecialExam = async (req, res, next) => {
     optionalSubject,
     fixedSubject,
     subjectInfo,
-    sollutionSheet,
+    solutionSheet,
     questionType,
     numberOfRetakes,
     numberOfOptions,
@@ -112,7 +112,7 @@ const createSpecialExam = async (req, res, next) => {
     status: JSON.parse(status),
     publishStatus: false,
     iLink: iLinkPath,
-    sollutionSheet: sollutionSheet,
+    solutionSheet: solutionSheet,
     questionType: questionType,
     numberOfRetakes: Number(numberOfRetakes),
     numberOfOptions: Number(numberOfOptions),
@@ -158,7 +158,7 @@ const updateSpecialExam = async (req, res, next) => {
     optionalSubject,
     fixedSubject,
     subjectInfo,
-    sollutionSheet,
+    solutionSheet,
     questionType,
     numberOfRetakes,
     numberOfOptions,
@@ -239,7 +239,7 @@ const updateSpecialExam = async (req, res, next) => {
     status: JSON.parse(status),
     publishStatus: false,
     iLink: iLinkPath,
-    sollutionSheet: sollutionSheet,
+    solutionSheet: solutionSheet,
     questionType: questionType,
     numberOfRetakes: Number(numberOfRetakes),
     numberOfOptions: Number(numberOfOptions),
@@ -1083,7 +1083,7 @@ const historyData = async (req, res, next) => {
     data1["totalObtainedMarks"] = data[i].totalMarksMcq.toFixed(2);
     data1["totalMarksMcqExam"] = data[i].totalMarksMcq;
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
-    data1["sollutionSheet"] = data[i].examId.sollutionSheet;
+    data1["solutionSheet"] = data[i].examId.solutionSheet;
     data1["meritPosition"] = resultRank;
     data1["examStartTimeMcq"] = moment(data[i].startTimeMcq).format("LLL");
     data1["examEndTimeMcq"] = moment(data[i].endTimeMcq).format("LLL");

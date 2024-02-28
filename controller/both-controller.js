@@ -244,7 +244,7 @@ const getBothExamBySubject = async (req, res, next) => {
       .subtract(6, "h")
       .format("MMMM Do YYYY, h:mm:ss a");
     inst["totalMarks"] = exams1[i].totalMarks;
-    inst["sollutionSheet"] = exams1[i].sollutionSheet;
+    inst["solutionSheet"] = exams1[i].solutionSheet;
     inst["iLink"] = exams1[i].iLink;
     inst["questionType"] = exams1[i].questionType;
     inst["_id"] = exams1[i]._id;

@@ -4,7 +4,7 @@ const specialExams = require("./SpecialExam");
 const exams = require("./Exam");
 const Schema = mongoose.Schema;
 
-const SollutionSheetSchema = new Schema(
+const solutionSheetSchema = new Schema(
   {
     examId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -29,4 +29,4 @@ const SollutionSheetSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("SollutionSheet", SollutionSheetSchema);
+module.exports = mongoose.model("solutionSheet", solutionSheetSchema);

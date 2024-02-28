@@ -73,27 +73,36 @@ const examSchema = new Schema(
       ref: courses,
       required: true,
     },
-    sscStatus: {
-      type: Boolean,
+    // sscStatus: {
+    //   type: Boolean,
+    //   required: true,
+    //   default: false,
+    // },
+    // hscStatus: {
+    //   type: Boolean,
+    //   required: true,
+    //   default: false,
+    // },
+    // buetStatus: {
+    //   type: Boolean,
+    //   required: true,
+    //   default: false,
+    // },
+    // medicalStatus: {
+    //   type: Boolean,
+    //   required: true,
+    //   default: false,
+    // },
+    // universityStatus: {
+    //   type: Boolean,
+    //   required: true,
+    //   default: false,
+    // },
+    curriculumName:{
+      type: String,
       required: true,
-      default: false,
     },
-    hscStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    buetStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    medicalStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    universityStatus: {
+    isAdmission:{
       type: Boolean,
       required: true,
       default: false,
@@ -107,7 +116,7 @@ const examSchema = new Schema(
       type: String,
       required: false,
     },
-    sollutionSheet: {
+    solutionSheet: {
       type: String,
       required: false,
       default: null,

@@ -1857,7 +1857,7 @@ const historyData = async (req, res, next) => {
     subjectName = subjectName.name;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
-    data1["sollutionSheet"] = data[i].examId.sollutionSheet;
+    data1["solutionSheet"] = data[i].examId.solutionSheet;
     data1["variation"] = examType[Number(data[i].examId.examType)];
     data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarksMcq;
@@ -5153,7 +5153,7 @@ const historyDataWritten = async (req, res, next) => {
     subjectName = subjectName.name;
     data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
-    data1["sollutionSheet"] = data[i].examId.sollutionSheet;
+    data1["solutionSheet"] = data[i].examId.solutionSheet;
     data1["variation"] = examType[Number(data[i].examId.examType)];
     data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalObtainedMarks"] = data[i].totalObtainedMarks;
@@ -5741,7 +5741,7 @@ const bothHistoryData = async (req, res, next) => {
     data1["variation"] = examType[Number(data[i].examId.examType)];
     //data1["type"] = examVariation[Number(data[i].examId.examVariation)];
     data1["totalMarksMcq"] = data[i].examId.totalMarks;
-    data1["sollutionSheet"] = data[i].examId.sollutionSheet;
+    data1["solutionSheet"] = data[i].examId.solutionSheet;
     data1["totalMarksWritten"] = data[i].totalObtainedMarksWritten.toFixed(2);
     data1["totalObtainedMarks"] = (
       data[i].totalObtainedMarksMcq + data[i].totalObtainedMarksWritten

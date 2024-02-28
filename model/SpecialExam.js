@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const subjects = require("./Subject");
-const courses = require("./Course");
-const questions = require("./QuestionsMcq");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const subjects = require('./Subject')
+const courses = require('./Course')
+const questions = require('./QuestionsMcq')
+const Schema = mongoose.Schema
 
 const SpecialExamSchema = new Schema(
   {
@@ -79,13 +79,19 @@ const SpecialExamSchema = new Schema(
           ref: subjects,
           required: false,
         },
-        mcqId: [
-          {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: questions,
-            required: false,
+        mcqQuestions: {
+          mcqIds: [
+            {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: questions,
+              required: false,
+            },
+          ],
+          setName: {
+            type: Number,
+            required: true,
           },
-        ],
+        },
       },
     ],
     questionWritten: [
@@ -172,27 +178,11 @@ const SpecialExamSchema = new Schema(
       required: true,
       default: false,
     },
-    sscStatus: {
-      type: Boolean,
+    curriculumName:{
+      type: String,
       required: true,
-      default: false,
     },
-    hscStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    buetStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    medicalStatus: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    universityStatus: {
+    isAdmission:{
       type: Boolean,
       required: true,
       default: false,
@@ -206,7 +196,7 @@ const SpecialExamSchema = new Schema(
       type: String,
       required: false,
     },
-    sollutionSheet: {
+    solutionSheet: {
       type: String,
       required: false,
       default: null,
@@ -233,6 +223,6 @@ const SpecialExamSchema = new Schema(
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
-);
+)
 
-module.exports = mongoose.model("SpecialExam", SpecialExamSchema);
+module.exports = mongoose.model('SpecialExam', SpecialExamSchema)
