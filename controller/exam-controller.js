@@ -1257,47 +1257,45 @@ const examByCourseSubject = async (req, res, next) => {
   result.push({ examCount: examData.length });
   return res.status(200).json({ result, paginateData });
 };
-const slotAvailable = async (req, res, next) =>{
-  
- 
-  let numberOfSlotAvailable,mcqQData;
+const slotAvailable = async (req, res, next) => {
+  let numberOfSlotAvailable, mcqQData;
 
-  const {  examId,setName } =
-    req.query;
-    let setName1=parseInt(setName);
+  const { examId, setName } = req.query;
+  let setName1 = parseInt(setName);
 
-    let examDetails ={};
+  let examDetails = {};
 
+  try {
+    examDetails = await Exam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  if (examDetails) {
     try {
-      examDetails = await Exam.findOne({_id:new mongoose.Types.ObjectId(examId)})
-    } catch (error) {
-      return res.status(404).json("Problem with exam settings");
-    }
-  if(examDetails){
-    try {
-      mcqQData = await McqQuestionVsExam.findOne({ eId: examId,setName:setName1 }).select(
-        "mId"
-      );
+      mcqQData = await McqQuestionVsExam.findOne({
+        eId: examId,
+        setName: setName1,
+      }).select("mId");
     } catch (err) {
       return res.status(500).json(err);
     }
-    if(mcqQData){
-      numberOfSlotAvailable = examDetails.totalQuestionMcq - mcqQData.mId.length;
-    }else{
-      numberOfSlotAvailable = examDetails.totalQuestionMcq ;
+    if (mcqQData) {
+      numberOfSlotAvailable =
+        examDetails.totalQuestionMcq - mcqQData.mId.length;
+    } else {
+      numberOfSlotAvailable = examDetails.totalQuestionMcq;
     }
   }
-  if(numberOfSlotAvailable===0){
-    return res.status(200).json({slots:numberOfSlotAvailable})
-  }else if(numberOfSlotAvailable===1){
-    
-    return res.status(200).json({slots:numberOfSlotAvailable})
+  if (numberOfSlotAvailable === 0) {
+    return res.status(200).json({ slots: numberOfSlotAvailable });
+  } else if (numberOfSlotAvailable === 1) {
+    return res.status(200).json({ slots: numberOfSlotAvailable });
+  } else {
+    return res.status(200).json({ slots: numberOfSlotAvailable });
   }
-  else{
-    return res.status(200).json({slots:numberOfSlotAvailable});
-  }
-  
-}
+};
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
@@ -1309,31 +1307,41 @@ const addQuestionMcq = async (req, res, next) => {
     doc1,
     mId,
     mIdNew = [];
-  const { questionText, optionCount, correctOption, status, examId, type,setName } =
-    req.body;
-    let setName1=parseInt(setName);
+  const {
+    questionText,
+    optionCount,
+    correctOption,
+    status,
+    examId,
+    type,
+    setName,
+  } = req.body;
+  let setName1 = parseInt(setName);
 
-    let examDetails ={};
+  let examDetails = {};
 
+  try {
+    examDetails = await Exam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  if (examDetails) {
     try {
-      examDetails = await Exam.findOne({_id:new mongoose.Types.ObjectId(examId)})
-    } catch (error) {
-      return res.status(404).json("Problem with exam settings");
-    }
-  if(examDetails){
-    try {
-      mcqQData = await McqQuestionVsExam.findOne({ eId: examId,setName:setName1 }).select(
-        "mId"
-      );
+      mcqQData = await McqQuestionVsExam.findOne({
+        eId: examId,
+        setName: setName1,
+      }).select("mId");
     } catch (err) {
       return res.status(500).json(err);
     }
     // console.log(mcqQData);
-   if(mcqQData!==null){
-    if(mcqQData.mId.length>=examDetails.totalQuestionMcq){
-      return res.status(405).json("Set of Question reached the limit");
+    if (mcqQData !== null) {
+      if (mcqQData.mId.length >= examDetails.totalQuestionMcq) {
+        return res.status(405).json("Set of Question reached the limit");
+      }
     }
-   }
   }
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
@@ -1373,8 +1381,7 @@ const addQuestionMcq = async (req, res, next) => {
   //insert question to reference mcqquestionexam table
   let questionId = doc._id;
   if (!questionId) return res.status(400).send("question not inserted");
-  
- 
+
   // console.log(mcqQData);
   if (mcqQData == null) {
     mIdNew.push(questionId);
@@ -1405,7 +1412,7 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
-  const { questionArray, examId,setName } = req.body;
+  const { questionArray, examId, setName } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let finalIds = [];
   for (let i = 0; i < questionArray.length; i++) {
@@ -1418,7 +1425,10 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
   try {
-    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName }, "mId");
+    mIdArray = await McqQuestionVsExam.findOne(
+      { eId: examIdObj, setName: setName },
+      "mId"
+    );
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -1452,7 +1462,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   ////console.log(withoutDuplicate);
   try {
     sav = await McqQuestionVsExam.updateOne(
-      { eId: examId,setName:setName },
+      { eId: examId, setName: setName },
       {
         mId: withoutDuplicate,
       }
@@ -1462,6 +1472,94 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   return res.status(201).json("Inserted question to the exam.");
 };
+const refillQuestion = async (req, res, next) => {
+  const { questionArray, examId } = req.body;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let finalIds = [];
+  for (let i = 0; i < questionArray.length; i++) {
+    if (ObjectId.isValid(questionArray[i]))
+      finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
+    else continue;
+  }
+  ////console.log(finalIds);
+  if (finalIds.length == 0)
+    return res.status(404).json("question IDs are not valid.");
+  let mIdArray = [];
+  let noOfQuestions = null;
+  let noOfSet = null;
+  try {
+    mIdArray = await McqQuestionVsExam.find({ eId: examIdObj }, "mId");
+    noOfQuestions = await Exam.findById(examId);
+    noOfQuestions = noOfQuestions.totalQuestionMcq;
+    noOfSet = noOfQuestions.numberOfSet;
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (mIdArray.length == 0)
+    return res.status(404).json("Please at least fill one set.");
+  if (mIdArray.length > 1)
+    return res
+      .status(404)
+      .json("Cant refill questions.Already added.Please check.");
+  if (mIdArray[0].mId.length == 0)
+    return res.status(404).json("No Active questions found.");
+  if (noOfQuestions != mIdArray[0].mId.length)
+    return res
+      .status(404)
+      .json(
+        "Total number of questions & first set all questions number are not same."
+      );
+  let setNo = mIdArray[0].setName;
+  mIdArray = mIdArray[0].mId;
+  let randArray = [];
+  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {
+    let rand = null;
+    while (1) {
+      rand = parseInt(Date.now() % mIdArray.length);
+      if (randArray.includes(rand) == true) continue;
+      randArray.push(rand);
+      break;
+    }
+  }
+
+  const newExamQuestinon = new McqQuestionVsExam({
+    eId: examIdObj,
+    mId: finalIds,
+    setName: Number(setName),
+  });
+  let sav = null;
+  try {
+    sav = await newExamQuestinon.save();
+  } catch (err) {
+    return res
+      .status(500)
+      .json("DB problem Occur when new question insert in exam table.");
+  }
+  return res.status(201).json("Success.");
+  ////console.log(mIdArray);
+  mIdArray = mIdArray.mId;
+  let finalIdsString = [];
+  finalIdsString = finalIds.map((e) => String(e));
+  mIdArray = mIdArray.map((e) => String(e));
+  mIdArray = mIdArray.concat(finalIdsString);
+  let withoutDuplicate = Array.from(new Set(mIdArray));
+  withoutDuplicate = withoutDuplicate.map(
+    (e) => new mongoose.Types.ObjectId(e)
+  );
+  ////console.log(withoutDuplicate);
+  try {
+    sav = await McqQuestionVsExam.updateOne(
+      { eId: examId, setName: setName },
+      {
+        mId: withoutDuplicate,
+      }
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(201).json("Inserted question to the exam.");
+};
+
 const getAllData = async (req, res, next) => {
   const examId = req.query.examId;
   const setName = Number(req.query.setName);
@@ -2626,8 +2724,8 @@ const updateExamPhoto = async (req, res, next) => {
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
   }
-  const {examId} = req.body;
-  const filter = {_id:examId};
+  const { examId } = req.body;
+  const filter = { _id: examId };
   console.log(filter);
   let update;
   try {
