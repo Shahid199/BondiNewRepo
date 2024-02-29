@@ -121,12 +121,11 @@ const McqSpecialExamSchema = new Schema(
       required: true,
       default: false,
     },
-    sscStatus: {
-      type: Boolean,
+    curriculumName:{
+      type: String,
       required: true,
-      default: false,
     },
-    hscStatus: {
+    isAdmission:{
       type: Boolean,
       required: true,
       default: false,
@@ -140,7 +139,7 @@ const McqSpecialExamSchema = new Schema(
       type: String,
       required: false,
     },
-    sollutionSheet: {
+    solutionSheet: {
       type: String,
       required: false,
       default: null,

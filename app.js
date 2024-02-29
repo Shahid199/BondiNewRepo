@@ -58,7 +58,8 @@ const specialRouter = require("./routes/special-routes");
 const teacherRouter = require("./routes/teacher-routes");
 const bothRouter = require("./routes/both-routes");
 const smsRouter = require("./routes/sms-routes");
-constmcqSpecialRouter = require("./routes/mcqspecial-routes");
+const curriculumRouter = require("./routes/curriculum-routes");
+// const mcqSpecialRouter = require("./routes/mcqspecial-routes");
 const { assignQuestion } = require("./controller/student-controller");
 
 //serve files from uploads folder
@@ -66,6 +67,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);
+app.use("/api/curriculum", curriculumRouter);
 app.use("/api/student", studentRouter);
 app.use("/api/coursevsstudent", courseVsStudentRouter);
 app.use("/api/subject", subjectRouter);
@@ -94,6 +96,6 @@ mongoose
     // console.log(curDate.valueOf());
     //console.log(moment(Date.now()).subtract(6, "h").format("YYYY-MM-DD hh:mm:ss A"));
     // 👇️ [{id: 1, name: 'Tom'}, {id: 2, name: 'Nick'}]
-    //console.log(studentIds);
+    console.log("connected");
   })
   .catch((err) => console.log(err));

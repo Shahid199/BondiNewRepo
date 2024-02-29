@@ -149,4 +149,12 @@ router.get(
   [passport.authenticate("jwt", { session: false }), authorize()],
   bothQuestionByExamId
 );
+router.post(
+  "/refillquestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  refillQuestion
+);
 module.exports = router;
