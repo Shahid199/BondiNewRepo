@@ -18,7 +18,8 @@ const {
   bothQuestionByExamId,
   updateBothExamPhoto,
   questionByExamIdAndSet,
-  slotAvailable
+  slotAvailable,
+  refillQuestion
 } = require("../controller/both-controller");
 const router = express.Router();
 router.post(
