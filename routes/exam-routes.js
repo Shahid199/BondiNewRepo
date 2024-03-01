@@ -40,7 +40,8 @@ const {
   updateExamPhoto,
   questionByExamIdAndSet,
   getAllData,
-  slotAvailable
+  slotAvailable,
+  refillQuestion
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -321,5 +322,13 @@ router.get("/columnadd", columnAdd);
 router.post("/downloadimage", downloadExamImage);
 router.post("/uploadsollution", uploadSollution);
 router.get("/getsollution", getSollution);
+router.post(
+  "/refillquestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  refillQuestion
+);
 
 module.exports = router;

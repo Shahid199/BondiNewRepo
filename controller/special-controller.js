@@ -15,6 +15,7 @@ const fsp = fs.promises;
 const path = require("path");
 const Student = require("../model/Student");
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
+
 const updateSpecialExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
@@ -31,6 +32,8 @@ const updateSpecialExam = async (req, res, next) => {
     negativeMarks,
     writtenDuration,
     totalMarksWritten,
+    curriculumName,
+    isAdmission,
     totalDuration,
     totalMarksMcq,
     totalMarks,
@@ -51,6 +54,8 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksMcq: totalMarksMcq,
     totalMarksWritten: totalMarksWritten,
     totalMarks: totalMarks,
+    curriculumName: curriculumName,
+    isAdmission: JSON.parse(isAdmission),
     status: true,
     iLink: iLinkPath,
   };
@@ -87,8 +92,8 @@ const createSpecialExam = async (req, res, next) => {
     totalMarksMcq,
     totalMarks,
     status,
-    sscStatus,
-    hscStatus,
+    curriculumName,
+    isAdmission,
     noOfTotalSubject,
     noOfExamSubject,
     noOfOptionalSubject,
@@ -100,7 +105,7 @@ const createSpecialExam = async (req, res, next) => {
     numberOfOptions,
     numberOfRetakes,
     numberOfSet,
-    questionType
+    questionType,
   } = req.body;
   const negative = req.body.negativeMarks;
   if (!ObjectId.isValid(courseId)) {
@@ -124,9 +129,9 @@ const createSpecialExam = async (req, res, next) => {
     let subObj = {};
     subObj["subjectId"] = allSubjects[i];
     subObj["mcqQuestions"] = {};
-    for(let j = 0 ; j<numberOfSet;  j++){
-      subObj["mcqQuestions"]["setName"] = j ;
-      subObj["mcqQuestions"]["mcqIds"]=[];
+    for (let j = 0; j < numberOfSet; j++) {
+      subObj["mcqQuestions"]["setName"] = j;
+      subObj["mcqQuestions"]["mcqIds"] = [];
     }
     mcqQuestionSub.push(subObj);
   }
@@ -190,8 +195,8 @@ const createSpecialExam = async (req, res, next) => {
     fixedSubject: fixedSubjects,
     questionMcq: mcqQuestionSub,
     questionWritten: writtenQuestionSub,
-    sscStatus: JSON.parse(sscStatus),
-    hscStatus: JSON.parse(hscStatus),
+    curriculumName: curriculumName,
+    isAdmission: JSON.parse(isAdmission),
     numberOfOptions,
     numberOfRetakes,
     numberOfSet,

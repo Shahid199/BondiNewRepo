@@ -213,7 +213,7 @@ const createExam = async (req, res, next) => {
     numberOfOptions,
     numberOfRetakes,
     numberOfSet,
-    questionType
+    questionType,
   } = req.body;
 
   if (!ObjectId.isValid(courseId) || !ObjectId.isValid(subjectId))
@@ -244,7 +244,7 @@ const createExam = async (req, res, next) => {
     marksPerMcq: tmm,
     totalMarksMcq: Number(totalMarksMcq),
     negativeMarks: Number(negativeMarks),
-    status: JSON.parse(status),    
+    status: JSON.parse(status),
     isAdmission: JSON.parse(isAdmission),
     curriculumName,
     numberOfRetakes,
@@ -485,7 +485,7 @@ const updateExam = async (req, res, next) => {
     numberOfRetakes,
     numberOfOptions,
     numberOfSet,
-    questionType
+    questionType,
   } = req.body;
   console.log(req.body);
   if (
@@ -750,7 +750,6 @@ const getExamBySubAdmin = async (req, res, next) => {
 
     if (dataRule == null) {
       examObj["RuleImage"] = "0";
-
     } else {
       examObj["RuleImage"] = dataRule.ruleILink;
     }
@@ -1252,47 +1251,45 @@ const examByCourseSubject = async (req, res, next) => {
   result.push({ examCount: examData.length });
   return res.status(200).json({ result, paginateData });
 };
-const slotAvailable = async (req, res, next) =>{
-  
- 
-  let numberOfSlotAvailable,mcqQData;
+const slotAvailable = async (req, res, next) => {
+  let numberOfSlotAvailable, mcqQData;
 
-  const {  examId,setName } =
-    req.query;
-    let setName1=parseInt(setName);
+  const { examId, setName } = req.query;
+  let setName1 = parseInt(setName);
 
-    let examDetails ={};
+  let examDetails = {};
 
+  try {
+    examDetails = await Exam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  if (examDetails) {
     try {
-      examDetails = await Exam.findOne({_id:new mongoose.Types.ObjectId(examId)})
-    } catch (error) {
-      return res.status(404).json("Problem with exam settings");
-    }
-  if(examDetails){
-    try {
-      mcqQData = await McqQuestionVsExam.findOne({ eId: examId,setName:setName1 }).select(
-        "mId"
-      );
+      mcqQData = await McqQuestionVsExam.findOne({
+        eId: examId,
+        setName: setName1,
+      }).select("mId");
     } catch (err) {
       return res.status(500).json(err);
     }
-    if(mcqQData){
-      numberOfSlotAvailable = examDetails.totalQuestionMcq - mcqQData.mId.length;
-    }else{
-      numberOfSlotAvailable = examDetails.totalQuestionMcq ;
+    if (mcqQData) {
+      numberOfSlotAvailable =
+        examDetails.totalQuestionMcq - mcqQData.mId.length;
+    } else {
+      numberOfSlotAvailable = examDetails.totalQuestionMcq;
     }
   }
-  if(numberOfSlotAvailable===0){
-    return res.status(200).json({slots:numberOfSlotAvailable})
-  }else if(numberOfSlotAvailable===1){
-    
-    return res.status(200).json({slots:numberOfSlotAvailable})
+  if (numberOfSlotAvailable === 0) {
+    return res.status(200).json({ slots: numberOfSlotAvailable });
+  } else if (numberOfSlotAvailable === 1) {
+    return res.status(200).json({ slots: numberOfSlotAvailable });
+  } else {
+    return res.status(200).json({ slots: numberOfSlotAvailable });
   }
-  else{
-    return res.status(200).json({slots:numberOfSlotAvailable});
-  }
-  
-}
+};
 const addQuestionMcq = async (req, res, next) => {
   let iLinkPath = null;
   let explanationILinkPath = null;
@@ -1304,31 +1301,41 @@ const addQuestionMcq = async (req, res, next) => {
     doc1,
     mId,
     mIdNew = [];
-  const { questionText, optionCount, correctOption, status, examId, type,setName } =
-    req.body;
-    let setName1=parseInt(setName);
+  const {
+    questionText,
+    optionCount,
+    correctOption,
+    status,
+    examId,
+    type,
+    setName,
+  } = req.body;
+  let setName1 = parseInt(setName);
 
-    let examDetails ={};
+  let examDetails = {};
 
+  try {
+    examDetails = await Exam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  if (examDetails) {
     try {
-      examDetails = await Exam.findOne({_id:new mongoose.Types.ObjectId(examId)})
-    } catch (error) {
-      return res.status(404).json("Problem with exam settings");
-    }
-  if(examDetails){
-    try {
-      mcqQData = await McqQuestionVsExam.findOne({ eId: examId,setName:setName1 }).select(
-        "mId"
-      );
+      mcqQData = await McqQuestionVsExam.findOne({
+        eId: examId,
+        setName: setName1,
+      }).select("mId");
     } catch (err) {
       return res.status(500).json(err);
     }
     // console.log(mcqQData);
-   if(mcqQData!==null){
-    if(mcqQData.mId.length>=examDetails.totalQuestionMcq){
-      return res.status(405).json("Set of Question reached the limit");
+    if (mcqQData !== null) {
+      if (mcqQData.mId.length >= examDetails.totalQuestionMcq) {
+        return res.status(405).json("Set of Question reached the limit");
+      }
     }
-   }
   }
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId))
@@ -1368,15 +1375,14 @@ const addQuestionMcq = async (req, res, next) => {
   //insert question to reference mcqquestionexam table
   let questionId = doc._id;
   if (!questionId) return res.status(400).send("question not inserted");
-  
- 
+
   // console.log(mcqQData);
   if (mcqQData == null) {
     mIdNew.push(questionId);
     let questionExam = new McqQuestionVsExam({
       eId: examId,
       mId: mIdNew,
-      setName:parseInt(setName)
+      setName: parseInt(setName),
     });
     try {
       doc1 = await questionExam.save();
@@ -1389,7 +1395,7 @@ const addQuestionMcq = async (req, res, next) => {
     mIdNew.push(questionId);
     try {
       doc1 = await McqQuestionVsExam.updateOne(
-        { eId: examIdObj,setName:setName1 },
+        { eId: examIdObj, setName: setName1 },
         { $set: { mId: mIdNew } }
       );
     } catch (err) {
@@ -1400,7 +1406,7 @@ const addQuestionMcq = async (req, res, next) => {
   return res.status(201).json("Saved.");
 };
 const addQuestionMcqBulk = async (req, res, next) => {
-  const { questionArray, examId,setName } = req.body;
+  const { questionArray, examId, setName } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let finalIds = [];
   for (let i = 0; i < questionArray.length; i++) {
@@ -1413,7 +1419,10 @@ const addQuestionMcqBulk = async (req, res, next) => {
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null;
   try {
-    mIdArray = await McqQuestionVsExam.findOne({ eId: examIdObj,setName:setName }, "mId");
+    mIdArray = await McqQuestionVsExam.findOne(
+      { eId: examIdObj, setName: setName },
+      "mId"
+    );
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -1447,7 +1456,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   ////console.log(withoutDuplicate);
   try {
     sav = await McqQuestionVsExam.updateOne(
-      { eId: examId,setName:setName },
+      { eId: examId, setName: setName },
       {
         mId: withoutDuplicate,
       }
@@ -1457,12 +1466,92 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   return res.status(201).json("Inserted question to the exam.");
 };
-const getAllData= async(req,res,next) =>{
+const refillQuestion = async (req, res, next) => {
+  const { examId } = req.body;
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let mIdArray = [];
+  let noOfQuestions = null;
+  let noOfSet = null;
+  try {
+    mIdArray = await McqQuestionVsExam.find({ eId: examIdObj }, "mId");
+    noOfQuestions = await Exam.findById(examId);
+    noOfQuestions = noOfQuestions.totalQuestionMcq;
+    noOfSet = noOfQuestions.numberOfSet;
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  if (mIdArray.length == 0)
+    return res.status(404).json("Please at least fill one set.");
+  if (mIdArray.length > 1)
+    return res
+      .status(404)
+      .json("Cant refill questions.Already added.Please check.");
+  if (mIdArray[0].mId.length == 0)
+    return res.status(404).json("No Active questions found.");
+  if (noOfQuestions != mIdArray[0].mId.length)
+    return res
+      .status(404)
+      .json(
+        "Total number of questions & first set all questions number are not same."
+      );
+  let setNo = mIdArray[0].setName;
+  mIdArray = mIdArray[0].mId;
+  let randArray = [];
+  let insertDataArray = [];
+  let flag = false;
+  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {
+    let rand = null;
+    while (1) {
+      rand = parseInt(Date.now() % mIdArray.length);
+      if (randArray.includes(rand) == true || rand == 0) continue;
+      randArray.push(rand);
+      break;
+    }
+    let dataArray = [];
+    if (flag == false) {
+      for (let j = 0; j < rand; j++) {
+        dataArray.push(mIdArray[j]);
+      }
+      for (let k = noOfQuestions - 1; k >= rand; k--) {
+        dataArray.push(mIdArray[k]);
+      }
+      flag = true;
+    } else {
+      for (let j = rand; j >= 0; j--) {
+        dataArray.push(mIdArray[j]);
+      }
+      for (let k = noOfQuestions - 1; k >= rand; k--) {
+        dataArray.push(mIdArray[k]);
+      }
+      flag = false;
+    }
+    let questionObj = {};
+    questionObj["eId"] = examIdObj;
+    questionObj["mId"] = dataArray;
+    questionObj["setName"] = Number(i);
+    insertDataArray.push(questionObj);
+  }
+
+  let doc = null;
+  try {
+    doc = await BothMcqQuestionVsExam.insertMany(insertDataArray, {
+      ordered: false,
+    });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+  return res.status(201).json("Inserted question to the exam's all sets.");
+};
+
+const getAllData = async (req, res, next) => {
   const examId = req.query.examId;
   const setName = Number(req.query.setName);
-  const result = await McqQuestionVsExam.find({eId:examId,setName:setName});
+  const result = await McqQuestionVsExam.find({
+    eId: examId,
+    setName: setName,
+  });
   res.status(200).json(result);
-}
+};
 //exam rule page
 const examRuleSet = async (req, res, next) => {
   const file = req.file;
@@ -2189,7 +2278,10 @@ const questionByExamIdAndSet = async (req, res, next) => {
   let queryResult = null;
 
   try {
-    queryResult = await McqQuestionVsExam.findOne({ eId: examId,setName:setName }).populate({
+    queryResult = await McqQuestionVsExam.findOne({
+      eId: examId,
+      setName: setName,
+    }).populate({
       path: "mId",
       match: { status: { $eq: true } },
     });
@@ -2605,36 +2697,40 @@ const getSollution = async (req, res, next) => {
   return res.status(200).json(data);
 };
 
-const updateExamPhoto = async(req,res,next)=>{
+const updateExamPhoto = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
   // console.log(file);
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
   }
-  const {examId} = req.body;
-  const filter = {_id:examId};
-  // console.log(filter);
+  const { examId } = req.body;
+  const filter = { _id: examId };
+  console.log(filter);
   let update;
   try {
-     update= await Exam.findOneAndUpdate(filter,{
-      iLink:iLinkPath
-    },{new:true});
-    
+    update = await Exam.findOneAndUpdate(
+      filter,
+      {
+        iLink: iLinkPath,
+      },
+      { new: true }
+    );
   } catch (error) {
     res.status(404).json(error);
   }
-  if(update){
+  if (update) {
     res.status(202).json("Successfully Uploaded the photo");
-  }else{
+  } else {
     res.status(404).json("could not update the photo!");
   }
-}
+};
 
 //export functions
+exports.refillQuestion = refillQuestion;
 exports.slotAvailable = slotAvailable;
 exports.getAllData = getAllData;
-exports.questionByExamIdAndSet= questionByExamIdAndSet;
+exports.questionByExamIdAndSet = questionByExamIdAndSet;
 exports.updateExamPhoto = updateExamPhoto;
 exports.getSollution = getSollution;
 exports.uploadSollution = uploadSollution;
