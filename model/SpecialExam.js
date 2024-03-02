@@ -79,7 +79,7 @@ const SpecialExamSchema = new Schema(
           ref: subjects,
           required: false,
         },
-        mcqQuestions: {
+        mcqQuestions: [{
           mcqIds: [
             {
               type: mongoose.Schema.Types.ObjectId,
@@ -91,7 +91,7 @@ const SpecialExamSchema = new Schema(
             type: Number,
             required: true,
           },
-        },
+      }],
       },
     ],
     questionWritten: [

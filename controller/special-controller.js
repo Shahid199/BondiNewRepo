@@ -72,7 +72,7 @@ const updateSpecialExam = async (req, res, next) => {
 const createSpecialExam = async (req, res, next) => {
   const file = req.file;
   let iLinkPath = null;
-  if (!file) {
+  if (file) {
     iLinkPath = "uploads/".concat(file.filename);
   }
 
@@ -128,10 +128,14 @@ const createSpecialExam = async (req, res, next) => {
   for (let i = 0; i < allSubjects.length; i++) {
     let subObj = {};
     subObj["subjectId"] = allSubjects[i];
-    subObj["mcqQuestions"] = {};
+    subObj.mcqQuestions = [];
+   
+
     for (let j = 0; j < numberOfSet; j++) {
-      subObj["mcqQuestions"]["setName"] = j;
-      subObj["mcqQuestions"]["mcqIds"] = [];
+      const mcqObject = {};
+      mcqObject.setName = j;
+      mcqObject.mcqIds = [];
+      subObj.mcqQuestions[j]=mcqObject;
     }
     mcqQuestionSub.push(subObj);
   }
@@ -206,8 +210,6 @@ const createSpecialExam = async (req, res, next) => {
     iLink: iLinkPath,
   });
   let updStatus = null;
-  console.log(saveExam);
-  return res.status(404).json("Check");
   //console.log("number of tota subhect:", req.query.noOfTotalSubject);
   try {
     updStatus = await saveExam.save();
@@ -381,8 +383,8 @@ const showSpecialExamByCourse = async (req, res, next) => {
     data1["totalMarks"] = data[i].totalMarks;
     data1["totalDuration"] = data[i].totalDuration;
     data1["status"] = data[i].status;
-    data1["sscStatus"] = data[i].sscStatus;
-    data1["hscStatus"] = data[i].hscStatus;
+    data1["curriculumName"] = data[i].curriculumName;
+    data1["isAdmission"] = data[i].isAdmission;
     data1["courseId"] = data[i].courseId;
     data1["iLink"] = data[i].iLink;
     data1["questionMcq"] = data[i].questionMcq;
