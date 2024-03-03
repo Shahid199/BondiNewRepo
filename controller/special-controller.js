@@ -17,11 +17,9 @@ const Student = require("../model/Student");
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
 
 const updateSpecialExam = async (req, res, next) => {
-  const file = req.file;
-  let iLinkPath = null;
-  if (!file) {
-    iLinkPath = "uploads/".concat(file.filename);
-  }
+ 
+
+
   const {
     examId,
     name,
@@ -57,7 +55,6 @@ const updateSpecialExam = async (req, res, next) => {
     curriculumName: curriculumName,
     isAdmission: JSON.parse(isAdmission),
     status: true,
-    iLink: iLinkPath,
   };
   let updStatus = null;
   try {
@@ -385,6 +382,7 @@ const showSpecialExamByCourse = async (req, res, next) => {
     data1["status"] = data[i].status;
     data1["curriculumName"] = data[i].curriculumName;
     data1["isAdmission"] = data[i].isAdmission;
+    data1["solutionSheet"] = data[i].solutionSheet;
     data1["courseId"] = data[i].courseId;
     data1["iLink"] = data[i].iLink;
     data1["questionMcq"] = data[i].questionMcq;
@@ -5122,6 +5120,36 @@ const updateWrittenMinus = async (req, res, next) => {
   }
   // for(let i=0;i<studData)
 };
+
+const updateSpecialExamPhoto = async (req, res, next) => {
+  const file = req.file;
+  let iLinkPath = null;
+  // console.log(file);
+  if (file) {
+    iLinkPath = "uploads/".concat(file.filename);
+  }
+  const { examId } = req.body;
+  const filter = { _id: examId };
+  console.log(filter);
+  let update;
+  try {
+    update = await SpecialExam.findOneAndUpdate(
+      filter,
+      {
+        iLink: iLinkPath,
+      },
+      { new: true }
+    );
+  } catch (error) {
+    res.status(404).json(error);
+  }
+  if (update) {
+    res.status(202).json("Successfully Uploaded the photo");
+  } else {
+    res.status(404).json("could not update the photo!");
+  }
+};
+exports.updateSpecialExamPhoto = updateSpecialExamPhoto;
 exports.specialGetHistoryFilter = specialGetHistoryFilter;
 exports.updateWrittenMinus = updateWrittenMinus;
 exports.specialGetHistoryAdmin = specialGetHistoryAdmin;

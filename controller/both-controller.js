@@ -20,18 +20,26 @@ const BothExam = require("../model/BothExam");
 const BothExamRule = require("../model/BothExamRule");
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
+const shuffle = (array) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
 
 const refillQuestion = async (req, res, next) => {
   const { examId } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let mIdArray = [];
+  let exam=null;
   let noOfQuestions = null;
   let noOfSet = null;
   try {
     mIdArray = await BothMcqQuestionVsExam.find({ eId: examIdObj }, "mId");
-    noOfQuestions = await BothExam.findById(examId);
-    noOfQuestions = noOfQuestions.totalQuestionMcq;
-    noOfSet = noOfQuestions.numberOfSet;
+    exam = await BothExam.findById(examId);
+    noOfQuestions = exam.totalQuestionMcq;
+    noOfSet = exam.numberOfSet;
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -51,50 +59,23 @@ const refillQuestion = async (req, res, next) => {
       );
   let setNo = mIdArray[0].setName;
   mIdArray = mIdArray[0].mId;
-  let randArray = [];
-  let insertDataArray = [];
-  let flag = false;
-  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {
-    let rand = null;
-    while (1) {
-      rand = parseInt(Date.now() % mIdArray.length);
-      if (randArray.includes(rand) == true || rand == 0) continue;
-      randArray.push(rand);
-      break;
-    }
-    let dataArray = [];
-    if (flag == false) {
-      for (let j = 0; j < rand; j++) {
-        dataArray.push(mIdArray[j]);
-      }
-      for (let k = noOfQuestions - 1; k >= rand; k--) {
-        dataArray.push(mIdArray[k]);
-      }
-      flag = true;
-    } else {
-      for (let j = rand; j >= 0; j--) {
-        dataArray.push(mIdArray[j]);
-      }
-      for (let k = noOfQuestions - 1; k >= rand; k--) {
-        dataArray.push(mIdArray[k]);
-      }
-      flag = false;
-    }
+  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {    
     let questionObj = {};
-    questionObj["eId"] = examIdObj;
-    questionObj["mId"] = dataArray;
-    questionObj["setName"] = Number(i);
-    insertDataArray.push(questionObj);
+    let shuffledArray= shuffle(mIdArray);
+    let getSetName = Number(i);
+    let questionExam = new BothMcqQuestionVsExam({
+      eId: examIdObj,
+      mId: shuffledArray,
+      setName: parseInt(getSetName),
+    });
+    try {
+      doc1 = await questionExam.save();
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   }
 
-  let doc = null;
-  try {
-    doc = await McqQuestionVsExam.insertMany(insertDataArray, {
-      ordered: false,
-    });
-  } catch (err) {
-    return res.status(500).json(err);
-  }
+
   return res.status(201).json("Inserted question to the exam's all sets.");
 };
 const createBothExam = async (req, res, next) => {
@@ -165,8 +146,8 @@ const createBothExam = async (req, res, next) => {
     totalMarksMcq: tqm * tmm,
     negativeMarksMcq: Number(negativeMarks),
     status: JSON.parse(status),
-    sscStatus: JSON.parse(sscStatus),
-    hscStatus: JSON.parse(hscStatus),
+    isAdmission: JSON.parse(isAdmission),
+    curriculumName,
     numberOfRetakes: Number(numberOfRetakes),
     numberOfOptions: Number(numberOfOptions),
     numberOfSet: Number(numberOfSet),
@@ -210,7 +191,12 @@ const updateBothExam = async (req, res, next) => {
     negativeMarks,
     totalMarks,
     examType,
+    questionType,
+    numberOfOptions,
+    numberOfRetakes,
+    numberOfSet
   } = req.body;
+  console.log(numberOfOptions)
   if (
     !ObjectId.isValid(examId) ||
     !ObjectId.isValid(courseId) ||
@@ -246,6 +232,10 @@ const updateBothExam = async (req, res, next) => {
     curriculumName: curriculumName,
     isAdmission: JSON.parse(isAdmission),
     iLink: iLinkPath,
+    questionType,
+    numberOfOptions:Number(numberOfOptions),
+    numberOfRetakes:Number(numberOfRetakes),
+    numberOfSet:Number(numberOfSet)
   };
   let updStatus = null;
   try {

@@ -59,6 +59,7 @@ const {
   showSpecialExamByIdStudentAdmin,
   updateWrittenMinus,
   specialGetHistoryFilter,
+  updateSpecialExamPhoto,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -79,6 +80,15 @@ router.put(
     upload.single("iLink"),
   ],
   updateSpecialExam
+);
+router.post(
+  "/updateSpecialExamPhoto",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
+  updateSpecialExamPhoto
 );
 router.post(
   "/addquestionmcq",

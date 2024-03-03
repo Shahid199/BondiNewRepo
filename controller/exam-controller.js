@@ -37,6 +37,14 @@ const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestio
 const FreestudentMarksRank = require("../model/FreestudentMarksRank");
 
 const Limit = 100;
+const shuffle = (array) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
+
 //create Exam
 const createExam1 = async (req, res, next) => {
   const file = req.file;
@@ -1474,9 +1482,9 @@ const refillQuestion = async (req, res, next) => {
   let noOfSet = null;
   try {
     mIdArray = await McqQuestionVsExam.find({ eId: examIdObj }, "mId");
-    noOfQuestions = await Exam.findById(examId);
-    noOfQuestions = noOfQuestions.totalQuestionMcq;
-    noOfSet = noOfQuestions.numberOfSet;
+    const exam = await Exam.findById(examId);
+    noOfQuestions = exam.totalQuestionMcq;
+    noOfSet = exam.numberOfSet;
   } catch (err) {
     return res.status(500).json(err);
   }
@@ -1496,50 +1504,22 @@ const refillQuestion = async (req, res, next) => {
       );
   let setNo = mIdArray[0].setName;
   mIdArray = mIdArray[0].mId;
-  let randArray = [];
-  let insertDataArray = [];
-  let flag = false;
-  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {
-    let rand = null;
-    while (1) {
-      rand = parseInt(Date.now() % mIdArray.length);
-      if (randArray.includes(rand) == true || rand == 0) continue;
-      randArray.push(rand);
-      break;
+  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {   
+    let shuffledArray= shuffle(mIdArray);
+    let getSetName = Number(i);
+    let questionExam = new McqQuestionVsExam({
+      eId: examIdObj,
+      mId: shuffledArray,
+      setName: parseInt(getSetName),
+    });
+    try {
+      doc1 = await questionExam.save();
+    } catch (err) {
+      return res.status(500).json(err);
     }
-    let dataArray = [];
-    if (flag == false) {
-      for (let j = 0; j < rand; j++) {
-        dataArray.push(mIdArray[j]);
-      }
-      for (let k = noOfQuestions - 1; k >= rand; k--) {
-        dataArray.push(mIdArray[k]);
-      }
-      flag = true;
-    } else {
-      for (let j = rand; j >= 0; j--) {
-        dataArray.push(mIdArray[j]);
-      }
-      for (let k = noOfQuestions - 1; k >= rand; k--) {
-        dataArray.push(mIdArray[k]);
-      }
-      flag = false;
-    }
-    let questionObj = {};
-    questionObj["eId"] = examIdObj;
-    questionObj["mId"] = dataArray;
-    questionObj["setName"] = Number(i);
-    insertDataArray.push(questionObj);
   }
 
-  let doc = null;
-  try {
-    doc = await BothMcqQuestionVsExam.insertMany(insertDataArray, {
-      ordered: false,
-    });
-  } catch (err) {
-    return res.status(500).json(err);
-  }
+ 
   return res.status(201).json("Inserted question to the exam's all sets.");
 };
 
