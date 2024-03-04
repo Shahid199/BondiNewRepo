@@ -778,6 +778,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   const questionArray = req.body.questionArray;
   const examId = req.body.examId;
   const subjectId = req.body.subjectId;
+  const setName = Number(req.body.setName);
   //console.log(examId);
   //console.log(subjectId);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
@@ -793,25 +794,41 @@ const addQuestionMcqBulk = async (req, res, next) => {
   //console.log(finalIds);
   if (finalIds.length == 0)
     return res.status(404).json("question IDs is not valid.");
-  let mIdArray = null;
+  let mIdArray = null,examDetails=null;
   try {
-    mIdArray = await SpecialExam.findById(examId, "questionMcq");
+    examDetails = await SpecialExam.findById(examId);
   } catch (err) {
     return res.status(500).json(err);
   }
   //console.log("midarray:", mIdArray);
-  mIdArray = mIdArray.questionMcq;
+  mIdArray = examDetails.questionMcq;
   //console.log("midarray:", mIdArray);
+  let numOfQuestions=null,numberOfSlotAvailable=null;
   let bulkData = [];
-  //console.log("subdid:", subjectId);
-  for (let i = 0; i < mIdArray.length; i++) {
-    //console.log("subid:", String(mIdArray[i].subjectId));
-    if (String(subjectId) == String(mIdArray[i].subjectId)) {
-      bulkData = mIdArray[i].mcqId;
-      //console.log("bulkData:", bulkData);
-      break;
-    }
+  if (examDetails) {
+   for(let i = 0 ; i<examDetails.subjectInfo.length; i++){
+      if(String(examDetails.subjectInfo[i].subjectId)=== (subjectId)){
+        numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
+      }
+   }
+   for(let i = 0 ; i<examDetails.questionMcq.length; i++){
+     if(String(examDetails.questionMcq[i].subjectId) === (subjectId)){
+        for(let j = 0 ; j<examDetails.questionMcq[i].mcqQuestions.length; j++){
+          if(examDetails.questionMcq[i].mcqQuestions[j].setName===Number(setName)){
+            numberOfSlotAvailable = numOfQuestions-examDetails.questionMcq[i].mcqQuestions[j].mcqIds.length;
+            if(numberOfSlotAvailable<=0){
+              return res.status(404).json("Set is full");
+            }
+            bulkData= examDetails.questionMcq[i].mcqQuestions[j].mcqIds;
+            break;
+          }
+        }
+        
+      }
+   }
   }
+  //console.log("subdid:", subjectId);
+  
   ////console.log(mIdArray);
   let finalIdsString = [];
   finalIdsString = finalIds.map((e) => String(e));
@@ -823,10 +840,18 @@ const addQuestionMcqBulk = async (req, res, next) => {
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
+  if(withoutDuplicate.length>numberOfSlotAvailable){
+    return res.status(400).json(`You can transfer only ${numberOfSlotAvailable}`);
+  }
   for (let i = 0; i < mIdArray.length; i++) {
     if (subjectId == String(mIdArray[i].subjectId)) {
-      mIdArray[i].mcqId = withoutDuplicate;
-      break;
+      for(let j = 0 ; j<mIdArray[i].mcqQuestions.length; j++){
+        if(mIdArray[i].mcqQuestions[j].setName===Number(setName)){
+          mIdArray[i].mcqQuestions[j].mcqIds = withoutDuplicate;
+          break;
+        }
+      }
+      
     }
   }
   ////console.log(withoutDuplicate);
