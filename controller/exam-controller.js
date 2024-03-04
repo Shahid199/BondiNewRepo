@@ -1417,10 +1417,21 @@ const addQuestionMcqBulk = async (req, res, next) => {
   const { questionArray, examId, setName } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let finalIds = [];
+  let examDetails;
+  try{
+    examDetails = await Exam.findOne({_id:examIdObj})
+  }catch{
+    return res.status(404).json("Cannot transfer to this exam")
+  }
+  
+  // totalQuestionMcq
   for (let i = 0; i < questionArray.length; i++) {
     if (ObjectId.isValid(questionArray[i]))
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
     else continue;
+  }
+  if(finalIds.length>examDetails.totalQuestionMcq){
+    return res.status(400).json(`You can transfer more than ${examDetails.totalQuestionMcq} `)
   }
   ////console.log(finalIds);
   if (finalIds.length == 0)
@@ -1453,6 +1464,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   }
   ////console.log(mIdArray);
   mIdArray = mIdArray.mId;
+  const prevLength = mIdArray.length;
   let finalIdsString = [];
   finalIdsString = finalIds.map((e) => String(e));
   mIdArray = mIdArray.map((e) => String(e));
@@ -1462,6 +1474,11 @@ const addQuestionMcqBulk = async (req, res, next) => {
     (e) => new mongoose.Types.ObjectId(e)
   );
   ////console.log(withoutDuplicate);
+  const totalLength = prevLength + withoutDuplicate.length;
+  const reaminingLength = examDetails.totalQuestionMcq - prevLength;
+  if(totalLength>examDetails.totalQuestionMcq){
+    return res.status(400).json(`You can transfer atmost ${reaminingLength}`)
+  }
   try {
     sav = await McqQuestionVsExam.updateOne(
       { eId: examId, setName: setName },

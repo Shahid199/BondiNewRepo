@@ -81,6 +81,7 @@ router.get(
   ],
   questionByExamIdAndSet
 );
+
 router.get(
   "/getbothexambyid",
   [

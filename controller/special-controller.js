@@ -675,7 +675,7 @@ const addQuestionMcq = async (req, res, next) => {
   let explanationILinkPath = null;
   let examIdObj;
   //let type = req.query.type;
-  let question;
+  let question='';
   const {
     questionText,
     optionCount,
@@ -684,6 +684,7 @@ const addQuestionMcq = async (req, res, next) => {
     examId,
     type,
     subjectId,
+    setName
   } = req.body;
   let options = JSON.parse(req.body.options);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
@@ -691,17 +692,13 @@ const addQuestionMcq = async (req, res, next) => {
   const file = req.files;
   //question insert for text question(type=true)
   if (JSON.parse(type) == true) {
-    if (!file.explanationILink) {
-      return res.status(404).json("Expalnation File not uploaded.");
-    }
+    
     question = questionText;
-    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
   } else {
     if (!file.iLink) {
       return res.status(404).json("Question File not uploaded.");
     }
     iLinkPath = "uploads/".concat(file.iLink[0].filename);
-    explanationILinkPath = "uploads/".concat(file.explanationILink[0].filename);
     question = iLinkPath;
     options = [];
   }
@@ -727,33 +724,48 @@ const addQuestionMcq = async (req, res, next) => {
   let questionId = doc._id;
   //console.log(questionId);
   if (!questionId) return res.status(400).send("question not inserted");
-  let mcqData,
-    doc1,
-    mcqQuestion = [];
+ 
+  let examDetails = {};
+
   try {
-    mcqData = await SpecialExam.findById(examIdObj).select("questionMcq -_id");
-  } catch (err) {
-    return res.status(500).json(err);
+    examDetails = await SpecialExam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
   }
-  ////console.log("mcqData:", mcqData);
-  mcqData = mcqData.questionMcq;
-  let mcqQues = mcqData;
-  for (let i = 0; i < mcqQues.length; i++) {
-    //console.log(i);
-    //console.log("mcq question:", mcqQues[i].subjectId);
-    //console.log("subjectId:", subjectIdObj);
-    if (subjectId == String(mcqQues[i].subjectId)) {
-      //console.log(mcqQues[i].subjectId);
-      mcqQues[i].mcqId.push(questionId);
-      break;
-    }
+  let numOfQuestions=null,numberOfSlotAvailable=null;
+  if (examDetails) {
+     console.log(examDetails);
+   for(let i = 0 ; i<examDetails.subjectInfo.length; i++){
+      if(String(examDetails.subjectInfo[i].subjectId)=== (subjectId)){
+        numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
+      }
+   }
+   for(let i = 0 ; i<examDetails.questionMcq.length; i++){
+     if(String(examDetails.questionMcq[i].subjectId) === (subjectId)){
+        for(let j = 0 ; j<examDetails.questionMcq[i].mcqQuestions.length; j++){
+          if(examDetails.questionMcq[i].mcqQuestions[j].setName===Number(setName)){
+            numberOfSlotAvailable = numOfQuestions-examDetails.questionMcq[i].mcqQuestions[j].mcqIds.length;
+            if(numberOfSlotAvailable<=0){
+              return res.status(404).json("Set is full");
+            }
+            examDetails.questionMcq[i].mcqQuestions[j].mcqIds.push(questionId)
+          }
+        }
+        
+      }
+   }
   }
+
   //console.log("mcqQues:", mcqQues);
+  
+  let doc1;
   try {
     doc1 = await SpecialExam.findOneAndUpdate(
       { _id: examIdObj },
       {
-        questionMcq: mcqQues,
+        questionMcq: examDetails.questionMcq,
       }
     );
   } catch (err) {
@@ -874,6 +886,59 @@ const questionByExamSub = async (req, res, next) => {
     result["status"] = quesData[i].status;
     resultAll.push(result);
   }
+  // resultAll.push({ totalQuestion: queryResult.mId.length });
+  // resultAll.push({ examId: String(queryResult.eId) });
+  return res.status(200).json(resultAll);
+};
+const questionByExamIdSubjectAndSet = async (req, res, next) => {
+  const {examId,subjectId} = req.query;
+  const setName = Number(req.query.setName);
+  
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+  return res.status(404).json("exam Id is not valid.");
+const examIdObj = new mongoose.Types.ObjectId(examId);
+const subjectIdIdObj = new mongoose.Types.ObjectId(subjectId);
+let queryResult = null;
+
+try {
+  queryResult = await SpecialExam.findById(examId);
+} catch (err) {
+  return res.status(500).json(err);
+}
+queryResult = queryResult.questionMcq;
+let mcqId = [];
+for (let i = 0; i < queryResult.length; i++) {
+  if (subjectId == String(queryResult[i].subjectId)) {
+    for (let j = 0; j <queryResult[i].mcqQuestions.length; j++) {
+      if(queryResult[i].mcqQuestions[j].setName===setName){
+        mcqId =queryResult[i].mcqQuestions[j].mcqIds;
+        break;
+      }
+    }
+  }
+}
+mcqId = mcqId.map((e) => new mongoose.Types.ObjectId(e));
+let quesData = [];
+try {
+  quesData = await QuestionsMcq.find({
+    $and: [{ _id: { $in: mcqId } }, { status: true }],
+  });
+} catch (err) {
+  return res.status(500).json(err);
+}
+let resultAll = [];
+for (let i = 0; i < quesData.length; i++) {
+  let result = {};
+  // if (queryResult.mId[i] == null) continue;
+  result["type"] = quesData[i].type;
+  result["question"] = quesData[i].question;
+  result["options"] = quesData[i].options;
+  result["correctOption"] = quesData[i].correctOption;
+  result["explanation"] = quesData[i].explanationILink;
+  result["questionId"] = quesData[i]._id;
+  result["status"] = quesData[i].status;
+  resultAll.push(result);
+}
   // resultAll.push({ totalQuestion: queryResult.mId.length });
   // resultAll.push({ examId: String(queryResult.eId) });
   return res.status(200).json(resultAll);
@@ -5149,6 +5214,50 @@ const updateSpecialExamPhoto = async (req, res, next) => {
     res.status(404).json("could not update the photo!");
   }
 };
+const slotAvailable = async (req, res, next) => {
+  let numberOfSlotAvailable, mcqQData;
+
+  const { examId, setName,subjectId } = req.query;
+  let setName1 = parseInt(setName);
+
+  let examDetails = {};
+
+  try {
+    examDetails = await SpecialExam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  let numOfQuestions=null;
+  if (examDetails) {
+    //  console.log(examDetails);
+   for(let i = 0 ; i<examDetails.subjectInfo.length; i++){
+      if(String(examDetails.subjectInfo[i].subjectId)=== (subjectId)){
+        numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
+      }
+   }
+   for(let i = 0 ; i<examDetails.questionMcq.length; i++){
+     if(String(examDetails.questionMcq[i].subjectId) === (subjectId)){
+        for(let j = 0 ; j<examDetails.questionMcq[i].mcqQuestions.length; j++){
+          if(examDetails.questionMcq[i].mcqQuestions[j].setName===Number(setName)){
+            numberOfSlotAvailable = numOfQuestions-examDetails.questionMcq[i].mcqQuestions[j].mcqIds.length;
+            break;
+          }
+        }
+        
+      }
+   }
+  }
+  if(numberOfSlotAvailable<0){
+    return res.status(500).json("Operational error! Please check all questions")
+  }else{
+    
+  return res.status(200).json({ slots: numberOfSlotAvailable });
+  }
+};
+exports.slotAvailable = slotAvailable;
+exports.questionByExamIdSubjectAndSet = questionByExamIdSubjectAndSet;
 exports.updateSpecialExamPhoto = updateSpecialExamPhoto;
 exports.specialGetHistoryFilter = specialGetHistoryFilter;
 exports.updateWrittenMinus = updateWrittenMinus;

@@ -60,6 +60,8 @@ const {
   updateWrittenMinus,
   specialGetHistoryFilter,
   updateSpecialExamPhoto,
+  slotAvailable,
+  questionByExamIdSubjectAndSet
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -89,6 +91,24 @@ router.post(
     upload.single("iLink"),
   ],
   updateSpecialExamPhoto
+);
+
+router.get(
+  "/slotAvailable",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator","teacher"]),
+  ],
+  //authorize(["student"]),
+  slotAvailable
+);
+router.get(
+  "/questionByExamIdSubjectAndSet",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  questionByExamIdSubjectAndSet
 );
 router.post(
   "/addquestionmcq",

@@ -1801,7 +1801,49 @@ const submitAnswerMcq = async (req, res, next) => {
   }
   return res.status(201).json("submited mcq Successfully.");
 };
+const slotAvailable = async (req, res, next) => {
+  let numberOfSlotAvailable, mcqQData;
 
+  const { examId, setName,subjectId } = req.query;
+  let setName1 = parseInt(setName);
+
+  let examDetails = {};
+
+  try {
+    examDetails = await SpecialExam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  let numOfQuestions=null;
+  if (examDetails) {
+     console.log(examDetails);
+   for(let i = 0 ; i<examDetails.subjectInfo.length; i++){
+      if(String(examDetails.subjectInfo[i].subjectId)=== (subjectId)){
+        numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
+      }
+   }
+   for(let i = 0 ; i<examDetails.questionMcq.length; i++){
+     if(String(examDetails.questionMcq[i].subjectId) === (subjectId)){
+        for(let j = 0 ; j<examDetails.questionMcq[i].mcqQuestions.length; j++){
+          if(examDetails.questionMcq[i].mcqQuestions[j].setName===Number(setName)){
+            numberOfSlotAvailable = numOfQuestions-examDetails.questionMcq[i].mcqQuestions[j].mcqIds.length;
+          }
+        }
+        
+      }
+   }
+  }
+  if(numberOfSlotAvailable<0){
+    return res.status(500).json("Operational error! Please check all questions")
+  }else{
+    
+  return res.status(200).json({ slots: numberOfSlotAvailable });
+  }
+};
+
+exports.slotAvailable = slotAvailable;
 exports.getAllRank = getAllRank;
 exports.getRank = getRank;
 exports.updateRank = updateRank;
