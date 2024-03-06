@@ -22,6 +22,7 @@ const {
   refillQuestion
 } = require("../controller/both-controller");
 const router = express.Router();
+
 router.post(
   "/createbothexam",
   [

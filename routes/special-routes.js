@@ -61,7 +61,8 @@ const {
   specialGetHistoryFilter,
   updateSpecialExamPhoto,
   slotAvailable,
-  questionByExamIdSubjectAndSet
+  questionByExamIdSubjectAndSet,
+  refillQuestion
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -91,6 +92,14 @@ router.post(
     upload.single("iLink"),
   ],
   updateSpecialExamPhoto
+);
+router.post(
+  "/refillquestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  refillQuestion
 );
 
 router.get(
