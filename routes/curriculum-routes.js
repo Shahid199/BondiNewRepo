@@ -4,6 +4,7 @@ const {
   getCurriculums,
   updateCurriculum,
   removeCurriculum,
+  getCurriculumId
 } = require('../controller/curriculum-controller')
 const authorize = require('../utilities/authorizationMiddleware')
 const passport = require('passport')
@@ -25,6 +26,7 @@ router.get(
   ],
   getCurriculums
 )
+router.get('/getcurriculumid', getCurriculumId)
 router.post('/updatecurriculum', updateCurriculum)
 router.post('/removecurriculum', removeCurriculum)
 

@@ -44,10 +44,6 @@ const updateCurriculum = async (req, res, next) => {
     name,
     isAdmission
   } = req.body;
- 
-  //console.log("CT", moment(new Date()));
-  //console.log("ST", moment(new Date(startTime)));
-  //console.log("ET", moment(new Date(endTime)));
 
   let updatedCurriculum = {
     name,    
@@ -64,21 +60,38 @@ const updateCurriculum = async (req, res, next) => {
 };
 
 const removeCurriculum = async (req, res, next) => {
-  const id = req.body.id;
+  const id = req.query.id;
+  console.log(id);
   if (!ObjectId.isValid(id))
     return res.status(404).json("Invalid exam Id.");
   const curObj = new mongoose.Types.ObjectId(id);
   let queryResult = null;
   try {
-    queryResult = await Curriculum.find({ _id:curObj }).remove().exec();
+    queryResult = await Curriculum.deleteOne({ _id:curObj });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.status(500).json("eikhane error");
   }
   if (queryResult) return res.status(201).json("Curriculum Removed.");
   else return res.status(404).json("Something went wrong.");
 };
+
+const getCurriculumId = async(req,res,next) =>{
+  const id = req.query.id;
+  let result;
+  try {
+     result = await Curriculum.findById(id);
+  } catch (error) {
+    return res.status(400).json("Operational Error! Contact with developer")
+  }
+  if(result){
+    return res.status(200).json(result);
+  }else{
+    return res.status(404).json("Details could not find");
+  }
+}
 //export functions
 exports.createCurriculum = createCurriculum;
 exports.getCurriculums = getCurriculums;
+exports.getCurriculumId = getCurriculumId;
 exports.updateCurriculum= updateCurriculum;
 exports.removeCurriculum = removeCurriculum;
