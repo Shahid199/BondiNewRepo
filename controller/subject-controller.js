@@ -9,25 +9,25 @@ const pagination = require("../utilities/pagination");
 const createSubject = async (req, res) => {
   const { courseId, name, descr } = req.body;
   let file = req.file;
-  let iLinkPath = null;
+  let iLinkPath = null+(new Date()).toString();
   if (file) {
     //return res.status(404).json("please Provide valid filename.");
     const courseId1 = courseId;
     iLinkPath = "uploads/".concat(file.filename);
   }
-  let existingSubject;
-  try {
-    existingSubject = await Subject.findOne({ name: name }).select("courseId");
-  } catch (err) {
-    ////console.log(err);
-    return res.status(500).json("Something went wrong!");
-  }
-  if (existingSubject) {
-    existingSubject = String(existingSubject.courseId);
-  }
-  if (existingSubject == courseId) {
-    return res.status(400).json({ message: "course already exist" });
-  }
+  // let existingSubject;
+  // try {
+  //   existingSubject = await Subject.findOne({ name: name }).select("courseId");
+  // } catch (err) {
+  //   ////console.log(err);
+  //   return res.status(500).json("Something went wrong!");
+  // }
+  // if (existingSubject) {
+  //   existingSubject = String(existingSubject.courseId);
+  // }
+  // if (existingSubject == courseId) {
+  //   return res.status(400).json({ message: "course already exist" });
+  // }
   const subject = new Subject({
     name: name,
     descr: descr,
@@ -35,10 +35,11 @@ const createSubject = async (req, res) => {
     courseId: courseId,
     status: true,
   });
+  console.log(subject);
   try {
     const doc = await subject.save();
   } catch (err) {
-    ////console.log(err);
+    console.log(err);
     return res.status(500).json("Something went wrong!");
   }
   return res.status(201).json({ message: "Subject Successfully created." });
@@ -225,6 +226,34 @@ const subjectDeactivate = async (req, res, nex) => {
 
   return res.status(201).json("Deactivated.");
 };
+const updateSubjectPhoto = async (req, res, next) => {
+  const file = req.file;
+  let iLinkPath = null;
+  // console.log(file);
+  if (file) {
+    iLinkPath = "uploads/".concat(file.filename);
+  }
+  const { examId } = req.body;
+  const filter = { _id: examId };
+  console.log(filter);
+  let update;
+  try {
+    update = await Subject.findOneAndUpdate(
+      filter,
+      {
+        iLink: iLinkPath,
+      },
+      { new: true }
+    );
+  } catch (error) {
+    res.status(404).json(error);
+  }
+  if (update) {
+    res.status(202).json("Successfully Uploaded the photo");
+  } else {
+    res.status(404).json("could not update the photo!");
+  }
+};
 exports.createSubject = createSubject;
 exports.getSubjectByCourse = getSubjectByCourse;
 exports.getSubjectById = getSubjectById;
@@ -232,3 +261,4 @@ exports.updateSubject = updateSubject;
 exports.getAllSubject = getAllSubject;
 exports.subjectDeactivate = subjectDeactivate;
 exports.getSubjectByCourseAdmin = getSubjectByCourseAdmin;
+exports.updateSubjectPhoto = updateSubjectPhoto;

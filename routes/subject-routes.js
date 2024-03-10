@@ -9,6 +9,7 @@ const {
   getAllSubject,
   subjectDeactivate,
   getSubjectByCourseAdmin,
+  updateSubjectPhoto,
 } = require("../controller/subject-controller");
 const { upload } = require("../utilities/multer");
 const { getHistoryByExamId } = require("../controller/student-controller");
@@ -22,6 +23,16 @@ router.post(
   ],
   createSubject
 );
+router.post(
+  "/updatesubjectphoto",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
+  updateSubjectPhoto
+);
+
 router.put(
   "/updatesubject",
   [

@@ -194,8 +194,8 @@ const createExam2 = async (req, res, next) => {
 
 const createExam = async (req, res, next) => {
   const file = req.file;
-  console.log(file);
-  console.log(req.body);
+  // console.log(file);
+  // console.log(req.body);
   let iLinkPath = null;
   if (file) {
     iLinkPath = "uploads/".concat(file.filename);
