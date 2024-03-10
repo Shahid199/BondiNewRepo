@@ -41,7 +41,8 @@ const {
   questionByExamIdAndSet,
   getAllData,
   slotAvailable,
-  refillQuestion
+  refillQuestion,
+  changeCorrectAnswer
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -53,6 +54,15 @@ router.post(
     upload.single("iLink"),
   ],
   createExam
+);
+router.post(
+  "/changeanswer",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
+  changeCorrectAnswer
 );
 router.get(
   "/slotAvailable",

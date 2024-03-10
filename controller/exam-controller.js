@@ -37,6 +37,7 @@ const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestio
 const FreestudentMarksRank = require("../model/FreestudentMarksRank");
 
 const Limit = 100;
+
 const shuffle = (array) => { 
   for (let i = array.length - 1; i > 0; i--) { 
     const j = Math.floor(Math.random() * (i + 1)); 
@@ -765,6 +766,7 @@ const getExamBySubAdmin = async (req, res, next) => {
   }
   return res.status(200).json(examData);
 };
+
 const getExamBySubWritten = async (req, res, next) => {
   const subjectId = req.query.subjectId;
   const examType = req.query.examType;
@@ -2419,6 +2421,22 @@ const resetExam = async (req, res, next) => {
   return res.status(200).json("Successfully reset exam for student.");
 };
 
+const changeCorrectAnswer = async(req,res,next)=>{
+  const {id,correctAnswer} = req.body;
+  let question;
+  // console.log(id,correctAnswer);
+  try {
+     question = await QuestionsMcq.findByIdAndUpdate(id,{
+      correctOption:Number(correctAnswer)
+     });
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+  return res.status(201).json("Updated the question");
+  
+}
+
+
 const resetExam1 = async (req, res, next) => {
   let regNo = req.body.regNo;
   let examId = req.body.examId;
@@ -2725,6 +2743,7 @@ const updateExamPhoto = async (req, res, next) => {
 
 //export functions
 exports.refillQuestion = refillQuestion;
+exports.changeCorrectAnswer = changeCorrectAnswer;
 exports.slotAvailable = slotAvailable;
 exports.getAllData = getAllData;
 exports.questionByExamIdAndSet = questionByExamIdAndSet;

@@ -703,10 +703,8 @@ const getFreeExamAll = async (req, res, next) => {
     dataObj["marksPerMcq"] = exams[i].marksPerMcq;
     dataObj["name"] = exams[i].name;
     dataObj["negativeMarks"] = exams[i].negativeMarks;
-    dataObj["sscStatus"] = exams[i].sscStatus;
-    dataObj["buetStatus"] = exams[i].buetStatus;
-    dataObj["medicalStatus"] = exams[i].medicalStatus;
-    dataObj["universityStatus"] = exams[i].universityStatus;
+    dataObj["isAdmssion"] = exams[i].isAdmssion;
+    dataObj["curriculumName"] = exams[i].curriculumName;
     dataObj["startTime"] = exams[i].startTime;
     dataObj["endTime"] = exams[i].endTime;
     dataObj["status"] = exams[i].status;
