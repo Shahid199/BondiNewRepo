@@ -628,6 +628,7 @@ const assignQuestion1 = async (req, res, next) => {
   return res.status(201).json(questions);
 };
 //checked
+//checked 2
 const assignQuestion2 = async (req, res, next) => {
   //data get from examcheck function req.body
   const eId = req.query.eId;
