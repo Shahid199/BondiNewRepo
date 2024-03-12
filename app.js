@@ -62,7 +62,6 @@ const curriculumRouter = require("./routes/curriculum-routes");
 const removeRouter = require("./routes/removefiles-routes");
 // const mcqSpecialRouter = require("./routes/mcqspecial-routes");
 const { assignQuestion } = require("./controller/student-controller");
-const removeRouter = require("./routes/removefiles-routes");
 
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));

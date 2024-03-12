@@ -4401,13 +4401,16 @@ const assignWrittenQuestion = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("something went wrong.");
   }
-  for (let i = 0; i < questionsNo; i++) {
+  let dataSubArr = [];
+  for (let i = 0; i < questionsNo.totalQuestions; i++) {
     dataArr[i] = null;
+    dataSubArr[i] = [];
   }
   let data = new StudentExamVsQuestionsWritten({
     examId: examId,
     studentId: studentId,
     ansewerScriptILink: dataArr,
+    submittedScriptILink: dataSubArr,
   });
   try {
     sav = data.save();
