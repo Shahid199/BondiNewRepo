@@ -900,7 +900,6 @@ const assignQuestion = async (req, res, next) => {
   }
   return res.status(201).json("Suceess!!");
 };
-
 //update question answer when student select answer
 //API:/updateassignquestion?examid=<examid>&questionindex=<questionumber>$optionindex=<optionindex>
 const updateAssignQuestion = async (req, res, next) => {
