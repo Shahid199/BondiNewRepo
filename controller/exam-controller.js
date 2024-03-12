@@ -38,13 +38,18 @@ const FreestudentMarksRank = require("../model/FreestudentMarksRank");
 
 const Limit = 100;
 
-const shuffle = (array) => { 
-  for (let i = array.length - 1; i > 0; i--) { 
-    const j = Math.floor(Math.random() * (i + 1)); 
-    [array[i], array[j]] = [array[j], array[i]]; 
-  } 
-  return array; 
-}; 
+function checkIfEmpty(array) {
+  return (
+    Array.isArray(array) && (array.length == 0 || array.every(checkIfEmpty))
+  );
+}
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 //create Exam
 const createExam1 = async (req, res, next) => {
@@ -1420,20 +1425,22 @@ const addQuestionMcqBulk = async (req, res, next) => {
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let finalIds = [];
   let examDetails;
-  try{
-    examDetails = await Exam.findOne({_id:examIdObj})
-  }catch{
-    return res.status(404).json("Cannot transfer to this exam")
+  try {
+    examDetails = await Exam.findOne({ _id: examIdObj });
+  } catch {
+    return res.status(404).json("Cannot transfer to this exam");
   }
-  
+
   // totalQuestionMcq
   for (let i = 0; i < questionArray.length; i++) {
     if (ObjectId.isValid(questionArray[i]))
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
     else continue;
   }
-  if(finalIds.length>examDetails.totalQuestionMcq){
-    return res.status(400).json(`You can transfer more than ${examDetails.totalQuestionMcq} `)
+  if (finalIds.length > examDetails.totalQuestionMcq) {
+    return res
+      .status(400)
+      .json(`You can transfer more than ${examDetails.totalQuestionMcq} `);
   }
   ////console.log(finalIds);
   if (finalIds.length == 0)
@@ -1478,8 +1485,8 @@ const addQuestionMcqBulk = async (req, res, next) => {
   ////console.log(withoutDuplicate);
   const totalLength = prevLength + withoutDuplicate.length;
   const reaminingLength = examDetails.totalQuestionMcq - prevLength;
-  if(totalLength>examDetails.totalQuestionMcq){
-    return res.status(400).json(`You can transfer atmost ${reaminingLength}`)
+  if (totalLength > examDetails.totalQuestionMcq) {
+    return res.status(400).json(`You can transfer atmost ${reaminingLength}`);
   }
   try {
     sav = await McqQuestionVsExam.updateOne(
@@ -1523,8 +1530,8 @@ const refillQuestion = async (req, res, next) => {
       );
   let setNo = mIdArray[0].setName;
   mIdArray = mIdArray[0].mId;
-  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {   
-    let shuffledArray= shuffle(mIdArray);
+  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {
+    let shuffledArray = shuffle(mIdArray);
     let getSetName = Number(i);
     let questionExam = new McqQuestionVsExam({
       eId: examIdObj,
@@ -1538,7 +1545,6 @@ const refillQuestion = async (req, res, next) => {
     }
   }
 
- 
   return res.status(201).json("Inserted question to the exam's all sets.");
 };
 
@@ -1879,25 +1885,26 @@ const assignStudentToTeacher = async (req, res, next) => {
   }
   questionNo = questionNo.totalQuestions;
   let nullStudentId = [];
+  let students = [],
+    studData = [];
   for (let i = 0; i < dataAll.length; i++) {
-    if (dataAll[i].submittedScriptILink.length == 0) {
+    if (checkIfEmpty(dataAll[i].submittedScriptILink) == true) {
       nullStudentId.push(dataAll[i].studentId);
     } else {
       count++;
+      studData.push(dataAll[i].studentId);
     }
   }
-  console.log("asdasdasda", count, dataAll.length);
+  console.log("asdasdasda", count, nullStudentId.length);
   if (count == 0)
     return res
       .status(404)
       .json("No Student participate in the exam or all Scripts are empty.");
 
-  let students = [],
-    studData = [];
-  for (let i = 0; i < dataAll.length; i++) {
-    if (dataAll[i].submittedScriptILink.length == 0) continue;
-    studData.push(dataAll[i].studentId);
-  }
+  // for (let i = 0; i < dataAll.length; i++) {
+  //   if (dataAll[i].submittedScriptILink.length == 0) continue;
+  //   studData.push(dataAll[i].studentId);
+  // }
   if (nullStudentId.length != 0) {
     let obtainedMarksPerQuestion = [];
     for (let j = 0; j < questionNo; j++) {
@@ -2421,21 +2428,19 @@ const resetExam = async (req, res, next) => {
   return res.status(200).json("Successfully reset exam for student.");
 };
 
-const changeCorrectAnswer = async(req,res,next)=>{
-  const {id,correctAnswer} = req.body;
+const changeCorrectAnswer = async (req, res, next) => {
+  const { id, correctAnswer } = req.body;
   let question;
   // console.log(id,correctAnswer);
   try {
-     question = await QuestionsMcq.findByIdAndUpdate(id,{
-      correctOption:Number(correctAnswer)
-     });
+    question = await QuestionsMcq.findByIdAndUpdate(id, {
+      correctOption: Number(correctAnswer),
+    });
   } catch (error) {
     return res.status(400).json(error);
   }
   return res.status(201).json("Updated the question");
-  
-}
-
+};
 
 const resetExam1 = async (req, res, next) => {
   let regNo = req.body.regNo;

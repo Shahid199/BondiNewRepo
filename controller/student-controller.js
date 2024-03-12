@@ -1947,6 +1947,7 @@ const historyData = async (req, res, next) => {
       .format("YYYY-MM-DD hh:mm:ss A");
     data1["subjectName"] = subjectName;
     data1["totalStudent"] = totalStudent;
+    data1["numberOfRetakes"] = data[i].examId.numberOfRetakes;
     resultData.push(data1);
   }
   return res.status(200).json({ resultData, paginateData });
@@ -5844,6 +5845,7 @@ const bothHistoryData = async (req, res, next) => {
       .subtract(6, "h")
       .format("LLL");
     data1["totalStudent"] = totalStudent;
+    data1["numberOfRetakes"] = data[i].examId.numberOfRetakes;
     resultData.push(data1);
   }
   let count = resultData.length;
