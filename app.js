@@ -59,6 +59,7 @@ const teacherRouter = require("./routes/teacher-routes");
 const bothRouter = require("./routes/both-routes");
 const smsRouter = require("./routes/sms-routes");
 const curriculumRouter = require("./routes/curriculum-routes");
+const removeRouter = require("./routes/removefiles-routes");
 // const mcqSpecialRouter = require("./routes/mcqspecial-routes");
 const { assignQuestion } = require("./controller/student-controller");
 
@@ -78,6 +79,7 @@ app.use("/api/special", specialRouter);
 app.use("/api/teacher", teacherRouter);
 app.use("/api/both", bothRouter);
 app.use("/api/sms", smsRouter);
+app.use("/api/remove", removeRouter);
 mongoose
   .connect(
     //"mongodb+srv://admin:01823787730Shahid@cluster0.wpepadn.mongodb.net/Bondi?retryWrites=true&w=majority"
