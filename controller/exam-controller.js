@@ -1896,7 +1896,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     }
   }
   console.log("asdasdasda", count, nullStudentId.length);
-  if (count == 0)
+  if (count == 0 && nullStudentId.length == 0)
     return res
       .status(404)
       .json("No Student participate in the exam or all Scripts are empty.");
@@ -2121,25 +2121,33 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   }
   questionNo = questionNo.totalQuestions;
   let nullStudentId = [];
+  //13-03-2024
+  let students = [],
+    studData = [];
   for (let i = 0; i < dataAll.length; i++) {
-    if (dataAll[i].submittedScriptILink.length > 0) {
-      count++;
-    } else {
+    if (checkIfEmpty(dataAll[i].submittedScriptILink) == true) {
       nullStudentId.push(dataAll[i].studentId);
+    } else {
+      count++;
+      studData.push(dataAll[i].studentId);
     }
-  }
+  }//13-03-2024
+  // for (let i = 0; i < dataAll.length; i++) {
+  //   if (dataAll[i].submittedScriptILink.length > 0) {
+  //     count++;
+  //   } else {
+  //     nullStudentId.push(dataAll[i].studentId);
+  //   }
+  // }
   if (count == 0 && nullStudentId.length == 0)
     return res
       .status(404)
       .json("No Student participate in the exam or No students upload paper.");
-
-  let students = [],
-    studData = [];
-  for (let i = 0; i < dataAll.length; i++) {
-    if (dataAll[i].submittedScriptILink.length > 0) {
-      studData.push(dataAll[i].studentId);
-    }
-  }
+  // for (let i = 0; i < dataAll.length; i++) {
+  //   if (dataAll[i].submittedScriptILink.length > 0) {
+  //     studData.push(dataAll[i].studentId);
+  //   }
+  // }
   if (nullStudentId.length > 0) {
     let obtainedMarksPerQuestion = [];
     for (let j = 0; j < questionNo; j++) {
@@ -2153,7 +2161,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
           $set: {
             obtainedMarks: obtainedMarksPerQuestion,
             totalObtainedMarksWritten: 0,
-            // checkStatus: true,
+            checkStatus: true,
           },
         }
       );

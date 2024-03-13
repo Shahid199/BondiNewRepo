@@ -6446,6 +6446,23 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     return res.status(500).json(err);
   }
   let saveStudentQuestion = null;
+  //13-03-2024
+  let numberOfWrittenQuestions = null;
+  let subArr = [];
+  try {
+    numberOfWrittenQuestions = await BothQuestionsWritten.findOne({
+      examId: eId1,
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  if (!numberOfWrittenQuestions)
+    return res.status(404).json("question not added.");
+  numberOfWrittenQuestions = Number(numberOfWrittenQuestions.totalQuestions);
+  for (let i = 0; i < numberOfWrittenQuestions; i++) {
+    subArr[i] = [];
+  }
+  //13-03-2024
   let duration = Number(bothExam.mcqDuration);
   let examStartTime = moment(new Date());
   let examEndTime = moment(examStartTime).add(duration, "m");
@@ -6476,6 +6493,8 @@ const bothAssignQuestionMcq = async (req, res, next) => {
     examEndTimeMcq: moment(examEndTime),
     mcqDuration: duration,
     writtenQuestionId: writtenQuestion,
+    //13-03-2024
+    submittedScriptILink: subArr,
   });
   try {
     saveStudentQuestion = await studentExamVsQuestionsMcq.save();

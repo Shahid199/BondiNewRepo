@@ -23,6 +23,11 @@ const shuffle = (array) => {
   }
   return array;
 };
+function checkIfEmpty(array) {
+  return (
+    Array.isArray(array) && (array.length == 0 || array.every(checkIfEmpty))
+  );
+}
 const refillQuestion = async (req, res, next) => {
   const examId = req.body.examId;
   const subjectId = req.body.subjectId;
@@ -377,16 +382,21 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   if (!ObjectId.isValid(examId))
     return res.status(404).json("Invalid Exam Id.");
   examId = new mongoose.Types.ObjectId(examId);
+  console.log(examId, studentId);
   let data = null;
   try {
     data = await SpecialVsStudent.findOne({
-      $and: [{ examId: examId }, { studentId: studentId }],
+      $and: [
+        { examId: examId },
+        { studentId: new mongoose.Types.ObjectId(studentId) },
+      ],
     })
       .populate({ path: "questionMcq", populate: { path: "subjectId" } })
       .populate({ path: "questionWritten", populate: { path: "subjectId" } });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  //return res.status(200).json(data);
   let dataWritten = null;
   try {
     dataWritten = await SpecialExam.findById(examId);
@@ -407,7 +417,7 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   );
   mcqObj["totalQuestion"] = dataWritten.totalQuestionsMcq;
   mcqObj["marksPerMcq"] = dataWritten.marksPerMcq;
-  //console.log("data", data);
+  console.log("data", data);
   let subjectsId = [
     data.questionMcq[0].subjectId._id,
     data.questionMcq[1].subjectId._id,
@@ -2979,7 +2989,7 @@ const getAllRank = async (req, res, next) => {
 // };
 //exam system
 
-const assignQuestionMcq = async (req, res, next) => {
+const assignQuestionMcq1 = async (req, res, next) => {
   const eId = req.query.examId;
   const subject1 = req.query.subjectId1;
   const subject2 = req.query.subjectId2;
@@ -3123,6 +3133,159 @@ const assignQuestionMcq = async (req, res, next) => {
 
   return res.status(201).json(questionsId);
 };
+const assignQuestionMcq = async (req, res, next) => {
+  const eId = req.query.examId;
+  const subject1 = req.query.subjectId1;
+  const subject2 = req.query.subjectId2;
+  const subject3 = req.query.subjectId3;
+  const subject4 = req.query.subjectId4;
+  let subjects = [subject1, subject2, subject3, subject4];
+  const studentId = req.user.studentId;
+  let eId1, sId;
+  sId = new mongoose.Types.ObjectId(studentId);
+  eId1 = new mongoose.Types.ObjectId(eId);
+  let existData = [];
+  try {
+    existData = await SpecialVsStudent.find({
+      $and: [{ examId: eId1 }, { studentId: sId }],
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+  if (existData.length > 0) return res.status(200).json("Mcq running");
+  subjects = subjects.map((e) => new mongoose.Types.ObjectId(e));
+  let examData = null,
+    rand;
+  try {
+    examData = await SpecialExam.findById(eId).populate({
+      path: "questionMcq",
+      populate: {
+        path: "mcqQuestions",
+        populate: { path: "mcqIds", match: { status: true } },
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json("2.something went wrong.");
+  }
+  console.log(examData);
+  //return res.status(200).json(examData);
+  ////console.log(examData.questionMcq);
+  if (!examData) return res.status(404).json("No Exam found.");
+  rand = parseInt(Date.now()) % Number(examData.numberOfSet);
+  let questionMcq = examData.questionMcq;
+  let mcqIds = [],
+    questionPerSub = [];
+  questionPerSub = examData.subjectInfo[0].noOfQuestionsMcq;
+  let questionsId = [];
+  for (let i = 0; i < 4; i++) {
+    let flag = 0;
+    let doc = [];
+    for (let j = 0; j < 6; j++) {
+      if (String(questionMcq[j].subjectId) == String(subjects[i])) {
+        mcqIds = questionMcq[j].mcqQuestions[rand].mcqIds;
+        break;
+      }
+    }
+    for (let i = 0; i < mcqIds.length; i++) {
+      doc.push(mcqIds[i]._id);
+    }
+    let docStr = doc.map((e) => String(e));
+    docStr = shuffle(docStr);
+    doc = docStr.map((e) => new mongoose.Types.ObjectId(e));
+    console.log("new mcqids ddddddd:", examData.questionMcq[i].mcqQuestions);
+    questionsId.push(doc);
+  }
+  //return res.status(200).json(questionsId);
+  let studExamStartTime = moment(new Date());
+  let studExamEndTime = moment(studExamStartTime).add(
+    examData.mcqDuration,
+    "m"
+  );
+  if (
+    Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
+  )
+    studExamEndTime = examData.endTime;
+  else studExamEndTime = moment(studExamEndTime).add(6, "h");
+  let sav = null,
+    mcqData = [];
+  for (let i = 0; i < 4; i++) {
+    let objSub = {};
+    objSub["subjectId"] = subjects[i];
+    let objMcq = [];
+    let dataQ = questionsId[i];
+
+    for (let p = 0; p < dataQ.length; p++) {
+      objMcq[p] = dataQ[p]._id;
+    }
+    objSub["mcqId"] = objMcq;
+    let answerArr = [];
+    for (let j = 0; j < questionsId[i].length; j++) {
+      answerArr[j] = -1;
+    }
+    objSub["mcqAnswer"] = answerArr;
+    objSub["mcqMarksPerSub"] = parseInt(
+      examData.totalQuestionsMcq * examData.marksPerMcq
+    );
+    objSub["totalCorrectAnswer"] = 0;
+    objSub["totalWrongAnswer"] = 0;
+    objSub["totalCorrectMarks"] = 0;
+    objSub["totalWrongMarks"] = 0;
+    mcqData[i] = objSub;
+  }
+  //13-03-2024
+  let questionWrittenArr1 = [];
+  for (let i = 0; i < 4; i++) {
+    let subObj1 = {};
+    let submitArr1 = [];
+    subObj1["subjectId"] = new mongoose.Types.ObjectId(subjects[i]);
+    for (
+      let i = 0;
+      i < examData.questionWritten[0].marksPerQuestion.length;
+      i++
+    ) {
+      submitArr1[i] = [];
+    }
+    subObj1["submittedScriptILink"] = submitArr1;
+    subObj1["answerScriptILink"] = [];
+    subObj1["obtainedMarks"] = [];
+    subObj1["totalObtainedMarksWritten"] = 0;
+    questionWrittenArr1.push(subObj1);
+  }
+  //13-03-2024
+  let upd = new SpecialVsStudent({
+    studentId: sId,
+    examId: eId1,
+    startTimeMcq: moment(studExamStartTime).add(6, "h"),
+    endTimeMcq: moment(studExamEndTime),
+    mcqDuration:
+      (studExamEndTime - moment(studExamStartTime).add(6, "h")) / 60000,
+    questionMcq: mcqData,
+    questionWritten: questionWrittenArr1,
+    runningStatus: true,
+    finishStatus: false,
+  });
+  try {
+    sav = await upd.save();
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!sav) return res.status(404).json("not assign mcq questions.");
+  //return res.status(200).json(questionsId);
+  questionsId.push({ studStartTime: moment(studExamStartTime).add(6, "h") });
+  questionsId.push({ studEndTime: moment(studExamEndTime) });
+  questionsId.push({ examStartTime: examData.startTime });
+  questionsId.push({ examEndTime: examData.endTime });
+  questionsId.push({
+    mcqDuration:
+      (studExamEndTime - moment(studExamStartTime).add(6, "h")) / 60000,
+  });
+  questionsId.push({ data: sav });
+
+  return res.status(201).json(questionsId);
+};
+
 const getRunningDataMcq = async (req, res, next) => {
   const sId = req.user.studentId;
   const eId = req.query.examId;
@@ -3372,7 +3535,7 @@ const submitAnswerMcq = async (req, res, next) => {
   // return res.status(200).json(data1);
 };
 //written
-const assignQuestionWritten = async (req, res, next) => {
+const assignQuestionWritten1 = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
   const subject1 = req.query.subjectId1;
@@ -3406,7 +3569,7 @@ const assignQuestionWritten = async (req, res, next) => {
   for (let i = 0; i < 4; i++) {
     let subObj = {};
     subObj["subjectId"] = new mongoose.Types.ObjectId(subjects[i]);
-    subObj["submittedScriptILink"] = [];
+    subObj["submittedScriptILink"] = submitArr;
     subObj["answerScriptILink"] = [];
     subObj["obtainedMarks"] = [];
     subObj["totalObtainedMarksWritten"] = 0;
@@ -3424,6 +3587,99 @@ const assignQuestionWritten = async (req, res, next) => {
   else studExamEndTime = moment(studExamEndTime).add(6, "h");
   let objSav = {
     questionWritten: questionWrittenArr,
+    startTimeWritten: moment(studExamStartTime).add(6, "h"),
+    endTimeWritten: moment(studExamEndTime),
+    writtenDuration:
+      (moment(studExamEndTime) - moment(studExamStartTime).add(6, "h")) / 60000,
+  };
+  let sav = null;
+  try {
+    sav = await SpecialVsStudent.findByIdAndUpdate(insertId, objSav);
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  let data1 = [];
+  for (let i = 0; i < 4; i++) {
+    let objWritten = {};
+    objWritten["subjectId"] = examData.questionWritten[i].subjectId._id;
+    objWritten["subjectName"] = examData.questionWritten[i].subjectId.name;
+    objWritten["marksPerQuestion"] =
+      examData.questionWritten[i].marksPerQuestion;
+    objWritten["totalQuestion"] =
+      examData.questionWritten[i].marksPerQuestion.length;
+    objWritten["writtenILink"] = examData.questionWritten[i].writtenILink;
+    data1.push(objWritten);
+  }
+  data1.push({ studExamStartTime: moment(studExamStartTime).add(6, "h") });
+  data1.push({ studExamEndTime: moment(studExamEndTime) });
+  data1.push({ examEndTime: examData.endTime });
+  data1.push({
+    duration:
+      (moment(studExamEndTime) - moment(studExamStartTime).add(6, "h")) / 60000,
+  });
+  return res.status(200).json(data1);
+};
+
+const assignQuestionWritten = async (req, res, next) => {
+  let examId = req.query.examId;
+  let studentId = req.user.studentId;
+  const subject1 = req.query.subjectId1;
+  const subject2 = req.query.subjectId2;
+  const subject3 = req.query.subjectId3;
+  const subject4 = req.query.subjectId4;
+  let subjects = [subject1, subject2, subject3, subject4];
+  //console.log("subjects:", subjects);
+  examId = new mongoose.Types.ObjectId(examId);
+  studentId = new mongoose.Types.ObjectId(studentId);
+  let updId = null;
+  try {
+    updId = await SpecialVsStudent.findOne({
+      $and: [{ examId: examId }, { studentId: studentId }],
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  let insertId = updId._id;
+  if (updId.startTimeWritten != null) return res.status(200).json(false);
+  let examData = null;
+  try {
+    examData = await SpecialExam.findById(examId).populate({
+      path: "questionWritten",
+      populate: { path: "subjectId", select: "_id name" },
+    });
+  } catch (err) {
+    return res.status(500).json("something went wrong.");
+  }
+  // let questionWrittenArr = [];
+  // for (let i = 0; i < 4; i++) {
+  //   let subObj = {};
+  //   let submitArr = [];
+  //   subObj["subjectId"] = new mongoose.Types.ObjectId(subjects[i]);
+  //   for (
+  //     let i = 0;
+  //     i < examData.questionWritten[0].marksPerQuestion.length;
+  //     i++
+  //   ) {
+  //     submitArr[i] = [];
+  //   }
+  //   subObj["submittedScriptILink"] = submitArr;
+  //   subObj["answerScriptILink"] = [];
+  //   subObj["obtainedMarks"] = [];
+  //   subObj["totalObtainedMarksWritten"] = 0;
+  //   questionWrittenArr.push(subObj);
+  // }
+  let studExamStartTime = moment(new Date());
+  let studExamEndTime = moment(studExamStartTime).add(
+    examData.writtenDuration,
+    "m"
+  );
+  if (
+    Number(moment(studExamEndTime).add(6, "h") - moment(examData.endTime)) > 0
+  )
+    studExamEndTime = examData.endTime;
+  else studExamEndTime = moment(studExamEndTime).add(6, "h");
+  let objSav = {
+    //questionWritten: questionWrittenArr,
     startTimeWritten: moment(studExamStartTime).add(6, "h"),
     endTimeWritten: moment(studExamEndTime),
     writtenDuration:
@@ -4003,7 +4259,7 @@ const assignStudentToTeacher = async (req, res, next) => {
           ////console.log("STUDENTS:", students[j].questionWritten[p]);
           if (String(students[j].questionWritten[p].subjectId) == String(sub)) {
             if (
-              students[j].questionWritten[p].submittedScriptILink.length > 0
+              !checkIfEmpty(students[j].questionWritten[p].submittedScriptILink)
             ) {
               data.push(students[j].studentId);
             }
