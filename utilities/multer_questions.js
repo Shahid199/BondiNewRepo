@@ -7,7 +7,7 @@ const maxCount = 15;
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
     let dir = path.resolve(path.join(__dirname, "../questions"));
-    dir = dir + "/" + String(req.query.examId);
+    //dir = dir + "/" + String(req.query.examId);
     console.log(req.query);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);

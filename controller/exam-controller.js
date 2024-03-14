@@ -1367,6 +1367,7 @@ const addQuestionMcq = async (req, res, next) => {
 
     //iLinkPath = "uploads/".concat(file.filename);
     iLinkPath = "questions/" + String(examId) + "/" + file.filename;
+
     question = iLinkPath;
     options = [];
   }
@@ -1671,7 +1672,9 @@ const addQuestionWritten = async (req, res, next) => {
   // return res.status(201).json("Ok");
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
-  questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
+  //questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
+  questionILinkPath =
+    "questions/" + String(examId) + file.questionILink[0].filename;
   //written question save to db table
   let question = new QuestionsWritten({
     questionILink: questionILinkPath,
