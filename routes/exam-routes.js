@@ -1,5 +1,6 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
+const { upload1 } = require("../utilities/multer_questions");
 const passport = require("passport");
 const authorize = require("../utilities/authorizationMiddleware");
 const {
@@ -101,7 +102,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload1.single("iLink"),
   ],
   addQuestionMcq
 );
@@ -263,7 +264,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([{ name: "questionILink", maxCount: 1 }]),
+    upload1.fields([{ name: "questionILink", maxCount: 1 }]),
   ],
   addQuestionWritten
 );
@@ -327,7 +328,7 @@ router.post(
   updateExamPhoto
 ); //afser
 
-router.get("/columnadd", columnAdd);
+//router.get("/columnadd", columnAdd);
 
 router.post("/downloadimage", downloadExamImage);
 router.post("/uploadsollution", uploadSollution);

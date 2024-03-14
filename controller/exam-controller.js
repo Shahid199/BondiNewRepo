@@ -1325,6 +1325,7 @@ const addQuestionMcq = async (req, res, next) => {
     type,
     setName,
   } = req.body;
+  //const examId = req.body.examId;
   let setName1 = parseInt(setName);
 
   let examDetails = {};
@@ -1364,7 +1365,8 @@ const addQuestionMcq = async (req, res, next) => {
       return res.status(404).json("Question File not uploaded.");
     }
 
-    iLinkPath = "uploads/".concat(file.filename);
+    //iLinkPath = "uploads/".concat(file.filename);
+    iLinkPath = "questions/" + String(examId) + "/" + file.filename;
     question = iLinkPath;
     options = [];
   }
@@ -2131,7 +2133,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
       count++;
       studData.push(dataAll[i].studentId);
     }
-  }//13-03-2024
+  } //13-03-2024
   // for (let i = 0; i < dataAll.length; i++) {
   //   if (dataAll[i].submittedScriptILink.length > 0) {
   //     count++;
@@ -2621,7 +2623,7 @@ const columnAdd10 = async (req, res, next) => {
 
 // sollution sheets
 // dropping collection
-const columnAdd = async (req, res, next) => {
+const columnAdd11 = async (req, res, next) => {
   let data = [];
   let data1 = [];
   let data2 = [];
@@ -2633,7 +2635,16 @@ const columnAdd = async (req, res, next) => {
 
   return res.status(200).json("SepcialExam success!!");
 };
+const columnAdd = async (req, res, next) => {
+  let data = [];
+  try {
+    data = await Student.updateMany({}, { $set: { curriculumRoll: null } });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
 
+  return res.status(200).json("SepcialExam success!!");
+};
 const uploadSollution = async (req, res, next) => {
   let examId = req.body.examId;
   let type = Number(req.body.type);

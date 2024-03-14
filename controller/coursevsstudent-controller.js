@@ -130,7 +130,7 @@ const addStudentToCourse = async (req, res, next) => {
   // for(let i =0;i<linesArr;i++){
 
   // }
-  ////console.log(linesArr);
+  console.log(linesArr);
   for (let i = 0; i < linesArr.length; i++) {
     let regNo;
     ////console.log(i);
@@ -147,6 +147,7 @@ const addStudentToCourse = async (req, res, next) => {
       ////console.log("k");
       continue;
     }
+    console.log(regNo);
     const users = {};
     users["courseId"] = courseId1;
     users["studentId"] = new mongoose.Types.ObjectId(regNo);
@@ -213,7 +214,7 @@ const getCourseByStudent = async (req, res, next) => {
   return res.status(200).json(courses);
 };
 //get course by regNo
-const getCourseByReg = async (req, res, next) => {
+const getCourseByReg1 = async (req, res, next) => {
   const regNo = req.query.regNo;
   let studentId;
   let courses;
@@ -236,7 +237,59 @@ const getCourseByReg = async (req, res, next) => {
     return res.status(200).json({ courses: dataNew, studentId: studentId1 });
   } else return res.status(404).json("Course Not found.");
 };
+const getCourseByReg = async (req, res, next) => {
+  const regNo = req.query.regNo;
+  let studentId;
+  let courses;
+  try {
+    studentId = await Student.findOne({ regNo: regNo }).select("_id");
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json("Something went wrong!");
+  }
+  if (studentId) {
+    courses = await CourseVsStudent.find({ studentId: studentId }).populate(
+      "courseId"
+    );
+    let dataNew = [];
+    for (let i = 0; i < courses.length; i++) {
+      if (
+        courses[i].courseId &&
+        courses[i].courseId.status == true &&
+        courses[i].status == true
+      )
+        dataNew.push(courses[i].courseId);
+    }
+    let studentId1 = studentId._id;
+    return res.status(200).json({ courses: dataNew, studentId: studentId1 });
+  } else return res.status(404).json("Course Not found.");
+};
+const changeStatus = async (req, res, next) => {
+  let courseId = req.body.courseId;
+  if (!ObjectId.isValid(courseId))
+    return res.status(404).json("courseId is not valid.");
+  courseId = new mongoose.Types.ObjectId(courseId);
+  let curStatus = null;
+  try {
+    curStatus = await CourseVsStudent.findOne({ courseId: courseId });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (!curStatus) return res.status(404).json("No student found.");
+  curStatus = curStatus.status;
+  let upd = null;
+  try {
+    upd = await CourseVsStudent.updateMany(
+      { courseId: courseId },
+      { $set: { status: !curStatus } }
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(201).json("Successfully updated.");
+};
 
+exports.changeStatus = changeStatus;
 exports.addStudentToCourse = addStudentToCourse;
 exports.getStudentByCourse = getStudentByCourse;
 exports.getCourseByStudent = getCourseByStudent;

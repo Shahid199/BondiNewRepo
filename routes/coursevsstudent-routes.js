@@ -8,6 +8,7 @@ const {
   getStudentByCourse,
   getCourseByStudent,
   getCourseByReg,
+  changeStatus,
 } = require("../controller/coursevsstudent-controller");
 
 router.post(
@@ -32,4 +33,9 @@ router.get(
 );
 router.get("/getcoursebyreg", getCourseByReg);
 
+router.post(
+  "/changestatus",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  changeStatus
+);
 module.exports = router;

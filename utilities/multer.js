@@ -12,6 +12,7 @@ const maxCount = 15;
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
+    console.log(req.body.examId);
     callback(null, path.resolve(__dirname, "../uploads"));
   },
   filename: function (req, file, callback) {
@@ -20,7 +21,7 @@ const storage = multer.diskStorage({
     let extension = arr.pop();
     let arrData = String(arr).replace(/[" "-.\r]/g, "");
     arrData = arrData.replace(extension, "");
-    const newName = arrData +Date.now().toString() + "." + extension;
+    const newName = arrData + Date.now().toString() + "." + extension;
     callback(null, newName);
   },
 });
