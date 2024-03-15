@@ -2,6 +2,7 @@ const express = require("express");
 const authorize = require("../utilities/authorizationMiddleware");
 const passport = require("passport");
 const { upload } = require("../utilities/multer");
+const { upload1 } = require("../utilities/multer_questions");
 const {
   createBothExam,
   updateBothExam,
@@ -19,7 +20,7 @@ const {
   updateBothExamPhoto,
   questionByExamIdAndSet,
   slotAvailable,
-  refillQuestion
+  refillQuestion,
 } = require("../controller/both-controller");
 const router = express.Router();
 
@@ -60,7 +61,7 @@ router.get(
   "/slotAvailable",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator","teacher"]),
+    authorize(["student", "superadmin", "moderator", "teacher"]),
   ],
   //authorize(["student"]),
   slotAvailable
@@ -69,7 +70,7 @@ router.get(
   "/getbothexambysubject",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator","teacher"]),
+    authorize(["student", "superadmin", "moderator", "teacher"]),
   ],
   //authorize(["student"]),
   getBothExamBySubject
@@ -125,7 +126,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload1.single("iLink"),
   ],
   bothAddQuestionMcq
 );
@@ -142,7 +143,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([{ name: "questionILink", maxCount: 1 }]),
+    upload1.fields([{ name: "questionILink", maxCount: 1 }]),
   ],
   bothAddQuestionWritten
 );

@@ -1,5 +1,6 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
+const { upload1 } = require("../utilities/multer_questions");
 const passport = require("passport");
 const authorize = require("../utilities/authorizationMiddleware");
 const {
@@ -62,7 +63,7 @@ const {
   updateSpecialExamPhoto,
   slotAvailable,
   questionByExamIdSubjectAndSet,
-  refillQuestion
+  refillQuestion,
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -106,7 +107,7 @@ router.get(
   "/slotAvailable",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator","teacher"]),
+    authorize(["student", "superadmin", "moderator", "teacher"]),
   ],
   //authorize(["student"]),
   slotAvailable
@@ -124,7 +125,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([
+    upload1.fields([
       { name: "iLink", maxCount: 8 },
       { name: "explanationILink", maxCount: 8 },
     ]),
@@ -218,7 +219,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([{ name: "iLink", maxCount: 8 }]),
+    upload1.fields([{ name: "iLink", maxCount: 8 }]),
   ],
   addQuestionWritten
 );

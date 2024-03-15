@@ -845,7 +845,7 @@ const addQuestionMcq = async (req, res, next) => {
     if (!file.iLink) {
       return res.status(404).json("Question File not uploaded.");
     }
-    iLinkPath = "uploads/".concat(file.iLink[0].filename);
+    iLinkPath = "questions/" + String(examId) + "/" + file.iLink[0].filename;
     question = iLinkPath;
     options = [];
   }
@@ -884,7 +884,7 @@ const addQuestionMcq = async (req, res, next) => {
   let numOfQuestions = null,
     numberOfSlotAvailable = null;
   if (examDetails) {
-    console.log(examDetails);
+    //console.log(examDetails);
     for (let i = 0; i < examDetails.subjectInfo.length; i++) {
       if (String(examDetails.subjectInfo[i].subjectId) === subjectId) {
         numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
@@ -1158,7 +1158,8 @@ const addQuestionWritten = async (req, res, next) => {
   let questionILinkPath = null;
   if (!file.iLink[0].filename)
     return res.status(400).json("File not uploaded.");
-  questionILinkPath = "uploads/".concat(file.iLink[0].filename);
+  questionILinkPath =
+    "questions/" + String(examId) + "/" + file.iLink[0].filename;
   //written question save to db table
   let writtenData = null;
   try {

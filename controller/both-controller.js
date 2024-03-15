@@ -20,19 +20,19 @@ const BothExam = require("../model/BothExam");
 const BothExamRule = require("../model/BothExamRule");
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
-const shuffle = (array) => { 
-  for (let i = array.length - 1; i > 0; i--) { 
-    const j = Math.floor(Math.random() * (i + 1)); 
-    [array[i], array[j]] = [array[j], array[i]]; 
-  } 
-  return array; 
-}; 
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 const refillQuestion = async (req, res, next) => {
   const { examId } = req.body;
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let mIdArray = [];
-  let exam=null;
+  let exam = null;
   let noOfQuestions = null;
   let noOfSet = null;
   try {
@@ -59,9 +59,9 @@ const refillQuestion = async (req, res, next) => {
       );
   let setNo = mIdArray[0].setName;
   mIdArray = mIdArray[0].mId;
-  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {    
+  for (let i = 0; i < noOfSet && i != Number(setNo); i++) {
     let questionObj = {};
-    let shuffledArray= shuffle(mIdArray);
+    let shuffledArray = shuffle(mIdArray);
     let getSetName = Number(i);
     let questionExam = new BothMcqQuestionVsExam({
       eId: examIdObj,
@@ -74,7 +74,6 @@ const refillQuestion = async (req, res, next) => {
       return res.status(500).json(err);
     }
   }
-
 
   return res.status(201).json("Inserted question to the exam's all sets.");
 };
@@ -194,9 +193,9 @@ const updateBothExam = async (req, res, next) => {
     questionType,
     numberOfOptions,
     numberOfRetakes,
-    numberOfSet
+    numberOfSet,
   } = req.body;
-  console.log(numberOfOptions)
+  console.log(numberOfOptions);
   if (
     !ObjectId.isValid(examId) ||
     !ObjectId.isValid(courseId) ||
@@ -233,9 +232,9 @@ const updateBothExam = async (req, res, next) => {
     isAdmission: JSON.parse(isAdmission),
     iLink: iLinkPath,
     questionType,
-    numberOfOptions:Number(numberOfOptions),
-    numberOfRetakes:Number(numberOfRetakes),
-    numberOfSet:Number(numberOfSet)
+    numberOfOptions: Number(numberOfOptions),
+    numberOfRetakes: Number(numberOfRetakes),
+    numberOfSet: Number(numberOfSet),
   };
   let updStatus = null;
   try {
@@ -539,7 +538,7 @@ const bothAddQuestionMcq = async (req, res, next) => {
       return res.status(404).json("Question File not uploaded.");
     }
 
-    iLinkPath = "uploads/".concat(file.filename);
+    iLinkPath = "questions/" + String(examId) + "/" + file.filename;
     question = iLinkPath;
     options = [];
   }
@@ -811,7 +810,8 @@ const bothAddQuestionWritten = async (req, res, next) => {
   // return res.status(201).json("Ok");
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
-  questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
+  questionILinkPath =
+    "uploads/" + String(examId) + "/" + file.questionILink[0].filename;
   //written question save to db table
   let question = new BothQuestionsWritten({
     questionILink: questionILinkPath,
