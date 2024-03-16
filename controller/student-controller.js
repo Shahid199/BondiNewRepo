@@ -254,7 +254,7 @@ const updateStudent = async (req, res, next) => {
   const stud = {
     name: name,
     mobileNo: mobileNo,
-    sscRoll: sscRoll,
+    curriculumRoll: sscRoll,
     sscReg: sscReg,
     hscRoll: hscRoll,
     hscReg: hscReg,
@@ -1877,7 +1877,7 @@ const historyData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
-  if (data == null)
+  if (data.length===0)
     return res.status(404).json("No exam data found for the student.");
   let resultData = [];
   let flag = false;
@@ -1886,7 +1886,7 @@ const historyData = async (req, res, next) => {
     let data1 = {};
     let rank = null;
     let totalStudent = 0;
-    let examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
+    let examIdObj = new mongoose.Types.ObjectId(data[i].examId);
     ////console.log(examIdObj);
     ////console.log(studentIdObj);
     try {

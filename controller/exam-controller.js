@@ -2319,6 +2319,7 @@ const questionByExamIdAndSet = async (req, res, next) => {
     result["explanation"] = queryResult.mId[i].explanationILink;
     result["questionId"] = queryResult.mId[i]._id;
     result["status"] = queryResult.mId[i].status;
+    result["optionCount"] = queryResult.mId[i].optionCount;
     resultAll.push(result);
   }
   // resultAll.push({ totalQuestion: queryResult.mId.length });
@@ -2626,19 +2627,20 @@ const columnAdd10 = async (req, res, next) => {
 
 // sollution sheets
 // dropping collection
-const columnAdd11 = async (req, res, next) => {
+const columnAdd = async (req, res, next) => {
   let data = [];
   let data1 = [];
   let data2 = [];
   try {
-    data = await SepcialExam.collection.drop();
+    // data = await Exam.collection.drop();
+    data = await BothExam.collection.drop();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
 
-  return res.status(200).json("SepcialExam success!!");
+  return res.status(200).json("both success!!");
 };
-const columnAdd = async (req, res, next) => {
+const columnAdd11 = async (req, res, next) => {
   let data = [];
   try {
     data = await Student.updateMany({}, { $set: { curriculumRoll: null } });
