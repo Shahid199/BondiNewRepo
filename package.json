@@ -23,6 +23,7 @@
     "handlebars": "^4.7.7",
     "isodate": "^0.1.4",
     "jsonwebtoken": "^9.0.0",
+    "jszip": "^3.10.1",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
