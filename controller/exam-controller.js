@@ -474,10 +474,7 @@ const updateExam2 = async (req, res, next) => {
 
 const updateExam = async (req, res, next) => {
   const file = req.file;
-  let iLinkPath = null;
-  if (file) {
-    iLinkPath = "uploads/".concat(file.filename);
-  }
+ 
   const {
     examId,
     courseId,
@@ -536,7 +533,6 @@ const updateExam = async (req, res, next) => {
     numberOfOptions,
     numberOfSet,
     questionType,
-    iLink: iLinkPath,
   };
   let updStatus = null;
   try {
@@ -2634,7 +2630,7 @@ const columnAdd = async (req, res, next) => {
   let data2 = [];
   try {
     // data = await Exam.collection.drop();
-    data = await BothExam.collection.drop();
+    data = await Exam.collection.drop();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }

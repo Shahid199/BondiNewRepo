@@ -165,10 +165,7 @@ const createBothExam = async (req, res, next) => {
 };
 const updateBothExam = async (req, res, next) => {
   const file = req.file;
-  let iLinkPath = null;
-  if (file) {
-    iLinkPath = "uploads/".concat(file.filename);
-  }
+ 
 
   const {
     examId,
@@ -230,7 +227,6 @@ const updateBothExam = async (req, res, next) => {
     status: JSON.parse(status),
     curriculumName: curriculumName,
     isAdmission: JSON.parse(isAdmission),
-    iLink: iLinkPath,
     questionType,
     numberOfOptions: Number(numberOfOptions),
     numberOfRetakes: Number(numberOfRetakes),
