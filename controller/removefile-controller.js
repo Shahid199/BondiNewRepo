@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const SpecialVsStudent = require("../model/SpecialVsStudent");
 const fs = require("fs");
+const JSZip = require("jszip");
 const path = require("path");
 let dir = path.resolve(path.join(__dirname, "../uploads"));
 let dir1 = path.resolve(path.join(__dirname, "../uploads/answers"));
@@ -68,5 +69,57 @@ const removeOneTime = async (req, res, next) => {
   //fs.unlinkSync(dir2 + "/"+);
   return res.status(200).json("fs ok.");
 };
+const downloadImage = async (req, res, next) => {
+  const zip = new JSZip();
+  let examId = req.query.examId;
+  examId = new mongoose.Types.ObjectId(examId);
+  let type = Number(req.query.type); //0=written 1=both 2=special
+  let path = [];
+  if (type == 2) {
+    let data = null;
+    try {
+      data = await SpecialVsStudent.find({ examId: examId });
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (data.length == 0) return res.status(404).json("No data found.");
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i].questionWritten) {
+        for (let j = 0; j < 4; j++) {
+          if (data[i].questionWritten[j]) {
+            let subjects = data[i].questionWritten[j].submittedScriptILink;
+            if (subjects.length > 0) {
+              for (let k = 0; k < subjects.length; k++) {
+                for (let p = 0; p < k.length; p++) {
+                  path.push(subjects[k][p]);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  const img = zip.folder(Striing(examId));
+  try {
+    for (let i = 0; i < path.length; i++) {
+      let pathFile = dir2 + "/" + path[i];
+      const pdfData = fs.readFileSync(pathFile);
+      console.log(pdfData);
+      img.file(path[i], pdfData);
+    }
+    zip
+      .generateNodeStream({ type: "nodebuffer", streamFiles: true })
+      .pipe(fs.createWriteStream("sample.zip"))
+      .on("finish", function () {
+        console.log("sample.zip written.");
+      });
+  } catch (err) {
+    console.error(err);
+  }
+
+  return res.status(200).json("fs ok.");
+};
+exports.downloadImage = downloadImage;
 exports.removeAnswerScript = removeAnswerScript;
 exports.removeOneTime = removeOneTime;

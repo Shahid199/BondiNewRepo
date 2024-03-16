@@ -1674,8 +1674,9 @@ const addQuestionWritten = async (req, res, next) => {
     return res.status(400).json("File not uploaded.");
   //questionILinkPath = "uploads/".concat(file.questionILink[0].filename);
   questionILinkPath =
-    "questions/" + String(examId) + file.questionILink[0].filename;
+    "questions/" + String(examId) + "/" + file.questionILink[0].filename;
   //written question save to db table
+  console.log("totalQuestions:", totalQuestions);
   let question = new QuestionsWritten({
     questionILink: questionILinkPath,
     status: status,
@@ -1688,7 +1689,7 @@ const addQuestionWritten = async (req, res, next) => {
   try {
     doc = await question.save();
   } catch (err) {
-    //console.log(err);
+    console.log(err);
     return res.status(500).json("2.Something went wrong!");
   }
   return res.status(200).json("Question save correctly.");

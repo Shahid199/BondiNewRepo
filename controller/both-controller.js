@@ -811,7 +811,7 @@ const bothAddQuestionWritten = async (req, res, next) => {
   if (!file.questionILink[0].filename)
     return res.status(400).json("File not uploaded.");
   questionILinkPath =
-    "uploads/" + String(examId) + "/" + file.questionILink[0].filename;
+    "questions/" + String(examId) + "/" + file.questionILink[0].filename;
   //written question save to db table
   let question = new BothQuestionsWritten({
     questionILink: questionILinkPath,
