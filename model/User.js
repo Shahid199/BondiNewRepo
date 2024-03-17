@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const courses = require("./Course");
 const subjects = require("./Subject");
 
-const userScheama = new Schema(
+const userScheama = new Schema( 
   {
     name: {
       type: String,
