@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const { default: mongoose, Mongoose } = require("mongoose");
-const SpecialExam = require("../model/SpecialExam");
+//const SpecialExam = require("../model/SpecialExam");
+const SpecialExam = require("../model/SpecialExamNew");
 const pagination = require("../utilities/pagination");
 const moment = require("moment");
 const QuestionsMcq = require("../model/QuestionsMcq");

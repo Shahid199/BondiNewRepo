@@ -17,13 +17,13 @@ const McqQuestionVsExamSchema = new Schema(
         ref: questions,
       },
     ],
-    
-    setName:{
-        type: Number,
-        required: true,
-      },
-    
-    
+
+    setName: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+
     // sizeMid: {
     //   type: Number,
     //   required: true,

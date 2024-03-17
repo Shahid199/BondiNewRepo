@@ -4,7 +4,7 @@ const courses = require("./Course");
 const questions = require("./QuestionsMcq");
 const Schema = mongoose.Schema;
 
-const SpecialExamSchema = new Schema(
+const SpecialExamNewSchema = new Schema(
   {
     name: {
       type: String,
@@ -228,4 +228,4 @@ const SpecialExamSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("SpecialExam", SpecialExamSchema);
+module.exports = mongoose.model("SpecialExamNew", SpecialExamNewSchema);

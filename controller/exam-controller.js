@@ -28,7 +28,8 @@ const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const FreeStudent = require("../model/FreeStudent");
 const path = require("path");
 // const solutionSheet = require("../model/solutionSheet");
-const SpecialExam = require("../model/SpecialExam");
+//const SpecialExam = require("../model/SpecialExam");
+const SpecialExam = require("../model/SpecialExamNew");
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 const BothExamRule = require("../model/BothExamRule");
 const BothRank = require("../model/BothRank");
@@ -474,7 +475,7 @@ const updateExam2 = async (req, res, next) => {
 
 const updateExam = async (req, res, next) => {
   const file = req.file;
- 
+
   const {
     examId,
     courseId,
@@ -2625,17 +2626,66 @@ const columnAdd10 = async (req, res, next) => {
 // sollution sheets
 // dropping collection
 const columnAdd = async (req, res, next) => {
-  let data = [];
-  let data1 = [];
-  let data2 = [];
+  let dataExam = [];
+  let dataBothExam = [];
+  let dataStudent = [];
+  let dataMcqQuestionVsExam = [];
+  let dataBothMcqQuestionVsExam = [];
   try {
     // data = await Exam.collection.drop();
-    data = await Exam.collection.drop();
+    dataExam = await Exam.updateMany(
+      {},
+      {
+        $set: {
+          curriculumName: null,
+          isAdmission: false,
+          solutionSheet: null,
+          questionType: null,
+          numberOfRetakes: 5,
+          numberOfOptions: 4,
+          numberOfSet: 4,
+        },
+      }
+    );
+    dataBothExam = await BothExam.updateMany(
+      {},
+      {
+        $set: {
+          curriculumName: null,
+          isAdmission: false,
+          solutionSheet: null,
+          questionType: null,
+          numberOfRetakes: 5,
+          numberOfOptions: 4,
+          numberOfSet: 4,
+        },
+      }
+    );
+    dataStudent = await Student.updateMany(
+      {},
+      { $set: { curriculumRoll: null } }
+    );
+    dataMcqQuestionVsExam = await McqQuestionVsExam.updateMany(
+      {},
+      { $set: { setName: 0 } }
+    );
+    dataBothMcqQuestionVsExam = await BothMcqQuestionVsExam.updateMany(
+      {},
+      { $set: { setName: 0 } }
+    );
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
 
-  return res.status(200).json("both success!!");
+  return res
+    .status(200)
+    .json({
+      dataExam,
+      dataBothExam,
+      dataStudent,
+      dataMcqQuestionVsExam,
+      dataBothMcqQuestionVsExam,
+    });
 };
 const columnAdd11 = async (req, res, next) => {
   let data = [];

@@ -17,11 +17,12 @@ const bothMcqQuestionVsExamSchema = new Schema(
         ref: questions,
       },
     ],
-    setName:{
+    setName: {
       type: Number,
       required: true,
+      default: 0,
     },
-  
+
     // sizeMid: {
     //   type: Number,
     //   required: true,
@@ -30,4 +31,7 @@ const bothMcqQuestionVsExamSchema = new Schema(
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );
 
-module.exports = mongoose.model("BothMcqQuestionVsExam", bothMcqQuestionVsExamSchema);
+module.exports = mongoose.model(
+  "BothMcqQuestionVsExam",
+  bothMcqQuestionVsExamSchema
+);

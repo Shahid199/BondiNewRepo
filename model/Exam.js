@@ -98,11 +98,12 @@ const examSchema = new Schema(
     //   required: true,
     //   default: false,
     // },
-    curriculumName:{
+    curriculumName: {
       type: String,
       required: true,
+      default: null,
     },
-    isAdmission:{
+    isAdmission: {
       type: Boolean,
       required: true,
       default: false,
@@ -134,12 +135,12 @@ const examSchema = new Schema(
     numberOfOptions: {
       type: Number,
       required: false,
-      default: -1,
+      default: 4,
     },
     numberOfSet: {
       type: Number,
       required: false,
-      default: -1,
+      default: 4,
     },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.

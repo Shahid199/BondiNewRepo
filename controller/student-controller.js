@@ -34,7 +34,8 @@ const BothQuestionsWritten = require("../model/BothQuestionsWritten");
 const BothExam = require("../model/BothExam");
 const BothRank = require("../model/BothRank");
 const SpecialRank = require("../model/SpecialRank");
-const SpecialExam = require("../model/SpecialExam");
+//const SpecialExam = require("../model/SpecialExam");
+const SpecialExam = require("../model/SpecialExamNew");
 const { options } = require("pdfkit");
 
 //const sharp = require("sharp");
