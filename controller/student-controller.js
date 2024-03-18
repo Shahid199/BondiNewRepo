@@ -1878,7 +1878,7 @@ const historyData = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.SOmething went wrong.");
   }
-  if (data.length===0)
+  if (data.length === 0)
     return res.status(404).json("No exam data found for the student.");
   let resultData = [];
   let flag = false;
@@ -5158,6 +5158,7 @@ const historyDataWritten = async (req, res, next) => {
   try {
     data = await StudentExamVsQuestionsWritten.find({
       studentId: studentIdObj,
+      checkStatus: true,
     })
       .populate({
         path: "examId",
@@ -5173,7 +5174,7 @@ const historyDataWritten = async (req, res, next) => {
     return res.status(404).json("No exam data found for the student.");
   let resultData = [];
   let flag = false;
-  console.log(data);
+  //console.log(data);
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     let rank = null;
@@ -5183,7 +5184,7 @@ const historyDataWritten = async (req, res, next) => {
     } else {
       continue;
     }
-    console.log(examIdObj);
+    //console.log(examIdObj);
     ////console.log(studentIdObj);
     let totalStudent = 0;
     try {
@@ -5191,7 +5192,7 @@ const historyDataWritten = async (req, res, next) => {
         {
           $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
         },
-        "examStartTime examEndtime"
+        "examStartTime examEndTime"
       );
       totalStudent = await StudentMarksRank.find({
         examId: examIdObj,
@@ -5199,6 +5200,7 @@ const historyDataWritten = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("2.Something went wrong.");
     }
+    //console.log(rank);
 
     //get rank
     if (rank == null) continue;
@@ -5241,8 +5243,12 @@ const historyDataWritten = async (req, res, next) => {
     data1["totalMarksMcq"] = questionsWrittens.totalMarks;
     data1["obtainPerQuestion"] = data[i].obtainedMarks;
     data1["meritPosition"] = resultRank;
-    data1["examStartTime"] = moment(rank.examStartTime).format("LLL");
-    data1["examEndTime"] = moment(rank.examEndTime).format("LLL");
+    data1["examStartTime"] = moment(rank.examStartTime)
+      .subtract(6, "h")
+      .format("LLL");
+    data1["examEndTime"] = moment(rank.examEndTime)
+      .subtract(6, "h")
+      .format("LLL");
     data1["subjectName"] = subjectName;
     data1["totalStudent"] = totalStudent;
     resultData.push(data1);
@@ -5590,6 +5596,16 @@ const examDetailWritten = async (req, res, next) => {
   for (let i = 0; i < writtenData.totalQuestions; i++) {
     if (data.obtainedMarks[i] == null) nullIndexes.push(i);
   }
+  let resultRank = null;
+  try {
+    resultRank = await McqRank.findOne({
+      $and: [{ examId: examIdObj }, { studentId: studentIdObj }],
+    }).select("rank -_id");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (resultRank == null) resultRank = "-1";
+  else resultRank = resultRank.rank;
   data1["examName"] = examData.name;
   data1["subjectName"] = examData.subjectId.name;
   data1["type"] = examType[examData.type];
@@ -5600,7 +5616,7 @@ const examDetailWritten = async (req, res, next) => {
   data1["examTotalMarks"] = writtenData.totalMarks;
   data1["examTotalQuestions"] = writtenData.totalQuestions;
   data1["examMarksPerQuestion"] = writtenData.marksPerQuestion;
-  data1["rank"] = "-1";
+  data1["rank"] = resultRank;
   return res.status(200).json(data1);
 };
 

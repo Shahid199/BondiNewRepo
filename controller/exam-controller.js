@@ -2339,6 +2339,35 @@ const updateQuestionStatus = async (req, res, next) => {
   }
   return res.status(201).json(queryResult);
 };
+// const updateQuestionStatus1 = async (req, res, next) => {
+//   let questionId = req.body.questionId;
+//   let examId = "65f816ce34f65d878daa82e7";
+//   if (!ObjectId.isValid(questionId) || !ObjectId.isValid(examId))
+//     return res.status(404).json("question Id or examId is not valid.");
+//   //const questionIdObj = new mongoose.Types.ObjectId(questionId);
+//   //let queryResult = null;
+//   examId = new mongoose.Types.ObjectId(examId);
+//   let questionVsExam = null;
+//   try {
+//     questionVsExam = await McqQuestionVsExam.find({ eId: examId });
+//   } catch (err) {
+//     return res.status(500).json(err);
+//   }
+//   for (let i = 0; i < questionVsExam.length; i++) {
+//     let mId = questionVsExam[i].mId;
+//     let indexValue = mId.findIndex((e) => String(e) === String(questionId));
+//     mId.splice(indexValue, 1);
+//     let upd;
+//     try {
+//       upd = await McqQuestionVsExam.findByIdAndUpdate(questionVsExam[i]._id, {
+//         $set: { mId: mId },
+//       });
+//     } catch (err) {
+//       return res.status(500).json(err);
+//     }
+//   }
+//   return res.status(201).json("successf");
+// };
 const getStudentByExam = async (req, res, next) => {
   const courseId = req.query.courseId;
   const examId = req.query.examId;
@@ -2677,15 +2706,13 @@ const columnAdd = async (req, res, next) => {
     return res.status(500).json("Something went wrong.");
   }
 
-  return res
-    .status(200)
-    .json({
-      dataExam,
-      dataBothExam,
-      dataStudent,
-      dataMcqQuestionVsExam,
-      dataBothMcqQuestionVsExam,
-    });
+  return res.status(200).json({
+    dataExam,
+    dataBothExam,
+    dataStudent,
+    dataMcqQuestionVsExam,
+    dataBothMcqQuestionVsExam,
+  });
 };
 const columnAdd11 = async (req, res, next) => {
   let data = [];
