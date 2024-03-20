@@ -377,6 +377,21 @@ const showSpecialExamById = async (req, res, next) => {
   if (data == null) return res.status(404).json("No data found.");
   return res.status(200).json(data);
 };
+const getSpecialExamById = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid Exam Id.");
+  examId = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await SpecialExam.findOne({ _id: examId});
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  if (data == null) return res.status(404).json("No data found.");
+  return res.status(200).json(data);
+};
+
 const showSpecialExamByIdStudent = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
@@ -5730,6 +5745,7 @@ exports.getAllRank = getAllRank;
 exports.publishExam = publishExam;
 exports.marksCalculation = marksCalculation;
 exports.checkScriptSingle = checkScriptSingle;
+exports.getSpecialExamById = getSpecialExamById;
 exports.getWrittenScriptSingle = getWrittenScriptSingle;
 exports.getRecheckStudentData = getRecheckStudentData;
 exports.getStudentData = getStudentData;

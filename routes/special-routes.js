@@ -64,6 +64,7 @@ const {
   slotAvailable,
   questionByExamIdSubjectAndSet,
   refillQuestion,
+  getSpecialExamById
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -155,6 +156,14 @@ router.get(
     authorize(["superadmin", "moderator", "student"]),
   ],
   showSpecialExamById
+);
+router.get(
+  "/getSpecialExamById",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getSpecialExamById
 );
 
 router.get(
