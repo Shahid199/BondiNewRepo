@@ -700,21 +700,37 @@ const getExamBySub = async (req, res, next) => {
 const getExamBySubAdmin = async (req, res, next) => {
   const subjectId = req.query.subjectId;
   const examType = req.query.examType;
+  const type = req.query.type;
   if (!ObjectId.isValid(subjectId))
     return res.status(404).json("subject Id is not valid.");
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   let examData1 = null;
-  try {
-    examData1 = await Exam.find({
-      $and: [
-        { subjectId: subjectIdObj },
-        { examVariation: examType },
-        // { examFreeOrNot: false },
-        { status: true },
-      ],
-    });
-  } catch (err) {
-    return res.status(500).json(err);
+  if(type==="free"){
+    try {
+      examData1 = await Exam.find({
+        $and: [
+          { subjectId: subjectIdObj },
+          { examType: examType },
+          // { examFreeOrNot: false },
+          { status: true },
+        ],
+      });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  }else{
+    try {
+      examData1 = await Exam.find({
+        $and: [
+          { subjectId: subjectIdObj },
+          { examVariation: examType },
+          // { examFreeOrNot: false },
+          { status: true },
+        ],
+      });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   }
   let examData = [];
   for (let i = 0; i < examData1.length; i++) {
