@@ -175,7 +175,7 @@ const getHomePage = async (req, res, next) => {
       return res.status(404).json({ message: "course or student not found." });
     try {
       subjectDataDaily = await Subject.find(
-        { courseId: courseId },
+        {$and:[{courseId:courseId},{status:true}]},
         "_id name iLink descr"
       );
     } catch (err) {
