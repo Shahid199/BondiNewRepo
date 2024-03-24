@@ -708,7 +708,7 @@ const getExamBySubAdmin = async (req, res, next) => {
     examData1 = await Exam.find({
       $and: [
         { subjectId: subjectIdObj },
-        { examVariation: examType },
+        { examType: examType },
         // { examFreeOrNot: false },
         { status: true },
       ],
