@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const exams = require("./SpecialExamNewNew");
+const exams = require("./SpecialExamNew");
 const students = require("./Student");
 const questions = require("./QuestionsMcq");
 const subjects = require("./Subject");

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const exams = require("./SpecialExamNew");
+const exams = require("./SpecialExam");
 const Schema = mongoose.Schema;
 
 const specialExamRuleSchema = new Schema(
