@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const exams = require("./SpecialExam");
+const exams = require("./SpecialExamNew");
 const students = require("./Student");
 const Schema = mongoose.Schema;
 
