@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bothExams = require("./BothExam");
-const specialExams = require("./SpecialExam");
+const specialExams = require("./SpecialExamNew");
 const exams = require("./Exam");
 const Schema = mongoose.Schema;
 
