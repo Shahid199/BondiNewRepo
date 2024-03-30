@@ -2330,6 +2330,8 @@ const missedExam = async (req, res, next) => {
       result["duration"] = Number(resultData[i].duration);
       result["examType"] = "Written";
       result["negativeMarks"] = resultData[i].negativeMarks;
+      
+      result["solutionSheet"] = resultData[i].solutionSheet;
       resultFinal.push(result);
     }
     return res.status(200).json({ resultFinal, paginateData });
@@ -2418,6 +2420,8 @@ const missedExam = async (req, res, next) => {
       result["duration"] = Number(resultData[i].totalDuration);
       result["examType"] = "Both";
       result["negativeMarks"] = resultData[i].negativeMarks;
+      
+      result["solutionSheet"] = resultData[i].solutionSheet;
       resultFinal.push(result);
     }
     return res.status(200).json({ resultFinal, paginateData });
@@ -2508,6 +2512,8 @@ const missedExam = async (req, res, next) => {
       result["duration"] = Number(resultData[i].totalDuration);
       result["examType"] = "Special";
       result["negativeMarks"] = resultData[i].negativeMarks;
+      
+      result["solutionSheet"] = resultData[i].solutionSheet;
       resultFinal.push(result);
     }
     return res.status(200).json({ resultFinal, paginateData });
