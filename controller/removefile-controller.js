@@ -3,6 +3,10 @@ const SpecialVsStudent = require("../model/SpecialVsStudent");
 const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
+const { ObjectId } = require("mongodb");
+const Exam = require("../model/Exam");
+const BothExam = require("../model/BothExam");
+const SpecialExamNew = require("../model/SpecialExamNew");
 let dir = path.resolve(path.join(__dirname, "../uploads"));
 let dir1 = path.resolve(path.join(__dirname, "../uploads/answers"));
 let dir2 = path.resolve(path.join(__dirname, "../"));
@@ -120,6 +124,137 @@ const downloadImage = async (req, res, next) => {
 
   return res.status(200).json("fs ok.");
 };
+const getExam = async (req, res, next) => {
+  let courseId = new mongoose.Types.ObjectId(req.query.courseId);
+  let type = Number(req.query.type);
+  let uploads = Number(req.query.uploads);
+  //uploads 0=uploads(dir) uploads 1=answers(dir1)
+  if (uploads == 0) {
+    let exams = [];
+    let examId = [];
+    if (type == 1) {
+      try {
+        exams = await Exam.find({
+          $and: [{ examVariation: 2 }, { courseId: courseId }],
+        });
+      } catch (err) {
+        return res.status(500).json("Type:1 Something went wrong.");
+      }
+      for (let i = 0; i < exams.length; i++) {
+        let rowExamId = String(exams[i]._id);
+        let path = dir + "/" + rowExamId;
+        if (fs.existsSync(path)) {
+          let data = {};
+          data["examId"] = exams[i]._id;
+          data["examName"] = exams[i].name;
+          examId.push(data);
+        }
+      }
+      return res.status(200).json(examId);
+    } else if (type == 2) {
+      try {
+        exams = await BothExam.find({
+          $and: [{ examVariation: 3 }, { courseId: courseId }],
+        });
+      } catch (err) {
+        return res.status(500).json("Type:1 Something went wrong.");
+      }
+      for (let i = 0; i < exams.length; i++) {
+        let rowExamId = String(exams[i]._id);
+        let path = dir + "/" + rowExamId;
+        if (fs.existsSync(path)) {
+          let data = {};
+          data["examId"] = exams[i]._id;
+          data["examName"] = exams[i].name;
+          examId.push(data);
+        }
+      }
+      return res.status(200).json(examId);
+    } else {
+      try {
+        exams = await SpecialExamNew.find({
+          $and: [{ examVariation: 4 }, { courseId: courseId }],
+        });
+      } catch (err) {
+        return res.status(500).json("Type:1 Something went wrong.");
+      }
+      for (let i = 0; i < exams.length; i++) {
+        let rowExamId = String(exams[i]._id);
+        let path = dir + "/" + rowExamId;
+        if (fs.existsSync(path)) {
+          let data = {};
+          data["examId"] = exams[i]._id;
+          data["examName"] = exams[i].name;
+          examId.push(data);
+        }
+      }
+      return res.status(200).json(examId);
+    }
+  }
+  if (uploads == 1) {
+    let exams = [];
+    let examId = [];
+    if (type == 1) {
+      try {
+        exams = await Exam.find({
+          $and: [{ examVariation: 2 }, { courseId: courseId }],
+        });
+      } catch (err) {
+        return res.status(500).json("Type:1 Something went wrong.");
+      }
+      for (let i = 0; i < exams.length; i++) {
+        let rowExamId = String(exams[i]._id);
+        let path = dir1 + "/" + rowExamId;
+        if (fs.existsSync(path)) {
+          let data = {};
+          data["examId"] = exams[i]._id;
+          data["examName"] = exams[i].name;
+          examId.push(data);
+        }
+      }
+      return res.status(200).json(examId);
+    } else if (type == 2) {
+      try {
+        exams = await BothExam.find({
+          $and: [{ examVariation: 3 }, { courseId: courseId }],
+        });
+      } catch (err) {
+        return res.status(500).json("Type:1 Something went wrong.");
+      }
+      for (let i = 0; i < exams.length; i++) {
+        let rowExamId = String(exams[i]._id);
+        let path = dir1 + "/" + rowExamId;
+        if (fs.existsSync(path)) {
+          let data = {};
+          data["examId"] = exams[i]._id;
+          data["examName"] = exams[i].name;
+          examId.push(data);
+        }
+      }
+      return res.status(200).json(examId);
+    } else {
+      try {
+        exams = await SpecialExamNew.find({
+          $and: [{ examVariation: 4 }, { courseId: courseId }],
+        });
+      } catch (err) {
+        return res.status(500).json("Type:1 Something went wrong.");
+      }
+      for (let i = 0; i < exams.length; i++) {
+        let rowExamId = String(exams[i]._id);
+        let path = dir1 + "/" + rowExamId;
+        if (fs.existsSync(path)) {
+          let data = {};
+          data["examId"] = exams[i]._id;
+          data["examName"] = exams[i].name;
+          examId.push(data);
+        }
+      }
+      return res.status(200).json(examId);
+    }
+  }
+};
+exports.getExam = getExam;
 exports.downloadImage = downloadImage;
 exports.removeAnswerScript = removeAnswerScript;
 exports.removeOneTime = removeOneTime;

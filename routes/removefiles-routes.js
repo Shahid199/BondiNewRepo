@@ -6,11 +6,13 @@ const {
   removeAnswerScript,
   removeOneTime,
   downloadImage,
+  getExam,
 } = require("../controller/removefile-controller");
 const router = express.Router();
 
 router.get("/removebyexam", removeAnswerScript);
 router.get("/removeonetime", removeOneTime);
 router.get("/download", downloadImage);
+router.get("/getexam", getExam);
 
 module.exports = router;
