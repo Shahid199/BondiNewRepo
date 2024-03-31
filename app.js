@@ -59,7 +59,7 @@ const teacherRouter = require("./routes/teacher-routes");
 const bothRouter = require("./routes/both-routes");
 const smsRouter = require("./routes/sms-routes");
 const curriculumRouter = require("./routes/curriculum-routes");
-const removeRouter = require("./routes/remove");
+const removeRouter = require("./routes/removefiles-routes");
 // const mcqSpecialRouter = require("./routes/mcqspecial-routes");
 const { assignQuestion } = require("./controller/student-controller");
 
