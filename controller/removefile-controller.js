@@ -67,7 +67,7 @@ const removeOneTime = async (req, res, next) => {
     fs.unlinkSync(dir2 + "/" + path[i]);
   }
   //fs.unlinkSync(dir2 + "/"+);
-  return res.status(200).json("fs ok.");
+  return res.status(200).json("Storage Removed");
 };
 const downloadImage = async (req, res, next) => {
   const zip = new JSZip();
