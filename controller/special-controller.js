@@ -2874,6 +2874,7 @@ const getRank = async (req, res, next) => {
   return res.status(200).json(data1);
 };
 const getAllRank = async (req, res, next) => {
+  console.log("insert");
   let examId = req.query.examId;
   if (!ObjectId.isValid(examId)) return res.status(200).json("Invalid examId.");
   let examIdObj = new mongoose.Types.ObjectId(examId);
@@ -2901,6 +2902,7 @@ const getAllRank = async (req, res, next) => {
         ],
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json("something went wrong.");
     }
     let data1 = {};
