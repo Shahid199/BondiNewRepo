@@ -39,7 +39,7 @@ const removeAnswerScript = async (req, res, next) => {
 };
 const removeOneTime = async (req, res, next) => {
   //let examId = req.query.examId;
-  let examId = new mongoose.Types.ObjectId("65d1ee37ef04d4cfb93401c6");
+  let examId = new mongoose.Types.ObjectId("651053a45f81627f6000b91f");
   let type = 2; //0=written 1=both 2=special
   let path = [];
   if (type == 2) {
@@ -58,7 +58,7 @@ const removeOneTime = async (req, res, next) => {
           if (data[i].questionWritten[j]) {
             let subjects = data[i].questionWritten[j].submittedScriptILink;
             console.log(subjects);
-            if (subjects.length > 0) {
+            if (subjects.length > 0 || subjects) {
               for (let k = 0; k < subjects.length; k++) {
                 for (let p = 0; p < k.length; p++) {
                   path.push(subjects[k][p]);
