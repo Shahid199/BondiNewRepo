@@ -2255,7 +2255,7 @@ const historyData = async (req, res, next) => {
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     let rank = null;
-    if (data[i].examId == null) contimnue;
+    if (data[i].examId == null) continue;
     examIdObj = new mongoose.Types.ObjectId(data[i].examId._id);
     if (String(examIdObj) == String(examIdObTest)) {
       //console.log(" examIdObTest:", examIdObTest);
