@@ -49,10 +49,10 @@ const removeOneTime = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-    console.log(data);
     if (data.length == 0) return res.status(404).json("No data found.");
     for (let i = 0; i < data.length; i++) {
-      if (!data[i].questionWritten) {
+      //console.log(data[i].questionWritten);
+      if (data[i].questionWritten) {
         for (let j = 0; j < 4; j++) {
           if (data[i].questionWritten[j]) {
             let subjects = data[i].questionWritten[j].submittedScriptILink;
