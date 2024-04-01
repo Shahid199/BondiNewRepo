@@ -384,7 +384,7 @@ const getSpecialExamById = async (req, res, next) => {
   examId = new mongoose.Types.ObjectId(examId);
   let data = null;
   try {
-    data = await SpecialExam.findOne({ _id: examId});
+    data = await SpecialExam.findOne({ _id: examId });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
@@ -2883,6 +2883,7 @@ const getAllRank = async (req, res, next) => {
       .sort("rank")
       .populate("examId studentId");
   } catch (err) {
+    console.log(err);
     return res.status(500).json("Something went wrong.");
   }
   if (!resultRank) return res.status(404).json("Exam not finshed yet.");
