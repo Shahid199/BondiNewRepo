@@ -2251,6 +2251,7 @@ const historyData = async (req, res, next) => {
   let flag = false;
   ////console.log(data.length);
   let examIdObTest = "-1";
+  console.log(data);
   for (let i = 0; i < data.length; i++) {
     let data1 = {};
     let rank = null;
