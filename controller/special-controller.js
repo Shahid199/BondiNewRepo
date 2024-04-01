@@ -2892,6 +2892,7 @@ const getAllRank = async (req, res, next) => {
   //eturn res.status(200).json(resultRank);
   let allData = [];
   let totalStudent = null;
+  console.log("result rank: ", resultRank);
   for (let i = 0; i < resultRank.length; i++) {
     let markData = null;
     try {
