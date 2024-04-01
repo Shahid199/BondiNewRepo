@@ -58,7 +58,7 @@ const removeOneTime = async (req, res, next) => {
           if (data[i].questionWritten[j]) {
             let subjects = data[i].questionWritten[j].submittedScriptILink;
             console.log(subjects);
-            if (subjects.length > 0 || subjects) {
+            if (subjects.length > 0) {
               for (let k = 0; k < subjects.length; k++) {
                 for (let p = 0; p < k.length; p++) {
                   path.push(subjects[k][p]);
