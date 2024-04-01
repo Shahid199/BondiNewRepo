@@ -49,6 +49,7 @@ const removeOneTime = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
+    console.log(data);
     if (data.length == 0) return res.status(404).json("No data found.");
     for (let i = 0; i < data.length; i++) {
       if (!data[i].questionWritten) {
