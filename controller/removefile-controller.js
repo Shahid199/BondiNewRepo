@@ -39,8 +39,8 @@ const removeAnswerScript = async (req, res, next) => {
 };
 const removeOneTime = async (req, res, next) => {
   let examId = req.query.examId;
-  examId = new mongoose.Types.ObjectId(examId);
-  let type = Number(req.query.type); //0=written 1=both 2=special
+  examId = new mongoose.Types.ObjectId("65d1ee37ef04d4cfb93401c6");
+  let type = 2; //0=written 1=both 2=special
   let path = [];
   if (type == 2) {
     let data = null;
@@ -68,7 +68,8 @@ const removeOneTime = async (req, res, next) => {
     }
   }
   for (let i = 0; i < path.length; i++) {
-    fs.unlinkSync(dir2 + "/" + path[i]);
+    //fs.unlinkSync(dir2 + "/" + path[i]);
+    console.log(dir2 + "/" + path[i]);
   }
   //fs.unlinkSync(dir2 + "/"+);
   return res.status(200).json("Storage Removed");
