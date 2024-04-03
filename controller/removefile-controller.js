@@ -146,9 +146,11 @@ const getExam = async (req, res, next) => {
       } catch (err) {
         return res.status(500).json("Type:1 Something went wrong.");
       }
+      console.log(exams.length, exams);
       for (let i = 0; i < exams.length; i++) {
         let rowExamId = String(exams[i]._id);
         let path = dir + "/" + rowExamId;
+        console.log("path:", path);
         if (fs.existsSync(path)) {
           let data = {};
           data["examId"] = exams[i]._id;
