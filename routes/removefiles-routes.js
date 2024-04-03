@@ -10,9 +10,9 @@ const {
 } = require("../controller/removefile-controller");
 const router = express.Router();
 
-router.post("/removebyexam", removeAnswerScript);
-router.get("/removeonetime", removeOneTime);
-router.get("/download", downloadImage);
-router.get("/getexam", getExam);
+//router.post("/removebyexam", removeAnswerScript);
+//router.get("/removeonetime", removeOneTime);
+//router.get("/download", downloadImage);
+//router.get("/getexam", getExam);
 
 module.exports = router;
