@@ -178,15 +178,15 @@ const getExam = async (req, res, next) => {
       return res.status(200).json(examId);
     } else {
       try {
-        exams = await SpecialExamNew.find({
-          $and: [{ examVariation: 4 }, { courseId: courseId }],
-        });
+        exams = await SpecialExamNew.find({ courseId: courseId });
       } catch (err) {
         return res.status(500).json("Type:1 Something went wrong.");
       }
+      console.log(exams.length, exams);
       for (let i = 0; i < exams.length; i++) {
         let rowExamId = String(exams[i]._id);
         let path = dir + "/" + rowExamId;
+        console.log("path:", path);
         if (fs.existsSync(path)) {
           let data = {};
           data["examId"] = exams[i]._id;
