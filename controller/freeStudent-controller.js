@@ -1600,22 +1600,24 @@ const submitAnswerFree = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  console.log("check",studentCheck);
+  console.log("data",examData);
   let curDate = moment(studentCheck.examEndTime).subtract(6, "h");
   curDate = moment(curDate).add(180, "s");
   let flagSt = true;
   let curTime = moment(new Date());
   let studEndTime = moment(studentCheck.examEndTime).subtract(6, "h");
-  console.log("StudentEndTime Curdate");
-  console.log(studEndTime, curDate);
-  console.log(studEndTime.valueOf(), ":studEndTime.valueOf()");
-  console.log(curDate.valueOf(), ":curDate.valueOf()");
-  console.log(
-    studEndTime.valueOf() > curDate.valueOf(),
-    "studEndTime.valueOf() > curDate.valueOf()"
-  );
-  if (curTime.valueOf() > curDate.valueOf()) {
+  // console.log("StudentEndTime Curdate");
+  // console.log(studEndTime, curDate);
+  // console.log(studEndTime.valueOf(), ":studEndTime.valueOf()");
+  // console.log(curDate.valueOf(), ":curDate.valueOf()");
+  // console.log(
+  //   studEndTime.valueOf() > curDate.valueOf(),
+  //   "studEndTime.valueOf() > curDate.valueOf()"
+  // );
+  if (curTime.valueOf() > studEndTime.valueOf() ) {
     flagSt = false;
-    console.log("check timer");
+    // console.log("check timer");
   }
   console.log("flagSt", flagSt);
   if (studentCheck.finishedStatus == true)
