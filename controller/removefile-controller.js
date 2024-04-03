@@ -13,9 +13,9 @@ let dir2 = path.resolve(path.join(__dirname, "../"));
 const removeAnswerScript = async (req, res, next) => {
   let removeTitle = Number(req.query.title); //number 0=uploads 1=answer Script
   let examId = String(req.query.examId);
-  console.log(examId,removeTitle);
-  if (!examId || !removeTitle) return res.status(404).json("data not valid.");
-  console.log(examId);
+  // console.log(examId,removeTitle);
+  // // if (!examId || !removeTitle) return res.status(404).json("data not valid.");
+  // // console.log(examId);
   if (removeTitle == 0) {
     dir = dir + "/" + examId;
     if (fs.existsSync(dir)) {
