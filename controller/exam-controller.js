@@ -499,7 +499,9 @@ const updateExam = async (req, res, next) => {
     numberOfSet,
     questionType,
   } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
+  
+  const totalMarks = (Number(totalQuestionMcq))*(Number(marksPerMcq))
   if (
     !ObjectId.isValid(examId) ||
     !ObjectId.isValid(courseId) ||
@@ -525,7 +527,7 @@ const updateExam = async (req, res, next) => {
     duration: Number(duration),
     totalQuestionMcq: Number(totalQuestionMcq),
     marksPerMcq: Number(marksPerMcq),
-    totalMarksMcq: Number(totalMarksMcq),
+    totalMarksMcq: Number(totalMarks),
     negativeMarks: Number(negativeMarks),
     status: JSON.parse(status),
     curriculumName,
