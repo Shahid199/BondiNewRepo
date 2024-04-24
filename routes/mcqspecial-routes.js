@@ -3,10 +3,11 @@ const { upload } = require("../utilities/multer");
 const passport = require("passport");
 const authorize = require("../utilities/authorizationMiddleware");
 const {
-  createSpecialExam,
+  createSpecialMcqExam,
   updateSpecialExam,
   showSpecialExamById,
-  showSpecialExamByCourse,
+  updateExamPhoto,
+  showMcqSpecialExamByCourse,
   deactivateSpecialExam,
   showSpecialExamByIdStudent,
   showSpecialExamByIdStudentAdmin,
@@ -27,14 +28,25 @@ const {
 } = require("../controller/mcqSpecial-controller");
 const { getAllRank } = require("../controller/special-controller");
 const router = express.Router();
+
 router.post(
-  "/createspecialexam",
+  "/createspecialmcqexam",
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
     upload.single("iLink"),
   ],
-  createSpecialExam
+  createSpecialMcqExam
+);
+
+router.post(
+  "/updatemcqspecialexamphoto",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+    upload.single("iLink"),
+  ],
+  updateExamPhoto
 );
 
 router.put(
@@ -57,12 +69,12 @@ router.get(
 );
 
 router.get(
-  "/showspecialexambycourse",
+  "/showmcqspecialexambycourse",
   [
     passport.authenticate("jwt", { session: false }),
     authorize(["superadmin", "moderator", "teacher"]),
   ],
-  showSpecialExamByCourse
+  showMcqSpecialExamByCourse
 );
 
 router.put(

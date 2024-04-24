@@ -2928,6 +2928,7 @@ const getAllRank = async (req, res, next) => {
   }
   return res.status(200).json(allData);
 };
+
 // const examHistory = async (req, res, next) => {
 //   const studentId = req.user.studentId;
 //   const eId = req.query.examId;
@@ -3153,6 +3154,7 @@ const assignQuestionMcq1 = async (req, res, next) => {
 
   return res.status(201).json(questionsId);
 };
+
 const assignQuestionMcq = async (req, res, next) => {
   const eId = req.query.examId;
   const subject1 = req.query.subjectId1;
@@ -3363,6 +3365,7 @@ const getRunningDataMcq = async (req, res, next) => {
 
   return res.status(200).json({ data, examDet });
 };
+
 const updateAssignQuestion = async (req, res, next) => {
   let studentId = req.user.studentId;
   let examId = req.body.examId;
@@ -3416,6 +3419,7 @@ const updateAssignQuestion = async (req, res, next) => {
   if (result) return res.status(201).json("Ok");
   else return res.status(201).json("Not updated.");
 };
+
 const submitAnswerMcq = async (req, res, next) => {
   const eId = req.body.eId;
   const sId = req.user.studentId;
@@ -3556,6 +3560,7 @@ const submitAnswerMcq = async (req, res, next) => {
   // return res.status(200).json(data1);
 };
 //written
+
 const assignQuestionWritten1 = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
@@ -3733,6 +3738,7 @@ const assignQuestionWritten = async (req, res, next) => {
   });
   return res.status(200).json(data1);
 };
+
 const ruunningWritten = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
@@ -3801,6 +3807,7 @@ const ruunningWritten = async (req, res, next) => {
 
   return res.status(200).json(data1);
 };
+
 const submitStudentScript10 = async (req, res, next) => {
   const files = req.files;
   //file upload handle:start
@@ -3878,6 +3885,7 @@ const submitStudentScript10 = async (req, res, next) => {
   }
   return res.status(201).json("Submitted Successfully.");
 };
+
 const submitStudentScript = async (req, res, next) => {
   const images = req.body.questionILink;
   let examId = req.body.examId;
@@ -4017,6 +4025,7 @@ const submitStudentScript = async (req, res, next) => {
   }
   return res.status(201).json("Submitted Successfully.");
 };
+
 const submitWritten = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.user.studentId;
@@ -4066,7 +4075,9 @@ const submitWritten = async (req, res, next) => {
   }
   return res.status(201).json("Submitted Sccessfully.");
 };
+
 //assign teacher
+
 const assignStudentToTeacher1 = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
@@ -4206,6 +4217,7 @@ const assignStudentToTeacher1 = async (req, res, next) => {
     .status(201)
     .json("Successfully assign all student to the teacher.");
 };
+
 const assignStudentToTeacher = async (req, res, next) => {
   //new code
   let examId = req.body.examId;
@@ -4349,6 +4361,7 @@ const assignStudentToTeacher = async (req, res, next) => {
     .status(201)
     .json("Successfully assign all student to the teacher.");
 };
+
 const getStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
@@ -4469,6 +4482,7 @@ const getStudentData = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+
 const getRecheckStudentData = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
@@ -4577,6 +4591,7 @@ const getRecheckStudentData = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+
 const getRecheckStudentData1 = async (req, res, next) => {
   let page = req.query.page || 1;
   let teacherId = req.user.id;
@@ -4676,6 +4691,7 @@ const getRecheckStudentData1 = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+
 const getWrittenScriptSingle = async (req, res, next) => {
   let studentId = req.query.studentId;
   let examId = req.query.examId;
@@ -4735,6 +4751,7 @@ const getWrittenScriptSingle = async (req, res, next) => {
   //console.log(getQuestion);
   return res.status(200).json(data);
 };
+
 const checkScriptSingle1 = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
@@ -4839,6 +4856,7 @@ const checkScriptSingle1 = async (req, res, next) => {
   }
   return res.status(201).json("Updated Successfully.");
 };
+
 const checkScriptSingle = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
@@ -4985,6 +5003,7 @@ const checkScriptSingle = async (req, res, next) => {
   }
   return res.status(201).json("Updated Successfully.");
 };
+
 const marksCalculation = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
@@ -5071,6 +5090,7 @@ const marksCalculation = async (req, res, next) => {
 
   return res.status(201).json("Status Change Successfully.");
 };
+
 const publishExam = async (req, res, next) => {
   let examId = req.body.examId;
   if (!ObjectId.isValid(examId)) {
@@ -5136,6 +5156,7 @@ const publishExam = async (req, res, next) => {
   }
   return res.status(201).json("successfully!");
 };
+
 const getWrittenStudentSingleByExam = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
@@ -5218,6 +5239,7 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   ////console.log(data.checkStatus);
   return res.status(200).json(dataObj);
 };
+
 const getWrittenStudentSingleByExamAdmin = async (req, res, next) => {
   let examId = req.query.examId;
   let studentId = req.query.studentId;
@@ -5294,6 +5316,7 @@ const getWrittenStudentSingleByExamAdmin = async (req, res, next) => {
   ////console.log(data.checkStatus);
   return res.status(200).json(dataObj);
 };
+
 const getStudentDataAdmin = async (req, res, next) => {
   let page = req.query.page || 1;
   let examId = req.query.examId;
@@ -5386,6 +5409,7 @@ const getStudentDataAdmin = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+
 const getRecheckStudentDataAdmin = async (req, res, next) => {
   let page = req.query.page || 1;
   let examId = req.query.examId;
@@ -5462,6 +5486,7 @@ const getRecheckStudentDataAdmin = async (req, res, next) => {
   }
   return res.status(200).json({ data1, paginateData });
 };
+
 const checkScriptSingleAdmin = async (req, res, next) => {
   let questionNo = Number(req.body.questionNo);
   let obtainedMarks = Number(req.body.obtainedMarks);
@@ -5557,6 +5582,7 @@ const checkScriptSingleAdmin = async (req, res, next) => {
   }
   return res.status(201).json("Updated Successfully.");
 };
+
 const marksCalculationAdmin = async (req, res, next) => {
   let studentId = req.body.studentId;
   let examId = req.body.examId;
@@ -5618,6 +5644,7 @@ const marksCalculationAdmin = async (req, res, next) => {
 
   return res.status(201).json("Status Change Successfully.");
 };
+
 const statusUpdate = async (req, res, next) => {
   let examId = req.body.examId;
   //console.log(examId);
@@ -5676,6 +5703,7 @@ const updateSpecialExamPhoto = async (req, res, next) => {
     res.status(404).json("could not update the photo!");
   }
 };
+
 const slotAvailable = async (req, res, next) => {
   let numberOfSlotAvailable, mcqQData;
 
@@ -5727,6 +5755,7 @@ const slotAvailable = async (req, res, next) => {
     return res.status(200).json({ slots: numberOfSlotAvailable });
   }
 };
+
 exports.refillQuestion = refillQuestion;
 exports.slotAvailable = slotAvailable;
 exports.questionByExamIdSubjectAndSet = questionByExamIdSubjectAndSet;

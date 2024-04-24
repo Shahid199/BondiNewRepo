@@ -36,6 +36,7 @@ const BothRank = require("../model/BothRank");
 const FreeMcqRank = require("../model/FreeMcqRank");
 const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestionsMcq");
 const FreestudentMarksRank = require("../model/FreestudentMarksRank");
+const McqSpecialExam = require("../model/McqSpecialExam");
 
 const Limit = 100;
 //test
@@ -2780,12 +2781,26 @@ const uploadSollution = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-  } else {
+  } else if(type===2){
     data = {
       solutionSheet: sollution,
     };
     try {
       upd = await SpecialExam.updateOne(
+        {
+          _id: examId,
+        },
+        { $set: { solutionSheet: sollution } }
+      );
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+  }else{
+    data = {
+      solutionSheet: sollution,
+    };
+    try {
+      upd = await McqSpecialExam.updateOne(
         {
           _id: examId,
         },

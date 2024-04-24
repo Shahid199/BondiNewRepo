@@ -70,11 +70,19 @@ const McqSpecialExamSchema = new Schema(
           ref: subjects,
           required: false,
         },
-        mcqId: [
+        mcqQuestions: [
           {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: questions,
-            required: false,
+            mcqIds: [
+              {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: questions,
+                required: false,
+              },
+            ],
+            setName: {
+              type: Number,
+              required: true,
+            },
           },
         ],
       },
@@ -87,7 +95,7 @@ const McqSpecialExamSchema = new Schema(
       type: Date,
       required: true,
     },
-    mcqDuration: {
+    duration: {
       type: Number,
       required: false,
       default: 0,
