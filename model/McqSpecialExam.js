@@ -11,6 +11,11 @@ const McqSpecialExamSchema = new Schema(
       required: true,
       max: 200,
     },
+    isOptionalAvailable:{
+      type: Boolean,
+      required: true,
+      default: true,
+    },
     examVariation: { type: Number, default: 5 },
     noOfTotalSubject: {
       type: Number,

@@ -1,6 +1,7 @@
 const BothExam = require("../model/BothExam");
 const Course = require("../model/Course");
 const Exam = require("../model/Exam");
+const McqSpecialExam = require("../model/McqSpecialExam");
 //const SpecialExam = require("../model/SpecialExam");
 const SpecialExam = require("../model/SpecialExamNew");
 const Student = require("../model/Student");
@@ -15,11 +16,13 @@ const getHomePage = async (req, res, next) => {
     running1 = [],
     running2 = [],
     running3 = [],
+    running4 = [],
     runningAll = [],
     coming = [],
     coming1 = [],
     coming2 = [],
     coming3 = [],
+    coming4 = [],
     comingAll = [],
     subjectDataDaily,
     subjectDataMonthly,
@@ -76,11 +79,24 @@ const getHomePage = async (req, res, next) => {
     )
       .sort("startTime")
       .limit(2);
+    coming4 = await McqSpecialExam.find(
+      {
+        $and: [
+          { status: true },
+          { courseId: courseId },
+          { startTime: { $gt: currentTime } },
+        ],
+      },
+      "_id name startTime endTime iLink"
+    )
+      .sort("startTime")
+      .limit(2);
     // //console.log(coming1);
     // //console.log(coming2);
     // //console.log(coming3);
     comingAll = coming1.concat(coming2);
     comingAll = comingAll.concat(coming3);
+    comingAll = comingAll.concat(coming4);
     ////console.log(comingAll);
     try {
       running1 = await Exam.find(
@@ -136,8 +152,26 @@ const getHomePage = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong!");
     }
+    try {
+      running4 = await McqSpecialExam.find(
+        {
+          $and: [
+            { status: true },
+            { courseId: courseId },
+            { startTime: { $lte: currentTime } },
+            { endTime: { $gt: currentTime } },
+          ],
+        },
+        "_id name startTime endTime iLink examVariation isOptionalAvailable"
+      )
+        .sort("startTime")
+        .limit(2);
+    } catch (err) {
+      return res.status(500).json("Something went wrong!");
+    }
     runningAll = running1.concat(running2);
     runningAll = runningAll.concat(running3);
+    runningAll = runningAll.concat(running4);
 
     runningAll = runningAll.sort((a, b) => a.startTime - b.startTime);
     comingAll = comingAll.sort((a, b) => a.startTime - b.startTime);

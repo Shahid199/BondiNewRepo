@@ -25,10 +25,65 @@ const {
   getCombination,
   updateStudentExamInfo,
   getRank,
+  slotAvailable,
+  refillQuestion,
+  questionByExamIdSubjectAndSet,
+  examCheckMiddleware,
+  assignQuestionMcq,
+  getRunningDataMcq
 } = require("../controller/mcqSpecial-controller");
 const { getAllRank } = require("../controller/special-controller");
+const { upload1 } = require("../utilities/multer_questions");
 const router = express.Router();
-
+router.get(
+  "/getrunningdatamcq",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  getRunningDataMcq
+);
+router.get(
+  "/startexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  assignQuestionMcq
+);
+router.get(
+  "/examcheckmiddleware",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  examCheckMiddleware
+);
+router.get(
+  "/slotAvailable",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator", "teacher"]),
+  ],
+  //authorize(["student"]),
+  slotAvailable
+);
+router.get(
+  "/questionByExamIdSubjectAndSet",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  questionByExamIdSubjectAndSet
+);
+router.post(
+  "/refillquestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  refillQuestion
+);
 router.post(
   "/createspecialmcqexam",
   [
@@ -129,7 +184,7 @@ router.post(
   [
     passport.authenticate("jwt", { session: false }),
     authorize(),
-    upload.fields([
+    upload1.fields([
       { name: "iLink", maxCount: 8 },
       { name: "explanationILink", maxCount: 8 },
     ]),
