@@ -20,6 +20,7 @@ const {
   viewSollutionMcq,
   specialGetHistoryFilter,
   viewSollutionMcqAdmin,
+  assignQuestionMcqWithoutOptional,
   historyData,
   getOptionalSubects,
   getCombination,
@@ -28,13 +29,68 @@ const {
   slotAvailable,
   refillQuestion,
   questionByExamIdSubjectAndSet,
+  getAllRank,
   examCheckMiddleware,
   assignQuestionMcq,
-  getRunningDataMcq
+  getRunningDataMcq,
+  updateAssignQuestion,
+  submitAnswer,
+  publishExam,
+  updateRank,
+  studentSubmittedExamDetail,
+  getExamSubjects,
+  specialGetHistory
 } = require("../controller/mcqSpecial-controller");
-const { getAllRank } = require("../controller/special-controller");
 const { upload1 } = require("../utilities/multer_questions");
 const router = express.Router();
+router.get(
+  "/studentSubmittedExamDetail",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  studentSubmittedExamDetail
+);
+router.get(
+  "/getexamsubjects",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getExamSubjects
+);
+router.post(
+  "/submit",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  submitAnswer
+);
+router.post(
+  "/publishexam",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  publishExam
+);
+router.post(
+  "/updaterank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  updateRank
+);
+router.post(
+  "/updateanswer",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  updateAssignQuestion
+);
 router.get(
   "/getrunningdatamcq",
   [
@@ -50,6 +106,14 @@ router.get(
     authorize(["student", "superadmin", "moderator"]),
   ],
   assignQuestionMcq
+);
+router.get(
+  "/startexamwos",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  assignQuestionMcqWithoutOptional
 );
 router.get(
   "/examcheckmiddleware",
@@ -218,7 +282,14 @@ router.get(
   ],
   specialGetHistoryFilter
 );
-
+router.get(
+  "/specialgethistory",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  specialGetHistory
+);
 router.get(
   "/viewsollutionmcqadmin",
   [

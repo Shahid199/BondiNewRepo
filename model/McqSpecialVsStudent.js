@@ -85,11 +85,6 @@ const McqSpecialVsStudentSchema = new Schema(
         ],
       },
     ],
-    totalMarksMcq: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
     totalObtainedMarks: {
       type: Number,
       required: false,

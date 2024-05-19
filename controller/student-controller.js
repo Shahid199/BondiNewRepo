@@ -1866,7 +1866,7 @@ const historyData = async (req, res, next) => {
   }
   //return res.status(200).json(count);
   ////console.log(count);
-  if (count == 0) return res.status(404).json("1.No data found.");
+  if (count == 0) return res.status(200).json("1.No data found.");
   let paginateData = pagination(count, page);
   try {
     data = await StudentExamVsQuestionsMcq.find({

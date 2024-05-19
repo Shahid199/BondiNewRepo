@@ -61,6 +61,7 @@ const smsRouter = require("./routes/sms-routes");
 const curriculumRouter = require("./routes/curriculum-routes");
 const removeRouter = require("./routes/removefiles-routes");
 const mcqSpecialRouter = require("./routes/mcqspecial-routes");
+const RetakeExamTrackerRouter = require("./routes/RetakeExamTracker-routes");
 const { assignQuestion } = require("./controller/student-controller");
 
 //serve files from uploads folder
@@ -75,6 +76,7 @@ app.use("/api/coursevsstudent", courseVsStudentRouter);
 app.use("/api/subject", subjectRouter);
 app.use("/api/exam", examRouter);
 app.use("/api/mcqspecialexam", mcqSpecialRouter);
+app.use("/api/retake", RetakeExamTrackerRouter);
 app.use("/api/home", homeRouter);
 app.use("/api/freestudent", freeStudentRouter);
 app.use("/api/special", specialRouter);
