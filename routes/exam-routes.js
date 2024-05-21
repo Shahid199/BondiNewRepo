@@ -43,7 +43,8 @@ const {
   getAllData,
   slotAvailable,
   refillQuestion,
-  changeCorrectAnswer
+  changeCorrectAnswer,
+  calculateMarks,
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -341,5 +342,12 @@ router.post(
   ],
   refillQuestion
 );
-
+router.get(
+  "/calculatemartks",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  calculateMarks
+);
 module.exports = router;
