@@ -37,6 +37,7 @@ const FreeMcqRank = require("../model/FreeMcqRank");
 const FreeStudentExamVsQuestionsMcq = require("../model/FreeStudentExamVsQuestionsMcq");
 const FreestudentMarksRank = require("../model/FreestudentMarksRank");
 const McqSpecialExam = require("../model/McqSpecialExam");
+const { forEach } = require("jszip");
 
 const Limit = 100;
 //test
@@ -501,8 +502,8 @@ const updateExam = async (req, res, next) => {
     questionType,
   } = req.body;
   // console.log(req.body);
-  
-  const totalMarks = (Number(totalQuestionMcq))*(Number(marksPerMcq))
+
+  const totalMarks = Number(totalQuestionMcq) * Number(marksPerMcq);
   if (
     !ObjectId.isValid(examId) ||
     !ObjectId.isValid(courseId) ||
@@ -708,7 +709,7 @@ const getExamBySubAdmin = async (req, res, next) => {
     return res.status(404).json("subject Id is not valid.");
   const subjectIdObj = new mongoose.Types.ObjectId(subjectId);
   let examData1 = null;
-  if(type==="free"){
+  if (type === "free") {
     try {
       examData1 = await Exam.find({
         $and: [
@@ -721,7 +722,7 @@ const getExamBySubAdmin = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json(err);
     }
-  }else{
+  } else {
     try {
       examData1 = await Exam.find({
         $and: [
@@ -2781,7 +2782,7 @@ const uploadSollution = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-  } else if(type===2){
+  } else if (type === 2) {
     data = {
       solutionSheet: sollution,
     };
@@ -2795,7 +2796,7 @@ const uploadSollution = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
-  }else{
+  } else {
     data = {
       solutionSheet: sollution,
     };
@@ -2877,7 +2878,62 @@ const updateExamPhoto = async (req, res, next) => {
   }
 };
 
+const calculateMarks = async (req, res, next) => {
+  let examId = new mongoose.Types.ObjectId(req.query.examId);
+  let type = req.query.type;
+  let data = [];
+  if (type == 1) {
+    try {
+      data = await StudentExamVsQuestionsMcq.find({ examId: examId })
+        .populate("mcqQuestionId")
+        .populate("examId");
+    } catch (err) {
+      return res.status(500).json("1.something went wrong.");
+    }
+    let updArr = [];
+    for (let index = 0; index < data.length; index++) {
+      let updObj = {};
+      let studentId = data[index].studentId;
+      let questions = data[index].mcqQuestionId;
+      let answered = data[index].answeredOption;
+      let cm = 0;
+      let wm = 0;
+      let tm = 0;
+      let na = 0;
+      let ca = 0;
+      let wa = 0;
+      for (let ind = 0; ind < questions.length; ind++) {
+        if (Number(answered[ind]) === questions[ind].correctOption) {
+          ca++;
+        } else if (Number(answered[ind]) === -1) {
+          na++;
+        } else wa++;
+      }
+      cm = ca * data[index].examId.marksPerMcq;
+      wm = (wa * (data[index].examId.marksPerMcq * 25)) / 100;
+      tm = cm - wm;
+      let upd = null;
+      try {
+        upd = await StudentExamVsQuestionsMcq.updateOne(
+          { examId: examId, studentId: studentId },
+          {
+            totalCorrectAnswer: ca,
+            totalWrongAnswer: wa,
+            totalNotAnswered: na,
+            totalCorrectMarks: cm,
+            totalWrongMarks: wm,
+            totalObtainedMarks: tm,
+          }
+        );
+      } catch (err) {
+        return res.status(500).json("Something went wrong.");
+      }
+    }
+  }
+  return res.status(200).json(data);
+};
 //export functions
+exports.calculateMarks = calculateMarks;
 exports.refillQuestion = refillQuestion;
 exports.changeCorrectAnswer = changeCorrectAnswer;
 exports.slotAvailable = slotAvailable;

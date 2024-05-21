@@ -28,11 +28,11 @@ const removeAnswerScript = async (req, res, next) => {
     } else return res.status(200).json("already deleted.no folder found.");
   } else {
     dir1 = dir1 + "/" + examId;
-    if (fs.existsSync(dir)) {
-      fs.rm(dir, { recursive: true, force: true }, (err) => {
+    if (fs.existsSync(dir1)) {
+      fs.rm(dir1, { recursive: true, force: true }, (err) => {
         if (err) {
           return res.status(404).json(err);
-        } else console.log(`${dir} is deleted!`);
+        } else console.log(`${dir1} is deleted!`);
       });
       return res.status(200).json("success");
     } else return res.status(200).json("already deleted.no folder found.");
