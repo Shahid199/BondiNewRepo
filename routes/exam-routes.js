@@ -342,7 +342,7 @@ router.post(
   ],
   refillQuestion
 );
-router.get(
+router.post(
   "/calculatemartks",
   [
     passport.authenticate("jwt", { session: false }),

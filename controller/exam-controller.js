@@ -2879,7 +2879,7 @@ const updateExamPhoto = async (req, res, next) => {
 };
 
 const calculateMarks = async (req, res, next) => {
-  let examId = new mongoose.Types.ObjectId(req.query.examId);
+  let examId = new mongoose.Types.ObjectId(req.body.examId);
   let type = req.query.type;
   let data = [];
   if (type == 1) {
@@ -2913,6 +2913,7 @@ const calculateMarks = async (req, res, next) => {
       wm = (wa * (data[index].examId.marksPerMcq * 25)) / 100;
       tm = cm - wm;
       let upd = null;
+      let saveStudentExamEnd =null;
       try {
         upd = await StudentExamVsQuestionsMcq.updateOne(
           { examId: examId, studentId: studentId },
@@ -2925,11 +2926,16 @@ const calculateMarks = async (req, res, next) => {
             totalObtainedMarks: tm,
           }
         );
+        saveStudentExamEnd = await StudentMarksRank.updateOne(
+          { examId: examId, studentId: studentId },
+          {totalObtainedMarks:tm}
+        );
       } catch (err) {
         return res.status(500).json("Something went wrong.");
       }
     }
   }
+  console.log(data);
   return res.status(200).json(data);
 };
 //export functions
