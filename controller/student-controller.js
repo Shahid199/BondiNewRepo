@@ -2330,7 +2330,7 @@ const missedExam = async (req, res, next) => {
       result["duration"] = Number(resultData[i].duration);
       result["examType"] = "Written";
       result["negativeMarks"] = resultData[i].negativeMarks;
-      
+
       result["solutionSheet"] = resultData[i].solutionSheet;
       resultFinal.push(result);
     }
@@ -2420,7 +2420,7 @@ const missedExam = async (req, res, next) => {
       result["duration"] = Number(resultData[i].totalDuration);
       result["examType"] = "Both";
       result["negativeMarks"] = resultData[i].negativeMarks;
-      
+
       result["solutionSheet"] = resultData[i].solutionSheet;
       resultFinal.push(result);
     }
@@ -2512,7 +2512,7 @@ const missedExam = async (req, res, next) => {
       result["duration"] = Number(resultData[i].totalDuration);
       result["examType"] = "Special";
       result["negativeMarks"] = resultData[i].negativeMarks;
-      
+
       result["solutionSheet"] = resultData[i].solutionSheet;
       resultFinal.push(result);
     }
@@ -2763,7 +2763,8 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataObject["totalWrongMarks"] = data.totalWrongMarks;
   dataObject["totalNotAnswered"] = data.totalNotAnswered;
   dataObject["marksPerMcq"] = data.examId.marksPerMcq;
-  dataObject["marksPerWrong"] = data.examId.negativeMarks / 100;
+  dataObject["marksPerWrong"] =
+    (data.examId.marksPerMcq * data.examId.negativeMarks) / 100;
   return res.status(200).json(dataObject);
 };
 
@@ -7354,6 +7355,9 @@ const bothGetExamDataForTest = async (req, res, next) => {
   }
   return res.status(200).json(result);
 };
+
+
+
 exports.bothGetExamDataForTest = bothGetExamDataForTest;
 exports.bothGetHistoryFilter = bothGetHistoryFilter;
 exports.getHistoryByWrittenIdFilter = getHistoryByWrittenIdFilter;

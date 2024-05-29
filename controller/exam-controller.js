@@ -2913,10 +2913,14 @@ const calculateMarks = async (req, res, next) => {
       wm = (wa * (data[index].examId.marksPerMcq * 25)) / 100;
       tm = cm - wm;
       let upd = null;
-      let saveStudentExamEnd =null;
+      let saveStudentExamEnd = null;
       try {
         upd = await StudentExamVsQuestionsMcq.updateOne(
-          { examId: examId, studentId: studentId },
+          {
+            examId: examId,
+            studentId: studentId,
+            totalObtainedMarks: { $ne: -5000 },
+          },
           {
             totalCorrectAnswer: ca,
             totalWrongAnswer: wa,
@@ -2927,8 +2931,12 @@ const calculateMarks = async (req, res, next) => {
           }
         );
         saveStudentExamEnd = await StudentMarksRank.updateOne(
-          { examId: examId, studentId: studentId },
-          {totalObtainedMarks:tm}
+          {
+            examId: examId,
+            studentId: studentId,
+            totalObtainedMarks: { $ne: -5000 },
+          },
+          { totalObtainedMarks: tm }
         );
       } catch (err) {
         return res.status(500).json("Something went wrong.");
