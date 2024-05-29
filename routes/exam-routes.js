@@ -45,6 +45,7 @@ const {
   refillQuestion,
   changeCorrectAnswer,
   calculateMarks,
+  addTextQuestion
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -56,6 +57,14 @@ router.post(
     upload.single("iLink"),
   ],
   createExam
+);
+router.post(
+  "/addTextQuestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+  ],
+  addTextQuestion
 );
 router.post(
   "/changeanswer",

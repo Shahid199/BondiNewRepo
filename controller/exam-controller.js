@@ -2938,8 +2938,111 @@ const calculateMarks = async (req, res, next) => {
   console.log(data);
   return res.status(200).json(data);
 };
+
+const addTextQuestion = async(req,res,next) =>{
+  const quest = req.body;
+  console.log(quest);
+  // res.status(200).json(quest);
+  let iLinkPath = null;
+  let explanationILinkPath = null;
+  let examIdObj;
+  // console.log(req.file);
+  //let type = req.query.type;
+  let question;
+  let mcqQData,
+    doc1,
+    mId,
+    mIdNew = [];
+ 
+  //const examId = req.body.examId;
+  let setName1 = parseInt(quest.setName);
+
+  let examDetails = {};
+
+  try {
+    examDetails = await Exam.findOne({
+      _id: new mongoose.Types.ObjectId(quest.examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  if (examDetails) {
+    try {
+      mcqQData = await McqQuestionVsExam.findOne({
+        eId: quest.examId,
+        setName: setName1,
+      }).select("mId");
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+    // console.log(mcqQData);
+    if (mcqQData !== null) {
+      if (mcqQData.mId.length >= examDetails.totalQuestionMcq) {
+        return res.status(405).json("Set of Question reached the limit");
+      }
+    }
+  }
+  // let options = JSON.parse(quest.options);
+  if (!ObjectId.isValid(quest.examId))
+    return res.status(404).json("examId Id is not valid.");
+  const file = req.file;
+  //question insert for text question(type=true)
+  question = quest.question;
+  examIdObj = new mongoose.Types.ObjectId(quest.examId);
+  //insert question
+  let questions = new QuestionsMcq({
+    question: question,
+    optionCount: Number(quest.optionCount),
+    options: quest.options,
+    correctOption: Number(quest.correctOption), //index value
+    explanationILink: null,
+    status: JSON.parse(quest.status),
+    type: JSON.parse(quest.type),
+  });
+  let doc;
+  try {
+    doc = await questions.save();
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json(err);
+  }
+  //end of insert question
+  //insert question to reference mcqquestionexam table
+  let questionId = doc._id;
+  if (!questionId) return res.status(400).send("question not inserted");
+
+  // console.log(mcqQData);
+  if (mcqQData == null) {
+    mIdNew.push(questionId);
+    let questionExam = new McqQuestionVsExam({
+      eId: quest.examId,
+      mId: mIdNew,
+      setName: parseInt(quest.setName),
+    });
+    try {
+      doc1 = await questionExam.save();
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  } else {
+    mId = mcqQData.mId;
+    mIdNew = mId;
+    mIdNew.push(questionId);
+    try {
+      doc1 = await McqQuestionVsExam.updateOne(
+        { eId: examIdObj, setName: setName1 },
+        { $set: { mId: mIdNew } }
+      );
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  }
+  // console.log(setName);
+  return res.status(201).json("Saved.");
+}
 //export functions
 exports.calculateMarks = calculateMarks;
+exports.addTextQuestion = addTextQuestion;
 exports.refillQuestion = refillQuestion;
 exports.changeCorrectAnswer = changeCorrectAnswer;
 exports.slotAvailable = slotAvailable;
