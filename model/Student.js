@@ -46,6 +46,16 @@ const studentsSchema = new Schema(
       required: false,
       default: null,
     },
+    displayPicture:{
+      type: String,
+      required: false,
+      default: null,
+    },
+    password:{
+      type: String,
+      required: false,
+      default: null,
+    }
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

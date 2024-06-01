@@ -2682,56 +2682,59 @@ const columnAdd = async (req, res, next) => {
   let dataBothMcqQuestionVsExam = [];
   try {
     // data = await Exam.collection.drop();
-    dataExam = await Exam.updateMany(
-      {},
-      {
-        $set: {
-          curriculumName: null,
-          isAdmission: false,
-          solutionSheet: null,
-          questionType: null,
-          numberOfRetakes: 5,
-          numberOfOptions: 4,
-          numberOfSet: 4,
-        },
-      }
-    );
-    dataBothExam = await BothExam.updateMany(
-      {},
-      {
-        $set: {
-          curriculumName: null,
-          isAdmission: false,
-          solutionSheet: null,
-          questionType: null,
-          numberOfRetakes: 5,
-          numberOfOptions: 4,
-          numberOfSet: 4,
-        },
-      }
-    );
+    // dataExam = await Exam.updateMany(
+    //   {},
+    //   {
+    //     $set: {
+    //       curriculumName: null,
+    //       isAdmission: false,
+    //       solutionSheet: null,
+    //       questionType: null,
+    //       numberOfRetakes: 5,
+    //       numberOfOptions: 4,
+    //       numberOfSet: 4,
+    //     },
+    //   }
+    // );
+    // dataBothExam = await BothExam.updateMany(
+    //   {},
+    //   {
+    //     $set: {
+    //       curriculumName: null,
+    //       isAdmission: false,
+    //       solutionSheet: null,
+    //       questionType: null,
+    //       numberOfRetakes: 5,
+    //       numberOfOptions: 4,
+    //       numberOfSet: 4,
+    //     },
+    //   }
+    // );
     dataStudent = await Student.updateMany(
       {},
-      { $set: { curriculumRoll: null } }
+      { $set: { 
+        displayPicture: null,
+        password:null,
+      } }
     );
-    dataMcqQuestionVsExam = await McqQuestionVsExam.updateMany(
-      {},
-      { $set: { setName: 0 } }
-    );
-    dataBothMcqQuestionVsExam = await BothMcqQuestionVsExam.updateMany(
-      {},
-      { $set: { setName: 0 } }
-    );
+    // dataMcqQuestionVsExam = await McqQuestionVsExam.updateMany(
+    //   {},
+    //   { $set: { setName: 0 } }
+    // );
+    // dataBothMcqQuestionVsExam = await BothMcqQuestionVsExam.updateMany(
+    //   {},
+    //   { $set: { setName: 0 } }
+    // );
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
 
   return res.status(200).json({
-    dataExam,
-    dataBothExam,
+    // dataExam,
+    // dataBothExam,
     dataStudent,
-    dataMcqQuestionVsExam,
-    dataBothMcqQuestionVsExam,
+    // dataMcqQuestionVsExam,
+    // dataBothMcqQuestionVsExam,
   });
 };
 const columnAdd11 = async (req, res, next) => {
@@ -2950,6 +2953,7 @@ const calculateMarks = async (req, res, next) => {
 const addTextQuestion = async(req,res,next) =>{
   const quest = req.body;
   console.log(quest);
+  // return;
   // res.status(200).json(quest);
   let iLinkPath = null;
   let explanationILinkPath = null;
