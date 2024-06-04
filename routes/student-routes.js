@@ -84,6 +84,8 @@ const {
   bothGetHistoryFilter,
   bothGetAllRank,
   bothGetExamDataForTest,
+  checkPassword,
+  changePassword
 } = require("../controller/student-controller");
 const StudentMarksRank = require("../model/StudentMarksRank");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
@@ -107,9 +109,25 @@ router.get(
   "/getstudentinfobyid",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    authorize(["superadmin", "moderator","student"]),
   ],
   getStudenInfoById
+);
+router.get(
+  "/checkpassword",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator","student"]),
+  ],
+  checkPassword
+);
+router.post(
+  "/changepassword",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator","student"]),
+  ],
+  changePassword
 );
 // router.get(
 //   "/updaterank",
