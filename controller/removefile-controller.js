@@ -40,7 +40,7 @@ const removeAnswerScript = async (req, res, next) => {
 };
 const removeOneTime = async (req, res, next) => {
   //let examId = req.query.examId;
-  let examId = new mongoose.Types.ObjectId("651053a45f81627f6000b91f");
+  let examId = new mongoose.Types.ObjectId("651022418e171dad4fdce59e");
   let type = 2; //0=written 1=both 2=special
   let path = [];
   if (type == 2) {
@@ -73,7 +73,7 @@ const removeOneTime = async (req, res, next) => {
   }
   //console.log("parth", path);
   for (let i = 0; i < path.length; i++) {
-    fs.unlinkSync(dir2 + "/" + path[i]);
+    //fs.unlinkSync(dir2 + "/" + path[i]);
     console.log(dir2 + "/" + path[i]);
   }
   //fs.unlinkSync(dir2 + "/"+);
