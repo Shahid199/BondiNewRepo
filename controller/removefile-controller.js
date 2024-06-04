@@ -55,7 +55,7 @@ const removeOneTime = async (req, res, next) => {
     if (data.length == 0) return res.status(404).json("No data found.");
     for (let i = 0; i < data.length; i++) {
       if(data[i].submittedScriptILink){
-        for(let j=0;j<data[i].length;j++){
+        for(let j=0;j<data[i].submittedScriptILink.length;j++){
           if(data[i].submittedScriptILink[j]!=null){
             for(let k=0;k<data[i].submittedScriptILink[j].length;k++){
               path.push(data[i].submittedScriptILink[j][k]);
