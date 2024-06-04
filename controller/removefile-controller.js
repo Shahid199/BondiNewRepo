@@ -73,7 +73,7 @@ const removeOneTime = async (req, res, next) => {
       }
     }
   }
-  //console.log("parth", path);
+  console.log("parth", path);
   let count = 0;
   for (let i = 0; i < path.length; i++) {
     if(fs.existsSync(dir2 + "/" + path[i])){
