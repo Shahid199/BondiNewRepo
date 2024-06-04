@@ -146,11 +146,11 @@ const getExam = async (req, res, next) => {
       } catch (err) {
         return res.status(500).json("Type:1 Something went wrong.");
       }
-      console.log(exams.length, exams);
+      console.log(exams.length);
       for (let i = 0; i < exams.length; i++) {
         let rowExamId = String(exams[i]._id);
         let path = dir + "/" + rowExamId;
-        console.log("path:", path);
+        //console.log("path:", path);
         if (fs.existsSync(path)) {
           let data = {};
           data["examId"] = exams[i]._id;
@@ -220,6 +220,7 @@ const getExam = async (req, res, next) => {
           examId.push(data);
         }
       }
+      console.log(data);
       return res.status(200).json(examId);
     } else if (type == 2) {
       try {
