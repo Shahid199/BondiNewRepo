@@ -58,7 +58,7 @@ const removeOneTime = async (req, res, next) => {
         //console.log(data[i].questionWritten);
         for (let j = 0; j < 4; j++) {
           if (data[i].questionWritten[j]) {
-            let subjects = data[i].questionWritten[j].submittedScriptILink;
+            let subjects = data[i].questionWritten[j].answerScriptILink;
             //console.log(subjects);
             if (subjects.length > 0) {
               for (let k = 0; k < subjects.length; k++) {
@@ -75,9 +75,9 @@ const removeOneTime = async (req, res, next) => {
   }
   //console.log("parth", path);
   for (let i = 0; i < path.length; i++) {
-    if(fs.existsSync(dir2 + "/" + path[i])){
-      fs.unlinkSync(dir2 + "/" + path[i]);
-    }
+    // if(fs.existsSync(dir2 + "/" + path[i])){
+    //   fs.unlinkSync(dir2 + "/" + path[i]);
+    // }
     console.log(dir2 + "/" + path[i]);
   }
   //fs.unlinkSync(dir2 + "/"+);
