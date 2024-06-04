@@ -6069,7 +6069,7 @@ const bothExamDetail = async (req, res, next) => {
   data1["obtainedMarks"] = data.obtainedMarks;
   data1["obtainedMarksWritten"] = data.totalObtainedMarksWritten;
   //written
-  data1["totalObtainedMarks"] = data.totalObtainedMarks;
+  data1["totalObtainedMarks"] = Number(data.totalObtainedMarks.toFixed(2));
   data1["rank"] = resultRank;
   return res.status(200).json(data1);
 };
