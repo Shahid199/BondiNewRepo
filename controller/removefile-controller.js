@@ -85,17 +85,17 @@ const removeOneTime = async (req, res, next) => {
     // }
   }
   console.log("parth", path);
-  // let count = 0;
-  // for (let i = 0; i < path.length; i++) {
-  //   if(fs.existsSync(dir2 + "/" + path[i])){
-  //     fs.unlinkSync(dir2 + "/" + path[i]);
-  //     count++;
-  //     console.log(dir2 + "/" + path[i]);
-  //   }
+  let count = 0;
+  for (let i = 0; i < path.length; i++) {
+    if(fs.existsSync(dir2 + "/" + path[i])){
+      fs.unlinkSync(dir2 + "/" + path[i]);
+      count++;
+      console.log(dir2 + "/" + path[i]);
+    }
     
-  // }
+  }
   //fs.unlinkSync(dir2 + "/"+);
-  return res.status(200).json("Storage Removed");
+  return res.status(200).json("Storage Removed"+count);
 };
 const downloadImage = async (req, res, next) => {
   const zip = new JSZip();
