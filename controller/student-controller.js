@@ -3611,7 +3611,7 @@ const bothGetHistory = async (req, res, next) => {
     rank
   try {
     rank = await BothStudentExamVsQuestions.find({
-      $and: [{ examId: examIdObj }, { checkStatus: true }],
+      $and: [{ examId: examIdObj }],
     })
       .populate('studentId')
       .skip(paginateData.skippedIndex)
