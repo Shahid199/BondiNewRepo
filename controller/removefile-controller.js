@@ -7,6 +7,7 @@ const { ObjectId } = require("mongodb");
 const Exam = require("../model/Exam");
 const BothExam = require("../model/BothExam");
 const SpecialExamNew = require("../model/SpecialExamNew");
+const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
 let dir = path.resolve(path.join(__dirname, "../uploads"));
 let dir1 = path.resolve(path.join(__dirname, "../uploads/answers"));
 let dir2 = path.resolve(path.join(__dirname, "../"));
@@ -47,42 +48,52 @@ const removeOneTime = async (req, res, next) => {
   if (type == 2) {
     let data = null;
     try {
-      data = await SpecialVsStudent.find({ examId: examId });
+      data = await BothStudentExamVsQuestions.find({ examId: examId });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
     if (data.length == 0) return res.status(404).json("No data found.");
     for (let i = 0; i < data.length; i++) {
-      //console.log(data[i].questionWritten);
-      if (data[i].questionWritten) {
-        //console.log(data[i].questionWritten);
-        for (let j = 0; j < 4; j++) {
-          if (data[i].questionWritten[j]) {
-            let subjects = data[i].questionWritten[j].answerScriptILink;
-            //console.log(subjects);
-            if (subjects.length > 0) {
-              for (let k = 0; k < subjects.length; k++) {
-                if(subjects[k]!=null)
-                  for (let p = 0; p < subjects[k].length; p++) {
-                    path.push(subjects[k][p]);
-                  }
-              }
+      if(data[i].submittedScriptILink){
+        for(let j=0;j<data[i].length:j++){
+          if(data[i].submittedScriptILink[j]){
+            for(let k=0;k<data[i].submittedScriptILink[j].length;k++){
+              path.push(data[i].submittedScriptILink[j][p]);
             }
           }
         }
       }
     }
+    //   //console.log(data[i].questionWritten);
+    //   if (data[i].questionWritten) {
+    //     //console.log(data[i].questionWritten);
+    //     for (let j = 0; j < 4; j++) {
+    //       if (data[i].questionWritten[j]) {
+    //         let subjects = data[i].questionWritten[j].answerScriptILink;
+    //         //console.log(subjects);
+    //         if (subjects.length > 0) {
+    //           for (let k = 0; k < subjects.length; k++) {
+    //             if(subjects[k]!=null)
+    //               for (let p = 0; p < subjects[k].length; p++) {
+    //                 path.push(subjects[k][p]);
+    //               }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
   console.log("parth", path);
-  let count = 0;
-  for (let i = 0; i < path.length; i++) {
-    if(fs.existsSync(dir2 + "/" + path[i])){
-      fs.unlinkSync(dir2 + "/" + path[i]);
-      count++;
-      console.log(dir2 + "/" + path[i]);
-    }
+  // let count = 0;
+  // for (let i = 0; i < path.length; i++) {
+  //   if(fs.existsSync(dir2 + "/" + path[i])){
+  //     fs.unlinkSync(dir2 + "/" + path[i]);
+  //     count++;
+  //     console.log(dir2 + "/" + path[i]);
+  //   }
     
-  }
+  // }
   //fs.unlinkSync(dir2 + "/"+);
   return res.status(200).json("Storage Removed"+count);
 };
