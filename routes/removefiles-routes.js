@@ -11,7 +11,7 @@ const {
 const router = express.Router();
 
  //router.post("/removebyexam", removeAnswerScript);
- router.get("/removeonetime", removeOneTime);
+ //router.get("/removeonetime", removeOneTime);
 // router.get("/download", downloadImage);
  //router.get("/getexam", getExam);
 
