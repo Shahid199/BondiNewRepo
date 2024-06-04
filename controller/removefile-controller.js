@@ -58,7 +58,7 @@ const removeOneTime = async (req, res, next) => {
         for(let j=0;j<data[i].length;j++){
           if(data[i].submittedScriptILink[j]){
             for(let k=0;k<data[i].submittedScriptILink[j].length;k++){
-              path.push(data[i].submittedScriptILink[j][p]);
+              path.push(data[i].submittedScriptILink[j][k]);
             }
           }
         }
