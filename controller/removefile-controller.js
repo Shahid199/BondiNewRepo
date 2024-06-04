@@ -54,11 +54,11 @@ const removeOneTime = async (req, res, next) => {
     }
     if (data.length == 0) return res.status(404).json("No data found.");
     for (let i = 0; i < data.length; i++) {
-      if(data[i].submittedScriptILink){
-        for(let j=0;j<data[i].submittedScriptILink.length;j++){
-          if(data[i].submittedScriptILink[j]!=null){
-            for(let k=0;k<data[i].submittedScriptILink[j].length;k++){
-              path.push(data[i].submittedScriptILink[j][k]);
+      if(data[i].ansewerScriptILink){
+        for(let j=0;j<data[i].ansewerScriptILink.length;j++){
+          if(data[i].ansewerScriptILink[j]!=null){
+            for(let k=0;k<data[i].ansewerScriptILink[j].length;k++){
+              path.push(data[i].ansewerScriptILink[j][k]);
             }
           }
         }
@@ -86,14 +86,14 @@ const removeOneTime = async (req, res, next) => {
   }
   console.log("parth", path);
   let count = 0;
-  for (let i = 0; i < path.length; i++) {
-    if(fs.existsSync(dir2 + "/" + path[i])){
-      fs.unlinkSync(dir2 + "/" + path[i]);
-      count++;
-      console.log(dir2 + "/" + path[i]);
-    }
+  // for (let i = 0; i < path.length; i++) {
+  //   if(fs.existsSync(dir2 + "/" + path[i])){
+  //     fs.unlinkSync(dir2 + "/" + path[i]);
+  //     count++;
+  //     console.log(dir2 + "/" + path[i]);
+  //   }
     
-  }
+  // }
   //fs.unlinkSync(dir2 + "/"+);
   return res.status(200).json("Storage Removed"+count);
 };
