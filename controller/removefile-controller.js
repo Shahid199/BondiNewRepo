@@ -40,7 +40,8 @@ const removeAnswerScript = async (req, res, next) => {
 };
 const removeOneTime = async (req, res, next) => {
   //let examId = req.query.examId;
-  let examId = new mongoose.Types.ObjectId("651022418e171dad4fdce59e");
+  let examId1 = req.query.examId;
+  let examId = new mongoose.Types.ObjectId(examId1);
   let type = 2; //0=written 1=both 2=special
   let path = [];
   if (type == 2) {
