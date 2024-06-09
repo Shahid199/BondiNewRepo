@@ -879,7 +879,7 @@ const updateBothExamPhoto = async (req, res, next) => {
 const updateBothStudentMarks = async (req, res, next) => {
   let getData
   try {
-    getData = await BothStudentExamVsQuestions.findOne({})
+    getData = await BothStudentExamVsQuestions.find({})
   } catch (error) {
     return res.status(500).json(error)
   }
