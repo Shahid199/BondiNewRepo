@@ -879,12 +879,7 @@ const updateBothExamPhoto = async (req, res, next) => {
 const updateBothStudentMarks = async (req, res, next) => {
   let getData
   try {
-    getData = await BothStudentExamVsQuestions.findOne({
-      $and: [
-        { examId: mongoose.Types.ObjectId('665f173cf4d6d34cfe6832b5') },
-        { studentId: mongoose.Types.ObjectId('6598e15a68bacdef168a3010') },
-      ]
-    })
+    getData = await BothStudentExamVsQuestions.findOne({})
   } catch (error) {
     return res.status(500).json(error)
   }
