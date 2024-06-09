@@ -20,6 +20,7 @@ const BothExam = require("../model/BothExam");
 const BothExamRule = require("../model/BothExamRule");
 const BothMcqQuestionVsExam = require("../model/BothMcqQuestionVsExam");
 const BothQuestionsWritten = require("../model/BothQuestionsWritten");
+const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
 const shuffle = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -887,7 +888,7 @@ const updateBothExamPhoto = async (req, res, next) => {
 const updateBothStudentMarks = async(req,res,next) =>{
   let getData ;
   try {
-    getData = db.bothstudentexamvsquestions.find({examId:ObjectId("665f173cf4d6d34cfe6832b5"),studentId:ObjectId("6598e15a68bacdef168a3010")});
+    getData = await BothStudentExamVsQuestions.find({examId:ObjectId("665f173cf4d6d34cfe6832b5"),studentId:ObjectId("6598e15a68bacdef168a3010")});
   } catch (error) {
     return res.status(500).json(error);    
   }
