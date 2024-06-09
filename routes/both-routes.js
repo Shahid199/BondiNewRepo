@@ -1,8 +1,8 @@
-const express = require("express");
-const authorize = require("../utilities/authorizationMiddleware");
-const passport = require("passport");
-const { upload } = require("../utilities/multer");
-const { upload1 } = require("../utilities/multer_questions");
+const express = require('express')
+const authorize = require('../utilities/authorizationMiddleware')
+const passport = require('passport')
+const { upload } = require('../utilities/multer')
+const { upload1 } = require('../utilities/multer_questions')
 const {
   createBothExam,
   updateBothExam,
@@ -21,144 +21,146 @@ const {
   questionByExamIdAndSet,
   slotAvailable,
   refillQuestion,
-} = require("../controller/both-controller");
-const router = express.Router();
+  updateBothStudentMarks,
+} = require('../controller/both-controller')
+const router = express.Router()
 
+router.get('/updateresult', updateBothStudentMarks)
 router.post(
-  "/createbothexam",
+  '/createbothexam',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   createBothExam
-);
+)
 router.post(
-  "/updateBothExamPhoto",
+  '/updateBothExamPhoto',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   updateBothExamPhoto
-);
+)
 router.put(
-  "/updatebothexam",
+  '/updatebothexam',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   updateBothExam
-);
+)
 router.put(
-  "/deactivatebothexam",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/deactivatebothexam',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   deactivateBothExam
-);
+)
 
 router.get(
-  "/slotAvailable",
+  '/slotAvailable',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['student', 'superadmin', 'moderator', 'teacher']),
   ],
   //authorize(["student"]),
   slotAvailable
-);
+)
 router.get(
-  "/getbothexambysubject",
+  '/getbothexambysubject',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['student', 'superadmin', 'moderator', 'teacher']),
   ],
   //authorize(["student"]),
   getBothExamBySubject
-);
+)
 router.get(
-  "/questionByExamIdAndSet",
+  '/questionByExamIdAndSet',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   questionByExamIdAndSet
-);
+)
 
 router.get(
-  "/getbothexambyid",
+  '/getbothexambyid',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   getBothExamById
-);
+)
 //exam rule
 router.post(
-  "/bothexamruleset",
+  '/bothexamruleset',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("ruleILink"),
+    upload.single('ruleILink'),
   ],
   bothExamRuleSet
-);
+)
 router.get(
-  "/bothexamruleget",
-  [passport.authenticate("jwt", { session: false })],
-  authorize(["superadmin", "moderator", "student", "freeStudent"]),
+  '/bothexamruleget',
+  [passport.authenticate('jwt', { session: false })],
+  authorize(['superadmin', 'moderator', 'student', 'freeStudent']),
   bothExamRuleGet
-);
+)
 router.get(
-  "/bothexamrulegetall",
+  '/bothexamrulegetall',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   bothExamRuleGetAll
-);
+)
 router.put(
-  "/bothaddquestionmcqbulk",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/bothaddquestionmcqbulk',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   bothAddQuestionMcqBulk
-);
+)
 router.post(
-  "/bothaddquestionmcq",
+  '/bothaddquestionmcq',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload1.single("iLink"),
+    upload1.single('iLink'),
   ],
   bothAddQuestionMcq
-);
+)
 router.get(
-  "/bothgetmcqquestionbyexamid",
+  '/bothgetmcqquestionbyexamid',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   bothGetMcqQuestionByExamId
-);
+)
 router.post(
-  "/bothaddquestionwritten",
+  '/bothaddquestionwritten',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload1.fields([{ name: "questionILink", maxCount: 1 }]),
+    upload1.fields([{ name: 'questionILink', maxCount: 1 }]),
   ],
   bothAddQuestionWritten
-);
+)
 
 router.get(
-  "/bothquestionbyexamid",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/bothquestionbyexamid',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   bothQuestionByExamId
-);
+)
 router.post(
-  "/refillquestion",
+  '/refillquestion',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   refillQuestion
-);
-module.exports = router;
+)
+module.exports = router

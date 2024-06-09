@@ -320,6 +320,8 @@ const getBothExamBySubject = async (req, res, next) => {
   if (exams.length > 0) return res.status(200).json({ examPage, paginateData });
   else return res.status(404).json({ message: "No exam Found." });
 };
+
+
 const getBothExamById = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
@@ -882,7 +884,17 @@ const updateBothExamPhoto = async (req, res, next) => {
     res.status(404).json("could not update the photo!");
   }
 };
-
+const updateBothStudentMarks = async(req,res,next) =>{
+  let getData ;
+  try {
+    getData = db.bothstudentexamvsquestions.find({examId:ObjectId("665f173cf4d6d34cfe6832b5"),studentId:ObjectId("6598e15a68bacdef168a3010")});
+  } catch (error) {
+    return res.status(500).json(error);    
+  }
+  
+  return res.status(200).json(getData);
+}
+exports.updateBothStudentMarks = updateBothStudentMarks;
 exports.refillQuestion = refillQuestion;
 exports.questionByExamIdAndSet = questionByExamIdAndSet;
 exports.slotAvailable = slotAvailable;

@@ -1,5 +1,5 @@
 const pagination = (totalCount, currentPage) => {
-  const perPage = 50;
+  const perPage = 10;
   let hasPrevPage = false;
   let hasNextPage = false;
   let skippedIndex = (currentPage - 1) * perPage;

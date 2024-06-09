@@ -48,6 +48,7 @@ const Limit = 100
  * @param {Object} req courseId,regNo
  * @returns token
  */
+
 // const loginStudent = async (req, res) => {
 //   const { courseId, regNo, password } = req.body
 //   const ObjectId = mongoose.Types.ObjectId
@@ -104,6 +105,7 @@ const Limit = 100
 //     return res.status(500).json({ message: 'Something went wrong!' })
 //   }
 // }
+
 const loginStudent = async (req, res) => {
   const { courseId, regNo } = req.body;
   const ObjectId = mongoose.Types.ObjectId;
@@ -150,6 +152,7 @@ const loginStudent = async (req, res) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
+
 const checkPassword = async(req,res,next)=>{
   let studentId = req.user.studentId;
   let password = req.query.password;
