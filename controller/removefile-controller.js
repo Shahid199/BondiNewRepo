@@ -7,6 +7,7 @@ const { ObjectId } = require("mongodb");
 const Exam = require("../model/Exam");
 const BothExam = require("../model/BothExam");
 const SpecialExamNew = require("../model/SpecialExamNew");
+const BothStudentExamVsQuestions = require("../model/BothStudentExamVsQuestions");
 let dir = path.resolve(path.join(__dirname, "../uploads"));
 let dir1 = path.resolve(path.join(__dirname, "../uploads/answers"));
 let dir2 = path.resolve(path.join(__dirname, "../"));
@@ -40,44 +41,61 @@ const removeAnswerScript = async (req, res, next) => {
 };
 const removeOneTime = async (req, res, next) => {
   //let examId = req.query.examId;
-  let examId = new mongoose.Types.ObjectId("651053a45f81627f6000b91f");
+  let examId1 = req.query.examId;
+  let examId = new mongoose.Types.ObjectId(examId1);
   let type = 2; //0=written 1=both 2=special
   let path = [];
   if (type == 2) {
     let data = null;
     try {
-      data = await SpecialVsStudent.find({ examId: examId });
+      data = await BothStudentExamVsQuestions.find({ examId: examId });
     } catch (err) {
       return res.status(500).json("Something went wrong.");
     }
     if (data.length == 0) return res.status(404).json("No data found.");
     for (let i = 0; i < data.length; i++) {
-      //console.log(data[i].questionWritten);
-      if (data[i].questionWritten) {
-        //console.log(data[i].questionWritten);
-        for (let j = 0; j < 4; j++) {
-          if (data[i].questionWritten[j]) {
-            let subjects = data[i].questionWritten[j].submittedScriptILink;
-            //console.log(subjects);
-            if (subjects.length > 0) {
-              for (let k = 0; k < subjects.length; k++) {
-                for (let p = 0; p < subjects[k].length; p++) {
-                  path.push(subjects[k][p]);
-                }
-              }
+      if(data[i].ansewerScriptILink){
+        for(let j=0;j<data[i].ansewerScriptILink.length;j++){
+          if(data[i].ansewerScriptILink[j]!=null){
+            for(let k=0;k<data[i].ansewerScriptILink[j].length;k++){
+              path.push(data[i].ansewerScriptILink[j][k]);
             }
           }
         }
       }
     }
+    //   //console.log(data[i].questionWritten);
+    //   if (data[i].questionWritten) {
+    //     //console.log(data[i].questionWritten);
+    //     for (let j = 0; j < 4; j++) {
+    //       if (data[i].questionWritten[j]) {
+    //         let subjects = data[i].questionWritten[j].answerScriptILink;
+    //         //console.log(subjects);
+    //         if (subjects.length > 0) {
+    //           for (let k = 0; k < subjects.length; k++) {
+    //             if(subjects[k]!=null)
+    //               for (let p = 0; p < subjects[k].length; p++) {
+    //                 path.push(subjects[k][p]);
+    //               }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
-  //console.log("parth", path);
+  console.log("parth", path);
+  let count = 0;
   for (let i = 0; i < path.length; i++) {
-    fs.unlinkSync(dir2 + "/" + path[i]);
-    console.log(dir2 + "/" + path[i]);
+    if(fs.existsSync(dir2 + "/" + path[i])){
+      fs.unlinkSync(dir2 + "/" + path[i]);
+      count++;
+      console.log(dir2 + "/" + path[i]);
+    }
+    
   }
   //fs.unlinkSync(dir2 + "/"+);
-  return res.status(200).json("Storage Removed");
+  return res.status(200).json("Storage Removed"+count);
 };
 const downloadImage = async (req, res, next) => {
   const zip = new JSZip();
@@ -146,11 +164,11 @@ const getExam = async (req, res, next) => {
       } catch (err) {
         return res.status(500).json("Type:1 Something went wrong.");
       }
-      console.log(exams.length, exams);
+      console.log(exams.length);
       for (let i = 0; i < exams.length; i++) {
         let rowExamId = String(exams[i]._id);
         let path = dir + "/" + rowExamId;
-        console.log("path:", path);
+        //console.log("path:", path);
         if (fs.existsSync(path)) {
           let data = {};
           data["examId"] = exams[i]._id;
@@ -220,6 +238,7 @@ const getExam = async (req, res, next) => {
           examId.push(data);
         }
       }
+      console.log(data);
       return res.status(200).json(examId);
     } else if (type == 2) {
       try {
