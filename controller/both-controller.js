@@ -879,7 +879,7 @@ const updateBothExamPhoto = async (req, res, next) => {
 const updateBothStudentMarks = async (req, res, next) => {
   let getData
   try {
-    getData = await BothStudentExamVsQuestions.find({})
+    getData = await BothStudentExamVsQuestions.find({_id:new mongoose.Types.ObjectId("66611a9aa45a1de46a09fc3e")})
   } catch (error) {
     return res.status(500).json(error)
   }
