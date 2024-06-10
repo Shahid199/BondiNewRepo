@@ -891,7 +891,7 @@ const updateBothStudentMarks = async (req, res, next) => {
   getData.obtainedMarks[4] = 10;
   let updStatus = null
   try {
-    updStatus = await Exam.BothStudentExamVsQuestions({ _id: new mongoose.Types.ObjectId("66611a9aa45a1de46a09fc3e") }, getData)
+    updStatus = await Exam.BothStudentExamVsQuestions.updateOne({ _id: new mongoose.Types.ObjectId("66611a9aa45a1de46a09fc3e") }, getData)
   } catch (err) {
     return res.status(500).json(err)
   }
