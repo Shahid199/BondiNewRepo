@@ -2089,7 +2089,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   let teacherId = req.body.teacherId
   //console.log(req.body);
   //console.log(examId);
-  //console.log(examId);
+  console.log(examId);
   if (!ObjectId.isValid(examId) || teacherId.length == 0)
     return res.status(404).json('Exam Id or Teacher Id is not valid.')
   let examIdObj = new mongoose.Types.ObjectId(examId)
@@ -2111,7 +2111,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
     return res.status(500).json('Somethhing went wrong.')
   }
   //console.log(assignedTeacher.length);
-  //console.log("aaa:", assignedTeacher);
+  console.log("aaa:", assignedTeacher);
   if (assignedTeacher.length > 0) {
     let del = null
     let delObj = null
@@ -2133,6 +2133,7 @@ const bothAssignStudentToTeacher = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('Something went wrong.')
   }
+  console.log(questionNo);
   questionNo = questionNo.totalQuestions
   let nullStudentId = []
   //13-03-2024
