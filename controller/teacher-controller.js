@@ -1226,22 +1226,41 @@ const bothUpdateRank = async (req, res, next) => {
   try {
     ranks = await BothStudentExamVsQuestions.find({
       $and: [{ examId: examIdObj }, { checkStatus: true }],
-    })
-      .select("examId totalObtainedMarks studentId -_id")
-      .sort({
-        totalObtainedMarks: -1,
-      });
+    });
+    // .select("examId totalObtainedMarks studentId -_id")
+    // .sort({
+    //   totalObtainedMarks: -1,
+    // });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  ////console.log("ranks:", ranks);
+
+  //   ranks = await BothStudentExamVsQuestions.aggregate([
+  //   {
+  //     $project: {
+  //       examId: "$examId",
+  //       studentId: "$studentId",
+  //       sum: { $add: ["$totalObtainedMarksMcq", "$totalObtainedMarksWritten"] },
+  //     },
+  //   },
+  //   {
+  //     $sort: { sum: -1 },
+  //   },
+  // ]);
+
+  ranks.forEach(obj => {
+    obj.sum = obj.totalObtainedMarksMcq + obj.totalObtainedMarksWritten;
+});
+  ranks.sort((a, b) => b.sum - a.sum);
+  console.log("ranks:", ranks);
   let dataLength = ranks.length;
   let dataIns = [];
   for (let i = 0; i < dataLength; i++) {
     let dataFree = {};
     dataFree["examId"] = ranks[i].examId;
     dataFree["studentId"] = ranks[i].studentId;
-    dataFree["totalObtainedMarks"] = ranks[i].totalObtainedMarks;
+    // dataFree["totalObtainedMarks"] = ranks[i].totalObtainedMarks;
+    dataFree["totalObtainedMarks"] = ranks[i].sum;
     dataFree["rank"] = i + 1;
     dataIns.push(dataFree);
   }
