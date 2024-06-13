@@ -2959,6 +2959,69 @@ const calculateMarks = async (req, res, next) => {
       }
     }
   }
+  if(type == 2) {
+    try {
+      data = await BothStudentExamVsQuestions.find({ examId: examId })
+        .populate('mcqQuestionId')
+        .populate('examId')
+    } catch (err) {
+      return res.status(500).json('1.something went wrong.')
+    }
+    let updArr = []
+    for (let index = 0; index < data.length; index++) {
+      let updObj = {}
+      let studentId = data[index].studentId
+      let questions = data[index].mcqQuestionId
+      let answered = data[index].answeredOption
+      let obtainedMarksWrit = data[index].totalObtainedMarksWritten
+      let cm = 0
+      let wm = 0
+      let tm = 0
+      let na = 0
+      let ca = 0
+      let wa = 0
+      for (let ind = 0; ind < questions.length; ind++) {
+        if (Number(answered[ind]) === questions[ind].correctOption) {
+          ca++
+        } else if (Number(answered[ind]) === -1) {
+          na++
+        } else wa++
+      }
+      cm = ca * data[index].examId.marksPerMcq
+      wm = (wa * (data[index].examId.marksPerMcq * data[index].examId.negativeMarksMcq)) / 100
+      tm = cm - wm
+      let upd = null
+      let saveStudentExamEnd = null
+      try {
+        upd = await BothStudentExamVsQuestions.updateOne(
+          {
+            examId: examId,
+            studentId: studentId,
+            totalObtainedMarks: { $ne: -5000 },
+          },
+          {
+            totalCorrectAnswer: ca,
+            totalWrongAnswer: wa,
+            totalNotAnswered: na,
+            totalCorrectMarks: cm,
+            totalWrongMarks: wm,
+            totalObtainedMarksMcq: tm,
+            totalObtainedMarks : tm + obtainedMarksWrit
+          }
+        )
+        // saveStudentExamEnd = await StudentMarksRank.updateOne(
+        //   {
+        //     examId: examId,
+        //     studentId: studentId,
+        //     totalObtainedMarks: { $ne: -5000 },
+        //   },
+        //   { totalObtainedMarks: tm }
+        // )
+      } catch (err) {
+        return res.status(500).json('Something went wrong.')
+      }
+    }
+  }
   console.log(data)
   return res.status(200).json(data)
 }
