@@ -337,7 +337,9 @@ const getBothExamById = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  examData.totalMarksWritten = writtenData.totalMarks;
+  if(writtenData){
+    examData.totalMarksWritten = writtenData.totalMarks;
+  }
 
   return res.status(200).json(examData);
 };
