@@ -49,109 +49,112 @@ const Limit = 100;
  * @returns token
  */
 
-// const loginStudent = async (req, res) => {
-//   const { courseId, regNo, password } = req.body
-//   const ObjectId = mongoose.Types.ObjectId
-//   if (!ObjectId.isValid(courseId))
-//     return res.status(422).json('Course Id not valid')
-//   try {
-//     const getStudent = await Student.findOne({ regNo: regNo }).exec()
-//     if (!getStudent) {
-//       return res.status(404).json('Student not found')
-//     }
-//     const getCourse = await Course.findById({ _id: courseId }).exec()
-//     if (!getCourse) {
-//       return res.status(404).json('Course not found')
-//     }
-//     const studentvscourse = await CourseVsStudent.findOne({
-//       courseId,
-//       studentId: getStudent._id,
-//       status: true,
-//     }).exec()
-//     if (!studentvscourse) {
-//       return res.status(404).json('Course not registered for the student ID')
-//     }
-//     // console.log("chchch",getStudent.password);
-//     // if all checks passed above now geneate login token
-//     let match = false;
-//     bcrypt.compare(password, getStudent.password, function (err, result) {
-//       // console.log("result:",res);
-//       if (result === true) {
-//         // console.log("result:",res);
-//         const studentIdStr = String(getStudent._id)
-//         const courseIdStr = String(courseId)
-//         const token = jwt.sign(
-//           {
-//             studentId: studentIdStr,
-//             courseId: courseIdStr,
-//             role: 4,
-//           },
-//           process.env.SALT,
-//           { expiresIn: '1d' }
-//         )
-
-//         return res.status(200).json({
-//           message: 'Student logged into the course',
-//           token,
-//           studentIdStr,
-//           courseIdStr,
-//         })
-//       }else{
-//         return res.status(500).json({ message: 'Password is not matching!' })
-//       }
-//     })
-//   } catch (error) {
-//     ////console.log(error);
-//     return res.status(500).json({ message: 'Something went wrong!' })
-//   }
-// }
-
 const loginStudent = async (req, res) => {
-  const { courseId, regNo } = req.body;
-  const ObjectId = mongoose.Types.ObjectId;
+  const { courseId, regNo, password } = req.body
+  const ObjectId = mongoose.Types.ObjectId
   if (!ObjectId.isValid(courseId))
-    return res.status(422).json("Course Id not valid");
+    return res.status(422).json('Course Id not valid')
   try {
-    const getStudent = await Student.findOne({ regNo: regNo }, "_id").exec();
+    const getStudent = await Student.findOne({ regNo: regNo }).exec()
     if (!getStudent) {
-      return res.status(404).json("Student not found");
+      return res.status(404).json('Student not found')
     }
-    const getCourse = await Course.findById({ _id: courseId }).exec();
+    const getCourse = await Course.findById({ _id: courseId }).exec()
     if (!getCourse) {
-      return res.status(404).json("Course not found");
+      return res.status(404).json('Course not found')
     }
     const studentvscourse = await CourseVsStudent.findOne({
       courseId,
       studentId: getStudent._id,
       status: true,
-    }).exec();
+    }).exec()
     if (!studentvscourse) {
-      return res.status(404).json("Course not registered for the student ID");
+      return res.status(404).json('Course not registered for the student ID')
     }
+    // console.log("chchch",getStudent.password);
     // if all checks passed above now geneate login token
-    const studentIdStr = String(getStudent._id);
-    const courseIdStr = String(courseId);
-    const token = jwt.sign(
-      {
-        studentId: studentIdStr,
-        courseId: courseIdStr,
-        role: 4,
-      },
-      process.env.SALT,
-      { expiresIn: "1d" }
-    );
+    let match = false;
+    bcrypt.compare(password, getStudent.password, function (err, result) {
+      // console.log("result:",res);
+      if (result === true) {
+        // console.log("result:",res);
+        const studentIdStr = String(getStudent._id)
+        const courseIdStr = String(courseId)
+        const token = jwt.sign(
+          {
+            studentId: studentIdStr,
+            courseId: courseIdStr,
+            role: 4,
+          },
+          process.env.SALT,
+          { expiresIn: '1d' }
+        )
 
-    return res.status(200).json({
-      message: "Student logged into the course",
-      token,
-      studentIdStr,
-      courseIdStr,
-    });
+        return res.status(200).json({
+          message: 'Student logged into the course',
+          token,
+          studentIdStr,
+          courseIdStr,
+        })
+      } else {
+        return res.status(500).json({ message: 'Password is not matching!' })
+      }
+    })
   } catch (error) {
     ////console.log(error);
-    return res.status(500).json({ message: "Something went wrong!" });
+    return res.status(500).json({ message: 'Something went wrong!' })
   }
-};
+}
+
+
+
+// const loginStudent = async (req, res) => {
+//   const { courseId, regNo } = req.body;
+//   const ObjectId = mongoose.Types.ObjectId;
+//   if (!ObjectId.isValid(courseId))
+//     return res.status(422).json("Course Id not valid");
+//   try {
+//     const getStudent = await Student.findOne({ regNo: regNo }, "_id").exec();
+//     if (!getStudent) {
+//       return res.status(404).json("Student not found");
+//     }
+//     const getCourse = await Course.findById({ _id: courseId }).exec();
+//     if (!getCourse) {
+//       return res.status(404).json("Course not found");
+//     }
+//     const studentvscourse = await CourseVsStudent.findOne({
+//       courseId,
+//       studentId: getStudent._id,
+//       status: true,
+//     }).exec();
+//     if (!studentvscourse) {
+//       return res.status(404).json("Course not registered for the student ID");
+//     }
+//     // if all checks passed above now geneate login token
+//     const studentIdStr = String(getStudent._id);
+//     const courseIdStr = String(courseId);
+//     const token = jwt.sign(
+//       {
+//         studentId: studentIdStr,
+//         courseId: courseIdStr,
+//         role: 4,
+//       },
+//       process.env.SALT,
+//       { expiresIn: "1d" }
+//     );
+
+//     return res.status(200).json({
+//       message: "Student logged into the course",
+//       token,
+//       studentIdStr,
+//       courseIdStr,
+//     });
+//   } catch (error) {
+//     ////console.log(error);
+//     return res.status(500).json({ message: "Something went wrong!" });
+//   }
+// };
+
 const checkPassword = async (req, res, next) => {
   let studentId = req.user.studentId;
   let password = req.query.password;
@@ -173,7 +176,12 @@ const checkPassword = async (req, res, next) => {
 };
 const changePassword = async (req, res, next) => {
   const salt = await bcrypt.genSalt(10);
-  const studentId = req.user.studentId;
+  let studentId;
+  if(req.query.studentId){
+    studentId = req.query.studentId;
+  }else{
+    studentId = req.user.studentId;
+  }
   const password = req.query.password;
   let studentData;
   try {
@@ -3682,7 +3690,7 @@ const bothGetHistory = async (req, res, next) => {
   }
   //console.log(examDetails.totalMarksMcq);
   //console.log(examDetails.totalMarksWritten);
-  
+
   let examInfo = {
     id: String(examDetails._id),
     name: examDetails.name,
@@ -6294,10 +6302,10 @@ const bothUpdateRank = async (req, res, next) => {
   let ranks = null;
   try {
     ranks = await BothStudentExamVsQuestions.find({ examId: examIdObj });
-      //.select('examId totalObtainedMarks studentId -_id')
-      // .sort({
-      //   totalObtainedMarks: -1,
-      // })
+    //.select('examId totalObtainedMarks studentId -_id')
+    // .sort({
+    //   totalObtainedMarks: -1,
+    // })
   } catch (err) {
     return res.status(500).json('Something went wrong.')
   }
