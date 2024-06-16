@@ -1,19 +1,19 @@
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+
+const dir = path.resolve(path.join(__dirname, "../profile-pictures"));
+
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
 const maxSize = 120 * 1000 * 1000;
 const maxCount = 15;
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    let dir = path.resolve(path.join(__dirname, "../profile-pictures"));
-    dir = dir + "/" + String(req.query.examId);
-    console.log(req.query);
-    console.log(dir);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    callback(null, dir);
+    // console.log(req.body.examId);
+    callback(null, path.resolve(__dirname, "../profile-pictures"));
   },
   filename: function (req, file, callback) {
     const data = file.originalname;
@@ -22,10 +22,11 @@ const storage = multer.diskStorage({
     let arrData = String(arr).replace(/[" "-.\r]/g, "");
     arrData = arrData.replace(extension, "");
     const newName = arrData + Date.now().toString() + "." + extension;
+    console.log("aa",newName);
     callback(null, newName);
   },
 });
-const upload1 = multer({
+const uploadDp = multer({
   storage: storage,
   limits: { fileSize: maxSize },
   fileFilter: function (req, file, callback) {
@@ -48,5 +49,5 @@ const upload1 = multer({
     }
   },
 });
-exports.upload1 = upload1;
+exports.uploadDp = uploadDp;
 exports.maxCount = maxCount;

@@ -68,6 +68,7 @@ const { assignQuestion } = require("./controller/student-controller");
 //serve files from uploads folder
 app.use("/uploads", express.static("uploads"));
 app.use("/questions", express.static("questions"));
+app.use("/profile-pictures", express.static("profile-pictures"));
 
 app.use("/api/course", courseRouter);
 app.use("/api/user", userRouter);

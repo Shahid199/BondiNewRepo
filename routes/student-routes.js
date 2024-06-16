@@ -1,5 +1,6 @@
 const express = require("express");
 const { upload } = require("../utilities/multer");
+const { uploadDp } = require("../utilities/multer_dp");
 const passport = require("passport");
 const mongoose = require("mongoose");
 const authorize = require("../utilities/authorizationMiddleware");
@@ -85,13 +86,16 @@ const {
   bothGetAllRank,
   bothGetExamDataForTest,
   checkPassword,
-  changePassword
+  changePassword,
+  editStudent,
+  newLoginStudent
 } = require("../controller/student-controller");
 const StudentMarksRank = require("../model/StudentMarksRank");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
 const router = express.Router();
 //student frontend routes
 router.post("/login", loginStudent);
+router.post("/newlogin", newLoginStudent);
 // router.get(
 //   "/validate-login",
 //   [passport.authenticate("jwt", { session: false })],
@@ -255,6 +259,16 @@ router.post(
     upload.single("excelFile"),
   ],
   addStudent
+);
+
+router.post(
+  "/editstudent",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["moderator", "student"]),
+    uploadDp.single("dp"),
+  ],
+  editStudent
 );
 router.put(
   "/updatestudent",
