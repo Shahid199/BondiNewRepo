@@ -201,6 +201,15 @@ const createExam2 = async (req, res, next) => {
   return res.status(201).json(doc)
 }
 
+const leaderboard = async(req,res,next) =>{
+  let type =Number(req.query.type);
+  let examId = req.query.examId;
+  let data = null ;
+  if(type===0){
+    data = await Exam.findById(examId);
+  }
+}
+
 const createExam = async (req, res, next) => {
   const file = req.file
   // console.log(file);
@@ -2348,6 +2357,7 @@ const updateQuestionStatus = async (req, res, next) => {
   }
   return res.status(201).json(queryResult)
 }
+
 // const updateQuestionStatus1 = async (req, res, next) => {
 //   let questionId = req.body.questionId;
 //   let examId = "65f816ce34f65d878daa82e7";
@@ -2377,6 +2387,7 @@ const updateQuestionStatus = async (req, res, next) => {
 //   }
 //   return res.status(201).json("successf");
 // };
+
 const getStudentByExam = async (req, res, next) => {
   const courseId = req.query.courseId
   const examId = req.query.examId

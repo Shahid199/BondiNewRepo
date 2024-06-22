@@ -895,8 +895,8 @@ const updateBothStudentMarks = async (req, res, next) => {
   try {
     getData = await BothStudentExamVsQuestions.findOne({
       $and: [
-        { examId: new mongoose.Types.ObjectId("665f173cf4d6d34cfe6832b5") },
-        { studentId: new mongoose.Types.ObjectId("6598e15a68bacdef168a3010") },
+        { examId: new mongoose.Types.ObjectId("6664201db5f71b63180db254") },
+        { studentId: new mongoose.Types.ObjectId("65a26d21405cac1184cd2900") },
       ],
     });
   } catch (error) {
@@ -904,11 +904,12 @@ const updateBothStudentMarks = async (req, res, next) => {
   }
   getData.obtainedMarks[4] = 10;
   // console.log(getData);
-  getData.totalObtainedMarksWritten = 50;
+  getData.totalObtainedMarksWritten = 49;
+  getData.totalObtainedMarks = 59;
   let updStatus = null;
   try {
     updStatus = await BothStudentExamVsQuestions.updateOne(
-      { _id: new mongoose.Types.ObjectId("66611a9aa45a1de46a09fc3e") },
+      { _id: new mongoose.Types.ObjectId("6666e3e41b7d400ab7f79354") },
       getData
     );
   } catch (err) {
