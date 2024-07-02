@@ -39,6 +39,7 @@ const FreestudentMarksRank = require('../model/FreestudentMarksRank')
 const McqSpecialExam = require('../model/McqSpecialExam')
 const { forEach } = require('jszip')
 const bcrypt = require('bcryptjs')
+const McqRank = require('../model/McqRank')
 
 const Limit = 100
 //test
@@ -50,7 +51,7 @@ function checkIfEmpty(array) {
 const shuffle = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
+      ;[array[i], array[j]] = [array[j], array[i]]
   }
   return array
 }
@@ -201,13 +202,92 @@ const createExam2 = async (req, res, next) => {
   return res.status(201).json(doc)
 }
 
-const leaderboard = async(req,res,next) =>{
-  let type =Number(req.query.type);
-  let examId = req.query.examId;
-  let data = null ;
-  if(type===0){
-    data = await Exam.findById(examId);
+
+const examByCourse = async(req,res,next) =>{
+  let examType = Number(req.query.type);
+  let courseId = (req.query.courseId);
+  //  courseId =  new mongoose.Types.ObjectId(courseId);
+  // console.log("params: ",req.params.course);
+  console.log(examType,courseId);
+  let getData = [] ;
+  if(examType===0){
+    try {
+    getData = await Exam.find({
+      $and:[{courseId:courseId},{examVariation:1},{status:true}]}
+      )
+    // console.log(getData);
+    } catch (error) {
+      return res.status(500).json("No exams available for this course");
+    }
   }
+  if(examType===1){
+    try {
+      
+    getData = await Exam.find({courseId:courseId,examVariation:2,status:true})
+    } catch (error) {
+      return res.status(500).json("No exams available for this course");
+    }
+  }
+  if(examType===2){
+    try {      
+    getData = await BothExam.find({courseId:courseId,status:true})
+    } catch (error) {
+      return res.status(500).json("No exams available for this course");
+    }
+  }
+  if(examType===3){
+    try {      
+    getData = await SpecialExam.find({courseId:courseId,status:true})
+    } catch (error) {
+      return res.status(500).json("No exams available for this course");
+    }
+  }
+  if(examType===4){
+    try {      
+    getData = await McqSpecialExam.find({courseId:courseId,status:true})
+    } catch (error) {
+      return res.status(500).json("No exams available for this course");
+    }
+  }
+  // console.log(getData);
+
+  return res.status(200).json(getData);
+}
+
+const leaderboard = async (req, res, next) => {
+  let type =Number(req.query.type);
+  // let studentId = req.user.studentId;
+  // console.log(studentId);
+  let examId = new mongoose.Types.ObjectId(req.query.examId);
+  // console.log(examId,type)
+  let data = null;
+  if (type === 0) {
+    try {
+      console.log("hi")
+      data = await McqRank.find({examId:examId}).populate('studentId').exec();
+    } catch (error) {
+      return res.status(500).json("Exam Id is not found");
+    }
+  } else if (type === 1) {
+    try {
+      data = await BothExam.find({examId:examId}).populate('examId studentId');
+    } catch (error) {
+      return res.status(500).json("Exam Id is not found");
+    }
+  } else if (type === 2) {
+    try {
+      data = await SpecialExam.find({examId:examId}).populate('examId studentId');
+    } catch (error) {
+      return res.status(500).json("Exam Id is not found");
+    }
+  } else if (type === 3) {
+    try {
+      data = await McqSpecialExam.find({examId:examId}).populate('examId studentId');
+    } catch (error) {
+      return res.status(500).json("Exam Id is not found");
+    }
+  }
+  return res.status(200).json(data);
 }
 
 const createExam = async (req, res, next) => {
@@ -2740,26 +2820,26 @@ const columnAdd = async (req, res, next) => {
   const salt = await bcrypt.genSalt(10);
   // console.log(salt);
   // return;
-  let studentData = [] ;
-  let doc =[];
-  try{
+  let studentData = [];
+  let doc = [];
+  try {
     studentData = await Student.find({})
-  }catch{
+  } catch {
     return res.status(500).json("Error");
   }
   console.log(studentData.length);
-  for(let i = 0 ;  i<studentData.length; i++){
-    studentData[i].password = await bcrypt.hash(studentData[i].regNo,salt);
-   if(i%90===0){
-    // console.log(studentData[i]);
-   }
-    try{
+  for (let i = 0; i < studentData.length; i++) {
+    studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
+    if (i % 90 === 0) {
+      // console.log(studentData[i]);
+    }
+    try {
       doc[i] = await Student.updateOne({ _id: studentData[i]._id }, studentData[i]);
-    }catch{
+    } catch {
       return res.status(500).json("Error");
     }
   }
-  return res.status(200).json("update total"+doc.length+" students");
+  return res.status(200).json("update total" + doc.length + " students");
 }
 const columnAdd11 = async (req, res, next) => {
   let data = []
@@ -2970,7 +3050,7 @@ const calculateMarks = async (req, res, next) => {
       }
     }
   }
-  if(type == 2) {
+  if (type == 2) {
     try {
       data = await BothStudentExamVsQuestions.find({ examId: examId })
         .populate('mcqQuestionId')
@@ -3017,7 +3097,7 @@ const calculateMarks = async (req, res, next) => {
             totalCorrectMarks: cm,
             totalWrongMarks: wm,
             totalObtainedMarksMcq: tm,
-            totalObtainedMarks : tm + obtainedMarksWrit
+            totalObtainedMarks: tm + obtainedMarksWrit
           }
         )
         // saveStudentExamEnd = await StudentMarksRank.updateOne(
@@ -3141,6 +3221,8 @@ const addTextQuestion = async (req, res, next) => {
 }
 //export functions
 exports.calculateMarks = calculateMarks
+exports.examByCourse = examByCourse
+exports.leaderboard = leaderboard
 exports.addTextQuestion = addTextQuestion
 exports.refillQuestion = refillQuestion
 exports.changeCorrectAnswer = changeCorrectAnswer

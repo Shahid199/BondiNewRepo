@@ -45,7 +45,9 @@ const {
   refillQuestion,
   changeCorrectAnswer,
   calculateMarks,
-  addTextQuestion
+  addTextQuestion,
+  leaderboard,
+  examByCourse
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -82,6 +84,21 @@ router.get(
     authorize(["superadmin", "mdoerator", "student"]),
   ],
   slotAvailable
+);
+router.get(
+  "/leaderboard", [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "mdoerator", "student"]),
+  ],
+  leaderboard
+);
+router.get(
+  "/exambycourse",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "student"]),
+  ],
+  examByCourse
 );
 router.get(
   "/getallexam",

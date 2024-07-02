@@ -410,7 +410,7 @@ router.get(
   "/getallrank",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    authorize(["superadmin", "moderator","student"]),
   ],
   getAllRank
 );
@@ -418,7 +418,7 @@ router.get(
   "/bothgetallrank",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    authorize(["superadmin", "moderator","student"]),
   ],
   bothGetAllRank
 );

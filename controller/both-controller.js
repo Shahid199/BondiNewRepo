@@ -892,6 +892,9 @@ const updateBothExamPhoto = async (req, res, next) => {
 };
 const updateBothStudentMarks = async (req, res, next) => {
   let getData;
+  // let examId = req.query.examId;
+  // let studentId = req.query.studentId;
+  // let findId =
   try {
     getData = await BothStudentExamVsQuestions.findOne({
       $and: [

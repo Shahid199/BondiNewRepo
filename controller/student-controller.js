@@ -4502,6 +4502,7 @@ const getAllRank = async (req, res, next) => {
     let conData = "*******";
     data1["examName"] = resultRank[i].examId.name;
     data1["studentName"] = resultRank[i].studentId.name;
+    data1["studentId"] = resultRank[i].studentId._id;
     data1["mobileNoOrg"] = resultRank[i].studentId.mobileNo;
     data1["mobileNo"] = conData.concat(
       resultRank[i].studentId.mobileNo.slice(7)
