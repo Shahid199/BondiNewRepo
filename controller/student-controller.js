@@ -4503,6 +4503,7 @@ const getAllRank = async (req, res, next) => {
     data1["examName"] = resultRank[i].examId.name;
     data1["studentName"] = resultRank[i].studentId.name;
     data1["studentId"] = resultRank[i].studentId._id;
+    data1["displayPicture"] = resultRank[i].studentId.displayPicture;
     data1["mobileNoOrg"] = resultRank[i].studentId.mobileNo;
     data1["mobileNo"] = conData.concat(
       resultRank[i].studentId.mobileNo.slice(7)
@@ -6473,12 +6474,14 @@ const bothGetAllRank = async (req, res, next) => {
     data1["examName"] = resultRank[i].examId.name;
     data1["studentName"] = resultRank[i].studentId.name;
     data1["mobileNoOrg"] = resultRank[i].studentId.mobileNo;
+    data1["studentId"] = resultRank[i].studentId._id;
     data1["mobileNo"] = conData.concat(
       resultRank[i].studentId.mobileNo.slice(7)
     );
     data1["institution"] = resultRank[i].studentId.institution;
     data1["totalObtainedMarks"] = resultRank[i].totalObtainedMarks;
     data1["rank"] = resultRank[i].rank;
+    data1["displayPicture"] = resultRank[i].displayPicture;
     data1["totalStudent"] = resultRank.length;
     data1["totalMarks"] = resultRank[i].examId.totalMarks;
     allData.push(data1);
