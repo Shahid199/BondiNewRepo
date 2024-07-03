@@ -2322,11 +2322,13 @@ const getAllRank = async (req, res, next) => {
     let conData = '*******'
     data1['examName'] = resultRank[i].examId.name
     data1['studentName'] = resultRank[i].studentId.name
+    data1['studentId'] = resultRank[i].studentId._id
     data1['mobileNoOrg'] = resultRank[i].studentId.mobileNo
     data1['mobileNo'] = conData.concat(
       resultRank[i].studentId.mobileNo.slice(7)
     )
     data1['institution'] = resultRank[i].studentId.institution
+    data1['displayPicture'] = resultRank[i].studentId.displayPicture
     data1['totalObtainedMarks'] = resultRank[i].totalObtainedMarks.toFixed(2)
     data1['rank'] = resultRank[i].rank
     data1['totalStudent'] = resultRank.length

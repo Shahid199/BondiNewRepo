@@ -515,7 +515,7 @@ router.get(
   "/getallrank",
   [
     passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "teacher"]),
+    authorize(["superadmin", "moderator", "teacher","student"]),
   ],
   getAllRank
 );
