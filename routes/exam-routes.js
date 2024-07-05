@@ -47,7 +47,8 @@ const {
   calculateMarks,
   addTextQuestion,
   leaderboard,
-  examByCourse
+  examByCourse,
+  columnAdd11
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -356,6 +357,7 @@ router.post(
 ); //afser
 
 router.get("/columnadd", columnAdd);
+router.get("/columnstudentadd", columnAdd11);
 
 router.post("/downloadimage", downloadExamImage);
 router.post("/uploadsollution", uploadSollution);

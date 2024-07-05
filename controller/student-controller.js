@@ -244,6 +244,7 @@ const validateToken = async (req, res) => {
 //Create Students
 const addStudent = async (req, res, next) => {
   //start file work
+  const salt = await bcrypt.genSalt(10);
   const file = req.file;
   let excelFilePath = null;
   if (!file) {
@@ -260,8 +261,9 @@ const addStudent = async (req, res, next) => {
 
   for (let i = 0; i < linesArr.length; i++) {
     const name = String(linesArr[i][2]).replace(/[-"\r]/g, "");
-    const regNo = String(linesArr[i][1]).replace(/[-"\r]/g, "");
+    let regNo = String(linesArr[i][1]).replace(/[-"\r]/g, "");
     const mobileNo = String(linesArr[i][3]).replace(/[-"\r]/g, "");
+    const password =  await bcrypt.hash(regNo, salt);
     if (
       name == "undefined" ||
       regNo == "undefined" ||
@@ -274,6 +276,8 @@ const addStudent = async (req, res, next) => {
       name: name,
       institution: null,
       mobileNo: mobileNo,
+      password:password,
+      displayPicture:null
     });
     // users["regNo"] = regNo;
     // users["name"] = name;

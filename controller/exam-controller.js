@@ -2424,6 +2424,7 @@ const questionByExamIdAndSet = async (req, res, next) => {
 }
 const updateQuestionStatus = async (req, res, next) => {
   const questionId = req.body.questionId
+
   if (!ObjectId.isValid(questionId))
     return res.status(404).json('question Id is not valid.')
   //const questionIdObj = new mongoose.Types.ObjectId(questionId);
@@ -2749,9 +2750,23 @@ const columnAdd10 = async (req, res, next) => {
   return res.status(200).json('success!!')
 }
 
+const columnAdd11 = async (req, res, next) => {
+  let data = []
+  try {
+    data = await Student.updateMany({}, { $set: { displayPicture: null,
+      password:null
+    } })
+  } catch (err) {
+    return res.status(500).json('Something went wrong.')
+  }
+
+  return res.status(200).json('SepcialExam success!!')
+}
+
 // sollution sheets
 // dropping collection
 const columnAdd = async (req, res, next) => {
+
   // {
   //   let dataExam = []
   //   let dataBothExam = []
@@ -2841,16 +2856,7 @@ const columnAdd = async (req, res, next) => {
   }
   return res.status(200).json("update total" + doc.length + " students");
 }
-const columnAdd11 = async (req, res, next) => {
-  let data = []
-  try {
-    data = await Student.updateMany({}, { $set: { curriculumRoll: null } })
-  } catch (err) {
-    return res.status(500).json('Something went wrong.')
-  }
 
-  return res.status(200).json('SepcialExam success!!')
-}
 const uploadSollution = async (req, res, next) => {
   let examId = req.body.examId
   let type = Number(req.body.type)
@@ -3221,6 +3227,7 @@ const addTextQuestion = async (req, res, next) => {
 }
 //export functions
 exports.calculateMarks = calculateMarks
+exports.columnAdd11 = columnAdd11
 exports.examByCourse = examByCourse
 exports.leaderboard = leaderboard
 exports.addTextQuestion = addTextQuestion
