@@ -71,7 +71,7 @@ const newLoginStudent = async (req, res) => {
     if (!studentvscourse) {
       return res.status(404).json('Course not registered for the student ID')
     }
-    // console.log("chchch",getStudent.password);
+    console.log("chchch",getStudent.password);
     // if all checks passed above now geneate login token
     let match = false;
     bcrypt.compare(password, getStudent.password, function (err, result) {
