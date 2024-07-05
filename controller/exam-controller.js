@@ -2847,18 +2847,20 @@ const columnAdd = async (req, res, next) => {
     return res.status(500).json("Error");
   }
   console.log(studentData.length);
+  let count  = 0 ;
   for (let i = 0; i < studentData.length; i++) {
     if (studentData[i].password !== null) {
       studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
 
       try {
         doc[i] = await Student.updateOne({ _id: studentData[i]._id }, studentData[i]);
+        count++;
       } catch {
         return res.status(500).json("Error");
       }
     }
   }
-  return res.status(200).json("update total" + doc.length + " students");
+  return res.status(200).json("update total" + count + " students");
 }
 
 const uploadSollution = async (req, res, next) => {
