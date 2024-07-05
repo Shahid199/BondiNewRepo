@@ -203,48 +203,49 @@ const createExam2 = async (req, res, next) => {
 }
 
 
-const examByCourse = async(req,res,next) =>{
+const examByCourse = async (req, res, next) => {
   let examType = Number(req.query.type);
   let courseId = (req.query.courseId);
   //  courseId =  new mongoose.Types.ObjectId(courseId);
   // console.log("params: ",req.params.course);
-  console.log(examType,courseId);
-  let getData = [] ;
-  if(examType===0){
+  console.log(examType, courseId);
+  let getData = [];
+  if (examType === 0) {
     try {
-    getData = await Exam.find({
-      $and:[{courseId:courseId},{examVariation:1},{status:true}]}
+      getData = await Exam.find({
+        $and: [{ courseId: courseId }, { examVariation: 1 }, { status: true }]
+      }
       )
-    // console.log(getData);
+      // console.log(getData);
     } catch (error) {
       return res.status(500).json("No exams available for this course");
     }
   }
-  if(examType===1){
+  if (examType === 1) {
     try {
-      
-    getData = await Exam.find({courseId:courseId,examVariation:2,status:true})
+
+      getData = await Exam.find({ courseId: courseId, examVariation: 2, status: true })
     } catch (error) {
       return res.status(500).json("No exams available for this course");
     }
   }
-  if(examType===2){
-    try {      
-    getData = await BothExam.find({courseId:courseId,status:true})
+  if (examType === 2) {
+    try {
+      getData = await BothExam.find({ courseId: courseId, status: true })
     } catch (error) {
       return res.status(500).json("No exams available for this course");
     }
   }
-  if(examType===3){
-    try {      
-    getData = await SpecialExam.find({courseId:courseId,status:true})
+  if (examType === 3) {
+    try {
+      getData = await SpecialExam.find({ courseId: courseId, status: true })
     } catch (error) {
       return res.status(500).json("No exams available for this course");
     }
   }
-  if(examType===4){
-    try {      
-    getData = await McqSpecialExam.find({courseId:courseId,status:true})
+  if (examType === 4) {
+    try {
+      getData = await McqSpecialExam.find({ courseId: courseId, status: true })
     } catch (error) {
       return res.status(500).json("No exams available for this course");
     }
@@ -255,7 +256,7 @@ const examByCourse = async(req,res,next) =>{
 }
 
 const leaderboard = async (req, res, next) => {
-  let type =Number(req.query.type);
+  let type = Number(req.query.type);
   // let studentId = req.user.studentId;
   // console.log(studentId);
   let examId = new mongoose.Types.ObjectId(req.query.examId);
@@ -264,25 +265,25 @@ const leaderboard = async (req, res, next) => {
   if (type === 0) {
     try {
       console.log("hi")
-      data = await McqRank.find({examId:examId}).populate('studentId').exec();
+      data = await McqRank.find({ examId: examId }).populate('studentId').exec();
     } catch (error) {
       return res.status(500).json("Exam Id is not found");
     }
   } else if (type === 1) {
     try {
-      data = await BothExam.find({examId:examId}).populate('examId studentId');
+      data = await BothExam.find({ examId: examId }).populate('examId studentId');
     } catch (error) {
       return res.status(500).json("Exam Id is not found");
     }
   } else if (type === 2) {
     try {
-      data = await SpecialExam.find({examId:examId}).populate('examId studentId');
+      data = await SpecialExam.find({ examId: examId }).populate('examId studentId');
     } catch (error) {
       return res.status(500).json("Exam Id is not found");
     }
   } else if (type === 3) {
     try {
-      data = await McqSpecialExam.find({examId:examId}).populate('examId studentId');
+      data = await McqSpecialExam.find({ examId: examId }).populate('examId studentId');
     } catch (error) {
       return res.status(500).json("Exam Id is not found");
     }
@@ -2753,9 +2754,12 @@ const columnAdd10 = async (req, res, next) => {
 const columnAdd11 = async (req, res, next) => {
   let data = []
   try {
-    data = await Student.updateMany({}, { $set: { displayPicture: null,
-      password:null
-    } })
+    data = await Student.updateMany({}, {
+      $set: {
+        displayPicture: null,
+        password: null
+      }
+    })
   } catch (err) {
     return res.status(500).json('Something went wrong.')
   }
@@ -2844,14 +2848,14 @@ const columnAdd = async (req, res, next) => {
   }
   console.log(studentData.length);
   for (let i = 0; i < studentData.length; i++) {
-    studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
-    if (i % 90 === 0) {
-      // console.log(studentData[i]);
-    }
-    try {
-      doc[i] = await Student.updateOne({ _id: studentData[i]._id }, studentData[i]);
-    } catch {
-      return res.status(500).json("Error");
+    if (studentData[i].password !== null) {
+      studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
+
+      try {
+        doc[i] = await Student.updateOne({ _id: studentData[i]._id }, studentData[i]);
+      } catch {
+        return res.status(500).json("Error");
+      }
     }
   }
   return res.status(200).json("update total" + doc.length + " students");
