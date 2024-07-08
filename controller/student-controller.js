@@ -263,7 +263,7 @@ const addStudent = async (req, res, next) => {
     const name = String(linesArr[i][2]).replace(/[-"\r]/g, "");
     let regNo = String(linesArr[i][1]).replace(/[-"\r]/g, "");
     const mobileNo = String(linesArr[i][3]).replace(/[-"\r]/g, "");
-    const password =  await bcrypt.hash(regNo, salt);
+    // const password =  await bcrypt.hash(regNo, salt);
     if (
       name == "undefined" ||
       regNo == "undefined" ||
@@ -276,8 +276,6 @@ const addStudent = async (req, res, next) => {
       name: name,
       institution: null,
       mobileNo: mobileNo,
-      password:password,
-      displayPicture:null
     });
     // users["regNo"] = regNo;
     // users["name"] = name;
