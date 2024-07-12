@@ -1589,9 +1589,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   mIdArray = mIdArray.concat(finalIdsString)
   let withoutDuplicate = Array.from(new Set(mIdArray))
   withoutDuplicate = withoutDuplicate.map((e) => new mongoose.Types.ObjectId(e))
-  console.log(withoutDuplicate);
+  console.log("wd",withoutDuplicate);
   const totalLength = prevLength + withoutDuplicate.length
-  console.log(totalLength);
+  console.log("tt",totalLength);
   const reaminingLength = examDetails.totalQuestionMcq - prevLength
   if (totalLength > examDetails.totalQuestionMcq) {
     return res.status(400).json(`You can transfer atmost ${reaminingLength}`)
