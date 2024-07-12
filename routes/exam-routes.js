@@ -356,8 +356,8 @@ router.post(
   updateExamPhoto
 ); //afser
 
-router.get("/columnadd", columnAdd);
-router.get("/columnstudentadd", columnAdd11);
+// router.get("/columnadd", columnAdd);
+// router.get("/columnstudentadd", columnAdd11);
 
 router.post("/downloadimage", downloadExamImage);
 router.post("/uploadsollution", uploadSollution);
