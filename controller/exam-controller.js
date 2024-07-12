@@ -1592,8 +1592,8 @@ const addQuestionMcqBulk = async (req, res, next) => {
   console.log("wd",withoutDuplicate.length);
   const totalLength = prevLength + withoutDuplicate.length
   console.log("tt",totalLength);
-  const reaminingLength = examDetails.totalQuestionMcq - prevLength
-  if (totalLength > examDetails.totalQuestionMcq) {
+  const reaminingLength = examDetails.totalQuestionMcq - withoutDuplicate.length
+  if (withoutDuplicate.length > examDetails.totalQuestionMcq) {
     return res.status(400).json(`You can transfer atmost ${reaminingLength}`)
   }
   try {
