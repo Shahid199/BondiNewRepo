@@ -1589,7 +1589,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
   mIdArray = mIdArray.concat(finalIdsString)
   let withoutDuplicate = Array.from(new Set(mIdArray))
   withoutDuplicate = withoutDuplicate.map((e) => new mongoose.Types.ObjectId(e))
-  console.log("wd",withoutDuplicate);
+  console.log("wd",withoutDuplicate.length);
   const totalLength = prevLength + withoutDuplicate.length
   console.log("tt",totalLength);
   const reaminingLength = examDetails.totalQuestionMcq - prevLength
