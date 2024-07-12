@@ -51,6 +51,11 @@ const freeStudentsSchema = new Schema(
       required: false,
       default: null,
     },
+    curriculumRoll: {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
   { timestamps: true } //createdAt,updatedAt auto genrate in the DB table.
 );

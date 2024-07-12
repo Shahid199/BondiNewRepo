@@ -2755,10 +2755,9 @@ const columnAdd10 = async (req, res, next) => {
 const columnAdd11 = async (req, res, next) => {
   let data = []
   try {
-    data = await Student.updateMany({}, {
+    data = await FreeStudent.updateMany({}, {
       $set: {
-        displayPicture: null,
-        password: null
+       curriculumRoll:null,
       }
     })
   } catch (err) {
