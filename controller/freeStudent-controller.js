@@ -2029,6 +2029,11 @@ const getAllRankFree = async (req, res, next) => {
     let data1 = {};
     let conData = "*******";
     data1["examName"] = resultRank[i].examId.name;
+    if(resultRank[i].examId.curriculumName!==null){
+      data1["curriculumName"] =resultRank[i].examId.curriculumName;
+    }else{
+      data1["curriculumName"] = null;
+    }
     data1["studentName"] = resultRank[i].freeStudentId.name;
     data1["mobileNoOrg"] = resultRank[i].freeStudentId.mobileNo;
     data1["buetRoll"] = resultRank[i].freeStudentId.buetRoll;
