@@ -5339,6 +5339,7 @@ const historyDataWritten = async (req, res, next) => {
   let page = req.query.page || 1;
 
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
+  let courseId =new mongoose.Types.ObjectId(req.query.courseId);
   let data;
   let count = 0;
   try {
@@ -5436,7 +5437,8 @@ const historyDataWritten = async (req, res, next) => {
       return res.status(500).json("3.Something went wrong.");
     }
     subjectName = subjectName.name;
-    data1["examId"] = data[i].examId._id;
+    if(String(data[i].examId.courseId===String(courseId))){
+      data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
     data1["solutionSheet"] = data[i].examId.solutionSheet;
     data1["variation"] = examType[Number(data[i].examId.examType)];
@@ -5454,6 +5456,7 @@ const historyDataWritten = async (req, res, next) => {
     data1["subjectName"] = subjectName;
     data1["totalStudent"] = totalStudent;
     resultData.push(data1);
+    }
   }
   return res.status(200).json({ resultData, paginateData });
 };
