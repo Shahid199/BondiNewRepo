@@ -2080,6 +2080,7 @@ const historyData = async (req, res, next) => {
     }
     subjectName = subjectName.name;
     console.log(courseId)
+    console.log("data ExamId=>",data[i].examId)
     if( String(data[i].examId.courseId)===String(courseId)){
       data1["examId"] = data[i].examId._id;
     data1["title"] = data[i].examId.name;
