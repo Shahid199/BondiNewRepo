@@ -64,7 +64,8 @@ const {
   slotAvailable,
   questionByExamIdSubjectAndSet,
   refillQuestion,
-  getSpecialExamById
+  getSpecialExamById,
+  addTextQuestion
 } = require("../controller/special-controller");
 const router = express.Router();
 
@@ -77,6 +78,7 @@ router.post(
   ],
   createSpecialExam
 );
+
 router.put(
   "/updatespecialexam",
   [
@@ -102,6 +104,14 @@ router.post(
     authorize(["superadmin", "moderator"]),
   ],
   refillQuestion
+);
+router.post(
+  "/addTextQuestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  addTextQuestion
 );
 
 router.get(

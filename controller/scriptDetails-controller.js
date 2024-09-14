@@ -60,13 +60,13 @@ const getData = async (req, res, next) => {
   let data = []
 //   console.log(req.body);
   try {
-    data = await ScriptDetails.find({teacherId: tId1}).populate('examId').
-    exec()
+    data = await ScriptDetails.find({teacherId: tId1})
   } catch (err) {
     return res.status(500).json('Some Problems found')
   }
+  
 
-  return res.status(201).json(data)
+  return res.status(200).json(data)
 }
 const getAllData = async (req, res, next) => {
   let data = []

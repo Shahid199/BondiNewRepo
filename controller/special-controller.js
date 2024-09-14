@@ -5758,7 +5758,110 @@ const slotAvailable = async (req, res, next) => {
   }
 };
 
+const addTextQuestion = async(req,res,next)=>{
+  let iLinkPath = null;
+  let explanationILinkPath = null;
+  let examIdObj;
+  //let type = req.query.type;
+  let question = "";
+  const {
+    questionText,
+    optionCount,
+    correctOption,
+    status,
+    examId,
+    type,
+    subjectId,
+    setName,
+    options
+  } = req.body;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("examId Id or subject Id is not valid.");
+  //question insert for text question(type=true)
+  question = String(questionText);
+  examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  //insert question
+  let questions = new QuestionsMcq({
+    question: question,
+    optionCount: Number(optionCount),
+    options: options,
+    correctOption: Number(correctOption),
+    explanationILink: explanationILinkPath,
+    status: JSON.parse(status),
+    type: JSON.parse(type),
+  });
+  let doc;
+  try {
+    doc = await questions.save();
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json(err);
+  }
+  let questionId = doc._id;
+  //console.log(questionId);
+  if (!questionId) return res.status(400).send("question not inserted");
+
+  let examDetails = {};
+
+  try {
+    examDetails = await SpecialExam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  let numOfQuestions = null,
+    numberOfSlotAvailable = null;
+  if (examDetails) {
+    //console.log(examDetails);
+    for (let i = 0; i < examDetails.subjectInfo.length; i++) {
+      if (String(examDetails.subjectInfo[i].subjectId) === subjectId) {
+        numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
+      }
+    }
+    for (let i = 0; i < examDetails.questionMcq.length; i++) {
+      if (String(examDetails.questionMcq[i].subjectId) === subjectId) {
+        for (
+          let j = 0;
+          j < examDetails.questionMcq[i].mcqQuestions.length;
+          j++
+        ) {
+          if (
+            examDetails.questionMcq[i].mcqQuestions[j].setName ===
+            Number(setName)
+          ) {
+            numberOfSlotAvailable =
+              numOfQuestions -
+              examDetails.questionMcq[i].mcqQuestions[j].mcqIds.length;
+            if (numberOfSlotAvailable <= 0) {
+              return res.status(404).json("Set is full");
+            }
+            examDetails.questionMcq[i].mcqQuestions[j].mcqIds.push(questionId);
+          }
+        }
+      }
+    }
+  }
+
+  //console.log("mcqQues:", mcqQues);
+
+  let doc1;
+  try {
+    doc1 = await SpecialExam.findOneAndUpdate(
+      { _id: examIdObj },
+      {
+        questionMcq: examDetails.questionMcq,
+      }
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+
+  return res.status(201).json("Saved.");
+}
 exports.refillQuestion = refillQuestion;
+exports.addTextQuestion = addTextQuestion;
 exports.slotAvailable = slotAvailable;
 exports.questionByExamIdSubjectAndSet = questionByExamIdSubjectAndSet;
 exports.updateSpecialExamPhoto = updateSpecialExamPhoto;
