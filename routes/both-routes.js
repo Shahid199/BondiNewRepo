@@ -22,6 +22,7 @@ const {
   slotAvailable,
   refillQuestion,
   updateBothStudentMarks,
+  updateQuestionStatus
 } = require('../controller/both-controller')
 const router = express.Router()
 
@@ -35,6 +36,11 @@ router.post(
   ],
   createBothExam
 )
+router.put(
+  "/updatequestionstatus",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  updateQuestionStatus
+);
 router.post(
   '/updateBothExamPhoto',
   [

@@ -48,7 +48,8 @@ const {
   addTextQuestion,
   leaderboard,
   examByCourse,
-  columnAdd11
+  columnAdd11,
+  updateQuestion
 } = require("../controller/exam-controller");
 const router = express.Router();
 
@@ -240,6 +241,11 @@ router.put(
   "/updatequestionstatus",
   [passport.authenticate("jwt", { session: false }), authorize()],
   updateQuestionStatus
+);
+router.post(
+  "/updateQuestion",
+  [passport.authenticate("jwt", { session: false }), authorize()],
+  updateQuestion
 );
 router.put(
   "/updateexam",

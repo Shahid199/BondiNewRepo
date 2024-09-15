@@ -15,6 +15,11 @@ const scriptDetailsSchema = new Schema(
       required: true,
       ref: exams,
     },
+    examName:{
+      type: String,
+      required: true,
+      default: null,
+    },
     numberOfQuestions:{
         type: Number,
         required: true,

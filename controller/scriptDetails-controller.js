@@ -5,6 +5,7 @@ const McqSpecialExam = require('../model/McqSpecialExam')
 const addCount = async (req, res, next) => {
   const teacherId = req.body.teacherId
   const examId = req.body.examId
+  const examName = req.body.examName || "Another Exam"
   const numberOfQuestions = Number(req.body.noq);
   let tId1, eId1
   tId1 = new mongoose.Types.ObjectId(teacherId)
@@ -29,6 +30,7 @@ const addCount = async (req, res, next) => {
     examId: eId1,
     numberOfQuestions: Number(retakes.numberOfQuestions)+numberOfQuestions,
     numberOfStudents: Number(retakes.numberOfStudents)+1,
+    examName : examName
   }
   try {
     doc = await ScriptDetails.updateOne({ _id: retakes._id }, saveExamUpd)
@@ -43,6 +45,7 @@ const addCount = async (req, res, next) => {
       examId: eId1,
       numberOfQuestions: numberOfQuestions,
       numberOfStudents: 1,
+      examName:examName
     })
     try {
       doc = saveRetakeTracker.save()

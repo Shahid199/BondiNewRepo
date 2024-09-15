@@ -921,6 +921,40 @@ const updateBothStudentMarks = async (req, res, next) => {
 
   return res.status(200).json(getData);
 };
+const updateQuestionStatus = async (req, res, next) => {
+  const questionId = req.body.questionId
+  const examId = req.body.examId
+  const examIdObj = new mongoose.Types.ObjectId(examId)
+  const quesObj = new mongoose.Types.ObjectId(questionId)
+  if (!ObjectId.isValid(questionId))
+    return res.status(404).json('question Id is not valid.')
+  //const questionIdObj = new mongoose.Types.ObjectId(questionId);
+  let queryResult = null
+  try {
+    queryResult = await BothMcqQuestionVsExam.find({eId:examIdObj})
+  
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+  for( let i = 0 ; i< queryResult.length ; i++ ){
+    let temp = []  
+    temp= queryResult[i].mId.filter(q=>String(q) !== String(quesObj))
+    // console.log(temp)
+    queryResult[i].mId = temp ;
+  }
+  for( let i = 0 ; i<queryResult.length ; i++ ){
+   let res = null ;
+   try{
+    res = await BothMcqQuestionVsExam.findByIdAndUpdate(queryResult[i]._id,{mId:queryResult[i].mId})
+   }catch(e){
+      return res.status(500).json("Cannot find data")
+   }
+  }
+
+  return res.status(201).json('Updated')
+}
+
+exports.updateQuestionStatus = updateQuestionStatus;
 exports.updateBothStudentMarks = updateBothStudentMarks;
 exports.refillQuestion = refillQuestion;
 exports.questionByExamIdAndSet = questionByExamIdAndSet;

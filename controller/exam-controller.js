@@ -2425,20 +2425,37 @@ const questionByExamIdAndSet = async (req, res, next) => {
   return res.status(200).json(resultAll)
 }
 const updateQuestionStatus = async (req, res, next) => {
-  const questionId = req.body.questionId
 
+  const questionId = req.body.questionId
+  const examId = req.body.examId
+  const examIdObj = new mongoose.Types.ObjectId(examId)
+  const quesObj = new mongoose.Types.ObjectId(questionId)
   if (!ObjectId.isValid(questionId))
     return res.status(404).json('question Id is not valid.')
   //const questionIdObj = new mongoose.Types.ObjectId(questionId);
   let queryResult = null
   try {
-    queryResult = await QuestionsMcq.findByIdAndUpdate(questionId, {
-      status: false,
-    })
+    queryResult = await McqQuestionVsExam.find({eId:examIdObj})
+  
   } catch (err) {
     return res.status(500).json(err)
   }
-  return res.status(201).json(queryResult)
+  for( let i = 0 ; i< queryResult.length ; i++ ){
+    let temp = []  
+    temp= queryResult[i].mId.filter(q=>String(q) !== String(quesObj))
+    // console.log(temp)
+    queryResult[i].mId = temp ;
+  }
+  for( let i = 0 ; i<queryResult.length ; i++ ){
+   let res = null ;
+   try{
+    res = await McqQuestionVsExam.findByIdAndUpdate(queryResult[i]._id,{mId:queryResult[i].mId})
+   }catch(e){
+      return res.status(500).json("Cannot find data")
+   }
+  }
+
+  return res.status(201).json('Updated')
 }
 
 // const updateQuestionStatus1 = async (req, res, next) => {
@@ -3231,7 +3248,29 @@ const addTextQuestion = async (req, res, next) => {
   // console.log(setName);
   return res.status(201).json('Saved.')
 }
+
+const updateQuestion  = async(req,res,next) =>{
+  const {
+    questionId,
+    question,
+    options,
+  } = req.body
+  console.log(req.body)
+  // return
+  // let options = JSON.parse(req.body.options) 
+  let doc
+  try {
+    doc = await QuestionsMcq.findByIdAndUpdate(questionId,{question:question,options:options})
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json(err)
+  }
+  
+  return res.status(201).json('Updated.')
+}
+
 //export functions
+exports.updateQuestion = updateQuestion
 exports.calculateMarks = calculateMarks
 exports.columnAdd11 = columnAdd11
 exports.examByCourse = examByCourse
