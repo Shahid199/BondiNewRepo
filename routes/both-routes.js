@@ -27,7 +27,7 @@ const {
 } = require('../controller/both-controller')
 const router = express.Router()
 
-router.get('/updateresult', updateBothStudentMarks)
+// router.get('/updateresult', updateBothStudentMarks)
 router.post(
   '/createbothexam',
   [
