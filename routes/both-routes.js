@@ -22,6 +22,7 @@ const {
   slotAvailable,
   refillQuestion,
   updateBothStudentMarks,
+  addTextQuestion,
   updateQuestionStatus
 } = require('../controller/both-controller')
 const router = express.Router()
@@ -124,6 +125,14 @@ router.get(
   ],
   bothExamRuleGetAll
 )
+router.post(
+  "/addTextQuestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(),
+  ],
+  addTextQuestion
+);
 router.put(
   '/bothaddquestionmcqbulk',
   [passport.authenticate('jwt', { session: false }), authorize()],

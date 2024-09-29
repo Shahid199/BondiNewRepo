@@ -65,10 +65,18 @@ const {
   questionByExamIdSubjectAndSet,
   refillQuestion,
   getSpecialExamById,
-  addTextQuestion
+  addTextQuestion,
+  getExamSubjects
 } = require("../controller/special-controller");
 const router = express.Router();
-
+router.get(
+  "/getexamsubjects",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getExamSubjects
+);
 router.post(
   "/createspecialexam",
   [

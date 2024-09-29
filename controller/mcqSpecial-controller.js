@@ -23,7 +23,7 @@ function checkIfEmpty(array) {
 const refillQuestion = async (req, res, next) => {
   const examId = req.body.examId
   const subjectId = req.body.subjectId
-  // console.log(subjectId);
+  // //console.log(subjectId);
 
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
     return res.status(404).json('exam Id or subject Id is invalid.')
@@ -37,9 +37,9 @@ const refillQuestion = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err)
   }
-  //console.log("midarray:", mIdArray);
+  ////console.log("midarray:", mIdArray);
   mIdArray = examDetails.questionMcq
-  //console.log("midarray:", mIdArray);
+  ////console.log("midarray:", mIdArray);
   let numOfQuestions = null,
     numberOfSlotAvailable = null
   let bulkData = []
@@ -119,15 +119,15 @@ const refillQuestion = async (req, res, next) => {
           updatedMcqQuestions = []
           if (examDetails.questionMcq[i].mcqQuestions[j].setName !== 0) {
             updatedMcqQuestions = shuffle(bulkData)
-            console.log('setnumber : ' + j + ' ')
+            //console.log('setnumber : ' + j + ' ')
             // for(let m = 0 ; m<shuffleIds.length; m++){
-            //   console.log(shuffleIds[m])
+            //   //console.log(shuffleIds[m])
             // }
             let newArr = []
             for (let x = updatedMcqQuestions.length - 1; x >= 0; x--) {
               newArr.push(updatedMcqQuestions[x])
             }
-            console.log(newArr)
+            //console.log(newArr)
             examDetails.questionMcq[i].mcqQuestions[j].mcqIds = newArr
             try {
               sav = await McqSpecialExam.findOneAndUpdate(
@@ -142,7 +142,7 @@ const refillQuestion = async (req, res, next) => {
             } catch (err) {
               return res.status(500).json(err)
             }
-            // console.log(examDetails.questionMcq[i].mcqQuestions[j].mcqIds)
+            // //console.log(examDetails.questionMcq[i].mcqQuestions[j].mcqIds)
           }
         }
       }
@@ -150,7 +150,7 @@ const refillQuestion = async (req, res, next) => {
     updatedMcqQuestions = examDetails.questionMcq
   }
 
-  // console.log(updatedMcqQuestions[0].mcqQuestions)
+  // //console.log(updatedMcqQuestions[0].mcqQuestions)
   // return res.status(404).json("checking");
 
   return res.status(201).json('updated All set questions.')
@@ -307,14 +307,14 @@ const updateSpecialExam = async (req, res, next) => {
     totalMarksMcq,
   }
   let updStatus = null
-  //console.log("number of tota subhect:", req.query.noOfTotalSubject);
+  ////console.log("number of tota subhect:", req.query.noOfTotalSubject);
   try {
     updStatus = await McqSpecialExam.findByIdAndUpdate(examId, saveExam)
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json('Something went wrong.')
   }
-  //console.log(updStatus);
+  ////console.log(updStatus);
   return res.status(201).json(updStatus)
 }
 const showSpecialExamById = async (req, res, next) => {
@@ -329,7 +329,7 @@ const showSpecialExamById = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('Something went wrong.')
   }
-  // console.log(data);
+  // //console.log(data);
   if (data == null) return res.status(404).json('No data found.')
   return res.status(200).json(data)
 }
@@ -347,7 +347,7 @@ const showMcqSpecialExamByCourse = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('Something went wrong.')
   }
-  //console.log("data.length", data.length);
+  ////console.log("data.length", data.length);
   if (data == null) return res.status(404).json('No data found.')
   let dataObj = []
   for (let i = 0; i < data.length; i++) {
@@ -392,7 +392,7 @@ const showMcqSpecialExamByCourse = async (req, res, next) => {
     dataObj.push(data1)
   }
   data = dataObj
-  //console.log("data", data);
+  ////console.log("data", data);
   return res.status(200).json(data)
 }
 
@@ -438,8 +438,8 @@ const submitAnswer = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('Something went wrong.')
   }
-  // console.log(studentCheck);
-  ////console.log("studentCheck:", studentCheck.questionMcq[i].mcqId.length);
+  // //console.log(studentCheck);
+  //////console.log("studentCheck:", studentCheck.questionMcq[i].mcqId.length);
   //exam status Check:end
   let findId = studentCheck._id
   let timeStudent = []
@@ -457,7 +457,7 @@ const submitAnswer = async (req, res, next) => {
     let lengthMcq = studentCheck.questionMcq[i].mcqId.length
     for (let j = 0; j < lengthMcq; j++) {
       let questions = studentCheck.questionMcq[i].mcqId[j]
-      ////console.log("questions:", questions);
+      //////console.log("questions:", questions);
       if (studentCheck.questionMcq[i].mcqAnswer[j] == -1) {
         totalNotAnswered++
       } else if (
@@ -482,7 +482,7 @@ const submitAnswer = async (req, res, next) => {
     totalObtainedMarks =
       totalObtainedMarks + studentCheck.questionMcq[i].mcqMarksPerSub
   }
-  ////console.log("studentCheck:", studentCheck.questionMcq);
+  //////console.log("studentCheck:", studentCheck.questionMcq);
   let dataUpd = {
     totalObtainedMarks: totalObtainedMarks,
     questionMcq: studentCheck.questionMcq,
@@ -542,13 +542,13 @@ const submitAnswer = async (req, res, next) => {
 const updateExamPhoto = async (req, res, next) => {
   const file = req.file
   let iLinkPath = null
-  // console.log(file);
+  // //console.log(file);
   if (file) {
     iLinkPath = 'uploads/'.concat(file.filename)
   }
   const { examId } = req.body
   const filter = { _id: examId }
-  // console.log(filter);
+  // //console.log(filter);
   let update
   try {
     update = await McqSpecialExam.findOneAndUpdate(
@@ -611,7 +611,7 @@ const showSpecialExamByIdStudent = async (req, res, next) => {
   )
   mcqObj['totalQuestion'] = dataWritten.totalQuestionsMcq
   mcqObj['marksPerMcq'] = dataWritten.marksPerMcq
-  //console.log("data", data);
+  ////console.log("data", data);
   let subjectsId = []
   for (let i = 0; i < data.questionMcq.length; i++) {
     subjectsId = [...subjectsId, data.questionMcq[i].subjectId._id]
@@ -651,7 +651,7 @@ const getExamSubjects = async (req, res, next) => {
   for (let i = 0; i < data.questionMcq.length; i++) {
     subjects.push(data.questionMcq[i].subjectId)
   }
-  // console.log('aaa', subjects)
+  // //console.log('aaa', subjects)
   let examData = {}
   try {
     examData = await McqSpecialExam.findById(examId).populate({
@@ -669,7 +669,7 @@ const getExamSubjects = async (req, res, next) => {
   let runningData = []
   let totSub = examData.noOfExamSubject
   let noAllSub = examData.noOfTotalSubject
-  // console.log(totSub);
+  // //console.log(totSub);
   let noOfSet = examData.numberOfSet
   const selectedSet = parseInt(Date.now()) % noOfSet
   let mcqIds = []
@@ -696,7 +696,7 @@ const getExamSubjects = async (req, res, next) => {
   let marksPerMcq = check.marksPerMcq;
   negMarking = Number((Number(negMarking/100))*(Number(check.marksPerMcq)));
   
-  // console.log("aaaaaa",check.questionMcq[0].mcqQuestions[0].mcqIds[0]);
+  // //console.log("aaaaaa",check.questionMcq[0].mcqQuestions[0].mcqIds[0]);
   // return;
   for (let i = 0; i < totSub; i++) {
     let flag = 0
@@ -711,9 +711,9 @@ const getExamSubjects = async (req, res, next) => {
     doc.push(mcqIds)
     questionsId.push(doc)
   }
-  // console.log(questionsId)
+  // //console.log(questionsId)
   
-  // console.log('check', check.questionMcq[0].mcqQuestions[0])
+  // //console.log('check', check.questionMcq[0].mcqQuestions[0])
   // return
   let studExamStartTime = moment(new Date())
   let studExamEndTime = moment(studExamStartTime).add(examData.duration, 'm')
@@ -772,7 +772,7 @@ const getExamSubjects = async (req, res, next) => {
     dataQ['marksMcqPerSub'] = 0;
     runningData[i] = dataQ
   }
-  console.log(runningData)
+  //console.log(runningData)
   //return res.status(200).json(questionsId);
   let allData = {}
   allData['studStartTime'] = moment(studExamStartTime).add(6, 'h')
@@ -822,7 +822,7 @@ const getRunningDataMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("can't get question.Problem Occur.")
   }
-  //console.log(getQuestionMcq);
+  ////console.log(getQuestionMcq);
   let examData = getQuestionMcq
   //exam status Check:end
   getQuestionMcq = getQuestionMcq.questionMcq
@@ -839,10 +839,10 @@ const getRunningDataMcq = async (req, res, next) => {
   examDet['studExamStartTime'] = examData.startTimeMcq
   examDet['studExamEndTime'] = examData.endTimeMcq
   examDet['duration'] = examData.mcqDuration
-  //console.log("start");
+  ////console.log("start");
   let timeS = moment(new Date())
-  //console.log(timeS);
-  //console.log(examData.endTimeMcq);
+  ////console.log(timeS);
+  ////console.log(examData.endTimeMcq);
   examDet['dueDuration'] =
     (moment(examData.endTimeMcq) - moment(timeS).add(12, 'h')) / 60000
 
@@ -851,8 +851,8 @@ const getRunningDataMcq = async (req, res, next) => {
 const assignQuestionMcq = async (req, res, next) => {
   const eId = req.query.examId
   let subjects = req.query.subjects.split(',')
-  // console.log(typeof(subjects));
-  // console.log(subjects);
+  // //console.log(typeof(subjects));
+  // //console.log(subjects);
   // return;
   const studentId = req.user.studentId
   let eId1, sId
@@ -882,7 +882,7 @@ const assignQuestionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('1.something went wrong.')
   }
-  ////console.log(examData.questionMcq);
+  //////console.log(examData.questionMcq);
   if (!examData) return res.status(404).json('No Exam found.')
   let questionMcq = examData.questionMcq
   let totSub = examData.noOfExamSubject
@@ -896,7 +896,7 @@ const assignQuestionMcq = async (req, res, next) => {
     let doc = []
     for (let j = 0; j < noAllSub; j++) {
       if (String(questionMcq[j].subjectId) == String(subjects[i])) {
-        // console.log("assigning",questionMcq[j].mcqQuestions[selectedSet].mcqIds);
+        // //console.log("assigning",questionMcq[j].mcqQuestions[selectedSet].mcqIds);
         mcqIds = questionMcq[j].mcqQuestions[selectedSet].mcqIds
         break
       }
@@ -904,7 +904,7 @@ const assignQuestionMcq = async (req, res, next) => {
     doc.push(mcqIds)
     questionsId.push(doc)
   }
-  // console.log(questionsId);
+  // //console.log(questionsId);
   let studExamStartTime = moment(new Date())
   let studExamEndTime = moment(studExamStartTime).add(examData.duration, 'm')
   if (
@@ -971,8 +971,8 @@ const assignQuestionMcqWithoutOptional = async (req, res, next) => {
   const eId = req.query.examId
   // let examDetails ={};
   let subjects;
-  // console.log(typeof(subjects));
-  // console.log(subjects);
+  // //console.log(typeof(subjects));
+  // //console.log(subjects);
   // return;
   const studentId = req.user.studentId
   let eId1, sId
@@ -1003,7 +1003,7 @@ const assignQuestionMcqWithoutOptional = async (req, res, next) => {
     return res.status(500).json('1.something went wrong.')
   }
   subjects = examData.allSubject;
-  ////console.log(examData.questionMcq);
+  //////console.log(examData.questionMcq);
   if (!examData) return res.status(404).json('No Exam found.')
   let questionMcq = examData.questionMcq
   let totSub = examData.noOfExamSubject
@@ -1017,7 +1017,7 @@ const assignQuestionMcqWithoutOptional = async (req, res, next) => {
     let doc = []
     for (let j = 0; j < noAllSub; j++) {
       if (String(questionMcq[j].subjectId) == String(subjects[i])) {
-        // console.log("assigning",questionMcq[j].mcqQuestions[selectedSet].mcqIds);
+        // //console.log("assigning",questionMcq[j].mcqQuestions[selectedSet].mcqIds);
         mcqIds = questionMcq[j].mcqQuestions[selectedSet].mcqIds
         break
       }
@@ -1025,7 +1025,7 @@ const assignQuestionMcqWithoutOptional = async (req, res, next) => {
     doc.push(mcqIds)
     questionsId.push(doc)
   }
-  // console.log(questionsId);
+  // //console.log(questionsId);
   let studExamStartTime = moment(new Date())
   let studExamEndTime = moment(studExamStartTime).add(examData.duration, 'm')
   if (
@@ -1123,7 +1123,7 @@ const showSpecialExamByIdStudentAdmin = async (req, res, next) => {
   )
   mcqObj['totalQuestion'] = dataWritten.totalQuestionsMcq
   mcqObj['marksPerMcq'] = dataWritten.marksPerMcq
-  //console.log("data", data);
+  ////console.log("data", data);
   let subjectsId = [
     data.questionMcq[0].subjectId._id,
     data.questionMcq[1].subjectId._id,
@@ -1140,7 +1140,7 @@ const examRuleSet = async (req, res, next) => {
   if (file) {
     ruleILinkPath = 'uploads/'.concat(file.filename)
   }
-  ////console.log(ruleILinkPath);
+  //////console.log(ruleILinkPath);
   const examId = req.body.examId
   if (!ObjectId.isValid(examId))
     return res.status(404).json('exam Id is not valid.')
@@ -1259,11 +1259,11 @@ const addQuestionMcq = async (req, res, next) => {
   try {
     doc = await questions.save()
   } catch (err) {
-    ////console.log(err);
+    //////console.log(err);
     return res.status(500).json(err)
   }
   let questionId = doc._id
-  //console.log(questionId);
+  ////console.log(questionId);
   if (!questionId) return res.status(400).send('question not inserted')
 
   let examDetails = {}
@@ -1278,7 +1278,7 @@ const addQuestionMcq = async (req, res, next) => {
   let numOfQuestions = null,
     numberOfSlotAvailable = null
   if (examDetails) {
-    //console.log(examDetails);
+    ////console.log(examDetails);
     for (let i = 0; i < examDetails.subjectInfo.length; i++) {
       if (String(examDetails.subjectInfo[i].subjectId) === subjectId) {
         numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq
@@ -1308,7 +1308,7 @@ const addQuestionMcq = async (req, res, next) => {
     }
   }
 
-  //console.log("mcqQues:", mcqQues);
+  ////console.log("mcqQues:", mcqQues);
 
   let doc1
   try {
@@ -1330,8 +1330,8 @@ const addQuestionMcqBulk = async (req, res, next) => {
   const subjectId = req.body.subjectId
   const setName = Number(req.body.setName)
   questionArray = shuffle(questionArray)
-  //console.log(examId);
-  //console.log(subjectId);
+  ////console.log(examId);
+  ////console.log(subjectId);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
     return res.status(404).json('exam Id or subject Id is invalid.')
   let examIdObj = new mongoose.Types.ObjectId(examId)
@@ -1342,7 +1342,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]))
     else continue
   }
-  //console.log(finalIds);
+  ////console.log(finalIds);
   if (finalIds.length == 0)
     return res.status(404).json('question IDs is not valid.')
   let mIdArray = null,
@@ -1352,9 +1352,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err)
   }
-  //console.log("midarray:", mIdArray);
+  ////console.log("midarray:", mIdArray);
   mIdArray = examDetails.questionMcq
-  //console.log("midarray:", mIdArray);
+  ////console.log("midarray:", mIdArray);
   let numOfQuestions = null,
     numberOfSlotAvailable = null
   let bulkData = []
@@ -1388,15 +1388,15 @@ const addQuestionMcqBulk = async (req, res, next) => {
       }
     }
   }
-  //console.log("subdid:", subjectId);
+  ////console.log("subdid:", subjectId);
 
-  ////console.log(mIdArray);
+  //////console.log(mIdArray);
   let finalIdsString = []
   finalIdsString = finalIds.map((e) => String(e))
   bulkData = bulkData.map((e) => String(e))
-  //console.log("bulk:", bulkData);
+  ////console.log("bulk:", bulkData);
   bulkData = bulkData.concat(finalIdsString)
-  //console.log("bulk:", bulkData);
+  ////console.log("bulk:", bulkData);
   let withoutDuplicate = Array.from(new Set(bulkData))
   withoutDuplicate = withoutDuplicate.map((e) => new mongoose.Types.ObjectId(e))
   if (withoutDuplicate.length > numberOfSlotAvailable) {
@@ -1414,7 +1414,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
       }
     }
   }
-  ////console.log(withoutDuplicate);
+  //////console.log(withoutDuplicate);
   try {
     sav = await McqSpecialExam.findOneAndUpdate(
       { _id: examIdObj },
@@ -1477,14 +1477,14 @@ const questionByExamSub = async (req, res, next) => {
 }
 
 const viewSollutionMcq = async (req, res, next) => {
-  ////console.log(req.query);
+  //////console.log(req.query);
   const studentId = req.user.studentId
   const examId = req.query.examId
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
     return res.status(404).json('student Id or examId is not valid.')
   let studentIdObj = new mongoose.Types.ObjectId(studentId)
   let examIdObj = new mongoose.Types.ObjectId(examId)
-  ////console.log(studentIdObj, examIdObj);
+  //////console.log(studentIdObj, examIdObj);
   let data = null
   let examDetials = {}
   try {
@@ -1508,14 +1508,14 @@ const viewSollutionMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('1.Something went wrong.')
   }
-  // console.log(examDetials);
+  // //console.log(examDetials);
   const perMarks = examDetials.marksPerMcq;
   if (data == null)
     return res.status(404).json('No exam found under this student.')
   let resultData = {};
   let subjectDetails =[];
   for (let i = 0; i < examDetials.noOfExamSubject; i++) {
-    //console.log("data", data.questionMcq[i].mcqId);
+    ////console.log("data", data.questionMcq[i].mcqId);
     let data1 = {}
     data1['subjectName'] = data.questionMcq[i].subjectId.name
     data1['totalObtainedMarksPerSub'] =
@@ -1606,19 +1606,19 @@ const specialGetHistory = async (req, res, next) => {
   let start, end
   start = (page - 1) * paginateData.perPage
   end = page * paginateData.perPage
-  // //console.log(paginateData);
-  // //console.log(start);
-  // //console.log(end);
-  // //console.log(data.length);
+  // ////console.log(paginateData);
+  // ////console.log(start);
+  // ////console.log(end);
+  // ////console.log(data.length);
   let data2 = []
   if (count1 > 0) {
     for (let i = start; i < end; i++) {
       if (i == data.length) break
-      //console.log("i value:", i, data[i]);
+      ////console.log("i value:", i, data[i]);
       data2.push(data[i])
     }
   }
-  ////console.log("data1", data2);
+  //////console.log("data1", data2);
   data = data2
   return res.status(200).json({ data, examInfo, paginateData })
 }
@@ -1689,32 +1689,32 @@ const specialGetHistoryFilter = async (req, res, next) => {
   let start, end
   start = (page - 1) * paginateData.perPage
   end = page * paginateData.perPage
-  // //console.log(paginateData);
-  // //console.log(start);
-  // //console.log(end);
-  // //console.log(data.length);
+  // ////console.log(paginateData);
+  // ////console.log(start);
+  // ////console.log(end);
+  // ////console.log(data.length);
   let data2 = []
   if (count1 > 0) {
     for (let i = start; i < end; i++) {
       if (i == data.length) break
-      //console.log("i value:", i, data[i]);
+      ////console.log("i value:", i, data[i]);
       data2.push(data[i])
     }
   }
-  ////console.log("data1", data2);
+  //////console.log("data1", data2);
   data = data2
 
   return res.status(200).json({ data, examInfo, paginateData })
 }
 const viewSollutionMcqAdmin = async (req, res, next) => {
-  ////console.log(req.query);
+  //////console.log(req.query);
   const studentId = req.query.studentId
   const examId = req.query.examId
   if (!ObjectId.isValid(studentId) || !ObjectId.isValid(examId))
     return res.status(404).json('student Id or examId is not valid.')
   let studentIdObj = new mongoose.Types.ObjectId(studentId)
   let examIdObj = new mongoose.Types.ObjectId(examId)
-  ////console.log(studentIdObj, examIdObj);
+  //////console.log(studentIdObj, examIdObj);
   let data = null
   try {
     data = await McqSpecialVsStudent.findOne({
@@ -1737,7 +1737,7 @@ const viewSollutionMcqAdmin = async (req, res, next) => {
     return res.status(404).json('No exam found under this student.')
   let resultData = []
   for (let i = 0; i <data.questionMcq.length ; i++) {
-    //console.log("data", data.questionMcq[i].mcqId);
+    ////console.log("data", data.questionMcq[i].mcqId);
     let data1 = {}
     data1['subjectName'] = data.questionMcq[i].subjectId.name
     data1['totalObtainedMarksPerSub'] = data.questionMcq[i].mcqMarksPerSub
@@ -1798,17 +1798,17 @@ const historyData = async (req, res, next) => {
     return res.status(500).json('1.SOmething went wrong.')
   }
   //return res.status(200).json(data);
-  // //console.log(data);
+  // ////console.log(data);
   let resultData = []
   let flag = false
-  ////console.log(data.length);
+  //////console.log(data.length);
   let examIdObTest = '-1'
   for (let i = 0; i < data.length; i++) {
     let data1 = {}
     let rank = null
     examIdObj = new mongoose.Types.ObjectId(data[i].examId._id)
     if (String(examIdObj) == String(examIdObTest)) {
-      //console.log(" examIdObTest:", examIdObTest);
+      ////console.log(" examIdObTest:", examIdObTest);
       continue
     }
     examIdObTest = examIdObj
@@ -1824,7 +1824,7 @@ const historyData = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json('Something went wrong.')
     }
-    ////console.log("res", resultRank);
+    //////console.log("res", resultRank);
     if (resultRank == null) resultRank = '-1'
     else resultRank = resultRank.rank
     data1['examId'] = data[i].examId._id
@@ -1851,7 +1851,7 @@ const historyData = async (req, res, next) => {
 
     for (let j = 0; j < data[i].questionMcq.length; j++) {
       
-      // console.log("aaaa",j+data[i].questionMcq[j]);
+      // //console.log("aaaa",j+data[i].questionMcq[j]);
       subObj.push(data[i].questionMcq[j].subjectId.name)
     }
     
@@ -1876,7 +1876,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('1.Something went wrong.')
   }
-  // console.log(examDetails);
+  // //console.log(examDetails);
   let data = null
   try {
     data = await McqSpecialVsStudent.findOne({
@@ -1909,7 +1909,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
     let searchedId = new mongoose.Types.ObjectId(
       data.questionMcq[i].subjectId._id
     )
-    // console.log(examDetails.subjectInfo,examDetails.subjectInfo.filter(s=>String(s.subjectId)===String(searchedId)),new mongoose.Types.ObjectId(data.questionMcq[i].subjectId._id));
+    // //console.log(examDetails.subjectInfo,examDetails.subjectInfo.filter(s=>String(s.subjectId)===String(searchedId)),new mongoose.Types.ObjectId(data.questionMcq[i].subjectId._id));
     // return;
     let numOfQuesPerSub = examDetails.subjectInfo.filter(
       (s) => String(s.subjectId) === String(searchedId)
@@ -1934,7 +1934,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   dataEx['endTime'] = moment(data.examId.endTime).format('LLLL')
   dataEx['examVariation'] = 'MCQ Special Exam'
   dataEx['examName'] = examDetails.name
-  // console.log(dataEx);
+  // //console.log(dataEx);
   // return ;
   return res.status(200).json(dataEx)
 }
@@ -2001,7 +2001,7 @@ const getCombination = async (req, res, next) => {
         String(allId[i]._id) === String(fixedIds[j]._id) ||
         String(allId[i]._id) === selectedId
       ) {
-        // console.log("dhujse")
+        // //console.log("dhujse")
         flag = 1
         break
       }
@@ -2010,10 +2010,10 @@ const getCombination = async (req, res, next) => {
       exceptFixedSub.push(allId[i])
     }
   }
-  // console.log("aaaa",exceptFixedSub);
+  // //console.log("aaaa",exceptFixedSub);
   let fixedAndOptional = [...fixedIds, selectedOptional]
   // fixedAndOptional.push();
-  console.log(fixedAndOptional)
+  //console.log(fixedAndOptional)
   if(fixedAndOptional.length<totSub){
     for (let i = 0; i < exceptFixedSub.length; i++) {
       let temp = []
@@ -2028,7 +2028,7 @@ const getCombination = async (req, res, next) => {
   // for(let i = 0 ; i<totSub;i++){
   //   combinations[i] =
   // }
-  // console.log(fixedIds,allId);
+  // //console.log(fixedIds,allId);
   // let result1 = allId.filter(
   //   (obj1) => !fixedIds.some((obj2) => String(obj1._id) === String(obj2._id))
   // )
@@ -2038,13 +2038,13 @@ const getCombination = async (req, res, next) => {
   // let result2 = result1.filter(
   //   (obj1) => !selectIdArr.some((obj2) => String(obj1._id) === String(obj2))
   // )
-  // // console.log(result3)
+  // // //console.log(result3)
   // let data = []
-  // //console.log(optionalId[sIndex]);
+  // ////console.log(optionalId[sIndex]);
   // data.push([fixedIds[0], fixedIds[1], result2[0], result3[0]])
   // data.push([fixedIds[0], fixedIds[1], result2[1], result3[0]])
   // data.push([fixedIds[0], fixedIds[1], result2[2], result3[0]])
-  // console.log(data)
+  // //console.log(data)
  
   return res.status(200).json(combinations)
 }
@@ -2173,7 +2173,7 @@ const updateRank = async (req, res, next) => {
   try {
     delData = await McqSpecialRank.find({ examId: examIdObj })
   } catch (err) {
-    //console.log(err);
+    ////console.log(err);
     return res.status(500).json('1.Something went wrong.')
   }
   if (delData.length > 0) {
@@ -2201,8 +2201,12 @@ const updateRank = async (req, res, next) => {
     return res.status(500).json('3.Something went wrong.')
   }
   let uniqueIds = []
+  // console.log(ranks[1])
+  ranks = ranks.filter(d=>d.studentId!==null)
   ranks = ranks.filter((element) => {
-    const isDuplicate = uniqueIds.includes(element.studentId._id)
+    // console.log(element)
+    // return
+    const isDuplicate = uniqueIds.includes(element?.studentId?._id)
 
     if (!isDuplicate) {
       uniqueIds.push(element.studentId._id)
@@ -2210,7 +2214,7 @@ const updateRank = async (req, res, next) => {
     }
     return false
   })
-  //console.log("ranks:", ranks);
+  ////console.log("ranks:", ranks);
   let dataLength = ranks.length
   let dataIns = []
   for (let i = 0; i < dataLength; i++) {
@@ -2222,7 +2226,7 @@ const updateRank = async (req, res, next) => {
     dataFree['rank'] = i + 1
     dataIns.push(dataFree)
   }
-  console.log('dataIns:', dataIns)
+  // //console.log('dataIns:', dataIns)
   let sav = null
   try {
     sav = await McqSpecialRank.insertMany(dataIns, { ordered: false })
@@ -2247,7 +2251,7 @@ const getRank = async (req, res, next) => {
     return res.status(500).json('Something went wrong.')
   }
   if (!resultRank) return res.status(404).json('Exam not finshed yet.')
-  ////console.log(resultRank.rank);
+  //////console.log(resultRank.rank);
   resultRank = Number(resultRank.rank)
   let data1 = {},
     getResult = null
@@ -2302,7 +2306,7 @@ const getAllRank = async (req, res, next) => {
     return res.status(500).json('Something went wrong.')
   }
   if (!resultRank) return res.status(404).json('Exam not finshed yet.')
-  ////console.log(resultRank);
+  //////console.log(resultRank);
   //eturn res.status(200).json(resultRank);
   let allData = []
   let totalStudent = null
@@ -2347,7 +2351,7 @@ const examCheckMiddleware = async (req, res, next) => {
   let query = null
   let examEndTime = null
   let currentDate = moment(new Date())
-  //console.log(currentDate, "current Date");
+  ////console.log(currentDate, "current Date");
   try {
     query = await McqSpecialExam.findById(examId, 'endTime')
   } catch (err) {
@@ -2379,8 +2383,8 @@ const updateAssignQuestion = async (req, res, next) => {
   let subjectId = req.body.subjectId
   let questionIndexNumber = Number(req.body.questionIndexNumber)
   let optionIndexNumber = Number(req.body.optionIndexNumber)
-  //console.log(questionIndexNumber);
-  //console.log(optionIndexNumber);
+  ////console.log(questionIndexNumber);
+  ////console.log(optionIndexNumber);
   studentId = new mongoose.Types.ObjectId(studentId)
   examId = new mongoose.Types.ObjectId(examId)
   subjectId = new mongoose.Types.ObjectId(subjectId)
@@ -2445,7 +2449,7 @@ const slotAvailable = async (req, res, next) => {
   }
   let numOfQuestions = null
   if (examDetails) {
-    console.log(examDetails)
+    //console.log(examDetails)
     for (let i = 0; i < examDetails.subjectInfo.length; i++) {
       if (String(examDetails.subjectInfo[i].subjectId) === subjectId) {
         numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq

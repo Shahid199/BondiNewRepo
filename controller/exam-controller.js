@@ -3026,6 +3026,15 @@ const calculateMarks = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json('1.something went wrong.')
     }
+    let examData  = null;
+    try{
+      examData = await Exam.findById(req.body.examId)
+    }catch(err){
+      console.log("kire beta ki khobor")
+      return res.status(500).json('eidke asho')
+    }
+    // console.log(examData);
+    // return ;
     let updArr = []
     for (let index = 0; index < data.length; index++) {
       let updObj = {}
@@ -3046,7 +3055,7 @@ const calculateMarks = async (req, res, next) => {
         } else wa++
       }
       cm = ca * data[index].examId.marksPerMcq
-      wm = (wa * (data[index].examId.marksPerMcq * 25)) / 100
+      wm = (wa * (data[index].examId.marksPerMcq * examData.negativeMarks)) / 100
       tm = cm - wm
       let upd = null
       let saveStudentExamEnd = null

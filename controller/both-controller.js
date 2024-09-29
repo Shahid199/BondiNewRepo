@@ -709,63 +709,8 @@ const slotAvailable = async (req, res, next) => {
   }
 };
 
-// const bothAddQuestionMcqBulk = async (req, res, next) => {
-//   const { questionArray, examId } = req.body;
-//   let examIdObj = new mongoose.Types.ObjectId(examId);
-//   let finalIds = [];
-//   for (let i = 0; i < questionArray.length; i++) {
-//     if (ObjectId.isValid(questionArray[i]))
-//       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
-//     else continue;
-//   }
-//   ////console.log(finalIds);
-//   if (finalIds.length == 0)
-//     return res.status(404).json("question IDs is not valid.");
-//   let mIdArray = null;
-//   try {
-//     mIdArray = await BothMcqQuestionVsExam.findOne({ eId: examIdObj }, "mId");
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
 
-//   if (mIdArray == null) {
-//     const newExamQuestinon = new BothMcqQuestionVsExam({
-//       eId: examIdObj,
-//       mId: finalIds,
-//     });
-//     let sav = null;
-//     try {
-//       sav = await newExamQuestinon.save();
-//     } catch (err) {
-//       return res
-//         .status(500)
-//         .json("DB problem Occur when new question insert in exam table.");
-//     }
-//     return res.status(201).json("Success.");
-//   }
-//   ////console.log(mIdArray);
-//   mIdArray = mIdArray.mId;
-//   let finalIdsString = [];
-//   finalIdsString = finalIds.map((e) => String(e));
-//   mIdArray = mIdArray.map((e) => String(e));
-//   mIdArray = mIdArray.concat(finalIdsString);
-//   let withoutDuplicate = Array.from(new Set(mIdArray));
-//   withoutDuplicate = withoutDuplicate.map(
-//     (e) => new mongoose.Types.ObjectId(e)
-//   );
-//   ////console.log(withoutDuplicate);
-//   try {
-//     sav = await BothMcqQuestionVsExam.updateOne(
-//       { eId: examId },
-//       {
-//         mId: withoutDuplicate,
-//       }
-//     );
-//   } catch (err) {
-//     return res.status(500).json(err);
-//   }
-//   return res.status(201).json("Inserted question to the exam.");
-// };
+
 const bothGetMcqQuestionByExamId = async (req, res, next) => {
   const examId = req.body.examId;
   if (!ObjectId.isValid(examId))
@@ -898,21 +843,20 @@ const updateBothStudentMarks = async (req, res, next) => {
   try {
     getData = await BothStudentExamVsQuestions.findOne({
       $and: [
-        { examId: new mongoose.Types.ObjectId("6664201db5f71b63180db254") },
-        { studentId: new mongoose.Types.ObjectId("65a26d21405cac1184cd2900") },
+        { examId: new mongoose.Types.ObjectId("66e8850490a74961d4389782") },
+        { studentId: new mongoose.Types.ObjectId("6637a73dcbafa8a12c615c3f") },
       ],
     });
   } catch (error) {
     return res.status(500).json(error);
   }
-  getData.obtainedMarks[4] = 10;
   // console.log(getData);
-  getData.totalObtainedMarksWritten = 49;
-  getData.totalObtainedMarks = 59;
+  getData.totalObtainedMarksWritten = 43;
+  getData.totalObtainedMarks = 43;
   let updStatus = null;
   try {
     updStatus = await BothStudentExamVsQuestions.updateOne(
-      { _id: new mongoose.Types.ObjectId("6666e3e41b7d400ab7f79354") },
+      { _id: new mongoose.Types.ObjectId("66e912e67b39a97f78ee6add") },
       getData
     );
   } catch (err) {
@@ -953,7 +897,110 @@ const updateQuestionStatus = async (req, res, next) => {
 
   return res.status(201).json('Updated')
 }
+const addTextQuestion = async (req, res, next) => {
+  const quest = req.body
+  // console.log(quest)
+  // return;
+  // res.status(200).json(quest);
+  let iLinkPath = null
+  let explanationILinkPath = null
+  let examIdObj
+  // console.log(req.file);
+  //let type = req.query.type;
+  let question
+  let mcqQData,
+    doc1,
+    mId,
+    mIdNew = []
 
+  //const examId = req.body.examId;
+  let setName1 = parseInt(quest.setName)
+
+  let examDetails = {}
+
+  try {
+    examDetails = await Exam.findOne({
+      _id: new mongoose.Types.ObjectId(quest.examId),
+    })
+  } catch (error) {
+    return res.status(404).json('Problem with exam settings')
+  }
+  if (examDetails) {
+    try {
+      mcqQData = await BothMcqQuestionVsExam.findOne({
+        eId: quest.examId,
+        setName: setName1,
+      }).select('mId')
+    } catch (err) {
+      return res.status(500).json(err)
+    }
+    // console.log(mcqQData);
+    if (mcqQData !== null) {
+      if (mcqQData.mId.length >= examDetails.totalQuestionMcq) {
+        return res.status(405).json('Set of Question reached the limit')
+      }
+    }
+  }
+  // let options = JSON.parse(quest.options);
+  if (!ObjectId.isValid(quest.examId))
+    return res.status(404).json('examId Id is not valid.')
+  const file = req.file
+  //question insert for text question(type=true)
+  question = quest.question
+  examIdObj = new mongoose.Types.ObjectId(quest.examId)
+  //insert question
+  let questions = new QuestionsMcq({
+    question: question,
+    optionCount: Number(quest.optionCount),
+    options: quest.options,
+    correctOption: Number(quest.correctOption), //index value
+    explanationILink: null,
+    status: JSON.parse(quest.status),
+    type: JSON.parse(quest.type),
+  })
+  let doc
+  try {
+    doc = await questions.save()
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json(err)
+  }
+  //end of insert question
+  //insert question to reference mcqquestionexam table
+  let questionId = doc._id
+  if (!questionId) return res.status(400).send('question not inserted')
+
+  // console.log(mcqQData);
+  if (mcqQData == null) {
+    mIdNew.push(questionId)
+    let questionExam = new BothMcqQuestionVsExam({
+      eId: quest.examId,
+      mId: mIdNew,
+      setName: parseInt(quest.setName),
+    })
+    try {
+      doc1 = await questionExam.save()
+    } catch (err) {
+      return res.status(500).json(err)
+    }
+  } else {
+    mId = mcqQData.mId
+    mIdNew = mId
+    mIdNew.push(questionId)
+    try {
+      doc1 = await BothMcqQuestionVsExam.updateOne(
+        { eId: examIdObj, setName: setName1 },
+        { $set: { mId: mIdNew } }
+      )
+    } catch (err) {
+      return res.status(500).json(err)
+    }
+  }
+  // console.log(setName);
+  return res.status(201).json('Saved.')
+}
+
+exports.addTextQuestion = addTextQuestion;
 exports.updateQuestionStatus = updateQuestionStatus;
 exports.updateBothStudentMarks = updateBothStudentMarks;
 exports.refillQuestion = refillQuestion;
