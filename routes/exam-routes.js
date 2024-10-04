@@ -378,10 +378,10 @@ router.post(
 );
 router.post(
   "/calculatemartks",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
-  ],
+  // [
+  //   passport.authenticate("jwt", { session: false }),
+  //   authorize(["superadmin", "moderator"]),
+  // ],
   calculateMarks
 );
 module.exports = router;

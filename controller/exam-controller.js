@@ -3017,6 +3017,7 @@ const updateExamPhoto = async (req, res, next) => {
 const calculateMarks = async (req, res, next) => {
   let examId = new mongoose.Types.ObjectId(req.body.examId)
   let type = req.query.type
+  console.log(type)
   let data = []
   if (type == 1) {
     try {
@@ -3151,7 +3152,83 @@ const calculateMarks = async (req, res, next) => {
       }
     }
   }
-  console.log(data)
+  if (type == 3) {
+    try {
+      data = await SpecialVsStudent.find({ examId: examId })
+        .populate('questionMcq.mcqId')
+        .populate('examId')
+    } catch (err) {
+      return res.status(500).json('1.something went wrong.')
+    }
+    // console.log(data[0].questionMcq[0].mcqId);
+    // console.log(data[0].questionMcq[0].mcqAnswer);
+    // return res.status(200).json(data);
+    let updArr = []
+    
+    for (let index = 0; index < data.length; index++) {      
+      let studentId = data[index].studentId
+      
+      let obtainedMarksWrit = data[index].totalMarksWritten
+      let totMcqMarks =  0 ;
+      for(let j = 0 ; j<data[index].questionMcq.length; j++ ){
+      let updObj = {}
+      let questions = data[index].questionMcq[j].mcqId;
+      let answered = data[index].questionMcq[j].mcqAnswer
+      let cm = 0
+      let wm = 0
+      let tm = 0
+      let na = 0
+      let ca = 0
+      let wa = 0
+      for (let ind = 0; ind < questions.length; ind++) {
+        if (Number(answered[ind]) === questions[ind].correctOption) {
+          ca++
+        } else if (Number(answered[ind]) === -1) {
+          na++
+        } else wa++
+      }
+      cm = ca * data[index].examId.marksPerMcq
+      wm = (wa * (data[index].examId.marksPerMcq * data[index].examId.negativeMarksMcq)) / 100
+      tm = cm - wm
+      totMcqMarks = totMcqMarks + tm ;
+      data[index].questionMcq[j].mcqMarksPerSub = tm ;
+      data[index].questionMcq[j].totalCorrectMarks = tm ;
+      data[index].questionMcq[j].totalCorrectAnswer = ca ;
+      data[index].questionMcq[j].totalWrongAnswer = wa ;
+      data[index].questionMcq[j].totalNotAnswered = na ;
+      data[index].questionMcq[j].totalWrongMarks = wm ;
+
+      
+
+    }
+    // console.log(totMcqMarks);
+    data[index].totalMarksMcq = totMcqMarks ;
+    data[index].totalObtainedMarks = totMcqMarks + obtainedMarksWrit ;
+    // return ;
+      let upd = null
+      let saveStudentExamEnd = null
+      try {
+        upd = await SpecialVsStudent.updateOne(
+          {
+            examId: examId,
+            studentId: studentId,
+          },
+          data[index]
+        )
+        // saveStudentExamEnd = await StudentMarksRank.updateOne(
+        //   {
+        //     examId: examId,
+        //     studentId: studentId,
+        //     totalObtainedMarks: { $ne: -5000 },
+        //   },
+        //   { totalObtainedMarks: tm }
+        // )
+      } catch (err) {
+        return res.status(500).json('Something went wrong.')
+      }
+    }
+  }
+  // console.log(data)
   return res.status(200).json(data)
 }
 

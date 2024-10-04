@@ -60,6 +60,7 @@ const bothRouter = require("./routes/both-routes");
 const smsRouter = require("./routes/sms-routes");
 const curriculumRouter = require("./routes/curriculum-routes");
 const removeRouter = require("./routes/removefiles-routes");
+const remarkRouter = require("./routes/remark-routes");
 const mcqSpecialRouter = require("./routes/mcqspecial-routes");
 const RetakeExamTrackerRouter = require("./routes/RetakeExamTracker-routes");
 const scriptDetailsRouter = require("./routes/scriptDetails-routes");
@@ -71,6 +72,7 @@ app.use("/questions", express.static("questions"));
 app.use("/profile-pictures", express.static("profile-pictures"));
 
 app.use("/api/course", courseRouter);
+app.use("/api/remark", remarkRouter);
 app.use("/api/user", userRouter);
 app.use("/api/curriculum", curriculumRouter);
 app.use("/api/student", studentRouter);

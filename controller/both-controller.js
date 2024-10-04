@@ -919,7 +919,7 @@ const addTextQuestion = async (req, res, next) => {
   let examDetails = {}
 
   try {
-    examDetails = await Exam.findOne({
+    examDetails = await BothExam.findOne({
       _id: new mongoose.Types.ObjectId(quest.examId),
     })
   } catch (error) {

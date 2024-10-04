@@ -28,6 +28,7 @@ const {
 const router = express.Router()
 
 // router.get('/updateresult', updateBothStudentMarks)
+
 router.post(
   '/createbothexam',
   [

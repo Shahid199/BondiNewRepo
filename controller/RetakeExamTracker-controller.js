@@ -10,7 +10,7 @@ const addCount = async (req, res, next) => {
   sId1 = new mongoose.Types.ObjectId(studentId)
   eId1 = new mongoose.Types.ObjectId(examId)
   let retakes = null
-  console.log(sId1, eId1)
+  // console.log(sId1, eId1)
   try {
     retakes = await RetakeExamTracker.findOne({
       $and: [{ studentId: sId1 }, { examId: eId1 }],
@@ -32,7 +32,7 @@ const addCount = async (req, res, next) => {
   if(examData.numberOfRetakes<result){
     return res.status(500).json("Retake limit reached");
   }
-    console.log('hi')
+    // console.log('hi')
     saveExamUpd = {
       examId: eId1,
       studentId: sId1,
