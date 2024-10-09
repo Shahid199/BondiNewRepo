@@ -5,16 +5,19 @@ const { default: mongoose, mongo } = require("mongoose");
 const add = async (req, res, next) => {
   const studentId = req.body.studentId
   const examId = req.body.examId
+  const subjectId = req.body.subjectId
+  const questionNo = Number(req.body.questionNo)
   console.log(studentId,examId);
   let sId1, eId1
   sId1 = new mongoose.Types.ObjectId(studentId)
   eId1 = new mongoose.Types.ObjectId(examId)
+  subId = new mongoose.Types.ObjectId(subjectId)
 
   let data = null
   console.log(sId1, eId1)
   try {
     data = await Remark.findOne({
-      $and: [{ studentId: sId1 }, { examId: eId1 }],
+      $and: [{ studentId: sId1 }, { examId: eId1 },{subjectId:subId},{questionNo:questionNo}],
     })
   } catch (err) {
     return res.status(500).json('Some Problems found')
@@ -26,6 +29,8 @@ const add = async (req, res, next) => {
     let myData = {
       examId: eId1,
       studentId: sId1,
+      subjectId: subId,
+      questionNo:questionNo,
       comment: req.body.comment,
     }
     try {
@@ -37,6 +42,8 @@ const add = async (req, res, next) => {
     let saveData = new Remark({
       examId: eId1,
       studentId: sId1,
+      subjectId: subId,
+      questionNo:questionNo,
       comment: req.body.comment,
     })
     try {

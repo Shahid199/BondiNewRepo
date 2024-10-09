@@ -38,6 +38,7 @@ const SpecialRank = require("../model/SpecialRank");
 //const SpecialExam = require("../model/SpecialExam");
 const SpecialExam = require("../model/SpecialExamNew");
 const { options } = require("pdfkit");
+const Remark = require("../model/Remark");
 
 //const sharp = require("sharp");
 
@@ -6222,8 +6223,10 @@ const bothGetWrittenStudentSingleByExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  // console.log("dataaa=>",data.examId);
   let dataObj = {};
   dataObj["examName"] = data.examId.name;
+  dataObj["subjectId"] = data.examId.subjectId;
   dataObj["examVariation"] = examVariation[data.examId.examVariation];
   dataObj["examType"] = examType[data.examId.examType];
   dataObj["studentName"] = data.studentId.name;
@@ -6841,6 +6844,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Can't get exam info.");
   }
+  console.log(getExamData);
   let runningResponseLast = [];
   let examData = new Object();
   let questionData = new Object();
@@ -6851,8 +6855,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
     runningResponse["options"] = getQuestionMcq.mcqQuestionId[i].options;
     runningResponse["type"] = getQuestionMcq.mcqQuestionId[i].type;
     runningResponse["answeredOption"] = getQuestionMcq.answeredOption[i];
-    runningResponse["optionCount"] =
-      getQuestionMcq.mcqQuestionId[i].optionCount;
+    runningResponse["optionCount"] =getExamData.examId.numberOfOptions;
     runningResponseLast.push(runningResponse);
   }
   timeData["examDuration"] =
@@ -7534,17 +7537,32 @@ const bothViewSollutionWritten = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("1.Something went wrong.");
   }
+  const subId = new mongoose.Types.ObjectId(dataWritten.examId.subjectId) 
 
-  //console.log(dataWritten);
+  // console.log(data.ansewerScriptILink);
   let data1 = {};
   data1["question"] = dataWritten.questionILink;
-  data1["sollutionScript"] = data.ansewerScriptILink;
+  data1["sollutionScript"]=[];
+  for( let k = 0 ; k <  data.ansewerScriptILink.length ; k++ ){
+    let scriptObject = {};
+    scriptObject.answerScript = data.ansewerScriptILink[k];
+    try {
+      scriptObject.remark  = await Remark.findOne({
+        $and: [{ studentId: studentIdObj }, { examId: examIdObj },{subjectId:subId},{questionNo:k}],
+      })
+    } catch (err) {
+      return res.status(500).json('Some Problems found')
+    }
+    data1["sollutionScript"][k] = scriptObject;
+    // subjects[i].answer[k] = scriptObject ;
+  }
+  // data1["sollutionScript"] = data.ansewerScriptILink;
   data1["obtainedMarks"] = data.obtainedMarks;
   data1["totalObtainedMarks"] = data.totalObtainedMarks;
   data1["marksPerQuestion"] = dataWritten.marksPerQuestion;
   data1["totalQuestion"] = dataWritten.totalQuestions;
   data1["totalMarks"] = dataWritten.totalMarks;
-
+  console.log(data1["sollutionScript"])
   return res.status(200).json(data1);
 };
 

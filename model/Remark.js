@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const subjects = require("./Subject");
 const Schema = mongoose.Schema;
 const remarkSchema = new Schema(
   {
@@ -9,6 +10,16 @@ const remarkSchema = new Schema(
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+    },
+    questionNo:{
+      type:Number,
+      required:true
+    },
+    subjectId:{
+      type: mongoose.Schema.Types.ObjectId,
+      required:true,
+      default:null,
+      ref: subjects
     },
     comment: {
         type: String,
