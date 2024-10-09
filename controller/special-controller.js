@@ -168,8 +168,7 @@ const getExamSubjects = async (req, res, next) => {
     examId: examId,
     startTimeMcq: moment(studExamStartTime).add(6, 'h'),
     endTimeMcq: moment(studExamEndTime),
-    mcqDuration:
-      (studExamEndTime - moment(studExamStartTime).add(6, 'h')) / 60000,
+    mcqDuration:check.mcqDuration,
     questionMcq: mcqData,
     runningStatus: true,
     finishStatus: false,
@@ -191,8 +190,7 @@ const getExamSubjects = async (req, res, next) => {
   allData['studEndTime'] = moment(studExamEndTime)
   allData['examStartTime'] = examData.startTime
   allData['examEndTime'] = examData.endTime
-  allData['mcqDuration'] =
-    (studExamEndTime - moment(studExamStartTime).add(6, 'h')) / 60000
+  allData['mcqDuration'] =check.mcqDuration
   allData['negativeMarking'] = -negMarking;
   allData['marksPerMcq'] = marksPerMcq;
   allData['data'] = sav
