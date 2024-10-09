@@ -129,11 +129,7 @@ const getExamSubjects = async (req, res, next) => {
   console.log("examData", examData)
   let studExamStartTime = moment(new Date())
   let studExamEndTime = moment(studExamStartTime).add(examData.mcqDuration, 'm')
-  if (
-    Number(moment(studExamEndTime).add(6, 'h') - moment(examData.endTime)) > 0
-  ) {
-    studExamEndTime = examData.endTime
-  } else studExamEndTime = moment(studExamEndTime).add(6, 'h')
+   studExamEndTime = moment(studExamEndTime).add(6, 'h')
 
   let mcqData = []
   for (let i = 0; i < totSub; i++) {
