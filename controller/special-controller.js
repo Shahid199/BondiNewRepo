@@ -1141,7 +1141,7 @@ const addQuestionMcqBulk = async (req, res, next) => {
       finalIds.push(new mongoose.Types.ObjectId(questionArray[i]));
     else continue;
   }
-  //console.log(finalIds);
+  // console.log(finalIds.length);
   if (finalIds.length == 0)
     return res.status(404).json("question IDs is not valid.");
   let mIdArray = null,
@@ -1197,10 +1197,11 @@ const addQuestionMcqBulk = async (req, res, next) => {
   bulkData = bulkData.concat(finalIdsString);
   //console.log("bulk:", bulkData);
   let withoutDuplicate = Array.from(new Set(bulkData));
+  console.log(withoutDuplicate.length);
   withoutDuplicate = withoutDuplicate.map(
     (e) => new mongoose.Types.ObjectId(e)
   );
-  if (withoutDuplicate.length > numberOfSlotAvailable) {
+  if (finalIds.length > numberOfSlotAvailable) {
     return res
       .status(400)
       .json(`You can transfer only ${numberOfSlotAvailable}`);
