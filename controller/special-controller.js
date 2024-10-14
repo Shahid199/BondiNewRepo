@@ -6092,7 +6092,7 @@ const updateQuestionStatus = async (req, res, next) => {
 
 const writtenMarksUpdate = async (req, res, next) => {
   // let writtenQuestion = null;
-  let examId,data;
+  let examId,data,updStatus;
   examId = new mongoose.Types.ObjectId("6704dabd8ed5245b867b3e3f");
  try {
   data = await SpecialVsStudent.find({examId:examId});
@@ -6102,6 +6102,7 @@ const writtenMarksUpdate = async (req, res, next) => {
  const mathId =  new mongoose.Types.ObjectId("66cedc2745490823d3208e0d") ;
  const physicsId = new mongoose.Types.ObjectId("66cedc0b45490823d3208e0b") ;
  for( let i = 0 ; i<data.length ; i++ ){
+  let idObj = new mongoose.Types.ObjectId(data[i]._id);
   for( let j = 0 ; j<data[i].questionWritten.length; j++){
     if(String(data[i].questionWritten[j].subjectId)===String(physicsId)){
       console.log("physics");
@@ -6123,6 +6124,7 @@ const writtenMarksUpdate = async (req, res, next) => {
       }
       
     }
+    updStatus = await SpecialVsStudent.updateOne({ _id: idObj }, data[i])
   }
 
  }
