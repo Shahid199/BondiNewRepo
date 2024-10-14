@@ -6105,14 +6105,14 @@ const writtenMarksUpdate = async (req, res, next) => {
   let idObj = new mongoose.Types.ObjectId(data[i]._id);
   for( let j = 0 ; j<data[i].questionWritten.length; j++){
     if(String(data[i].questionWritten[j].subjectId)===String(physicsId)){
-      console.log("physics");
+      // console.log("physics");
       if( data[i].questionWritten[j].obtainedMarks.length > 0){
         data[i].questionWritten[j].obtainedMarks[2] = 2.5 ;
       }
       
     }
     if(String(data[i].questionWritten[j].subjectId)===String(mathId)){
-      console.log("math");
+      // console.log("math");
       if( data[i].questionWritten[j].obtainedMarks.length > 0){
         if(data[i].questionWritten[j].obtainedMarks[0] === 2.5){
           data[i].questionWritten[j].obtainedMarks[0] = 0 ;
