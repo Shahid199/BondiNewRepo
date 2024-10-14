@@ -6099,8 +6099,8 @@ const writtenMarksUpdate = async (req, res, next) => {
  } catch (error) {
   return res.status(500).json("Cannot find this exam");
  }
- const mathId = "66cedc2745490823d3208e0d" ;
- const physicsId ="66cedc0b45490823d3208e0b" ;
+ const mathId =  new mongoose.Types.ObjectId("66cedc2745490823d3208e0d") ;
+ const physicsId = new mongoose.Types.ObjectId("66cedc0b45490823d3208e0b") ;
  for( let i = 0 ; i<data.length ; i++ ){
   for( let j = 0 ; j<data[i].questionWritten.length; j++){
     if(String(data[i].questionWritten[j].subjectId)===String(physicsId)){
