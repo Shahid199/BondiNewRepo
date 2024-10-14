@@ -6109,6 +6109,11 @@ const writtenMarksUpdate = async (req, res, next) => {
       if( data[i].questionWritten[j].obtainedMarks.length > 0){
         data[i].questionWritten[j].obtainedMarks[2] = 2.5 ;
       }
+      let sum = 0 ;
+      for( let k = 0 ; k< data[i].questionWritten[j].obtainedMarks.length; k++ ){
+          sum = sum + data[i].questionWritten[j].obtainedMarks[k];
+      }
+      data[i].questionWritten[j].totalObtainedMarksWritten = sum ; 
       
     }
     if(String(data[i].questionWritten[j].subjectId)===String(mathId)){
@@ -6120,7 +6125,11 @@ const writtenMarksUpdate = async (req, res, next) => {
         if(data[i].questionWritten[j].obtainedMarks[0] === 0.5){
           data[i].questionWritten[j].obtainedMarks[0] = 2.5 ;
         }
-         
+        let sum = 0 ;
+        for( let k = 0 ; k< data[i].questionWritten[j].obtainedMarks.length; k++ ){
+            sum = sum + data[i].questionWritten[j].obtainedMarks[k];
+        }
+        data[i].questionWritten[j].totalObtainedMarksWritten = sum ;         
       }
       
     }
