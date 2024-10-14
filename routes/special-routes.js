@@ -66,9 +66,14 @@ const {
   refillQuestion,
   getSpecialExamById,
   addTextQuestion,
-  getExamSubjects
+  getExamSubjects,
+  writtenMarksUpdate
 } = require("../controller/special-controller");
 const router = express.Router();
+router.get(
+  "/writtenMarksUpdate",
+  writtenMarksUpdate
+);
 router.get(
   "/getexamsubjects",
   [

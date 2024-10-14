@@ -6089,6 +6089,21 @@ const updateQuestionStatus = async (req, res, next) => {
 
   return res.status(201).json('Updated')
 }
+
+const writtenMarksUpdate = async (req, res, next) => {
+  // let writtenQuestion = null;
+  let examId,data;
+  examId = new mongoose.Types.ObjectId("6704dabd8ed5245b867b3e3f");
+ try {
+  data = await SpecialVsStudent.find({examId:examId});
+ } catch (error) {
+  return res.status(500).json("Cannot find this exam");
+ }
+ return res.status(200).json(data);
+};
+
+
+exports.writtenMarksUpdate = writtenMarksUpdate;
 exports.getExamSubjects = getExamSubjects;
 exports.refillQuestion = refillQuestion;
 exports.addTextQuestion = addTextQuestion;
