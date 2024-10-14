@@ -6102,6 +6102,7 @@ const writtenMarksUpdate = async (req, res, next) => {
  const mathId =  new mongoose.Types.ObjectId("66cedc2745490823d3208e0d") ;
  const physicsId = new mongoose.Types.ObjectId("66cedc0b45490823d3208e0b") ;
  for( let i = 0 ; i<data.length ; i++ ){
+  let totalWr= 0 ;
   let idObj = new mongoose.Types.ObjectId(data[i]._id);
   for( let j = 0 ; j<data[i].questionWritten.length; j++){
     if(String(data[i].questionWritten[j].subjectId)===String(physicsId)){
@@ -6133,8 +6134,10 @@ const writtenMarksUpdate = async (req, res, next) => {
       }
       
     }
-    updStatus = await SpecialVsStudent.updateOne({ _id: idObj }, data[i])
+    totalWr= totalWr + data[i].questionWritten[j].totalObtainedMarksWritten
   }
+  data[i].totalMarksWritten = 
+  updStatus = await SpecialVsStudent.updateOne({ _id: idObj }, data[i])
 
  }
  return res.status(200).json(data);
