@@ -6099,6 +6099,31 @@ const writtenMarksUpdate = async (req, res, next) => {
  } catch (error) {
   return res.status(500).json("Cannot find this exam");
  }
+ const mathId = "66cedc2745490823d3208e0d" ;
+ const physicsId ="66cedc0b45490823d3208e0b" ;
+ for( let i = 0 ; i<data.length ; i++ ){
+  for( let j = 0 ; j<data[i].questionWritten.length; j++){
+    if(data[i].questionWritten[j].subjectId===physicsId){
+      if( data[i].questionWritten[j].obtainedMarks.length > 0){
+        data[i].questionWritten[j].obtainedMarks[2] = 2.5 ;
+      }
+      
+    }
+    if(data[i].questionWritten[j].subjectId===mathId){
+      if( data[i].questionWritten[j].obtainedMarks.length > 0){
+        if(data[i].questionWritten[j].obtainedMarks[0] === 2.5){
+          data[i].questionWritten[j].obtainedMarks[0] = 0 ;
+        }
+        if(data[i].questionWritten[j].obtainedMarks[0] === 0.5){
+          data[i].questionWritten[j].obtainedMarks[0] = 2.5 ;
+        }
+         
+      }
+      
+    }
+  }
+
+ }
  return res.status(200).json(data);
 };
 
