@@ -681,7 +681,7 @@ const getFreeExamAll = async (req, res, next) => {
   try {
     exams = await Exam.find({
       $and: [{ status: true }, { examFreeOrNot: true }],
-    });
+    }).sort({ createdAt: 'desc' });
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
