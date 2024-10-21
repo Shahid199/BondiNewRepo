@@ -167,7 +167,7 @@ const updateStatusCourse = async (req, res, next) => {
 const getAllCourseAdmin = async (req, res, next) => {
   let courses;
   try {
-    courses = await Course.find({ status: true }).exec();
+    courses = await Course.find({ status: true }).sort({ createdAt: 'desc' }).exec();
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
