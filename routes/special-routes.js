@@ -67,12 +67,22 @@ const {
   getSpecialExamById,
   addTextQuestion,
   getExamSubjects,
-  writtenMarksUpdate
+  writtenMarksUpdate,
+  getExamSubjectsRetake
 } = require("../controller/special-controller");
 const router = express.Router();
+// router.get(
+//   "/writtenMarksUpdate",
+//   writtenMarksUpdate
+// );
+
 router.get(
-  "/writtenMarksUpdate",
-  writtenMarksUpdate
+  "/getexamsubjectsretake",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "student"]),
+  ],
+  getExamSubjectsRetake
 );
 router.get(
   "/getexamsubjects",
