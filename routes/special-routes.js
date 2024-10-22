@@ -68,7 +68,8 @@ const {
   addTextQuestion,
   getExamSubjects,
   writtenMarksUpdate,
-  getExamSubjectsRetake
+  getExamSubjectsRetake,
+  topRank
 } = require("../controller/special-controller");
 const router = express.Router();
 // router.get(
@@ -542,6 +543,14 @@ router.get(
     authorize(["superadmin", "moderator", "teacher"]),
   ],
   getRank
+);
+router.get(
+  "/toprank",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator", "teacher"]),
+  ],
+  topRank
 );
 
 router.get(

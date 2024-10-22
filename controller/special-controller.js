@@ -2900,6 +2900,7 @@ const getRank = async (req, res, next) => {
   data1["studExamTime"] = getResult.mcqDuration + getResult.writtenDuration;
   return res.status(200).json(data1);
 };
+
 const getAllRank = async (req, res, next) => {
   let examId = req.query.examId;
   if (!ObjectId.isValid(examId)) return res.status(200).json("Invalid examId.");
@@ -6321,7 +6322,22 @@ const getExamSubjects = async (req, res, next) => {
 
   // return res.status(200).json(examData);
 }
+const topRank = async(req,res,next)=>{
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId)) return res.status(200).json("Invalid examId.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let resultRank = null;
+  try {
+    resultRank = await SpecialRank.find({ examId: examIdObj })
+      .sort("rank")
+      .populate("examId studentId");
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return resultRank;
+}
 
+exports.topRank = topRank;
 exports.getExamSubjectsRetake = getExamSubjectsRetake;
 exports.writtenMarksUpdate = writtenMarksUpdate;
 exports.getExamSubjects = getExamSubjects;
