@@ -6334,7 +6334,8 @@ const topRank = async(req,res,next)=>{
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
-  return resultRank;
+
+  return res.status(200).json(resultRank);
 }
 
 exports.topRank = topRank;
