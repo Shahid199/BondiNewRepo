@@ -7421,6 +7421,7 @@ const bothSubmitStudentScript = async (req, res, next) => {
     console.log("questionILinkPath[i]:", questionILinkPath[i]);
   }
   //new implement
+  let returnedData = questionILinkPath;
   let getQuestionScript = null;
   try {
     getQuestionScript = await BothStudentExamVsQuestions.findOne({
@@ -7453,7 +7454,7 @@ const bothSubmitStudentScript = async (req, res, next) => {
     ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  return res.status(201).json("Submitted Successfully.");
+  return res.status(201).json(returnedData);
 };
 
 const bothSubmitWritten = async (req, res, next) => {

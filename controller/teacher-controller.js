@@ -15,6 +15,7 @@ const examVariation = require("../utilities/exam-variation");
 const examType = require("../utilities/exam-type");
 const pagination = require("../utilities/pagination");
 const BothTeacherVsExam = require("../model/BothTeacherVsExam");
+const Exam = require("../model/Exam");
 //const sharp = require("sharp");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
@@ -663,7 +664,13 @@ const updateRank = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("3.Something went wrong.");
   }
-  ////console.log("ranks:", ranks);
+  let examData = null;
+  try {
+    examData = await Exam.findOne({_id: examIdObj})
+  } catch (error) {
+    return res.status(500).json("3.Something went 4 wrong.");
+  }
+  console.log("daaaataaa: ", examData);
   let dataLength = ranks.length;
   let dataIns = [];
   for (let i = 0; i < dataLength; i++) {

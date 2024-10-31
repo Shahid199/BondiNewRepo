@@ -40,6 +40,7 @@ const McqSpecialExam = require('../model/McqSpecialExam')
 const { forEach } = require('jszip')
 const bcrypt = require('bcryptjs')
 const McqRank = require('../model/McqRank')
+let dir = path.resolve(path.join(__dirname, "../uploads"));
 
 const Limit = 100
 //test
