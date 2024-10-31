@@ -1590,9 +1590,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   mIdArray = mIdArray.concat(finalIdsString)
   let withoutDuplicate = Array.from(new Set(mIdArray))
   withoutDuplicate = withoutDuplicate.map((e) => new mongoose.Types.ObjectId(e))
-  console.log("wd",withoutDuplicate.length);
+  console.log("wd", withoutDuplicate.length);
   const totalLength = prevLength + withoutDuplicate.length
-  console.log("tt",totalLength);
+  console.log("tt", totalLength);
   const reaminingLength = examDetails.totalQuestionMcq - withoutDuplicate.length
   if (withoutDuplicate.length > examDetails.totalQuestionMcq) {
     return res.status(400).json(`You can transfer atmost ${reaminingLength}`)
@@ -2436,24 +2436,24 @@ const updateQuestionStatus = async (req, res, next) => {
   //const questionIdObj = new mongoose.Types.ObjectId(questionId);
   let queryResult = null
   try {
-    queryResult = await McqQuestionVsExam.find({eId:examIdObj})
-  
+    queryResult = await McqQuestionVsExam.find({ eId: examIdObj })
+
   } catch (err) {
     return res.status(500).json(err)
   }
-  for( let i = 0 ; i< queryResult.length ; i++ ){
-    let temp = []  
-    temp= queryResult[i].mId.filter(q=>String(q) !== String(quesObj))
+  for (let i = 0; i < queryResult.length; i++) {
+    let temp = []
+    temp = queryResult[i].mId.filter(q => String(q) !== String(quesObj))
     // console.log(temp)
-    queryResult[i].mId = temp ;
+    queryResult[i].mId = temp;
   }
-  for( let i = 0 ; i<queryResult.length ; i++ ){
-   let res = null ;
-   try{
-    res = await McqQuestionVsExam.findByIdAndUpdate(queryResult[i]._id,{mId:queryResult[i].mId})
-   }catch(e){
+  for (let i = 0; i < queryResult.length; i++) {
+    let res = null;
+    try {
+      res = await McqQuestionVsExam.findByIdAndUpdate(queryResult[i]._id, { mId: queryResult[i].mId })
+    } catch (e) {
       return res.status(500).json("Cannot find data")
-   }
+    }
   }
 
   return res.status(201).json('Updated')
@@ -2549,6 +2549,7 @@ const resetExam = async (req, res, next) => {
   let delObj = null
   let delObj1 = null
   if (type == '0') {
+
     try {
       delObj = await StudentExamVsQuestionsMcq.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -2560,6 +2561,16 @@ const resetExam = async (req, res, next) => {
       return res.status(500).json('Problem MCQ delete.')
     }
   } else if (type == '1') {
+    dirUpload = dir + "/" + examId + "/" + studentIdObj;
+    console.log(dirUpload);
+    if (fs.existsSync(dirUpload)) {
+      fs.rm(dirUpload, { recursive: true, force: true }, (err) => {
+        if (err) {
+          return res.status(404).json(err);
+        } else console.log(`${dirUpload} is deleted!`);
+      });
+      return res.status(200).json("success");
+    }
     try {
       delObj = await StudentExamVsQuestionsWritten.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -2571,6 +2582,16 @@ const resetExam = async (req, res, next) => {
       return res.status(500).json('Problem Written delete.')
     }
   } else if (type == '2') {
+    dirUpload = dir + "/" + examId + "/" + studentIdObj;
+    console.log(dirUpload);
+    if (fs.existsSync(dirUpload)) {
+      fs.rm(dirUpload, { recursive: true, force: true }, (err) => {
+        if (err) {
+          return res.status(404).json(err);
+        } else console.log(`${dirUpload} is deleted!`);
+      });
+      return res.status(200).json("success");
+    }
     try {
       delObj = await BothStudentExamVsQuestions.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -2579,6 +2600,16 @@ const resetExam = async (req, res, next) => {
       return res.status(500).json('Problem Both delete.')
     }
   } else {
+    dirUpload = dir + "/" + examId + "/" + studentIdObj;
+    console.log(dirUpload);
+    if (fs.existsSync(dirUpload)) {
+      fs.rm(dirUpload, { recursive: true, force: true }, (err) => {
+        if (err) {
+          return res.status(404).json(err);
+        } else console.log(`${dirUpload} is deleted!`);
+      });
+      return res.status(200).json("success");
+    }
     try {
       delObj = await SpecialVsStudent.deleteOne({
         $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -2775,7 +2806,7 @@ const columnAdd11 = async (req, res, next) => {
   try {
     data = await FreeStudent.updateMany({}, {
       $set: {
-       curriculumRoll:null,
+        curriculumRoll: null,
       }
     })
   } catch (err) {
@@ -2865,7 +2896,7 @@ const columnAdd = async (req, res, next) => {
     return res.status(500).json("Error");
   }
   console.log(studentData.length);
-  let count  = 0 ;
+  let count = 0;
   for (let i = 0; i < studentData.length; i++) {
     if (studentData[i].password !== null) {
       studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
@@ -3028,10 +3059,10 @@ const calculateMarks = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json('1.something went wrong.')
     }
-    let examData  = null;
-    try{
+    let examData = null;
+    try {
       examData = await Exam.findById(req.body.examId)
-    }catch(err){
+    } catch (err) {
       console.log("kire beta ki khobor")
       return res.status(500).json('eidke asho')
     }
@@ -3165,47 +3196,47 @@ const calculateMarks = async (req, res, next) => {
     // console.log(data[0].questionMcq[0].mcqAnswer);
     // return res.status(200).json(data);
     let updArr = []
-    
-    for (let index = 0; index < data.length; index++) {      
+
+    for (let index = 0; index < data.length; index++) {
       let studentId = data[index].studentId
-      
+
       let obtainedMarksWrit = data[index].totalMarksWritten
-      let totMcqMarks =  0 ;
-      for(let j = 0 ; j<data[index].questionMcq.length; j++ ){
-      let updObj = {}
-      let questions = data[index].questionMcq[j].mcqId;
-      let answered = data[index].questionMcq[j].mcqAnswer
-      let cm = 0
-      let wm = 0
-      let tm = 0
-      let na = 0
-      let ca = 0
-      let wa = 0
-      for (let ind = 0; ind < questions.length; ind++) {
-        if (Number(answered[ind]) === questions[ind].correctOption) {
-          ca++
-        } else if (Number(answered[ind]) === -1) {
-          na++
-        } else wa++
+      let totMcqMarks = 0;
+      for (let j = 0; j < data[index].questionMcq.length; j++) {
+        let updObj = {}
+        let questions = data[index].questionMcq[j].mcqId;
+        let answered = data[index].questionMcq[j].mcqAnswer
+        let cm = 0
+        let wm = 0
+        let tm = 0
+        let na = 0
+        let ca = 0
+        let wa = 0
+        for (let ind = 0; ind < questions.length; ind++) {
+          if (Number(answered[ind]) === questions[ind].correctOption) {
+            ca++
+          } else if (Number(answered[ind]) === -1) {
+            na++
+          } else wa++
+        }
+        cm = ca * data[index].examId.marksPerMcq
+        wm = (wa * (data[index].examId.marksPerMcq * data[index].examId.negativeMarksMcq)) / 100
+        tm = cm - wm
+        totMcqMarks = totMcqMarks + tm;
+        data[index].questionMcq[j].mcqMarksPerSub = tm;
+        data[index].questionMcq[j].totalCorrectMarks = tm;
+        data[index].questionMcq[j].totalCorrectAnswer = ca;
+        data[index].questionMcq[j].totalWrongAnswer = wa;
+        data[index].questionMcq[j].totalNotAnswered = na;
+        data[index].questionMcq[j].totalWrongMarks = wm;
+
+
+
       }
-      cm = ca * data[index].examId.marksPerMcq
-      wm = (wa * (data[index].examId.marksPerMcq * data[index].examId.negativeMarksMcq)) / 100
-      tm = cm - wm
-      totMcqMarks = totMcqMarks + tm ;
-      data[index].questionMcq[j].mcqMarksPerSub = tm ;
-      data[index].questionMcq[j].totalCorrectMarks = tm ;
-      data[index].questionMcq[j].totalCorrectAnswer = ca ;
-      data[index].questionMcq[j].totalWrongAnswer = wa ;
-      data[index].questionMcq[j].totalNotAnswered = na ;
-      data[index].questionMcq[j].totalWrongMarks = wm ;
-
-      
-
-    }
-    // console.log(totMcqMarks);
-    data[index].totalMarksMcq = totMcqMarks ;
-    data[index].totalObtainedMarks = totMcqMarks + obtainedMarksWrit ;
-    // return ;
+      // console.log(totMcqMarks);
+      data[index].totalMarksMcq = totMcqMarks;
+      data[index].totalObtainedMarks = totMcqMarks + obtainedMarksWrit;
+      // return ;
       let upd = null
       let saveStudentExamEnd = null
       try {
@@ -3336,7 +3367,7 @@ const addTextQuestion = async (req, res, next) => {
   return res.status(201).json('Saved.')
 }
 
-const updateQuestion  = async(req,res,next) =>{
+const updateQuestion = async (req, res, next) => {
   const {
     questionId,
     question,
@@ -3347,12 +3378,12 @@ const updateQuestion  = async(req,res,next) =>{
   // let options = JSON.parse(req.body.options) 
   let doc
   try {
-    doc = await QuestionsMcq.findByIdAndUpdate(questionId,{question:question,options:options})
+    doc = await QuestionsMcq.findByIdAndUpdate(questionId, { question: question, options: options })
   } catch (err) {
     ////console.log(err);
     return res.status(500).json(err)
   }
-  
+
   return res.status(201).json('Updated.')
 }
 

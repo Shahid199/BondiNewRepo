@@ -4005,7 +4005,7 @@ const submitStudentScript = async (req, res, next) => {
     //console.log("questionILinkPath[i]:", questionILinkPath[i]);
   }
   //file upload handle:end
-
+  let returnedData =  questionILinkPath ;
   let getQuestionScript = null;
   try {
     getQuestionScript = await SpecialVsStudent.findOne({
@@ -4052,7 +4052,7 @@ const submitStudentScript = async (req, res, next) => {
     ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  return res.status(201).json("Submitted Successfully.");
+  return res.status(201).json(returnedData);
 };
 
 const submitWritten = async (req, res, next) => {

@@ -22,7 +22,7 @@ const add = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json('Some Problems found')
   }
-  console.log(data);
+  // console.log(data);
   let doc = null;
 
   if (data) {

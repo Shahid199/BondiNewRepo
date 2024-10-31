@@ -4975,6 +4975,7 @@ const submitStudentScript = async (req, res, next) => {
     console.log("questionILinkPath[i]:", questionILinkPath[i]);
   }
   //new implement
+  let returnedData = questionILinkPath ;
   questionNo = questionNo - 1;
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   examId = new mongoose.Types.ObjectId(examId);
@@ -5010,7 +5011,7 @@ const submitStudentScript = async (req, res, next) => {
     ////console.log(err);
     return res.status(500).json("Something went wrong!");
   }
-  return res.status(201).json("Submitted Successfully.");
+  return res.status(201).json(questionILinkPath);
 };
 
 const runningWritten = async (req, res, next) => {
@@ -5274,12 +5275,20 @@ const getWrittenStudentSingleByExam = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  let examData=null;
+  try{
+    examData = await Exam.findOne({_id:examId});
+  }catch{
+    return res.status(500).json("Problem fidning exam");
+  }
+  // console.log("dataTwo: ",examData);
   let dataObj = {};
   dataObj["examName"] = data.examId.name;
   dataObj["examVariation"] = examVariation[data.examId.examVariation];
   dataObj["examType"] = examType[data.examId.examType];
   dataObj["studentName"] = data.studentId.name;
   dataObj["studentId"] = data.studentId._id;
+  dataObj["subjectId"] = examData.subjectId;
   dataObj["answerScript"] = [];
   for (let p = 0; p < data2.totalQuestions; p++) {
     if (data.submittedScriptILink[p])
