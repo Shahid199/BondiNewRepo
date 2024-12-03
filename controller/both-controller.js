@@ -999,7 +999,37 @@ const addTextQuestion = async (req, res, next) => {
   // console.log(setName);
   return res.status(201).json('Saved.')
 }
+const getStudentExamDetails = async (req, res, next) => {
+  let data = null;
 
+  const { examId, studentId } = req.query;
+
+  // Convert strings to ObjectId
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  const studentIdObj = new mongoose.Types.ObjectId(studentId);
+
+  console.log("Received IDs:", studentIdObj, examIdObj);
+
+  try {
+    // Corrected the query object
+    data = await BothStudentExamVsQuestions.findOne({
+      examId: examIdObj,
+      studentId: studentIdObj,
+    });
+
+    if (!data) {
+      return res.status(404).json({ message: "No student exam details found" });
+    }
+  } catch (error) {
+    console.error("Error fetching student exam details:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+  // console.log("Fetched data:", data);
+  return res.status(200).json(data);
+};
+
+exports.getStudentExamDetails = getStudentExamDetails;
 exports.addTextQuestion = addTextQuestion;
 exports.updateQuestionStatus = updateQuestionStatus;
 exports.updateBothStudentMarks = updateBothStudentMarks;

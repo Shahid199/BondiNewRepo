@@ -2429,6 +2429,7 @@ const updateQuestionStatus = async (req, res, next) => {
 
   const questionId = req.body.questionId
   const examId = req.body.examId
+  // console.log(examId);
   const examIdObj = new mongoose.Types.ObjectId(examId)
   const quesObj = new mongoose.Types.ObjectId(questionId)
   if (!ObjectId.isValid(questionId))
@@ -2441,6 +2442,8 @@ const updateQuestionStatus = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json(err)
   }
+  // console.log(quesObj);
+  // console.log(queryResult);
   for (let i = 0; i < queryResult.length; i++) {
     let temp = []
     temp = queryResult[i].mId.filter(q => String(q) !== String(quesObj))

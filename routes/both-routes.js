@@ -23,7 +23,8 @@ const {
   refillQuestion,
   updateBothStudentMarks,
   addTextQuestion,
-  updateQuestionStatus
+  updateQuestionStatus,
+  getStudentExamDetails
 } = require('../controller/both-controller')
 const router = express.Router()
 
@@ -37,6 +38,14 @@ router.post(
     upload.single('iLink'),
   ],
   createBothExam
+)
+router.get(
+  '/getexamsingle',
+  [
+    passport.authenticate('jwt', { session: false }),
+    authorize(['student', 'superadmin', 'moderator', 'teacher'])
+  ],
+  getStudentExamDetails
 )
 router.put(
   "/updatequestionstatus",

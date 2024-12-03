@@ -16,6 +16,7 @@ const examType = require("../utilities/exam-type");
 const pagination = require("../utilities/pagination");
 const BothTeacherVsExam = require("../model/BothTeacherVsExam");
 const Exam = require("../model/Exam");
+const BothExam = require("../model/BothExam");
 //const sharp = require("sharp");
 
 const dir = path.resolve(path.join(__dirname, "../uploads/answers/"));
@@ -1121,6 +1122,12 @@ const bothCheckScriptSingle = async (req, res, next) => {
   let studentIdObj = new mongoose.Types.ObjectId(studentId);
   let examIdObj = new mongoose.Types.ObjectId(examId);
   let getData = null;
+  let examDetails = null;
+  try {
+    examDetails = await BothExam.findOne({_id:examIdObj})
+  } catch (error) {
+    return res.status(500).json("Exam not found")
+  }
   try {
     getData = await BothStudentExamVsQuestions.findOne({
       $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
@@ -1128,11 +1135,18 @@ const bothCheckScriptSingle = async (req, res, next) => {
   } catch (err) {
     return res.status(500).json("Something went wrong.");
   }
+  console.log("examdetails: ",examDetails);
   let insertId = getData._id;
   let checkScript = getData.ansewerScriptILink;
   let obtainedMarksArr = [];
   checkScript[questionNo] = uploadImages;
-  obtainedMarksArr = getData.obtainedMarks;
+  if(getData.obtainedMarks.length===0){
+    for( let i = 0 ; i<examDetails.totalQuestionWritten; i++ ){
+      obtainedMarksArr[i] = 0 ;
+    }
+  }else{
+    obtainedMarksArr = getData.obtainedMarks;
+  }
   obtainedMarksArr[questionNo] = obtainedMarks;
   let upd = {
     ansewerScriptILink: checkScript,
