@@ -1052,6 +1052,32 @@ const updateWrittenMarksBothTest = async (req, res, next) => {
   }
   return res.status(201).json(data);
 };
+const updateWrittenMarksBothNeg = async (req, res, next) => {
+  let examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("Invalid exam Id.");
+  let examIdObj = new mongoose.Types.ObjectId(examId);
+  let data = null;
+  try {
+    data = await BothStudentExamVsQuestions.updateMany(
+      { examId: examIdObj, totalObtainedMarksWritten: { $lt: 0 } },
+      [
+        {
+          $set: {
+            totalObtainedMarksWritten: {
+              $add: ["$totalObtainedMarksWritten", "$totalObtainedMarksMcq"],
+            },
+            totalObtainedMarks:"$totalObtainedMarksMcq",
+          },
+        },
+      ]
+    );
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  return res.status(201).json(data);
+};
+exports.updateWrittenMarksBothNeg = updateWrittenMarksBothNeg;
 exports.updateWrittenMarksBothTest = updateWrittenMarksBothTest;
 exports.getStudentExamDetails = getStudentExamDetails;
 exports.addTextQuestion = addTextQuestion;

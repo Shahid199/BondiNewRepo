@@ -25,12 +25,16 @@ const {
   addTextQuestion,
   updateQuestionStatus,
   getStudentExamDetails,
-  updateWrittenMarksBothTest
+  updateWrittenMarksBothTest,
+  updateWrittenMarksBothNeg
 } = require('../controller/both-controller')
 const router = express.Router()
 
 // router.get('/updateresult', updateBothStudentMarks)
-
+router.post(
+  "/updatewrneg",
+  updateWrittenMarksBothNeg
+);
 router.post(
   '/createbothexam',
   [
