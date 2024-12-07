@@ -24,7 +24,8 @@ const {
   updateBothStudentMarks,
   addTextQuestion,
   updateQuestionStatus,
-  getStudentExamDetails
+  getStudentExamDetails,
+  updateWrittenMarksBothTest
 } = require('../controller/both-controller')
 const router = express.Router()
 
@@ -142,6 +143,10 @@ router.post(
     authorize(),
   ],
   addTextQuestion
+);
+router.post(
+  "/updatewrmark",
+  updateWrittenMarksBothTest
 );
 router.put(
   '/bothaddquestionmcqbulk',
