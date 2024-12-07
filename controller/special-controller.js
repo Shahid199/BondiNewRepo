@@ -954,7 +954,9 @@ const addQuestionMcqBulk = async (req, res, next) => {
   const examId = req.body.examId;
   const subjectId = req.body.subjectId;
   const setName = Number(req.body.setName);
-  questionArray = shuffle(questionArray);
+  if(setName!==0){
+    questionArray = shuffle(questionArray);
+  }
   //console.log(examId);
   //console.log(subjectId);
   if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
