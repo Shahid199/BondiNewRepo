@@ -3083,9 +3083,84 @@ const calculateMarks = async (req, res, next) => {
   let type = req.query.type;
   console.log(type);
   let data = [];
+
+  // if (type == 1) {
+  //   try {
+  //     data = await StudentExamVsQuestionsMcq.find({ examId: examId })
+  //       .populate('mcqQuestionId')
+  //       .populate('examId');
+  //   } catch (err) {
+  //     return res.status(500).json('1.something went wrong.');
+  //   }
+  //   console.log('now data: ', data);
+  //   let examData = null;
+  //   try {
+  //     examData = await Exam.findById(req.body.examId);
+  //   } catch (err) {
+  //     console.log('kire beta ki khobor');
+  //     return res.status(500).json('eidke asho');
+  //   }
+  //   // console.log(examData);
+  //   // return ;
+  //   let updArr = [];
+
+  //   for (let index = 0; index < data.length; index++) {
+  //     let updObj = {}
+  //     let studentId = data[index].studentId
+  //     let questions = data[index].mcqQuestionId
+  //     let answered = data[index].answeredOption
+  //     let cm = 0
+  //     let wm = 0
+  //     let tm = 0
+  //     let na = 0
+  //     let ca = 0
+  //     let wa = 0
+  //     for (let ind = 0; ind < questions.length; ind++) {
+  //       if (Number(answered[ind]) === questions[ind].correctOption) {
+  //         ca++
+  //       } else if (Number(answered[ind]) === -1) {
+  //         na++
+  //       } else wa++
+  //     }
+  //     cm = ca * data[index].examId.marksPerMcq
+  //     wm = (wa * (data[index].examId.marksPerMcq * examData.negativeMarks)) / 100
+  //     tm = cm - wm
+  //     let upd = null
+  //     let saveStudentExamEnd = null
+  //     try {
+  //       upd = await StudentExamVsQuestionsMcq.updateOne(
+  //         {
+  //           examId: examId,
+  //           studentId: studentId,
+  //           totalObtainedMarks: { $ne: -5000 },
+  //         },
+  //         {
+  //           totalCorrectAnswer: ca,
+  //           totalWrongAnswer: wa,
+  //           totalNotAnswered: na,
+  //           totalCorrectMarks: cm,
+  //           totalWrongMarks: wm,
+  //           totalObtainedMarks: tm,
+  //         }
+  //       )
+  //       saveStudentExamEnd = await StudentMarksRank.updateOne(
+  //         {
+  //           examId: examId,
+  //           studentId: studentId,
+  //           totalObtainedMarks: { $ne: -5000 },
+  //         },
+  //         { totalObtainedMarks: tm }
+  //       )
+  //     } catch (err) {
+  //       return res.status(500).json('Something went wrong.')
+  //     }
+  //   }
+
+  // }
+
   if (type == 1) {
     try {
-      data = await StudentExamVsQuestionsMcq.find({ examId: examId })
+      data = await FreeStudentExamVsQuestionsMcq.find({ examId: examId })
         .populate('mcqQuestionId')
         .populate('examId');
     } catch (err) {
@@ -3099,62 +3174,8 @@ const calculateMarks = async (req, res, next) => {
       console.log('kire beta ki khobor');
       return res.status(500).json('eidke asho');
     }
-    // console.log(examData);
-    // return ;
+    console.log('now dataL: ', data);
     let updArr = [];
-
-    // for (let index = 0; index < data.length; index++) {
-    //   let updObj = {}
-    //   let studentId = data[index].studentId
-    //   let questions = data[index].mcqQuestionId
-    //   let answered = data[index].answeredOption
-    //   let cm = 0
-    //   let wm = 0
-    //   let tm = 0
-    //   let na = 0
-    //   let ca = 0
-    //   let wa = 0
-    //   for (let ind = 0; ind < questions.length; ind++) {
-    //     if (Number(answered[ind]) === questions[ind].correctOption) {
-    //       ca++
-    //     } else if (Number(answered[ind]) === -1) {
-    //       na++
-    //     } else wa++
-    //   }
-    //   // cm = ca * data[index].examId.marksPerMcq
-    //   cm = ca * 1
-    //   wm = (wa * (data[index].examId.marksPerMcq * examData.negativeMarks)) / 100
-    //   tm = cm - wm
-    //   let upd = null
-    //   let saveStudentExamEnd = null
-    //   try {
-    //     upd = await StudentExamVsQuestionsMcq.updateOne(
-    //       {
-    //         examId: examId,
-    //         studentId: studentId,
-    //         totalObtainedMarks: { $ne: -5000 },
-    //       },
-    //       {
-    //         totalCorrectAnswer: ca,
-    //         totalWrongAnswer: wa,
-    //         totalNotAnswered: na,
-    //         totalCorrectMarks: cm,
-    //         totalWrongMarks: wm,
-    //         totalObtainedMarks: tm,
-    //       }
-    //     )
-    //     saveStudentExamEnd = await StudentMarksRank.updateOne(
-    //       {
-    //         examId: examId,
-    //         studentId: studentId,
-    //         totalObtainedMarks: { $ne: -5000 },
-    //       },
-    //       { totalObtainedMarks: tm }
-    //     )
-    //   } catch (err) {
-    //     return res.status(500).json('Something went wrong.')
-    //   }
-    // }
 
     for (let index = 0; index < data.length; index++) {
       if (data[index].totalObtainedMarks > 20) {
@@ -3163,7 +3184,7 @@ const calculateMarks = async (req, res, next) => {
         let questions = data[index].mcqQuestionId;
         console.log(index, data[index]);
         try {
-          let upd = await StudentExamVsQuestionsMcq.updateOne(
+          let upd = await FreeStudentExamVsQuestionsMcq.updateOne(
             {
               examId: examId,
               studentId: studentId,
@@ -3173,7 +3194,7 @@ const calculateMarks = async (req, res, next) => {
               totalObtainedMarks: marks,
             },
           );
-          let saveStudentExamEnd = await StudentMarksRank.updateOne(
+          let saveStudentExamEnd = await FreestudentMarksRank.updateOne(
             {
               examId: examId,
               studentId: studentId,
