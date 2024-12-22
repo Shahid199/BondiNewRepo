@@ -3091,6 +3091,7 @@ const calculateMarks = async (req, res, next) => {
     } catch (err) {
       return res.status(500).json('1.something went wrong.');
     }
+    console.log('now data: ', data);
     let examData = null;
     try {
       examData = await Exam.findById(req.body.examId);
@@ -3160,6 +3161,7 @@ const calculateMarks = async (req, res, next) => {
         let marks = data[index].totalObtainedMarks / 20;
         let studentId = data[index].studentId;
         let questions = data[index].mcqQuestionId;
+        console.log(index, data[index]);
         try {
           let upd = await StudentExamVsQuestionsMcq.updateOne(
             {
