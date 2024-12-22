@@ -3090,7 +3090,8 @@ const calculateMarks = async (req, res, next) => {
           na++
         } else wa++
       }
-      cm = ca * data[index].examId.marksPerMcq
+      // cm = ca * data[index].examId.marksPerMcq
+      cm = ca * 1
       wm = (wa * (data[index].examId.marksPerMcq * examData.negativeMarks)) / 100
       tm = cm - wm
       let upd = null
