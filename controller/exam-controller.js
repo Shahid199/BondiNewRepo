@@ -3159,13 +3159,13 @@ const calculateMarks = async (req, res, next) => {
       if (data[index].totalObtainedMarks > 20) {
         let marks = data[index].totalObtainedMarks / 20;
         try {
-          saveStudentExamEnd = await StudentMarksRank.updateOne(
+          let saveStudentExamEnd = await StudentMarksRank.updateOne(
             {
               examId: examId,
               studentId: studentId,
               totalObtainedMarks: { $ne: -5000 },
             },
-            { totalObtainedMarks: tm },
+            { totalObtainedMarks: marks },
           );
         } catch (err) {
           return res.status(500).json('Something went wrong.');
