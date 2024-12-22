@@ -3158,7 +3158,19 @@ const calculateMarks = async (req, res, next) => {
     for (let index = 0; index < data.length; index++) {
       if (data[index].totalObtainedMarks > 20) {
         let marks = data[index].totalObtainedMarks / 20;
+        let studentId = data[index].studentId;
+        let questions = data[index].mcqQuestionId;
         try {
+          let upd = await StudentExamVsQuestionsMcq.updateOne(
+            {
+              examId: examId,
+              studentId: studentId,
+              totalObtainedMarks: { $ne: -5000 },
+            },
+            {
+              totalObtainedMarks: marks,
+            },
+          );
           let saveStudentExamEnd = await StudentMarksRank.updateOne(
             {
               examId: examId,
