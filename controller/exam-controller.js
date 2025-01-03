@@ -3157,56 +3157,56 @@ const calculateMarks = async (req, res, next) => {
     }
   }
 
-  // if (type == 1) {
-  //   try {
-  //     data = await FreeStudentExamVsQuestionsMcq.find({ examId: examId })
-  //       .populate('mcqQuestionId')
-  //       .populate('examId');
-  //   } catch (err) {
-  //     return res.status(500).json('1.something went wrong.');
-  //   }
-  //   console.log('now data: ', data);
-  //   let examData = null;
-  //   try {
-  //     examData = await Exam.findById(req.body.examId);
-  //   } catch (err) {
-  //     console.log('kire beta ki khobor');
-  //     return res.status(500).json('eidke asho');
-  //   }
-  //   console.log('now dataL: ', data);
-  //   let updArr = [];
+  if (type == 100) {
+    try {
+      data = await FreeStudentExamVsQuestionsMcq.find({ examId: examId })
+        .populate('mcqQuestionId')
+        .populate('examId');
+    } catch (err) {
+      return res.status(500).json('1.something went wrong.');
+    }
+    console.log('now data: ', data);
+    let examData = null;
+    try {
+      examData = await Exam.findById(req.body.examId);
+    } catch (err) {
+      console.log('kire beta ki khobor');
+      return res.status(500).json('eidke asho');
+    }
+    console.log('now dataL: ', data);
+    let updArr = [];
 
-  //   for (let index = 0; index < data.length; index++) {
-  //     if (data[index].totalObtainedMarks > 20) {
-  //       let marks = data[index].totalObtainedMarks / 20;
-  //       let studentId = data[index].studentId;
-  //       let questions = data[index].mcqQuestionId;
-  //       console.log(index, data[index]);
-  //       try {
-  //         let upd = await FreeStudentExamVsQuestionsMcq.updateOne(
-  //           {
-  //             examId: examId,
-  //             studentId: studentId,
-  //             totalObtainedMarks: { $ne: -5000 },
-  //           },
-  //           {
-  //             totalObtainedMarks: marks,
-  //           },
-  //         );
-  //         let saveStudentExamEnd = await FreestudentMarksRank.updateOne(
-  //           {
-  //             examId: examId,
-  //             studentId: studentId,
-  //             totalObtainedMarks: { $ne: -5000 },
-  //           },
-  //           { totalObtainedMarks: marks },
-  //         );
-  //       } catch (err) {
-  //         return res.status(500).json('Something went wrong.');
-  //       }
-  //     }
-  //   }
-  // }
+    for (let index = 0; index < data.length; index++) {
+      if (data[index].totalObtainedMarks > 20) {
+        let marks = data[index].totalObtainedMarks / 20;
+        let studentId = data[index].studentId;
+        let questions = data[index].mcqQuestionId;
+        console.log(index, data[index]);
+        try {
+          let upd = await FreeStudentExamVsQuestionsMcq.updateOne(
+            {
+              examId: examId,
+              studentId: studentId,
+              totalObtainedMarks: { $ne: -5000 },
+            },
+            {
+              totalObtainedMarks: marks,
+            },
+          );
+          let saveStudentExamEnd = await FreestudentMarksRank.updateOne(
+            {
+              examId: examId,
+              studentId: studentId,
+              totalObtainedMarks: { $ne: -5000 },
+            },
+            { totalObtainedMarks: marks },
+          );
+        } catch (err) {
+          return res.status(500).json('Something went wrong.');
+        }
+      }
+    }
+  }
 
   if (type == 2) {
     try {
