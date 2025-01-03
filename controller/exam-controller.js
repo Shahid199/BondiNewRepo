@@ -3177,28 +3177,51 @@ const calculateMarks = async (req, res, next) => {
     let updArr = [];
 
     for (let index = 0; index < data.length; index++) {
-      let marks = data[index].totalObtainedMarks / 20;
       let studentId = data[index].studentId;
       let questions = data[index].mcqQuestionId;
-      console.log(index, data[index]);
+      let answered = data[index].answeredOption;
+      let cm = 0;
+      let wm = 0;
+      let tm = 0;
+      let na = 0;
+      let ca = 0;
+      let wa = 0;
+      for (let ind = 0; ind < questions.length; ind++) {
+        if (Number(answered[ind]) === questions[ind].correctOption) {
+          ca++;
+        } else if (Number(answered[ind]) === -1) {
+          na++;
+        } else wa++;
+      }
+      cm = ca * data[index].examId.marksPerMcq;
+      wm =
+        (wa * (data[index].examId.marksPerMcq * examData.negativeMarks)) / 100;
+      tm = cm - wm;
+      let upd = null;
+      let saveStudentExamEnd = null;
       try {
-        let upd = await FreeStudentExamVsQuestionsMcq.updateOne(
+        upd = await FreeStudentExamVsQuestionsMcq.updateOne(
           {
             examId: examId,
             studentId: studentId,
             totalObtainedMarks: { $ne: -5000 },
           },
           {
-            totalObtainedMarks: marks,
+            totalCorrectAnswer: ca,
+            totalWrongAnswer: wa,
+            totalNotAnswered: na,
+            totalCorrectMarks: cm,
+            totalWrongMarks: wm,
+            totalObtainedMarks: tm,
           },
         );
-        let saveStudentExamEnd = await FreestudentMarksRank.updateOne(
+        saveStudentExamEnd = await FreestudentMarksRank.updateOne(
           {
             examId: examId,
             studentId: studentId,
             totalObtainedMarks: { $ne: -5000 },
           },
-          { totalObtainedMarks: marks },
+          { totalObtainedMarks: tm },
         );
       } catch (err) {
         return res.status(500).json('Something went wrong.');
