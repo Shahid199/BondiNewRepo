@@ -88,7 +88,8 @@ const {
   checkPassword,
   changePassword,
   editStudent,
-  newLoginStudent
+  newLoginStudent,
+  retakeBothExam
 } = require("../controller/student-controller");
 const StudentMarksRank = require("../model/StudentMarksRank");
 const StudentExamVsQuestionsMcq = require("../model/StudentExamVsQuestionsMcq");
@@ -320,6 +321,14 @@ router.get(
     authorize(["student", "superadmin", "moderator"]),
   ],
   retakeExam
+);
+router.get(
+  "/retakeboth",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["student", "superadmin", "moderator"]),
+  ],
+  retakeBothExam
 );
 router.post(
   "/retakesubmit",

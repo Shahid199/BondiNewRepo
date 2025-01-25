@@ -2769,6 +2769,102 @@ const retakeExam = async (req, res, next) => {
   return res.status(200).json({ question: questionData, two: doc, duration });
 };
 
+const retakeBothExam = async (req, res, next) => {
+  const examId = req.query.examId;
+  if (!ObjectId.isValid(examId))
+    return res.status(404).json("examId is not valid.");
+  const examIdObj = new mongoose.Types.ObjectId(examId);
+  let examData = null,
+    doc = [],
+    min = 0,
+    max = 0,
+    questionData = [],
+    rand,
+    examQuestion = null;
+  try {
+    examData = await BothMcqQuestionVsExam.findOne({ eId: examIdObj })
+      .select("_id mId eId")
+      .populate("eId mId");
+
+    examQuestion = await BothExam.findById(examIdObj);
+  } catch (err) {
+    ////console.log(examQuestion);
+    return res.status(500).json("1.Something went wrong.");
+  }
+  if (examData == null)
+    return res.status(404).json("No data found against this exam.");
+  //console.log(examQuestion);
+  let examDataNew = examData;
+  examData = examData.mId;
+  let questData = [];
+  for (let i = 0; i < examData.length; i++) {
+    let quesId = String(examData[i]._id);
+    let status = null;
+    try {
+      status = await QuestionsMcq.findById(quesId);
+      status = status.status;
+    } catch (err) {
+      return res.status(500).json("Something went wrong.");
+    }
+    if (status == true) questData.push(examData[i]._id);
+  }
+  let questDataFull = [];
+  try {
+    questDataFull = await QuestionsMcq.find({ _id: { $in: questData } });
+  } catch (err) {
+    return res.status(500).json("Something went wrong.");
+  }
+  //return res.status(200).json(examData);
+  //start:generating random index of questions
+  max = questData.length - 1;
+  //max = max - min;
+  rand = parseInt(Date.now() % questDataFull.length);
+  if (rand == 0) rand = 1;
+  if (rand == questDataFull.length - 1) rand = rand - 1;
+  let flag = 0;
+  for (let j = rand; j >= 0; j--) {
+    if (doc.length == examQuestion.totalQuestionMcq) {
+      flag = 1;
+      break;
+    }
+    doc.push(j);
+  }
+  if (flag == 0) {
+    for (let j = rand + 1; j < examQuestion.totalQuestionMcq; j++) {
+      if (doc.length == examQuestion.totalQuestionMcq) {
+        flag = 1;
+        break;
+      }
+      doc.push(j);
+    }
+  }
+
+  // for (let j = rand; j >= 0; j--) doc.push(j);
+  // for (let j = rand + 1; j < examQuestion.totalQuestionMcq; j++) doc.push(j);
+  // for (let i = 0; ; i++) {
+  //   rand = Math.random();
+  //   rand = rand * Number(max);
+  //   rand = Math.floor(rand);
+  //   rand = rand + Number(min);
+  //   if (!doc.includes(rand)) doc.push(rand);
+  //   if (doc.length == examDataNew.eId.totalQuestionMcq) break;
+  // }
+  examData = questDataFull;
+  ////console.log(examData);
+  for (let i = 0; i < doc.length; i++) {
+    let questions = {};
+    questions["id"] = examData[doc[i]]._id;
+    questions["question"] = examData[doc[i]].question;
+    questions["options"] = examData[doc[i]].options;
+    questions["optionCount"] = examData[doc[i]].optionCount;
+    questions["correctOption"] = examData[doc[i]].correctOption;
+    questions["type"] = examData[doc[i]].type;
+    questionData.push(questions);
+  }
+  let duration = examDataNew.eId.mcqDuration;
+  //end:generating random index of questions
+  return res.status(200).json({ question: questionData, two: doc, duration });
+};
 const retakeSubmit = async (req, res, next) => {
   let examData;
   const examId = req.body.examId;
@@ -7647,6 +7743,7 @@ const bothGetExamDataForTest = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+exports.retakeBothExam = retakeBothExam;
 exports.bothGetExamDataForTest = bothGetExamDataForTest;
 exports.newLoginStudent = newLoginStudent;
 exports.checkPassword = checkPassword;

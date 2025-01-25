@@ -155,7 +155,7 @@ const createBothExam = async (req, res, next) => {
     iLink: iLinkPath,
   });
   let doc;
-  console.log(saveExam);
+  // console.log(saveExam);
   try {
     doc = await saveExam.save();
   } catch (err) {
