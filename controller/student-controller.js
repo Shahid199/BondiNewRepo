@@ -265,6 +265,7 @@ const addStudent = async (req, res, next) => {
   const linesArr = linesExceptFirst.map((line) => line.split(','));
   let students = [];
   let rNo = [];
+  let pass="bpexam";
   let password;
   try {
     password = await bcrypt.hash(pass, salt);
