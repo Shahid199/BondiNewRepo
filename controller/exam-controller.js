@@ -3432,10 +3432,17 @@ const columnAdd = async (req, res, next) => {
     return res.status(500).json('error found');
   }
   try {
-    // Use pagination or batching to process data in chunks
-    const batchSize = 100; // Number of records to process per batch
-    let skip = 0;
     studentData = await Student.find({});
+    console.log('ekhane hishab rakhlam:', studentData.length);
+    for (const student of studentData) {
+      student.password = password;
+      try {
+        await Student.updateOne({ _id: student._id }, student);
+        count++;
+      } catch (err) {
+        console.error(`Failed to update student ID ${student._id}:`, err);
+      }
+    }
   } catch (err) {
     console.error('Error during processing:', err);
     return res.status(500).json('An error occurred during the update process');
