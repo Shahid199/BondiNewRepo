@@ -1,8 +1,8 @@
-const express = require("express");
-const { upload } = require("../utilities/multer");
-const { upload1 } = require("../utilities/multer_questions");
-const passport = require("passport");
-const authorize = require("../utilities/authorizationMiddleware");
+const express = require('express');
+const { upload } = require('../utilities/multer');
+const { upload1 } = require('../utilities/multer_questions');
+const passport = require('passport');
+const authorize = require('../utilities/authorizationMiddleware');
 const {
   createExam,
   getAllExam,
@@ -49,335 +49,335 @@ const {
   leaderboard,
   examByCourse,
   columnAdd11,
-  updateQuestion
-} = require("../controller/exam-controller");
+  updateQuestion,
+  studentUpdate,
+} = require('../controller/exam-controller');
 const router = express.Router();
 
+router.get('/studentUpdate', studentUpdate);
 router.post(
-  "/createexam",
+  '/createexam',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   createExam
 );
 router.post(
-  "/addTextQuestion",
-  [
-    passport.authenticate("jwt", { session: false }),
-    authorize(),
-  ],
+  '/addTextQuestion',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   addTextQuestion
 );
 router.post(
-  "/changeanswer",
+  '/changeanswer',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   changeCorrectAnswer
 );
 router.get(
-  "/slotAvailable",
+  '/slotAvailable',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "mdoerator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'mdoerator', 'student']),
   ],
   slotAvailable
 );
 router.get(
-  "/leaderboard", [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "mdoerator", "student"]),
+  '/leaderboard',
+  [
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'mdoerator', 'student']),
   ],
   leaderboard
 );
 router.get(
-  "/exambycourse",
+  '/exambycourse',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'student']),
   ],
   examByCourse
 );
 router.get(
-  "/getallexam",
+  '/getallexam',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "mdoerator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'mdoerator', 'student']),
   ],
   getAllExam
 );
 router.get(
-  "/getAllData",
+  '/getAllData',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "mdoerator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'mdoerator', 'student']),
   ],
   getAllData
 );
 router.get(
-  "/questionByExamIdAndSet",
+  '/questionByExamIdAndSet',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "mdoerator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'mdoerator', 'student']),
   ],
   questionByExamIdAndSet
 );
 router.post(
-  "/addquestionmcq",
+  '/addquestionmcq',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload1.single("iLink"),
+    upload1.single('iLink'),
   ],
   addQuestionMcq
 );
 router.get(
-  "/getexambysubject",
+  '/getexambysubject',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["student", "superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['student', 'superadmin', 'moderator']),
   ],
   //authorize(["student"]),
   getExamBySubject
 );
 
 router.get(
-  "/getexambysub",
+  '/getexambysub',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
   getExamBySub
 );
 router.get(
-  "/getexambysubadmin",
+  '/getexambysubadmin',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
   getExamBySubAdmin
 );
 router.get(
-  "/getexambysubwritten",
+  '/getexambysubwritten',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
   getExamBySubWritten
 );
 router.get(
-  "/getexambysubquestion",
+  '/getexambysubquestion',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
   getExamBySubQuestion
 );
 router.get(
-  "/getmcqbysub",
+  '/getmcqbysub',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   getMcqBySub
 );
 router.get(
-  "/getwrittenbysub",
+  '/getwrittenbysub',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   getWrittenBySub
 );
 router.post(
-  "/examruleset",
+  '/examruleset',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("ruleILink"),
+    upload.single('ruleILink'),
   ],
   examRuleSet
 );
 router.get(
-  "/examruleget",
-  [passport.authenticate("jwt", { session: false })],
-  authorize(["superadmin", "moderator", "student", "freeStudent"]),
+  '/examruleget',
+  [passport.authenticate('jwt', { session: false })],
+  authorize(['superadmin', 'moderator', 'student', 'freeStudent']),
   examRuleGet
 );
 router.get(
-  "/examrulegetall",
+  '/examrulegetall',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   examRuleGetAll
 );
 router.get(
-  "/exambycoursesubject",
+  '/exambycoursesubject',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   examByCourseSubject
 );
 router.get(
-  "/getexambyid",
+  '/getexambyid',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student']),
   ],
   getExamById
 );
 router.get(
-  "/questionbyexamid",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/questionbyexamid',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   questionByExamId
 );
 router.put(
-  "/updatequestionstatus",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/updatequestionstatus',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   updateQuestionStatus
 );
 router.post(
-  "/updateQuestion",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/updateQuestion',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   updateQuestion
 );
 router.put(
-  "/updateexam",
+  '/updateexam',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   updateExam
 );
 router.put(
-  "/addquestionmcqbulk",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/addquestionmcqbulk',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   addQuestionMcqBulk
 );
 router.put(
-  "/deactivateexam",
-  [passport.authenticate("jwt", { session: false }), authorize()],
+  '/deactivateexam',
+  [passport.authenticate('jwt', { session: false }), authorize()],
   deactivateExam
 );
 
 router.get(
-  "/freeexamstatus",
+  '/freeexamstatus',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "freeStudent"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'freeStudent']),
   ],
   freeExamStatus
 );
 router.get(
-  "/getexamtype",
+  '/getexamtype',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   getExamType
 );
 router.get(
-  "/freecoursesub",
+  '/freecoursesub',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   freeCourseSub
 );
 
 //written routes
 router.post(
-  "/addquestionwritten",
+  '/addquestionwritten',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload1.fields([{ name: "questionILink", maxCount: 1 }]),
+    upload1.fields([{ name: 'questionILink', maxCount: 1 }]),
   ],
   addQuestionWritten
 );
 
 router.post(
-  "/removequestionwritten",
+  '/removequestionwritten',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   removeQuestionWritten
 );
 router.get(
-  "/getwrittenquestionbyexam",
+  '/getwrittenquestionbyexam',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator", "student", "teacher"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
   getWrittenQuestionByexam
 );
 
 router.post(
-  "/assignteacher",
+  '/assignteacher',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   assignTeacher
 );
 router.post(
-  "/assignstudenttoteacher",
+  '/assignstudenttoteacher',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   assignStudentToTeacher
 );
 router.post(
-  "/bothassignstudenttoteacher",
+  '/bothassignstudenttoteacher',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   bothAssignStudentToTeacher
 );
 router.post(
-  "/resetexam",
+  '/resetexam',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   resetExam
 );
 router.post(
-  "/updateExamPhoto",
+  '/updateExamPhoto',
   [
-    passport.authenticate("jwt", { session: false }),
+    passport.authenticate('jwt', { session: false }),
     authorize(),
-    upload.single("iLink"),
+    upload.single('iLink'),
   ],
   updateExamPhoto
 ); //afser
 
-// router.get("/columnadd", columnAdd);
+router.get('/columnadd', columnAdd);
 // router.get("/columnstudentadd", columnAdd11);
 
-router.post("/downloadimage", downloadExamImage);
-router.post("/uploadsollution", uploadSollution);
-router.get("/getsollution", getSollution);
+router.post('/downloadimage', downloadExamImage);
+router.post('/uploadsollution', uploadSollution);
+router.get('/getsollution', getSollution);
 router.post(
-  "/refillquestion",
+  '/refillquestion',
   [
-    passport.authenticate("jwt", { session: false }),
-    authorize(["superadmin", "moderator"]),
+    passport.authenticate('jwt', { session: false }),
+    authorize(['superadmin', 'moderator']),
   ],
   refillQuestion
 );
 router.post(
-  "/calculatemartks",
+  '/calculatemartks',
   // [
   //   passport.authenticate("jwt", { session: false }),
   //   authorize(["superadmin", "moderator"]),
