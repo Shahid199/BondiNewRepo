@@ -3431,22 +3431,24 @@ const columnAdd = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json('error found');
   }
-  // try {
-  //   studentData = await Student.find({});
-  //   console.log('ekhane hishab rakhlam:', studentData.length);
-  //   for (const student of studentData) {
-  //     student.password = password;
-  //     try {
-  //       await Student.updateOne({ _id: student._id }, $set);
-  //       count++;
-  //     } catch (err) {
-  //       console.error(`Failed to update student ID ${student._id}:`, err);
-  //     }
-  //   }
-  // } catch (err) {
-  //   console.error('Error during processing:', err);
-  //   return res.status(500).json('An error occurred during the update process');
-  // }
+  try {
+    studentData = await Student.find({});
+    console.log('ekhane hishab rakhlam:', studentData.length);
+    for (const student of studentData) {
+      try {
+        await Student.updateOne(
+          { _id: student._id },
+          { $set: { password: password } },
+        );
+        count++;
+      } catch (err) {
+        console.error(`Failed to update student ID ${student._id}:`, err);
+      }
+    }
+  } catch (err) {
+    console.error('Error during processing:', err);
+    return res.status(500).json('An error occurred during the update process');
+  }
   console.log('hoise koyta: ', count);
   return res.status(200).json(`Updated ${count} students`);
 };
