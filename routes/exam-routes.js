@@ -62,12 +62,12 @@ router.post(
     authorize(),
     upload.single('iLink'),
   ],
-  createExam
+  createExam,
 );
 router.post(
   '/addTextQuestion',
   [passport.authenticate('jwt', { session: false }), authorize()],
-  addTextQuestion
+  addTextQuestion,
 );
 router.post(
   '/changeanswer',
@@ -76,7 +76,7 @@ router.post(
     authorize(),
     upload.single('iLink'),
   ],
-  changeCorrectAnswer
+  changeCorrectAnswer,
 );
 router.get(
   '/slotAvailable',
@@ -84,7 +84,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'mdoerator', 'student']),
   ],
-  slotAvailable
+  slotAvailable,
 );
 router.get(
   '/leaderboard',
@@ -92,7 +92,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'mdoerator', 'student']),
   ],
-  leaderboard
+  leaderboard,
 );
 router.get(
   '/exambycourse',
@@ -100,7 +100,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'student']),
   ],
-  examByCourse
+  examByCourse,
 );
 router.get(
   '/getallexam',
@@ -108,7 +108,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'mdoerator', 'student']),
   ],
-  getAllExam
+  getAllExam,
 );
 router.get(
   '/getAllData',
@@ -116,7 +116,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'mdoerator', 'student']),
   ],
-  getAllData
+  getAllData,
 );
 router.get(
   '/questionByExamIdAndSet',
@@ -124,7 +124,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'mdoerator', 'student']),
   ],
-  questionByExamIdAndSet
+  questionByExamIdAndSet,
 );
 router.post(
   '/addquestionmcq',
@@ -133,7 +133,7 @@ router.post(
     authorize(),
     upload1.single('iLink'),
   ],
-  addQuestionMcq
+  addQuestionMcq,
 );
 router.get(
   '/getexambysubject',
@@ -142,7 +142,7 @@ router.get(
     authorize(['student', 'superadmin', 'moderator']),
   ],
   //authorize(["student"]),
-  getExamBySubject
+  getExamBySubject,
 );
 
 router.get(
@@ -151,7 +151,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
-  getExamBySub
+  getExamBySub,
 );
 router.get(
   '/getexambysubadmin',
@@ -159,7 +159,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
-  getExamBySubAdmin
+  getExamBySubAdmin,
 );
 router.get(
   '/getexambysubwritten',
@@ -167,7 +167,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
-  getExamBySubWritten
+  getExamBySubWritten,
 );
 router.get(
   '/getexambysubquestion',
@@ -175,7 +175,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
-  getExamBySubQuestion
+  getExamBySubQuestion,
 );
 router.get(
   '/getmcqbysub',
@@ -183,7 +183,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student']),
   ],
-  getMcqBySub
+  getMcqBySub,
 );
 router.get(
   '/getwrittenbysub',
@@ -191,7 +191,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student']),
   ],
-  getWrittenBySub
+  getWrittenBySub,
 );
 router.post(
   '/examruleset',
@@ -200,13 +200,13 @@ router.post(
     authorize(),
     upload.single('ruleILink'),
   ],
-  examRuleSet
+  examRuleSet,
 );
 router.get(
   '/examruleget',
   [passport.authenticate('jwt', { session: false })],
   authorize(['superadmin', 'moderator', 'student', 'freeStudent']),
-  examRuleGet
+  examRuleGet,
 );
 router.get(
   '/examrulegetall',
@@ -214,7 +214,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student']),
   ],
-  examRuleGetAll
+  examRuleGetAll,
 );
 router.get(
   '/exambycoursesubject',
@@ -222,7 +222,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student']),
   ],
-  examByCourseSubject
+  examByCourseSubject,
 );
 router.get(
   '/getexambyid',
@@ -230,22 +230,22 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student']),
   ],
-  getExamById
+  getExamById,
 );
 router.get(
   '/questionbyexamid',
   [passport.authenticate('jwt', { session: false }), authorize()],
-  questionByExamId
+  questionByExamId,
 );
 router.put(
   '/updatequestionstatus',
   [passport.authenticate('jwt', { session: false }), authorize()],
-  updateQuestionStatus
+  updateQuestionStatus,
 );
 router.post(
   '/updateQuestion',
   [passport.authenticate('jwt', { session: false }), authorize()],
-  updateQuestion
+  updateQuestion,
 );
 router.put(
   '/updateexam',
@@ -254,17 +254,17 @@ router.put(
     authorize(),
     upload.single('iLink'),
   ],
-  updateExam
+  updateExam,
 );
 router.put(
   '/addquestionmcqbulk',
   [passport.authenticate('jwt', { session: false }), authorize()],
-  addQuestionMcqBulk
+  addQuestionMcqBulk,
 );
 router.put(
   '/deactivateexam',
   [passport.authenticate('jwt', { session: false }), authorize()],
-  deactivateExam
+  deactivateExam,
 );
 
 router.get(
@@ -273,7 +273,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'freeStudent']),
   ],
-  freeExamStatus
+  freeExamStatus,
 );
 router.get(
   '/getexamtype',
@@ -281,7 +281,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  getExamType
+  getExamType,
 );
 router.get(
   '/freecoursesub',
@@ -289,7 +289,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  freeCourseSub
+  freeCourseSub,
 );
 
 //written routes
@@ -300,7 +300,7 @@ router.post(
     authorize(),
     upload1.fields([{ name: 'questionILink', maxCount: 1 }]),
   ],
-  addQuestionWritten
+  addQuestionWritten,
 );
 
 router.post(
@@ -309,7 +309,7 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  removeQuestionWritten
+  removeQuestionWritten,
 );
 router.get(
   '/getwrittenquestionbyexam',
@@ -317,7 +317,7 @@ router.get(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator', 'student', 'teacher']),
   ],
-  getWrittenQuestionByexam
+  getWrittenQuestionByexam,
 );
 
 router.post(
@@ -326,7 +326,7 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  assignTeacher
+  assignTeacher,
 );
 router.post(
   '/assignstudenttoteacher',
@@ -334,7 +334,7 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  assignStudentToTeacher
+  assignStudentToTeacher,
 );
 router.post(
   '/bothassignstudenttoteacher',
@@ -342,7 +342,7 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  bothAssignStudentToTeacher
+  bothAssignStudentToTeacher,
 );
 router.post(
   '/resetexam',
@@ -350,7 +350,7 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  resetExam
+  resetExam,
 );
 router.post(
   '/updateExamPhoto',
@@ -359,10 +359,10 @@ router.post(
     authorize(),
     upload.single('iLink'),
   ],
-  updateExamPhoto
+  updateExamPhoto,
 ); //afser
 
-router.get('/columnadd', columnAdd);
+// router.get('/columnadd', columnAdd);
 // router.get("/columnstudentadd", columnAdd11);
 
 router.post('/downloadimage', downloadExamImage);
@@ -374,7 +374,7 @@ router.post(
     passport.authenticate('jwt', { session: false }),
     authorize(['superadmin', 'moderator']),
   ],
-  refillQuestion
+  refillQuestion,
 );
 router.post(
   '/calculatemartks',
@@ -382,6 +382,6 @@ router.post(
   //   passport.authenticate("jwt", { session: false }),
   //   authorize(["superadmin", "moderator"]),
   // ],
-  calculateMarks
+  calculateMarks,
 );
 module.exports = router;
