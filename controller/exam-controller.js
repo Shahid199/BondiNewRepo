@@ -3432,19 +3432,19 @@ const columnAdd = async (req, res, next) => {
   }
   console.log(studentData.length);
   let count = 0;
-  for (let i = 0; i < studentData.length; i++) {
-    studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
+  // for (let i = 0; i < studentData.length; i++) {
+  //   studentData[i].password = await bcrypt.hash(studentData[i].regNo, salt);
 
-    try {
-      doc[i] = await Student.updateOne(
-        { _id: studentData[i]._id },
-        studentData[i]
-      );
-      count++;
-    } catch {
-      return res.status(500).json('Error');
-    }
-  }
+  //   try {
+  //     doc[i] = await Student.updateOne(
+  //       { _id: studentData[i]._id },
+  //       studentData[i]
+  //     );
+  //     count++;
+  //   } catch {
+  //     return res.status(500).json('Error');
+  //   }
+  // }
   return res.status(200).json('update total' + count + ' students');
 };
 
