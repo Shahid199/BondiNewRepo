@@ -3435,9 +3435,8 @@ const columnAdd = async (req, res, next) => {
     studentData = await Student.find({});
     console.log('ekhane hishab rakhlam:', studentData.length);
     for (const student of studentData) {
-      student.password = password;
       try {
-        await Student.updateOne({ _id: student._id }, student);
+        await Student.updateOne({ _id: student._id }, $set{password:password});
         count++;
       } catch (err) {
         console.error(`Failed to update student ID ${student._id}:`, err);
@@ -3447,7 +3446,7 @@ const columnAdd = async (req, res, next) => {
     console.error('Error during processing:', err);
     return res.status(500).json('An error occurred during the update process');
   }
-  console.log('hoise');
+  console.log('hoise koyta: ', count);
   return res.status(200).json(`Updated ${count} students`);
 };
 
