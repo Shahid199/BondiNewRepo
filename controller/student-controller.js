@@ -88,7 +88,7 @@ const newLoginStudent = async (req, res) => {
             role: 4,
           },
           process.env.SALT,
-          { expiresIn: '1d' }
+          { expiresIn: '1d' },
         );
 
         return res.status(200).json({
@@ -139,7 +139,7 @@ const editStudent = async (req, res, next) => {
   try {
     updateStatus = await Student.updateOne(
       { _id: studentIdObj },
-      updatedStudent
+      updatedStudent,
     );
   } catch (error) {
     return res.status(500).json('Student cannot be found !!');
@@ -180,7 +180,7 @@ const loginStudent = async (req, res) => {
         role: 4,
       },
       process.env.SALT,
-      { expiresIn: '1d' }
+      { expiresIn: '1d' },
     );
 
     return res.status(200).json({
@@ -265,12 +265,17 @@ const addStudent = async (req, res, next) => {
   const linesArr = linesExceptFirst.map((line) => line.split(','));
   let students = [];
   let rNo = [];
-
+  let password;
+  try {
+    password = await bcrypt.hash(pass, salt);
+  } catch (error) {
+    return res.status(500).json('error found');
+  }
   for (let i = 0; i < linesArr.length; i++) {
     const name = String(linesArr[i][2]).replace(/[-"\r]/g, '');
     let regNo = String(linesArr[i][1]).replace(/[-"\r]/g, '');
     const mobileNo = String(linesArr[i][3]).replace(/[-"\r]/g, '');
-    const password = await bcrypt.hash(regNo, salt);
+
     if (
       name == 'undefined' ||
       regNo == 'undefined' ||
@@ -648,7 +653,7 @@ const assignQuestion1 = async (req, res, next) => {
   let totalQuesData;
   try {
     totalQuesData = await Exam.findById(eId).select(
-      'totalQuestionMcq duration endTime'
+      'totalQuestionMcq duration endTime',
     );
   } catch (err) {
     return res.status(500).json('2.something went wrong');
@@ -714,7 +719,7 @@ const assignQuestion1 = async (req, res, next) => {
   try {
     questions = await QuestionsMcq.find(
       { _id: { $in: resultQuestion } },
-      'question type options'
+      'question type options',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -1083,7 +1088,7 @@ const updateAssignQuestion = async (req, res, next) => {
       {
         $and: [{ studentId: studentId }, { examId: examId }],
       },
-      '_id answeredOption'
+      '_id answeredOption',
     );
   } catch (err) {
     return res.status(500).json('cant save to db');
@@ -1144,7 +1149,7 @@ const getRunningData = async (req, res, next) => {
     }).populate('mcqQuestionId');
     getExamData = await StudentMarksRank.findOne(
       { $and: [{ examId: eId1 }, { studentId: sId1 }] },
-      'examStartTime examEndTime examId'
+      'examStartTime examEndTime examId',
     )
       .populate({
         path: 'examId',
@@ -1343,7 +1348,7 @@ const submitAnswer1 = async (req, res, next) => {
       {
         $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
-      'finishedStatus -_id'
+      'finishedStatus -_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -1377,14 +1382,14 @@ const submitAnswer1 = async (req, res, next) => {
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
-      update
+      update,
     );
   } catch (err) {
     return res.status(500).json('Problem when updating student marks rank.');
   }
   let sIeIObj = await StudentMarksRank.find(
     { $and: [{ studentId: sId1 }, { examId: eId1 }] },
-    '_id'
+    '_id',
   );
   let rankTable = sIeIObj;
   sIeIObj = sIeIObj[0]._id;
@@ -1439,7 +1444,7 @@ const submitAnswer1 = async (req, res, next) => {
       {
         $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
-      { totalObtainedMarks: totalObtainedMarks, rank: -1 }
+      { totalObtainedMarks: totalObtainedMarks, rank: -1 },
     );
   } catch (err) {
     return res.status(500).json('Problem when update total obtained marks.');
@@ -1606,7 +1611,7 @@ const submitAnswer2 = async (req, res, next) => {
     try {
       saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
         findId,
-        update
+        update,
       );
       result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
     } catch (err) {
@@ -1778,7 +1783,7 @@ const submitAnswer = async (req, res, next) => {
   console.log(curDate.valueOf(), ':curDate.valueOf()');
   console.log(
     studEndTime.valueOf() > curDate.valueOf(),
-    'studEndTime.valueOf() > curDate.valueOf()'
+    'studEndTime.valueOf() > curDate.valueOf()',
   );
   if (curTime.valueOf() > curDate.valueOf()) {
     flagSt = false;
@@ -1867,7 +1872,7 @@ const submitAnswer = async (req, res, next) => {
   try {
     saveStudentExamEnd = await StudentMarksRank.findByIdAndUpdate(
       findId,
-      update
+      update,
     );
     result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(id, update1);
     // console.log(update, update1, flagSt);
@@ -2054,7 +2059,7 @@ const historyData = async (req, res, next) => {
             { finishedStatus: true },
           ],
         },
-        'totalObtainedMarks examStartTime examEndTime'
+        'totalObtainedMarks examStartTime examEndTime',
       );
       totalStudent = await StudentMarksRank.findOne({
         $and: [{ examId: examIdObj }, { finishedStatus: true }],
@@ -2148,7 +2153,7 @@ const historyData1 = async (req, res, next) => {
             { finishedStatus: true },
           ],
         },
-        'totalObtainedMarks examStartTime examEndtime'
+        'totalObtainedMarks examStartTime examEndtime',
       );
     } catch (err) {
       return res.status(500).json('2.Something went wrong.');
@@ -2242,7 +2247,7 @@ const missedExam1 = async (req, res, next) => {
       {
         studentId: studentIdObj,
       },
-      'examId'
+      'examId',
     );
     ////console.log("doneExam");
     ////console.log(doneExam);
@@ -2342,7 +2347,7 @@ const missedExam = async (req, res, next) => {
         {
           studentId: studentIdObj,
         },
-        'examId'
+        'examId',
       );
       ////console.log("doneExam");
       ////console.log(doneExam);
@@ -2429,7 +2434,7 @@ const missedExam = async (req, res, next) => {
         {
           studentId: studentIdObj,
         },
-        'examId'
+        'examId',
       );
       ////console.log("doneExam");
       ////console.log(doneExam);
@@ -2517,7 +2522,7 @@ const missedExam = async (req, res, next) => {
         {
           studentId: studentIdObj,
         },
-        'examId'
+        'examId',
       );
       ////console.log("doneExam");
       ////console.log(doneExam);
@@ -2607,7 +2612,7 @@ const missedExam = async (req, res, next) => {
         {
           studentId: studentIdObj,
         },
-        'examId'
+        'examId',
       );
       ////console.log("doneExam");
       ////console.log(doneExam);
@@ -2895,7 +2900,7 @@ const retakeSubmit = async (req, res, next) => {
   const answered = answerArr;
   try {
     examData = await McqQuestionVsExam.findOne({ eId: examIdObj }).populate(
-      'mId eId'
+      'mId eId',
     );
   } catch (err) {
     ////console.log(err);
@@ -3197,7 +3202,7 @@ const missedExamAdmin = async (req, res, next) => {
       {
         studentId: studentIdObj,
       },
-      'examId'
+      'examId',
     );
   } catch (err) {
     return res.status(500).json('2.Something went wrong.');
@@ -3304,7 +3309,7 @@ const historyDataAdmin = async (req, res, next) => {
             { finishedStatus: true },
           ],
         },
-        'rank totalObtainedMarks examStartTime examEndtime'
+        'rank totalObtainedMarks examStartTime examEndtime',
       );
     } catch (err) {
       return res.status(500).json('2.Something went wrong.');
@@ -3425,7 +3430,7 @@ const getHistoryByExamId = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await Exam.findById(String(examIdObj)).populate(
-      'courseId subjectId'
+      'courseId subjectId',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -3541,7 +3546,7 @@ const getHistoryByExamIdFilter = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await Exam.findById(String(examIdObj)).populate(
-      'courseId subjectId'
+      'courseId subjectId',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -3636,7 +3641,7 @@ const getHistoryByWrittenId = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await Exam.findById(String(examIdObj)).populate(
-      'courseId subjectId'
+      'courseId subjectId',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -3747,7 +3752,7 @@ const getHistoryByWrittenIdFilter = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await Exam.findById(String(examIdObj)).populate(
-      'courseId subjectId'
+      'courseId subjectId',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -3846,7 +3851,7 @@ const bothGetHistory = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await BothExam.findById(String(examIdObj)).populate(
-      'courseId subjectId'
+      'courseId subjectId',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -3960,7 +3965,7 @@ const bothGetHistoryFilter = async (req, res, next) => {
   examDetails = null;
   try {
     examDetails = await BothExam.findById(String(examIdObj)).populate(
-      'courseId subjectId'
+      'courseId subjectId',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4001,7 +4006,7 @@ const updateStudentExamInfo1 = async (req, res, next) => {
           { totalObtainedMarks: 0 },
         ],
       },
-      '_id'
+      '_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4015,7 +4020,7 @@ const updateStudentExamInfo1 = async (req, res, next) => {
       {
         _id: { $in: examUncheckStudent },
       },
-      { $set: { runningStatus: false, finishedStatus: true } }
+      { $set: { runningStatus: false, finishedStatus: true } },
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4048,7 +4053,7 @@ const updateStudentExamInfo2 = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      '_id'
+      '_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4070,7 +4075,7 @@ const updateStudentExamInfo2 = async (req, res, next) => {
           { studentId: examUncheckStudent[i].studentId },
         ],
       },
-      'mcqQuestionId answeredOption -_id'
+      'mcqQuestionId answeredOption -_id',
     ).populate('mcqQuestionId');
     if (data == null) continue;
     let mcqDetail = data.mcqQuestionId;
@@ -4100,7 +4105,7 @@ const updateStudentExamInfo2 = async (req, res, next) => {
             { studentId: examUncheckStudent[i].studentId },
           ],
         },
-        update1
+        update1,
       );
     } catch (err) {
       return res.status(500).json('Something went wrong.');
@@ -4112,7 +4117,7 @@ const updateStudentExamInfo2 = async (req, res, next) => {
       {
         _id: { $in: examUncheckStudent },
       },
-      { $set: { runningStatus: false, finishedStatus: true } }
+      { $set: { runningStatus: false, finishedStatus: true } },
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4153,7 +4158,7 @@ const updateStudentExamInfo = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      '_id'
+      '_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4169,7 +4174,7 @@ const updateStudentExamInfo = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      'studentId -_id'
+      'studentId -_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4184,7 +4189,7 @@ const updateStudentExamInfo = async (req, res, next) => {
       {
         _id: { $in: examUncheckStudent },
       },
-      { $set: { runningStatus: false, finishedStatus: true } }
+      { $set: { runningStatus: false, finishedStatus: true } },
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4244,7 +4249,7 @@ const updateStudentExamInfo = async (req, res, next) => {
         {
           $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
         },
-        { totalObtainedMarks: totalObtainedMarks }
+        { totalObtainedMarks: totalObtainedMarks },
       );
       ////console.log("upd", upd.modifiedCount);
     } catch (err) {
@@ -4286,7 +4291,7 @@ const updateStudentExamInfo3 = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      '_id'
+      '_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4302,7 +4307,7 @@ const updateStudentExamInfo3 = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      'studentId -_id'
+      'studentId -_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4317,7 +4322,7 @@ const updateStudentExamInfo3 = async (req, res, next) => {
       {
         _id: { $in: examUncheckStudent },
       },
-      { $set: { runningStatus: false, finishedStatus: true } }
+      { $set: { runningStatus: false, finishedStatus: true } },
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -4377,7 +4382,7 @@ const updateStudentExamInfo3 = async (req, res, next) => {
         {
           $and: [{ examId: examIdObj }, { studentId: studentIds[i].studentId }],
         },
-        { totalObtainedMarks: totalObtainedMarks }
+        { totalObtainedMarks: totalObtainedMarks },
       );
       ////console.log("upd", upd.modifiedCount);
     } catch (err) {
@@ -4615,7 +4620,7 @@ const getAllRank = async (req, res, next) => {
     data1['displayPicture'] = resultRank[i].studentId.displayPicture;
     data1['mobileNoOrg'] = resultRank[i].studentId.mobileNo;
     data1['mobileNo'] = conData.concat(
-      resultRank[i].studentId.mobileNo.slice(7)
+      resultRank[i].studentId.mobileNo.slice(7),
     );
     data1['institution'] = resultRank[i].studentId.institution;
     data1['totalObtainedMarks'] = resultRank[i].totalObtainedMarks;
@@ -4692,7 +4697,7 @@ const assignWrittenQuestion = async (req, res, next) => {
   try {
     questionsNo = await QuestionsWritten.findOne(
       { examId: examId },
-      'totalQuestions -_id'
+      'totalQuestions -_id',
     );
   } catch (err) {
     return res.status(500).json('something went wrong.');
@@ -4737,7 +4742,7 @@ const assignWrittenQuestion = async (req, res, next) => {
   data1['studExamStartTime'] = moment(new Date());
   data1['studExamEndTime'] = moment(data1.studExamStartTime).add(
     examData.duration,
-    'minutes'
+    'minutes',
   );
   data1['examStartTime'] = examData.startTime;
   data1['examEndTime'] = examData.endTime;
@@ -4915,11 +4920,11 @@ const submitStudentScript10 = async (req, res, next) => {
     return res
       .status(404)
       .json(
-        'Student Id or Exam Id or question Id is not valid or no image uploaded.'
+        'Student Id or Exam Id or question Id is not valid or no image uploaded.',
       );
   }
   const dir = path.resolve(
-    path.join(__dirname, '../uploads/' + String(examId) + '/')
+    path.join(__dirname, '../uploads/' + String(examId) + '/'),
   );
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -4928,7 +4933,7 @@ const submitStudentScript10 = async (req, res, next) => {
   for (let i = 0; i < images.length; i++) {
     const matches = String(images[i]).replace(
       /^data:([A-Za-z-+/]+);base64,/,
-      ''
+      '',
     );
     let timeData = Date.now();
     let fileNameDis =
@@ -5017,11 +5022,11 @@ const submitStudentScript = async (req, res, next) => {
     return res
       .status(404)
       .json(
-        'Student Id or Exam Id or question Id is not valid or no image uploaded.'
+        'Student Id or Exam Id or question Id is not valid or no image uploaded.',
       );
   }
   const dir = path.resolve(
-    path.join(__dirname, '../uploads/' + String(examId) + '/')
+    path.join(__dirname, '../uploads/' + String(examId) + '/'),
   );
 
   if (!fs.existsSync(dir)) {
@@ -5030,8 +5035,8 @@ const submitStudentScript = async (req, res, next) => {
   const dir1 = path.resolve(
     path.join(
       __dirname,
-      '../uploads/' + String(examId) + '/' + String(studentId) + '/'
-    )
+      '../uploads/' + String(examId) + '/' + String(studentId) + '/',
+    ),
   );
   // dir1 = path.resolve(path.join(__dirname, dir + String(studentId) + '/'))
   if (!fs.existsSync(dir1)) {
@@ -5042,7 +5047,7 @@ const submitStudentScript = async (req, res, next) => {
   for (let i = 0; i < images.length; i++) {
     const matches = String(images[i]).replace(
       /^data:([A-Za-z-+/]+);base64,/,
-      ''
+      '',
     );
     let timeData = Date.now();
     let fileNameDis =
@@ -5204,7 +5209,7 @@ const submitWritten = async (req, res, next) => {
       {
         $and: [{ examId: examId }, { studentId: studentIdObj }],
       },
-      upd
+      upd,
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -5215,7 +5220,7 @@ const submitWritten = async (req, res, next) => {
       {
         $and: [{ studentId: studentIdObj }, { examId: examId }],
       },
-      { uploadStatus: true }
+      { uploadStatus: true },
     );
   } catch (err) {
     return res.status(500).json('Somethhing went wrong.');
@@ -5508,7 +5513,7 @@ const historyDataWritten = async (req, res, next) => {
         {
           $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
         },
-        'examStartTime examEndTime'
+        'examStartTime examEndTime',
       );
       totalStudent = await StudentMarksRank.find({
         examId: examIdObj,
@@ -5608,7 +5613,7 @@ const historyDataWritten1 = async (req, res, next) => {
         {
           $and: [{ studentId: studentIdObj }, { examId: examIdObj }],
         },
-        'examStartTime examEndtime'
+        'examStartTime examEndtime',
       );
     } catch (err) {
       return res.status(500).json('2.Something went wrong.');
@@ -5706,7 +5711,7 @@ const missedExamWritten = async (req, res, next) => {
       {
         studentId: studentIdObj,
       },
-      'examId'
+      'examId',
     );
     ////console.log("doneExam");
     ////console.log(doneExam);
@@ -5966,7 +5971,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      '_id'
+      '_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -5981,7 +5986,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
           { runningStatus: true },
         ],
       },
-      'studentId -_id'
+      'studentId -_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -5994,7 +5999,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
         {
           _id: { $in: examUncheckStudent },
         },
-        { $set: { runningStatus: false, finishedStatus: true } }
+        { $set: { runningStatus: false, finishedStatus: true } },
       );
     } catch (err) {
       return res.status(500).json('Something went wrong.');
@@ -6044,7 +6049,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
       try {
         result = await BothStudentExamVsQuestions.findByIdAndUpdate(
           id,
-          update1
+          update1,
         );
       } catch (err) {
         //console.log(err);
@@ -6061,7 +6066,7 @@ const bothUpdateStudentExamInfo = async (req, res, next) => {
       {
         $and: [{ examId: examIdObj }, { uploadStatus: false }],
       },
-      { $set: { uploadStatus: true } }
+      { $set: { uploadStatus: true } },
     );
   } catch (err) {
     return res.status(500).json('55.Something went wrong.');
@@ -6190,10 +6195,10 @@ const bothHistoryData = async (req, res, next) => {
     data1['examStartTimeMcq'] = moment(data[i].examStartTimeMcq).format('LLL');
     data1['examEndTimeMcq'] = moment(data[i].examEndTimeMcq).format('LLL');
     data1['examStartTimeWritten'] = moment(data[i].examStartTimeWritten).format(
-      'LLL'
+      'LLL',
     );
     data1['examEndTimeWritten'] = moment(data[i].examEndTimeWritten).format(
-      'LLL'
+      'LLL',
     );
     data1['mcqDuration'] = data[i].mcqDuration.toFixed(2);
     data1['writtenDuration'] = data[i].writtenDuration.toFixed(2);
@@ -6303,7 +6308,7 @@ const bothExamDetail = async (req, res, next) => {
     (
       Number(data.totalObtainedMarksMcq.toFixed(2)) +
       Number(data.totalObtainedMarksWritten.toFixed(2))
-    ).toFixed(2)
+    ).toFixed(2),
   );
   data1['rank'] = resultRank;
   return res.status(200).json(data1);
@@ -6600,7 +6605,7 @@ const bothGetAllRank = async (req, res, next) => {
     data1['mobileNoOrg'] = resultRank[i].studentId.mobileNo;
     data1['studentId'] = resultRank[i].studentId._id;
     data1['mobileNo'] = conData.concat(
-      resultRank[i].studentId.mobileNo.slice(7)
+      resultRank[i].studentId.mobileNo.slice(7),
     );
     data1['institution'] = resultRank[i].studentId.institution;
     data1['totalObtainedMarks'] = resultRank[i].totalObtainedMarks;
@@ -6648,7 +6653,7 @@ const bothAssignQuestionMcq1 = async (req, res, next) => {
   let totalQuesData;
   try {
     totalQuesData = await BothExam.findById(eId).select(
-      'totalQuestionMcq mcqDuration endTime'
+      'totalQuestionMcq mcqDuration endTime',
     );
   } catch (err) {
     return res.status(500).json('2.something went wrong');
@@ -6703,7 +6708,7 @@ const bothAssignQuestionMcq1 = async (req, res, next) => {
   try {
     questions = await QuestionsMcq.find(
       { _id: { $in: resultQuestion } },
-      'question type options'
+      'question type options',
     );
   } catch (err) {
     return res.status(500).json(err);
@@ -6732,7 +6737,7 @@ const bothAssignQuestionMcq1 = async (req, res, next) => {
 
   if (
     Number(
-      moment(examEndTime).add(6, 'h') - moment(examEndTimeActual.endTime)
+      moment(examEndTime).add(6, 'h') - moment(examEndTimeActual.endTime),
     ) > 0
   )
     examEndTime = examEndTimeActual.endTime;
@@ -6745,7 +6750,7 @@ const bothAssignQuestionMcq1 = async (req, res, next) => {
   try {
     writtenQuestion = await BothQuestionsWritten.findOne(
       { examId: eId1 },
-      '_id'
+      '_id',
     );
   } catch (err) {
     ////console.log(err);
@@ -6831,7 +6836,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   try {
     questions = await QuestionsMcq.find(
       { _id: { $in: resultQuestion } },
-      'question type options'
+      'question type options',
     );
   } catch (err) {
     return res.status(500).json(err);
@@ -6864,7 +6869,7 @@ const bothAssignQuestionMcq = async (req, res, next) => {
   try {
     writtenQuestion = await BothQuestionsWritten.findOne(
       { examId: eId1 },
-      '_id'
+      '_id',
     );
   } catch (err) {
     ////console.log(err);
@@ -6936,7 +6941,7 @@ const bothGetRunningDataMcq = async (req, res, next) => {
   try {
     getExamData = await BothStudentExamVsQuestions.findOne(
       { $and: [{ examId: eId1 }, { studentId: sId1 }] },
-      'examStartTimeMcq examEndTimeMcq examId'
+      'examStartTimeMcq examEndTimeMcq examId',
     )
       .populate({
         path: 'examId',
@@ -7010,7 +7015,7 @@ const bothUpdateAssignQuestionMcq = async (req, res, next) => {
     return res
       .status(409)
       .json(
-        'Already Submitted from another device.You will be redirected to written exam within 5 seconds.'
+        'Already Submitted from another device.You will be redirected to written exam within 5 seconds.',
       );
   //exam status Check:end
   try {
@@ -7018,7 +7023,7 @@ const bothUpdateAssignQuestionMcq = async (req, res, next) => {
       {
         $and: [{ studentId: studentId }, { examId: examId }],
       },
-      '_id answeredOption'
+      '_id answeredOption',
     );
   } catch (err) {
     return res.status(500).json('cant save to db');
@@ -7075,7 +7080,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
       {
         $and: [{ examId: eId1 }, { studentId: sId1 }],
       },
-      'finishedStatus -_id'
+      'finishedStatus -_id',
     );
   } catch (err) {
     return res.status(500).json('Something went wrong.');
@@ -7114,7 +7119,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   try {
     saveStudentExamEnd = await BothStudentExamVsQuestions.findByIdAndUpdate(
       findId,
-      update
+      update,
     );
   } catch (err) {
     //console.log(err);
@@ -7122,7 +7127,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   }
   let sIeIObj = await BothStudentExamVsQuestions.find(
     { $and: [{ studentId: sId1 }, { examId: eId1 }] },
-    '_id'
+    '_id',
   );
   let rankTable = sIeIObj;
   sIeIObj = sIeIObj[0]._id;
@@ -7187,7 +7192,7 @@ const BothSubmitAnswerMcq = async (req, res, next) => {
   }
   try {
     getResult = await BothStudentExamVsQuestions.findById(id).populate(
-      'examId'
+      'examId',
     );
   } catch (err) {
     return res.status(500).json('Problem when get Student Exam info.');
@@ -7324,7 +7329,7 @@ const bothAssignQuestionWritten = async (req, res, next) => {
   data1['studExamStartTime'] = moment(new Date());
   data1['studExamEndTime'] = moment(data1.studExamStartTime).add(
     examData.writtenDuration,
-    'minutes'
+    'minutes',
   );
   data1['examStartTime'] = examData.startTime;
   data1['examEndTime'] = examData.endTime;
@@ -7481,7 +7486,7 @@ const bothSubmitStudentScript = async (req, res, next) => {
   examId = new mongoose.Types.ObjectId(examId);
   //new implement
   const dir = path.resolve(
-    path.join(__dirname, '../uploads/' + String(examId) + '/')
+    path.join(__dirname, '../uploads/' + String(examId) + '/'),
   );
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -7489,8 +7494,8 @@ const bothSubmitStudentScript = async (req, res, next) => {
   const dir1 = path.resolve(
     path.join(
       __dirname,
-      '../uploads/' + String(examId) + '/' + String(studentId) + '/'
-    )
+      '../uploads/' + String(examId) + '/' + String(studentId) + '/',
+    ),
   );
   if (!fs.existsSync(dir1)) {
     fs.mkdirSync(dir1);
@@ -7498,7 +7503,7 @@ const bothSubmitStudentScript = async (req, res, next) => {
   for (let i = 0; i < images.length; i++) {
     const matches = String(images[i]).replace(
       /^data:([A-Za-z-+/]+);base64,/,
-      ''
+      '',
     );
     let timeData = Date.now();
     let fileNameDis =
@@ -7614,7 +7619,7 @@ const bothSubmitWritten = async (req, res, next) => {
       {
         $and: [{ examId: examId }, { studentId: studentIdObj }],
       },
-      upd
+      upd,
     );
   } catch (err) {
     //console.log(err);
@@ -7742,7 +7747,7 @@ const bothGetExamDataForTest = async (req, res, next) => {
     try {
       data1 = await Student.findById(
         data[i].studentId.toString(),
-        'regNo -_id'
+        'regNo -_id',
       );
       reOb['regNo'] = data1.regNo;
     } catch (err) {
