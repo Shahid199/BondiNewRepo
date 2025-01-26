@@ -3420,35 +3420,36 @@ const studentUpdate = async (req, res, next) => {
   return res.status(200).json(students);
 };
 
-// const columnAdd = async (req, res, next) => {
-//   const salt = await bcrypt.genSalt(10);
-//   let count = 0;
-//   let studentData;
-//   let pass = 'bpexam';
-//   let password;
-//   try {
-//     password = await bcrypt.hash(pass, salt);
-//   } catch (error) {
-//     return res.status(500).json('error found');
-//   }
-//   try {
-//     studentData = await Student.find({});
-//     console.log('ekhane hishab rakhlam:', studentData.length);
-//     for (const student of studentData) {
-//       try {
-//         await Student.updateOne({ _id: student._id }, $set{password:password});
-//         count++;
-//       } catch (err) {
-//         console.error(`Failed to update student ID ${student._id}:`, err);
-//       }
-//     }
-//   } catch (err) {
-//     console.error('Error during processing:', err);
-//     return res.status(500).json('An error occurred during the update process');
-//   }
-//   console.log('hoise koyta: ', count);
-//   return res.status(200).json(`Updated ${count} students`);
-// };
+const columnAdd = async (req, res, next) => {
+  const salt = await bcrypt.genSalt(10);
+  let count = 0;
+  let studentData;
+  let pass = 'bpexam';
+  let password;
+  try {
+    password = await bcrypt.hash(pass, salt);
+  } catch (error) {
+    return res.status(500).json('error found');
+  }
+  // try {
+  //   studentData = await Student.find({});
+  //   console.log('ekhane hishab rakhlam:', studentData.length);
+  //   for (const student of studentData) {
+  //     student.password = password;
+  //     try {
+  //       await Student.updateOne({ _id: student._id }, $set);
+  //       count++;
+  //     } catch (err) {
+  //       console.error(`Failed to update student ID ${student._id}:`, err);
+  //     }
+  //   }
+  // } catch (err) {
+  //   console.error('Error during processing:', err);
+  //   return res.status(500).json('An error occurred during the update process');
+  // }
+  console.log('hoise koyta: ', count);
+  return res.status(200).json(`Updated ${count} students`);
+};
 
 //export functions
 exports.studentUpdate = studentUpdate;
