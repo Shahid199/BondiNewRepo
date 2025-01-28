@@ -214,6 +214,7 @@ const checkPassword = async (req, res, next) => {
     }
   });
 };
+
 const changePassword = async (req, res, next) => {
   const salt = await bcrypt.genSalt(10);
   let studentId;
@@ -222,7 +223,7 @@ const changePassword = async (req, res, next) => {
   } else {
     studentId = req.user.studentId;
   }
-  const password = req.query.password;
+  const password = req.body.password;
   let studentData;
   try {
     studentData = await Student.findById(studentId);
@@ -230,6 +231,7 @@ const changePassword = async (req, res, next) => {
     return res.status(500).json({ message: 'student not found' });
   }
   studentData.password = await bcrypt.hash(password, salt);
+  console.log(studentData.password);
   let doc;
   try {
     doc = await Student.updateOne({ _id: studentData._id }, studentData);
@@ -238,6 +240,7 @@ const changePassword = async (req, res, next) => {
   }
   return res.status(201).json({ message: 'password updated' });
 };
+
 // const logoutStudent = async (req, res, next) => {
 //   req.logout();
 //   res.redirect("/");
@@ -265,7 +268,7 @@ const addStudent = async (req, res, next) => {
   const linesArr = linesExceptFirst.map((line) => line.split(','));
   let students = [];
   let rNo = [];
-  let pass="bpexam";
+  let pass = 'bpexam';
   let password;
   try {
     password = await bcrypt.hash(pass, salt);
