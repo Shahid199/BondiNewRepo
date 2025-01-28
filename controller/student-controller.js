@@ -231,7 +231,7 @@ const changePassword = async (req, res, next) => {
     return res.status(500).json({ message: 'student not found' });
   }
   studentData.password = await bcrypt.hash(password, salt);
-  console.log(studentData.password);
+  // console.log(studentData.password);
   let doc;
   try {
     doc = await Student.updateOne({ _id: studentData._id }, studentData);
