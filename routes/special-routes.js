@@ -69,6 +69,7 @@ const {
   getExamSubjects,
   writtenMarksUpdate,
   getExamSubjectsRetake,
+  updateQuestionStatus,
   topRank
 } = require("../controller/special-controller");
 const router = express.Router();
@@ -77,6 +78,7 @@ const router = express.Router();
 //   writtenMarksUpdate
 // );
 
+router.put('/updatequestionstatus',updateQuestionStatus)
 router.get(
   "/getexamsubjectsretake",
   [

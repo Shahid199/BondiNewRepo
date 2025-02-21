@@ -1291,6 +1291,7 @@ const viewSollutionMcq = async (req, res, next) => {
   resultData.push({ totalObtainedMarks: data.totalObtainedMarks.toFixed(2) });
   return res.status(200).json(resultData);
 };
+
 const viewSollutionWritten1 = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
@@ -1351,6 +1352,7 @@ const viewSollutionWritten1 = async (req, res, next) => {
   }
   return res.status(200).json(dataNew);
 };
+
 const viewSollutionWritten = async (req, res, next) => {
   const studentId = req.user.studentId;
   const examId = req.query.examId;
@@ -1471,6 +1473,7 @@ const viewSollutionWritten = async (req, res, next) => {
   }
   return res.status(200).json(dataNew);
 };
+
 const specialGetHistory1 = async (req, res, next) => {
   const examId = req.query.examId;
   if (!ObjectId.isValid(examId))
@@ -5892,32 +5895,38 @@ const addTextQuestion = async (req, res, next) => {
 }
 const updateQuestionStatus = async (req, res, next) => {
   const questionId = req.body.questionId
+  console.log('qid: ',questionId);
   const examId = req.body.examId
+  const subjectId = new mongoose.Types.ObjectId(req.body.subjectId)
   const examIdObj = new mongoose.Types.ObjectId(examId)
   const quesObj = new mongoose.Types.ObjectId(questionId)
+  // console.log("subject Id: ",subjectId);
   if (!ObjectId.isValid(questionId))
     return res.status(404).json('question Id is not valid.')
   //const questionIdObj = new mongoose.Types.ObjectId(questionId);
   let queryResult = null
   try {
-    queryResult = await BothMcqQuestionVsExam.find({ eId: examIdObj })
+    queryResult = await SpecialExam.findById(examId)
 
   } catch (err) {
     return res.status(500).json(err)
   }
-  for (let i = 0; i < queryResult.length; i++) {
-    let temp = []
-    temp = queryResult[i].mId.filter(q => String(q) !== String(quesObj))
-    // console.log(temp)
-    queryResult[i].mId = temp;
-  }
-  for (let i = 0; i < queryResult.length; i++) {
-    let res = null;
-    try {
-      res = await BothMcqQuestionVsExam.findByIdAndUpdate(queryResult[i]._id, { mId: queryResult[i].mId })
-    } catch (e) {
-      return res.status(500).json("Cannot find data")
+  // console.log("result",queryResult.questionMcq)
+  for(let i = 0 ; i<queryResult.questionMcq.length;i++){
+    if(String(queryResult.questionMcq[i].subjectId)===String(subjectId)){
+      for(let j = 0; j<queryResult.questionMcq[i].mcqQuestions.length;j++){
+        queryResult.questionMcq[i].mcqQuestions[j].mcqIds = queryResult.questionMcq[i].mcqQuestions[j].mcqIds .filter(quest=>String(quest)!==questionId);
+      }
+      // console.log(queryResult.questionMcq[i].mcqQuestions);
     }
+  }
+  // return res.status(200);
+  
+  let result;
+  try {
+    result = await SpecialExam.findByIdAndUpdate(examId,queryResult )
+  } catch (e) {
+    return res.status(500).json("Cannot find data")
   }
 
   return res.status(201).json('Updated')
@@ -6341,6 +6350,7 @@ const topRank = async(req,res,next)=>{
 }
 
 exports.topRank = topRank;
+exports.updateQuestionStatus = updateQuestionStatus;
 exports.getExamSubjectsRetake = getExamSubjectsRetake;
 exports.writtenMarksUpdate = writtenMarksUpdate;
 exports.getExamSubjects = getExamSubjects;
