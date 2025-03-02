@@ -3461,7 +3461,7 @@ const updateMarksTask = async(req,res,next) =>{
   } catch (error) {
     return res.status(500).json("No data found")
   }
-  console.log(details.length);
+  console.log(details);
   return res.status(200).json(details);
 }
 
