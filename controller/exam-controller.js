@@ -3479,6 +3479,12 @@ const updateMarksTask = async (req, res, next) => {
           console.log("ei dhuklo")
       }
     }
+    let result ;
+    try {
+      result = await StudentExamVsQuestionsMcq.findByIdAndUpdate(details[i]._id,details[i])
+    } catch (error) {
+      return res.status(500).json("error occured");
+    }
   }
   return res.status(200).json(details[0]);
 };
