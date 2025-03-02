@@ -3463,6 +3463,19 @@ const updateMarksTask = async(req,res,next) =>{
     return res.status(500).json("No data found")
   }
   console.log(details.length);
+  for(let i =0 ; i<details.length; i++){
+    for(let j = 0 ; j<details[i].mcqQuestionId.length; j++){
+      if(details[i].mcqQuestionId[j]._id==="67c03aab2273f2e848a5c1b7"){
+        details[i].answeredOption[j] = details[i].mcqQuestionId[j].correctOption;
+      }
+      
+      if(details[i].mcqQuestionId[j]._id==="67c055133e2973354ac6ed0a"){
+        details[i].answeredOption[j] = details[i].mcqQuestionId[j].correctOption;
+      }
+
+    }
+    
+  }
   return res.status(200).json(details[0]);
 }
 
