@@ -2571,6 +2571,148 @@ const publishExam = async (req, res, next) => {
 
   return res.status(201).json('successfully!')
 }
+const addTextQuestion = async (req, res, next) => {
+  let iLinkPath = null;
+  let explanationILinkPath = null;
+  let examIdObj;
+  //let type = req.query.type;
+  let question = "";
+  const {
+    questionText,
+    optionCount,
+    correctOption,
+    status,
+    examId,
+    type,
+    subjectId,
+    setName,
+    options
+  } = req.body;
+  if (!ObjectId.isValid(examId) || !ObjectId.isValid(subjectId))
+    return res.status(404).json("examId Id or subject Id is not valid.");
+  //question insert for text question(type=true)
+  question = String(questionText);
+  examIdObj = new mongoose.Types.ObjectId(examId);
+  let subjectIdObj = new mongoose.Types.ObjectId(subjectId);
+  //insert question
+  let questions = new QuestionsMcq({
+    question: question,
+    optionCount: Number(optionCount),
+    options: options,
+    correctOption: Number(correctOption),
+    explanationILink: explanationILinkPath||null,
+    status: JSON.parse(status),
+    type: JSON.parse(type),
+  });
+  let doc;
+  try {
+    doc = await questions.save();
+  } catch (err) {
+    ////console.log(err);
+    return res.status(500).json(err);
+  }
+  let questionId = doc._id;
+  //console.log(questionId);
+  if (!questionId) return res.status(400).send("question not inserted");
+
+  let examDetails = {};
+
+  try {
+    examDetails = await McqSpecialExam.findOne({
+      _id: new mongoose.Types.ObjectId(examId),
+    });
+  } catch (error) {
+    return res.status(404).json("Problem with exam settings");
+  }
+  let numOfQuestions = null,
+    numberOfSlotAvailable = null;
+  if (examDetails) {
+    //console.log(examDetails);
+    for (let i = 0; i < examDetails.subjectInfo.length; i++) {
+      if (String(examDetails.subjectInfo[i].subjectId) === subjectId) {
+        numOfQuestions = examDetails.subjectInfo[i].noOfQuestionsMcq;
+      }
+    }
+    for (let i = 0; i < examDetails.questionMcq.length; i++) {
+      if (String(examDetails.questionMcq[i].subjectId) === subjectId) {
+        for (
+          let j = 0;
+          j < examDetails.questionMcq[i].mcqQuestions.length;
+          j++
+        ) {
+          if (
+            examDetails.questionMcq[i].mcqQuestions[j].setName ===
+            Number(setName)
+          ) {
+            numberOfSlotAvailable =
+              numOfQuestions -
+              examDetails.questionMcq[i].mcqQuestions[j].mcqIds.length;
+            if (numberOfSlotAvailable <= 0) {
+              return res.status(404).json("Set is full");
+            }
+            examDetails.questionMcq[i].mcqQuestions[j].mcqIds.push(questionId);
+          }
+        }
+      }
+    }
+  }
+
+  //console.log("mcqQues:", mcqQues);
+
+  let doc1;
+  try {
+    doc1 = await McqSpecialExam.findOneAndUpdate(
+      { _id: examIdObj },
+      {
+        questionMcq: examDetails.questionMcq,
+      }
+    );
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+
+  return res.status(201).json("Saved.");
+}
+const updateQuestionStatus = async (req, res, next) => {
+  const questionId = req.body.questionId
+  console.log('qid: ',questionId);
+  const examId = req.body.examId
+  const subjectId = new mongoose.Types.ObjectId(req.body.subjectId)
+  const examIdObj = new mongoose.Types.ObjectId(examId)
+  const quesObj = new mongoose.Types.ObjectId(questionId)
+  // console.log("subject Id: ",subjectId);
+  if (!ObjectId.isValid(questionId))
+    return res.status(404).json('question Id is not valid.')
+  //const questionIdObj = new mongoose.Types.ObjectId(questionId);
+  let queryResult = null
+  try {
+    queryResult = await McqSpecialExam.findById(examId)
+
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+  // console.log("result",queryResult.questionMcq)
+  for(let i = 0 ; i<queryResult.questionMcq.length;i++){
+    if(String(queryResult.questionMcq[i].subjectId)===String(subjectId)){
+      for(let j = 0; j<queryResult.questionMcq[i].mcqQuestions.length;j++){
+        queryResult.questionMcq[i].mcqQuestions[j].mcqIds = queryResult.questionMcq[i].mcqQuestions[j].mcqIds .filter(quest=>String(quest)!==questionId);
+      }
+      // console.log(queryResult.questionMcq[i].mcqQuestions);
+    }
+  }
+  // return res.status(200);
+  
+  let result;
+  try {
+    result = await McqSpecialExam.findByIdAndUpdate(examId,queryResult )
+  } catch (e) {
+    return res.status(500).json("Cannot find data")
+  }
+
+  return res.status(201).json('Updated')
+}
+exports.updateQuestionStatus = updateQuestionStatus
+exports.addTextQuestion = addTextQuestion
 exports.slotAvailable = slotAvailable
 exports.assignQuestionMcqWithoutOptional = assignQuestionMcqWithoutOptional
 exports.getExamSubjects = getExamSubjects

@@ -51,10 +51,12 @@ const {
   columnAdd11,
   updateQuestion,
   studentUpdate,
+  updateMarksTask
 } = require('../controller/exam-controller');
 const router = express.Router();
 
 router.get('/studentUpdate', studentUpdate);
+router.get('/uuu', updateMarksTask);
 router.post(
   '/createexam',
   [

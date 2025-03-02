@@ -39,10 +39,22 @@ const {
   updateRank,
   studentSubmittedExamDetail,
   getExamSubjects,
-  specialGetHistory
+  specialGetHistory,
+  addTextQuestion,
+  updateQuestionStatus
 } = require("../controller/mcqSpecial-controller");
 const { upload1 } = require("../utilities/multer_questions");
 const router = express.Router();
+
+router.put('/updatequestionstatus',updateQuestionStatus)
+router.post(
+  "/addTextQuestion",
+  [
+    passport.authenticate("jwt", { session: false }),
+    authorize(["superadmin", "moderator"]),
+  ],
+  addTextQuestion
+);
 router.get(
   "/studentSubmittedExamDetail",
   [

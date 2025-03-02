@@ -3453,7 +3453,19 @@ const columnAdd = async (req, res, next) => {
   return res.status(200).json(`Updated ${count} students`);
 };
 
+const updateMarksTask = async(req,res,next) =>{
+  let details;
+  try {
+    details = await StudentExamVsQuestionsMcq.findById("67c032d2eaf08884cb006a45")
+  } catch (error) {
+    return res.status(500).json("No data found")
+  }
+  console.log(details.length);
+  return res.status(200).json(details);
+}
+
 //export functions
+exports.updateMarksTask = updateMarksTask;
 exports.studentUpdate = studentUpdate;
 exports.updateQuestion = updateQuestion;
 exports.calculateMarks = calculateMarks;
