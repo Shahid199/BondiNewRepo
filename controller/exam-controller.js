@@ -3470,11 +3470,13 @@ const updateMarksTask = async (req, res, next) => {
       if (String(details[i].mcqQuestionId[j]._id) === "67c03aab2273f2e848a5c1b7") {
         details[i].answeredOption[j] =
           details[i].mcqQuestionId[j].correctOption;
+          console.log("ei dhuklo")
       }
 
       if (String(details[i].mcqQuestionId[j]._id) === "67c055133e2973354ac6ed0a") {
         details[i].answeredOption[j] =
           details[i].mcqQuestionId[j].correctOption;
+          console.log("ei dhuklo")
       }
     }
   }
