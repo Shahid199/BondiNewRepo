@@ -3455,13 +3455,14 @@ const columnAdd = async (req, res, next) => {
 
 const updateMarksTask = async(req,res,next) =>{
   let details;  
+  let eId = new mongoose.Types.ObjectId("67c032d2eaf08884cb006a45")
   console.log("hhhohohoh")
   try {
-    details = await StudentExamVsQuestionsMcq.findById("67c032d2eaf08884cb006a45")
+    details = await StudentExamVsQuestionsMcq.find({examId:eId})
   } catch (error) {
     return res.status(500).json("No data found")
   }
-  console.log(details);
+  console.log(details.length);
   return res.status(200).json(details);
 }
 
