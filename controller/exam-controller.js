@@ -3454,7 +3454,8 @@ const columnAdd = async (req, res, next) => {
 };
 
 const updateMarksTask = async(req,res,next) =>{
-  let details;
+  let details;  
+  console.log("hhhohohoh")
   try {
     details = await StudentExamVsQuestionsMcq.findById("67c032d2eaf08884cb006a45")
   } catch (error) {
