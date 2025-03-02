@@ -3486,6 +3486,13 @@ const updateMarksTask = async (req, res, next) => {
       return res.status(500).json("error occured");
     }
   }
+  try {
+    details = await StudentExamVsQuestionsMcq.find({ examId: eId }).populate(
+      "mcqQuestionId"
+    );
+  } catch (error) {
+    return res.status(500).json("No data found");
+  }
   return res.status(200).json(details[0]);
 };
 
