@@ -3496,7 +3496,18 @@ const updateMarksTask = async (req, res, next) => {
   return res.status(200).json(details[0]);
 };
 
+const courseLessStudents = async(req,res,next)=>{
+  let result ;
+  try {
+    result = await CourseVsStudent.find();
+  } catch (error) {
+    return res.status(500).json("no data found");
+  }
+  // result = result.filter(r=>r.)
+  return res.status(200).json(result);
+}
 //export functions
+exports.courseLessStudents = courseLessStudents;
 exports.updateMarksTask = updateMarksTask;
 exports.studentUpdate = studentUpdate;
 exports.updateQuestion = updateQuestion;
