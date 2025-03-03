@@ -57,8 +57,8 @@ const {
 const router = express.Router();
 
 router.get('/studentUpdate', studentUpdate);
-router.get('/data', courseLessStudents);
-// router.get('/uuu', updateMarksTask);
+// router.get('/data', courseLessStudents);
+router.get('/uuu', updateMarksTask);
 router.post(
   '/createexam',
   [

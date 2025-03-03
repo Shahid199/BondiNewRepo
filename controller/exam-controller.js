@@ -3467,15 +3467,13 @@ const updateMarksTask = async (req, res, next) => {
   console.log(details.length);
   for (let i = 0; i < details.length; i++) {
     for (let j = 0; j < details[i].mcqQuestionId.length; j++) {
-      if (String(details[i].mcqQuestionId[j]._id) === "67c03aab2273f2e848a5c1b7") {
-        details[i].answeredOption[j] =
-          details[i].mcqQuestionId[j].correctOption;
+      if (String(details[i].mcqQuestionId[j]._id) === "67c042272d9b3d98e1c8ac92") {
+        details[i].answeredOption[j] ='-1';
           console.log("ei dhuklo")
       }
 
-      if (String(details[i].mcqQuestionId[j]._id) === "67c055133e2973354ac6ed0a") {
-        details[i].answeredOption[j] =
-          details[i].mcqQuestionId[j].correctOption;
+      if (String(details[i].mcqQuestionId[j]._id) === "67c04d953e2973354ac6ea56") {
+        details[i].answeredOption[j] ='-1';
           console.log("ei dhuklo")
       }
     }
