@@ -3503,6 +3503,7 @@ const courseLessStudents = async(req,res,next)=>{
   } catch (error) {
     return res.status(500).json("no data found");
   }
+  result = result.splice(0,100);
   // result = result.filter(r=>r.)
   return res.status(200).json(result);
 }
