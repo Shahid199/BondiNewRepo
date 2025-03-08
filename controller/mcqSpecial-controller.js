@@ -1899,7 +1899,7 @@ const studentSubmittedExamDetail = async (req, res, next) => {
   }
   if (mcqRank != null) mcqRank = mcqRank.rank
   else mcqRank = '-1'
-  //end rank
+  // console.log("dataL",data);
   let dataEx = {}
   let subjectDetails = []
   for (let i = 0; i < examDetails.noOfExamSubject; i++) {
@@ -1909,18 +1909,20 @@ const studentSubmittedExamDetail = async (req, res, next) => {
     let searchedId = new mongoose.Types.ObjectId(
       data.questionMcq[i].subjectId._id
     )
-    // //console.log(examDetails.subjectInfo,examDetails.subjectInfo.filter(s=>String(s.subjectId)===String(searchedId)),new mongoose.Types.ObjectId(data.questionMcq[i].subjectId._id));
-    // return;
     let numOfQuesPerSub = examDetails.subjectInfo.filter(
       (s) => String(s.subjectId) === String(searchedId)
     )[0].noOfQuestionsMcq
-    if (data.questionMcq[i].mcqMarksPerSub > data.examId.totalMarksMcq / 4) {
-      dataObject['marksMcqPerSub'] = 0
-    } else {
-      dataObject['marksMcqPerSub'] =
-        data.questionMcq[i].mcqMarksPerSub.toFixed(2)
-    }
+    // if (data.questionMcq[i].mcqMarksPerSub > data.examId.totalMarksMcq / 4) {
+    //   dataObject['marksMcqPerSub'] = 0
+    // } else {
+    //   dataObject['marksMcqPerSub'] =
+    //     data.questionMcq[i].mcqMarksPerSub.toFixed(2)
+    // }
+    
+    dataObject['marksMcqPerSub'] =
+    data.questionMcq[i].mcqMarksPerSub.toFixed(2)
     dataObject['subjectMarks'] = numOfQuesPerSub * examDetails.marksPerMcq
+    // console.log("data by subject->",dataObject)
     subjectDetails.push(dataObject)
   }
   dataEx['subjectDetails'] = subjectDetails
